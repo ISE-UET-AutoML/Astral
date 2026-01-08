@@ -32,6 +32,9 @@ import {
     DownloadOutlined,
     CloudUploadOutlined,
     StarOutlined,
+    MonitorOutlined,
+    LineChartOutlined,
+    CalculatorOutlined
 } from '@ant-design/icons'
 import { getDeployData } from 'src/api/deploy'
 import { getProjectById } from 'src/api/project'
@@ -789,6 +792,168 @@ export default function DeployedModelView() {
                             </Col>
                         </Row>
                     )}
+
+                    {deployData?.status === 'ONLINE' && projectInfo && (
+                        <Row
+                            gutter={[24, 24]}
+                            style={{
+                                marginTop: '24px',
+                            }}
+                        >
+                            <Col span={24}>
+                                <Card
+                                    title={
+                                        <Space>
+                                            <MonitorOutlined
+                                                style={{
+                                                    color: '#1890ff',
+                                                }}
+                                            />
+                                            <span
+                                                style={{
+                                                    color: 'var(--secondary-text)',
+                                                    fontFamily:
+                                                        'Poppins, sans-serif',
+                                                }}
+                                            >
+                                                Monitoring
+                                            </span>
+                                        </Space>
+                                    }
+                                    style={{
+                                        background: 'var(--card-gradient)',
+                                        backdropFilter: 'blur(10px)',
+                                        border: '1px solid var(--border)',
+                                        borderRadius: '12px',
+                                        fontFamily: 'Poppins, sans-serif',
+                                    }}
+                                >
+                                    <Row gutter={[24, 24]}>
+                                        <Col span={24}>
+                                            <Divider
+                                                orientation="left"
+                                                orientationMargin={0}
+                                                style={{
+                                                    color: 'var(--secondary-text)',
+                                                    fontFamily:
+                                                        'Poppins, sans-serif',
+                                                }}
+                                            >
+                                                Monitor Endpoint URL
+                                            </Divider>
+                                            <div className="flex">
+                                                <Input.Group compact>
+                                                    <Input
+                                                        style={{
+                                                            width: '30%',
+                                                        }}
+                                                        value={
+                                                            deployData?.monitor_url ||
+                                                            'https://api.example.com'
+                                                        }
+                                                        readOnly
+                                                    />
+                                                    <Button
+                                                        type="primary"
+                                                        onClick={() => {
+                                                            const textToCopy =
+                                                                deployData?.monitor_url ||
+                                                                'https://api.example.com'
+                                                            try {
+                                                                const textarea =
+                                                                    document.createElement(
+                                                                        'textarea'
+                                                                    )
+                                                                textarea.value =
+                                                                    textToCopy
+                                                                document.body.appendChild(
+                                                                    textarea
+                                                                )
+                                                                textarea.select()
+                                                                document.execCommand(
+                                                                    'copy'
+                                                                )
+                                                                document.body.removeChild(
+                                                                    textarea
+                                                                )
+                                                                message.success(
+                                                                    'Copied to clipboard',
+                                                                    1
+                                                                )
+                                                            } catch (err) {
+                                                                message.error(
+                                                                    'Failed to copy',
+                                                                    1
+                                                                )
+                                                            }
+                                                        }}
+                                                    >
+                                                        Copy URL
+                                                    </Button>
+                                                </Input.Group>
+                                                <Space className="ml-2">
+                                                    <Button
+                                                        type="primary"
+                                                        size="large"
+                                                        icon={<LineChartOutlined />}
+                                                        disabled={!deployData?.monitor_url}
+                                                        onClick={() => {
+                                                            if (deployData?.monitor_url) {
+                                                                window.open(
+                                                                    `${deployData.monitor_url}/d/rYdddlPWk/node-exporter-full`,
+                                                                    '_blank',
+                                                                    'noopener,noreferrer'
+                                                                )
+                                                            }
+                                                        }}
+                                                    >
+                                                        System Monitoring
+                                                    </Button>
+                                                </Space>
+                                                <Space className="ml-2">
+                                                    <Button
+                                                        type="primary"
+                                                        size="large"
+                                                        icon={<CalculatorOutlined />}
+                                                        disabled={!deployData?.monitor_url}
+                                                        onClick={() => {
+                                                            if (deployData?.monitor_url) {
+                                                                window.open(
+                                                                    `${deployData.monitor_url}/d/vlvPlrgnk/gpu-metrics`,
+                                                                    '_blank',
+                                                                    'noopener,noreferrer'
+                                                                )
+                                                            }
+                                                        }}
+                                                    >
+                                                        GPU Monitoring
+                                                    </Button>
+                                                </Space>
+                                            </div>
+                                        </Col>
+                                    </Row>
+                                </Card>
+                                <>
+                                    {(() => {
+                                        if (object) {
+                                            const LiveInferComponent =
+                                                object.liveInferView
+                                            return (
+                                                <LiveInferComponent
+                                                    projectInfo={projectInfo}
+                                                    handleUploadFiles={
+                                                        handleUploadFiles
+                                                    }
+                                                />
+                                            )
+                                        }
+                                        return null
+                                    })()}
+                                </>
+                            </Col>
+                        </Row>
+                    )}
+
 
                     {deployData?.status === 'ONLINE' &&
                         !uploading &&
