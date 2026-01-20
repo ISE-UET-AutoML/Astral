@@ -38,7 +38,7 @@ import {
 } from '@ant-design/icons'
 import { getDeployData } from 'src/api/deploy'
 import { getProjectById } from 'src/api/project'
-import { getModelById } from 'src/api/model'
+import { getLatestModelVersionByModelId } from 'src/api/model_version'
 import { getExperimentById } from 'src/api/experiment'
 import config from '../build/config'
 import * as modelAPI from 'src/api/model'
@@ -66,7 +66,6 @@ export default function DeployedModelView() {
     const [model, setModel] = useState(null)
     const [predictResult, setPredictResult] = useState(null)
     const [uploadedFiles, setUploadedFiles] = useState(null)
-    const [experimentName, setExperimentName] = useState(null)
     const [isShowUpload, setIsShowUpload] = useState(false)
     const [isLoadingPredictions, setIsLoadingPredictions] = useState(false)
     const [isModalVisible, setIsModalVisible] = useState(false)
@@ -177,11 +176,8 @@ export default function DeployedModelView() {
         console.log(projectInfo)
         const { data } = await getDeployData(deployId)
         setDeployData(data)
-        const res = await getModelById(data.model_id)
+        const res = await getLatestModelVersionByModelId(data.model_id)
         setModel(res.data)
-        const experimentId = res.data?.experiment_id
-        const res2 = await getExperimentById(experimentId)
-        setExperimentName(res2.data?.name)
     }
 
     const fetchProjectData = async () => {
@@ -772,23 +768,6 @@ export default function DeployedModelView() {
                                         </Col>
                                     </Row>
                                 </Card>
-                                <>
-                                    {(() => {
-                                        if (object) {
-                                            const LiveInferComponent =
-                                                object.liveInferView
-                                            return (
-                                                <LiveInferComponent
-                                                    projectInfo={projectInfo}
-                                                    handleUploadFiles={
-                                                        handleUploadFiles
-                                                    }
-                                                />
-                                            )
-                                        }
-                                        return null
-                                    })()}
-                                </>
                             </Col>
                         </Row>
                     )}
