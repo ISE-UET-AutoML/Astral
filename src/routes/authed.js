@@ -13,6 +13,8 @@ import ProjectModels from 'src/pages/project/models'
 import ProjectBuild from 'src/pages/project/build/build'
 import ProjectSettings from 'src/pages/project/settings'
 import ProjectExperiments from 'src/pages/project/experiments'
+import ProjectGenApp from 'src/pages/project/genapp'
+import EditAppPage from 'src/pages/editapp'
 
 import Buckets from 'src/pages/buckets'
 
@@ -129,6 +131,14 @@ const routes = {
                                 {
                                     path: 'deploy/:deployId',
                                     element: <DeployedModelView />
+                                },
+                                {
+                                    path: 'my-apps',
+                                    element: <ProjectGenApp />,
+                                },
+                                {
+                                    path: 'my-apps/:appId/edit',
+                                    element: <EditAppPage />,
                                 },
                                 {
                                     path: 'tasks',

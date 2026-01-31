@@ -11,8 +11,9 @@ const PATHS = {
 	LABELS: '/app/label-projects',
 	PROFILE: '/profile',
 	SETTINGS: '/settings',
+	MY_APPS: '/my-apps',
 	MODELS: '/app/models',
-
+	PROJECT_MY_APPS: (projectID) => `/app/project/${projectID}/my-apps`,
 	/*-----------------------------PROJECT-------------------------------------*/
 	PROJECT_INFO: (projectID) => `/app/project/${projectID}/build/info`,
 	PROJECT_BUILD: (projectID) => `/app/project/${projectID}/build/uploadData`,

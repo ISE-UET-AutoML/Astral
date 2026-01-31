@@ -5,6 +5,8 @@ import {
 	DeployIcon,
 	TasksIcon,
 	InfoIcon,
+	MyAppsIcon,
+	MyAppIcon,
 } from 'src/components/icons'
 import clsx from 'clsx'
 import { PATHS } from 'src/constants/paths'
@@ -40,10 +42,16 @@ const ProjectSidebar = ({ projectID, className }) => {
 			href: PATHS.PROJECT_MODEL(projectID),
 			icon: ModelIcon,
 		},
+
 		{
 			name: 'Deploy',
 			href: PATHS.PROJECT_DEPLOY(projectID),
 			icon: DeployIcon,
+		},
+		{
+			name: 'My apps',
+			href: PATHS.PROJECT_MY_APPS(projectID),
+			icon: MyAppIcon,
 		},
 	]
 
