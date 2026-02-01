@@ -73,6 +73,7 @@ const ProjectDeploy = () => {
 
     const getListDeployedModels = async () => {
         const { data } = await getAllDeployedModel(projectId)
+        console.log("data:", data)
         const sortedData = data.sort((a, b) => b.id - a.id)
         setDeployedModels(prev => sortedData)
         setFilteredDeployedModels(prev => sortedData)

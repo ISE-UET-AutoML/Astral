@@ -29,11 +29,12 @@ const ProjectInfo = () => {
 		const fetchData = async () => {
 			try {
 				const experimentsData = await getAllExperiments(projectInfo.id)
+
 				const modelsData = await getModels(projectInfo.id)
 				const deployedModelsData = await getAllDeployedModel(
 					projectInfo.id
 				)
-
+				
 				setExperiments(
 					Array.isArray(experimentsData)
 						? experimentsData

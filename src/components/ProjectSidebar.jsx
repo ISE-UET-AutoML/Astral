@@ -5,10 +5,12 @@ import {
 	DeployIcon,
 	TasksIcon,
 	InfoIcon,
+	MyAppsIcon,
+	MyAppIcon,
 } from 'src/components/icons'
 import clsx from 'clsx'
 import { PATHS } from 'src/constants/paths'
-import { NavLink, useLocation } from 'react-router-dom' // ✅ use NavLink
+import { NavLink, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
 import { useTheme } from 'src/theme/ThemeProvider'
 
@@ -40,10 +42,16 @@ const ProjectSidebar = ({ projectID, className }) => {
 			href: PATHS.PROJECT_MODEL(projectID),
 			icon: ModelIcon,
 		},
+
 		{
 			name: 'Deploy',
 			href: PATHS.PROJECT_DEPLOY(projectID),
 			icon: DeployIcon,
+		},
+		{
+			name: 'My Apps',
+			href: PATHS.PROJECT_MY_APPS(projectID),
+			icon: MyAppIcon,
 		},
 	]
 
