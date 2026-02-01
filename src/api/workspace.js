@@ -2,7 +2,7 @@ import axiosClient from './axios'
 
 /**
  * Workspace API for interacting with generated apps.
- * Maps to backend gateway endpoint: /v1/api/workspace/
+ * Maps to backend gateway endpoint: /api/service/adaptive_model_to_app/workspace/
  */
 
 export const workspaceApi = {
@@ -12,7 +12,9 @@ export const workspaceApi = {
 	 * @returns {Promise<TreeNode>} File tree structure
 	 */
 	async getTree(appId) {
-		const response = await axiosClient.get(`/v1/api/workspace/${appId}/tree`)
+		const response = await axiosClient.get(
+			`/api/service/adaptive_model_to_app/workspace/${appId}/tree`
+		)
 		return response.data
 	},
 
@@ -23,9 +25,12 @@ export const workspaceApi = {
 	 * @returns {Promise<{content: string}>} File content
 	 */
 	async getFile(appId, path) {
-		const response = await axiosClient.get(`/v1/api/workspace/${appId}/file`, {
-			params: { path }
-		})
+		const response = await axiosClient.get(
+			`/api/service/adaptive_model_to_app/workspace/${appId}/file`,
+			{
+				params: { path },
+			}
+		)
 		return response.data
 	},
 
@@ -37,10 +42,13 @@ export const workspaceApi = {
 	 * @returns {Promise<void>}
 	 */
 	async saveFile(appId, path, content) {
-		await axiosClient.post(`/v1/api/workspace/${appId}/file`, {
-			path,
-			content
-		})
+		await axiosClient.post(
+			`/api/service/adaptive_model_to_app/workspace/${appId}/file`,
+			{
+				path,
+				content,
+			}
+		)
 	},
 
 	/**
@@ -51,9 +59,12 @@ export const workspaceApi = {
 	 * @returns {Promise<AdaptResponse>}
 	 */
 	async startAdapt(appId, prompt) {
-		const response = await axiosClient.post(`/v1/api/workspace/${appId}/adapt`, {
-			prompt
-		})
+		const response = await axiosClient.post(
+			`/api/service/adaptive_model_to_app/workspace/${appId}/adapt`,
+			{
+				prompt,
+			}
+		)
 		return response.data
 	},
 
@@ -64,7 +75,9 @@ export const workspaceApi = {
 	 * @returns {Promise<AdaptResponse>}
 	 */
 	async getAdaptStatus(appId, adaptId) {
-		const response = await axiosClient.get(`/v1/api/workspace/${appId}/adapt/${adaptId}`)
+		const response = await axiosClient.get(
+			`/api/service/adaptive_model_to_app/workspace/${appId}/adapt/${adaptId}`
+		)
 		return response.data
 	},
 
@@ -78,7 +91,13 @@ export const workspaceApi = {
 	 * @param {number} initialDelayMs - Initial delay between polls (default: 1000ms)
 	 * @returns {Promise<AdaptResponse>}
 	 */
-	async pollAdaptCompletion(appId, adaptId, onStatusUpdate, maxAttempts = 120, initialDelayMs = 1000) {
+	async pollAdaptCompletion(
+		appId,
+		adaptId,
+		onStatusUpdate,
+		maxAttempts = 120,
+		initialDelayMs = 1000
+	) {
 		let attempts = 0
 		let delay = initialDelayMs
 
@@ -102,5 +121,5 @@ export const workspaceApi = {
 		}
 
 		throw new Error('Adapt operation timed out')
-	}
+	},
 }

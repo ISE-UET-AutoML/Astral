@@ -2,7 +2,11 @@ import { useState, useCallback, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { message } from 'antd'
 import { workspaceApi } from 'src/api/workspace'
-import { ChatPanel, TreePanel, CodeEditorPanel } from 'src/components/CodeEditor'
+import {
+	ChatPanel,
+	TreePanel,
+	CodeEditorPanel,
+} from 'src/components/CodeEditor'
 import { useFileTree, useFileEditor, useSaveShortcut } from 'src/hooks'
 import { Button } from 'src/components/ui/button'
 import { ArrowLeftOutlined } from '@ant-design/icons'
@@ -22,7 +26,11 @@ const EditAppPage = () => {
 
 	// All hooks must be called before any conditional returns
 	const { tree, refetch: refetchTree } = useFileTree(appId)
-	const { code, setCode, isSaving } = useFileEditor(appId, currentFile, originalCode)
+	const { code, setCode, isSaving } = useFileEditor(
+		appId,
+		currentFile,
+		originalCode
+	)
 	const hasAutoLoadedRef = useRef(false)
 
 	// Helper functions (must be defined before conditional return)
@@ -110,26 +118,33 @@ const EditAppPage = () => {
 
 		try {
 			// Add "thinking" message
-			setMessages((prev) => [...prev, { role: 'assistant', content: '🔄 Starting adaptation...' }])
+			setMessages((prev) => [
+				...prev,
+				{ role: 'assistant', content: '🔄 Starting adaptation...' },
+			])
 
 			// Start adapt operation
 			const adaptResponse = await workspaceApi.startAdapt(appId, prompt)
 
 			// Poll for completion with status updates
-			const finalResult = await workspaceApi.pollAdaptCompletion(appId, adaptResponse.adapt_id, (status) => {
-				// Update the last assistant message with current status
-				setMessages((prev) => {
-					const newMessages = [...prev]
-					const lastIdx = newMessages.length - 1
-					if (newMessages[lastIdx]?.role === 'assistant') {
-						newMessages[lastIdx] = {
-							role: 'assistant',
-							content: `🔄 ${status.message}`
+			const finalResult = await workspaceApi.pollAdaptCompletion(
+				appId,
+				adaptResponse.adapt_id,
+				(status) => {
+					// Update the last assistant message with current status
+					setMessages((prev) => {
+						const newMessages = [...prev]
+						const lastIdx = newMessages.length - 1
+						if (newMessages[lastIdx]?.role === 'assistant') {
+							newMessages[lastIdx] = {
+								role: 'assistant',
+								content: `🔄 ${status.message}`,
+							}
 						}
-					}
-					return newMessages
-				})
-			})
+						return newMessages
+					})
+				}
+			)
 
 			// Update with final result
 			if (finalResult.status === 'completed') {
@@ -139,7 +154,9 @@ const EditAppPage = () => {
 					if (newMessages[lastIdx]?.role === 'assistant') {
 						newMessages[lastIdx] = {
 							role: 'assistant',
-							content: finalResult.result || '✅ Adaptation completed successfully!'
+							content:
+								finalResult.result ||
+								'✅ Adaptation completed successfully!',
 						}
 					}
 					return newMessages
@@ -156,7 +173,7 @@ const EditAppPage = () => {
 					if (newMessages[lastIdx]?.role === 'assistant') {
 						newMessages[lastIdx] = {
 							role: 'assistant',
-							content: `❌ Adaptation failed: ${finalResult.error || 'Unknown error'}`
+							content: `❌ Adaptation failed: ${finalResult.error || 'Unknown error'}`,
 						}
 					}
 					return newMessages
@@ -169,8 +186,8 @@ const EditAppPage = () => {
 				...prev.slice(0, -1), // Remove "thinking" message
 				{
 					role: 'assistant',
-					content: `❌ Error: ${error instanceof Error ? error.message : 'Unknown error'}`
-				}
+					content: `❌ Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+				},
 			])
 			message.error('Failed to adapt')
 		} finally {
@@ -184,7 +201,13 @@ const EditAppPage = () => {
 			<div className="flex items-center justify-center h-screen">
 				<div className="text-center">
 					<p className="text-gray-600 mb-4">Invalid app ID</p>
-					<Button onClick={() => navigate(`/project/${projectId}/genapp`)}>Go Back</Button>
+					<Button
+						onClick={() =>
+							navigate(`/app/project/${projectId}/my-apps`)
+						}
+					>
+						Go Back
+					</Button>
 				</div>
 			</div>
 		)
@@ -193,15 +216,30 @@ const EditAppPage = () => {
 	return (
 		<div className="flex flex-col h-screen w-screen bg-gray-100 overflow-hidden">
 			<div className="flex items-center gap-2 px-4 py-2 bg-white border-b">
-				<Button variant="ghost" size="sm" onClick={() => navigate(`/project/${projectId}/genapp`)}>
-					<ArrowLeftOutlined  className="h-4 w-4 mr-2" />
+				<Button
+					variant="ghost"
+					size="sm"
+					onClick={() =>
+						navigate(`/app/project/${projectId}/my-apps`)
+					}
+				>
+					<ArrowLeftOutlined className="h-4 w-4 mr-2" />
 					Back to Apps
 				</Button>
-				{isAdapting && <span className="text-sm text-orange-600 ml-4">🔄 Adapting...</span>}
+				{isAdapting && (
+					<span className="text-sm text-orange-600 ml-4">
+						🔄 Adapting...
+					</span>
+				)}
 			</div>
 			<div className="grid grid-cols-[360px_240px_1fr] flex-1 min-h-0 overflow-hidden">
 				<div className="min-w-0 min-h-0 overflow-hidden">
-					<ChatPanel messages={messages} input={chatInput} onInputChange={setChatInput} onSendMessage={sendMessage} />
+					<ChatPanel
+						messages={messages}
+						input={chatInput}
+						onInputChange={setChatInput}
+						onSendMessage={sendMessage}
+					/>
 				</div>
 				<div className="min-w-0 min-h-0 overflow-hidden">
 					<TreePanel tree={tree} onOpen={loadFile} />

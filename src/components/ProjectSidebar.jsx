@@ -10,7 +10,7 @@ import {
 } from 'src/components/icons'
 import clsx from 'clsx'
 import { PATHS } from 'src/constants/paths'
-import { NavLink, useLocation } from 'react-router-dom' // ✅ use NavLink
+import { NavLink, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
 import { useTheme } from 'src/theme/ThemeProvider'
 
@@ -49,7 +49,7 @@ const ProjectSidebar = ({ projectID, className }) => {
 			icon: DeployIcon,
 		},
 		{
-			name: 'My apps',
+			name: 'My Apps',
 			href: PATHS.PROJECT_MY_APPS(projectID),
 			icon: MyAppIcon,
 		},
