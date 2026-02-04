@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { getAllDeployedModel, genApp } from 'src/api/deploy'
+import { getAllDeployedModel, genApp, getDeployData } from 'src/api/deploy'
 import { getProjectById } from 'src/api/project'
+import { getLatestModelVersionByModelId } from 'src/api/model_version'
 import { useGenApps } from 'src/hooks/useGenApps'
 import {
 	Card,
@@ -70,16 +71,20 @@ export default function ProjectGenApp() {
 	const [genLoading, setGenLoading] = useState(false)
 	const [appName, setAppName] = useState('')
 	const [isFormOpen, setIsFormOpen] = useState(false)
+	const [modelMetadata, setModelMetadata] = useState(null)
+	const [selectedDeploy, setSelectedDeploy] = useState(null)
 
 	const fetchDeploys = async () => {
 		try {
 			const { data } = await getAllDeployedModel(projectId)
-			const sorted = (data || []).sort(
+			const onlineDeploys = (data || []).filter(
+				(d) => d.status === 'ONLINE'
+			)
+			const sorted = onlineDeploys.sort(
 				(a, b) => (b.id ?? 0) - (a.id ?? 0)
 			)
 			setDeploys(sorted)
 
-			// Auto-select first deploy and prefill app name
 			if (sorted.length > 0 && !selectedModelId) {
 				setSelectedModelId(sorted[0].model_id)
 				setAppName(sorted[0].name ?? '')
@@ -106,6 +111,55 @@ export default function ProjectGenApp() {
 		fetchProject()
 	}, [projectId])
 
+	// Fetch model metadata when selectedModelId changes
+	useEffect(() => {
+		const fetchMetadata = async () => {
+			if (!selectedModelId) {
+				setModelMetadata(null)
+				setSelectedDeploy(null)
+				return
+			}
+
+			try {
+				const deploy = deploys.find(
+					(d) => d.model_id === selectedModelId
+				)
+				setSelectedDeploy(deploy)
+
+				const modelRes =
+					await getLatestModelVersionByModelId(selectedModelId)
+				setModelMetadata(modelRes.data)
+
+				if (deploy?.id) {
+					const deployRes = await getDeployData(deploy.id)
+					setSelectedDeploy(deployRes.data)
+				}
+			} catch (e) {
+				console.error('Failed to fetch model metadata', e)
+			}
+		}
+		fetchMetadata()
+	}, [selectedModelId, deploys])
+
+	// Log metadata when model changes
+	useEffect(() => {
+		if (
+			selectedModelId &&
+			(modelMetadata || selectedDeploy || projectInfo)
+		) {
+			console.log('Metadata to be passed to API:', {
+				projectName: projectInfo?.name,
+				projectDescription: projectInfo?.description,
+				taskType: projectInfo?.task_type,
+				labelsName: modelMetadata?.metadata?.label_column,
+				labelValues: modelMetadata?.metadata?.labels,
+				apiUrl: selectedDeploy?.api_base_url,
+				sampleData: modelMetadata?.metadata?.sample_data,
+				modelInfo: modelMetadata,
+			})
+		}
+	}, [selectedModelId, modelMetadata, selectedDeploy, projectInfo])
+
 	const resolveTaskType = () => {
 		const raw = projectInfo?.task_type
 		if (!raw) return 'image_classification'
@@ -121,6 +175,19 @@ export default function ProjectGenApp() {
 		return 'image_classification'
 	}
 
+	const buildMetadata = () => ({
+		projectName: projectInfo?.name,
+		projectDescription: projectInfo?.description,
+		taskType: projectInfo?.task_type,
+		description:
+			projectInfo?.description || `A model for ${projectInfo?.task_type}`,
+		labelsName: modelMetadata?.metadata?.label_column,
+		labelValues: modelMetadata?.metadata?.labels,
+		apiUrl: selectedDeploy?.api_base_url,
+		sampleData: modelMetadata?.metadata?.sample_data,
+		modelInfo: modelMetadata,
+	})
+
 	const handleConfirmGenApp = async () => {
 		if (!selectedModelId) {
 			message.error('Please select a model')
@@ -134,6 +201,7 @@ export default function ProjectGenApp() {
 				projectId,
 				name: appName,
 				taskType: resolveTaskType(),
+				metadata: buildMetadata(),
 			})
 			message.success('Gen app successfully')
 			refetch()
