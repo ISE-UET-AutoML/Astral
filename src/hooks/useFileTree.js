@@ -13,17 +13,20 @@ export function useFileTree(appId) {
 
 	const fetchTree = useCallback(async () => {
 		if (!appId) {
+			console.warn('[useFileTree] No appId provided')
 			setLoading(false)
 			return
 		}
 
+		console.log('[useFileTree] Fetching tree for appId:', appId)
 		setLoading(true)
 		try {
 			const data = await workspaceApi.getTree(appId)
+			console.log('[useFileTree] Tree fetched successfully:', data)
 			setTree(data)
 			setError(null)
 		} catch (err) {
-			console.error('Failed to load tree:', err)
+			console.error('[useFileTree] Failed to load tree:', err)
 			setError(err instanceof Error ? err.message : 'Unknown error')
 		} finally {
 			setLoading(false)

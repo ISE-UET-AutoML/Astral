@@ -1,5 +1,6 @@
 import Editor from '@monaco-editor/react'
 import { Button } from '../ui/button'
+import { ArrowPathIcon, BookmarkIcon } from '@heroicons/react/24/outline'
 
 /**
  * Get monaco editor language from filename
@@ -58,6 +59,11 @@ const CodeEditorPanel = ({ currentFile, code, originalCode, isSaving, onCodeChan
 						{isSaving && <span className="text-xs text-gray-500">Saving...</span>}
 						{!isSaving && hasUnsavedChanges && <span className="text-orange-500 text-sm">●</span>}
 						<Button onClick={onSave} disabled={isSaving} size="sm" variant={isSaving ? 'secondary' : 'default'}>
+							{isSaving ? (
+								<ArrowPathIcon className="h-4 w-4 mr-2 animate-spin" />
+							) : (
+								<BookmarkIcon className="h-4 w-4 mr-2" />
+							)}
 							Save
 						</Button>
 					</div>
