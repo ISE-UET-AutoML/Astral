@@ -1,11 +1,10 @@
 import ExperimentCard from './card'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { getAllExperiments } from 'src/api/experiment'
 import { useParams } from 'react-router-dom'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'src/components/ui/card'
+import { Card, CardContent } from 'src/components/ui/card'
 import BackgroundShapes from 'src/components/landing/BackgroundShapes'
 import { useTheme } from 'src/theme/ThemeProvider'
-import { message } from 'antd'
 
 // Simple SVG icons
 const ExperimentIcon = ({ className, ...props }) => (
@@ -53,15 +52,16 @@ export default function ProjectExperiments() {
     const { theme } = useTheme()
     const [experiments, setExperiments] = useState([])
 
-    const getListExperiments = async () => {
+    const getListExperiments = useCallback(async () => {
+        if (!projectId) return;
         const { data } = await getAllExperiments(projectId)
         const sortedData = data.sort((a, b) => b.id - a.id)
         setExperiments(sortedData)
-    }
+    }, [projectId])
 
     useEffect(() => {
         getListExperiments()
-    }, [projectId])
+    }, [getListExperiments])
 
     return (
         <div className="relative min-h-screen" style={{ background: 'var(--surface)' }}>

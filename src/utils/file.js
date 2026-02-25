@@ -1,4 +1,4 @@
-import { ALLOWED_FILE_EXTENSIONS } from 'src/constants/file'
+
 import { TASK_TYPES } from 'src/constants/types'
 import Papa from 'papaparse';
 

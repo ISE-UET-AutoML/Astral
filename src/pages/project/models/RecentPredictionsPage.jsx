@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef } from 'react'
-import { useParams, useNavigate, useOutletContext  } from 'react-router-dom'
+import React, { useEffect, useState, useRef, useCallback } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
 import { useTheme } from 'src/theme/ThemeProvider'
 import {
     Card,
@@ -13,7 +13,6 @@ import {
     Typography,
 } from 'antd'
 import {
-    CheckCircleOutlined,
     DownloadOutlined,
     SettingOutlined,
     ArrowLeftOutlined,
@@ -21,8 +20,7 @@ import {
 } from '@ant-design/icons'
 import { getProjectById } from 'src/api/project'
 import { getModelById } from 'src/api/model'
-import { getExperimentById } from 'src/api/experiment'
-import { getLbProjects, getLbProjByTask, startExport, getExportStatus } from 'src/api/labelProject'
+import { getLbProjByTask, startExport, getExportStatus } from 'src/api/labelProject'
 import * as dataServiceAPI from 'src/api/dataset'
 import { formatDistanceToNow, format } from 'date-fns'
 import axios from 'axios'
@@ -49,37 +47,39 @@ export default function RecentPredictionsPage() {
     const [availableDatasets, setAvailableDatasets] = useState([])
     const [isLoadingDatasets, setIsLoadingDatasets] = useState(false)
     const [selectedDatasetKeys, setSelectedDatasetKeys] = useState([])
-    
+
     // Modal states
     const [isModalVisible, setIsModalVisible] = useState(false)
     const [isJsonLoading, setIsJsonLoading] = useState(false)
     const [selectedPredictionContent, setSelectedPredictionContent] = useState(null)
-    
+
     const simpleDataModalRef = useRef(null)
     const multilabelModalRef = useRef(null)
 
-    const fetchModelData = async () => {
+    const fetchModelData = useCallback(async () => {
+        if (!modelId) return;
         try {
             const res = await getModelById(modelId)
             setModel(res.data)
         } catch (error) {
             console.error("Error fetching model data:", error)
         }
-    }
+    }, [modelId])
 
-    const fetchProjectData = async () => {
+    const fetchProjectData = useCallback(async () => {
+        if (!id) return;
         try {
             const { data } = await getProjectById(id)
             setProjectInfo(data.project)
         } catch (error) {
             console.error("Error fetching project data:", error)
         }
-    }
+    }, [id])
 
     useEffect(() => {
         fetchModelData()
         fetchProjectData()
-    }, [])
+    }, [fetchModelData, fetchProjectData])
 
     useEffect(() => {
         if (!model?.id) return
@@ -117,7 +117,7 @@ export default function RecentPredictionsPage() {
 
             const predictUrl = downloadJsonContentPresignedUrl.data.url
             // console.logs("Predict URL:", predictUrl)
-            
+
             const jsonResponse = await axios.get(predictUrl)
             const predictContent = jsonResponse.data
 
@@ -127,11 +127,9 @@ export default function RecentPredictionsPage() {
 
                 const feedbackUrl = downloadFeedbackJsonContentPresignedUrl.data.url;
                 const feedbackJsonResponse = await axios.get(feedbackUrl);
-                const feedbackContent = feedbackJsonResponse.data;
-                console.log("Feedback Content:", feedbackContent)
+                console.log("Feedback Content:", feedbackJsonResponse.data)
             } catch (error) {
                 console.warn("Could not load feedback data, it might not exist yet.", error.message);
-                const feedbackContent = []
             }
 
             if (projectInfo.task_type.includes('IMAGE')) {
@@ -309,14 +307,14 @@ export default function RecentPredictionsPage() {
             await pollExportStatus(task_id);
             message.success({ content: 'Dataset prepared successfully!', key: 'retrain', duration: 3 });
             setIsDatasetModalVisible(false);
-            navigate(`/app/project/${id}/build/selectInstance`, { 
-                state: { 
+            navigate(`/app/project/${id}/build/selectInstance`, {
+                state: {
                     isRetraining: true,
                     previousModelId: modelId,
                     metadata: lsProject.meta_data,
                     datasetId: newDatasetId,
                     retrainDatasetId: newDatasetId
-                } 
+                }
             });
 
             message.success({ content: 'Dataset prepared successfully!', key: 'retrain', duration: 3 });
@@ -392,7 +390,7 @@ export default function RecentPredictionsPage() {
 
     return (
         <>
-             <style>
+            <style>
                 {`
                 body, html {
                     background-color: var(--surface) !important;
@@ -416,13 +414,13 @@ export default function RecentPredictionsPage() {
             `}
             </style>
             <div className="p-6 bg-gray-50 min-h-screen" style={{ background: 'var(--surface)' }}>
-                 {theme === 'dark' && (
+                {theme === 'dark' && (
                     <BackgroundShapes />
                 )}
                 <Space direction="vertical" size="large" className="w-full relative z-10">
                     <div className="flex items-center gap-4">
-                        <Button 
-                            icon={<ArrowLeftOutlined />} 
+                        <Button
+                            icon={<ArrowLeftOutlined />}
                             onClick={() => navigate(-1)}
                             className="bg-white/10 border-white/20 text-[var(--text)]"
                         >
@@ -434,7 +432,7 @@ export default function RecentPredictionsPage() {
                     </div>
 
                     <Card
-                        className="border-[var(--border)] border-white/10 bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-xl shadow-2xl"
+                        className="border border-white/10 bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-xl shadow-2xl"
                         style={{
                             background: theme === 'dark'
                                 ? 'linear-gradient(135deg, rgba(51, 65, 85, 0.4) 0%, rgba(15, 23, 42, 0.4) 100%)'

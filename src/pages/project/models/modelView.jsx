@@ -129,8 +129,9 @@ const ModelView = () => {
                 console.log("Error while getting metrics", error)
             }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         fetchModel()
-    }, [])
+    }, [modelId])
 
     return (
         <>

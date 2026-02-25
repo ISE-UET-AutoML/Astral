@@ -192,9 +192,8 @@ const getStatusConfig = (status) => {
 
 
 export default function DeployedModelCard({ deployedModel }) {
-    const { theme } = useTheme()
     const { id: projectId } = useParams()
-    const { id: deploy_id, model_id, name, create_time, status, instance_info, api_base_url } = deployedModel
+    const { id: deploy_id, model_id, name, create_time, status, api_base_url } = deployedModel
     const navigate = useNavigate()
     const statusConfig = getStatusConfig(status)
 

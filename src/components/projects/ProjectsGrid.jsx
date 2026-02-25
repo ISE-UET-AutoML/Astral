@@ -1,54 +1,32 @@
 import React from 'react'
-import { Row, Col, Empty, Space, Typography, Button } from 'antd'
 import ProjectCard from 'src/pages/projects/card'
-
-const { Text } = Typography
 
 const ProjectsGrid = ({ projects, getProjects, onCreateProject }) => {
     if (projects.length === 0) {
         return (
-            <Empty
-                image={Empty.PRESENTED_IMAGE_SIMPLE}
-                imageStyle={{ 
-                    filter: 'invert(1)',
-                    opacity: 1,
-                    color: 'white'
-                }}
-                description={
-                    <Space direction="vertical" align="center">
-                        <Text strong className="font-poppins text-h2" style={{ color: 'var(--text)' }}>No Projects Yet</Text>
-                        <Text className="font-poppins text-body" style={{ color: 'var(--secondary-text)' }}>
-                            Start by creating your first AI project
-                        </Text>
-                        <Button
-                            type="primary"
-                            onClick={onCreateProject}
-                            className="font-poppins"
-                            style={{
-                                background: 'var(--button-gradient)',
-                                border: '1px solid var(--border)',
-                                color: '#ffffff'
-                            }}
-                        >
-                            Create Project
-                        </Button>
-                    </Space>
-                }
-            />
+            <div className="flex flex-col items-center justify-center py-16 gap-4">
+                <p className="text-xl font-semibold text-gray-900 dark:text-white">No Projects Yet</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Start by creating your first AI project</p>
+                <button
+                    onClick={onCreateProject}
+                    className="px-6 py-2.5 rounded-xl font-semibold text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition-all duration-200 hover:shadow-lg"
+                >
+                    Create Project
+                </button>
+            </div>
         )
     }
 
     return (
-        <Row gutter={[16, 16]} className="">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
             {projects.map((project) => (
-                <Col xs={24} sm={12} xl={8} key={project.id}>
-                    <ProjectCard
-                        project={project}
-                        getProjects={getProjects}
-                    />
-                </Col>
+                <ProjectCard
+                    key={project.id}
+                    project={project}
+                    getProjects={getProjects}
+                />
             ))}
-        </Row>
+        </div>
     )
 }
 

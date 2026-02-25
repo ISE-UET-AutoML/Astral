@@ -5,9 +5,9 @@ export default function DatasetLayout() {
 	const params = useParams()
 
 	return (
-		<div className="relative min-h-[calc(100dvh-60px)]">
+		<div className="relative min-h-[calc(100dvh-60px)] bg-white dark:bg-[#01000A]">
 			{/* Full-viewport background fill */}
-			<div className="fixed inset-0 bg-[var(--surface)] -z-50" />
+			<div className="fixed inset-0 bg-white dark:bg-[#01000A] -z-50" />
 			<DatasetSidebar
 				datasetID={params.id}
 				className="fixed h-[calc(100dvh-60px)] w-[80px] top-[60px] z-100"

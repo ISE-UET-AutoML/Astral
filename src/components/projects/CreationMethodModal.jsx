@@ -1,11 +1,9 @@
 import React from 'react'
-import { Modal, Row, Col, Card, Typography } from 'antd'
+import { Modal } from 'antd'
 import { RobotOutlined, UserOutlined } from '@ant-design/icons'
 import { motion } from 'framer-motion'
 import ChatbotImage from 'src/assets/images/chatbot.png'
 import NormalImage from 'src/assets/images/normal.png'
-
-const { Title, Text } = Typography
 
 const CreationMethodModal = ({ open, onCancel, onSelectChatbot, onSelectManual }) => {
     const options = [
@@ -14,7 +12,7 @@ const CreationMethodModal = ({ open, onCancel, onSelectChatbot, onSelectManual }
             title: 'AI Assistant',
             description: 'Let our AI guide you through project creation step by step',
             image: ChatbotImage,
-            icon: <RobotOutlined />,
+            icon: <RobotOutlined className="text-2xl text-blue-500" />,
             action: onSelectChatbot,
         },
         {
@@ -22,154 +20,61 @@ const CreationMethodModal = ({ open, onCancel, onSelectChatbot, onSelectManual }
             title: 'Manual Creation',
             description: 'Create your project with full control over all settings',
             image: NormalImage,
-            icon: <UserOutlined />,
+            icon: <UserOutlined className="text-2xl text-blue-500" />,
             action: onSelectManual,
         },
     ]
 
     return (
-        <>
-            <style>{`
-                .theme-creation-modal .ant-modal-content {
-                    background: var(--modal-bg) !important;
-                    border: 1px solid var(--modal-border) !important;
-                    border-radius: 16px !important;
-                }
-                
-                .theme-creation-modal .ant-modal-header {
-                    background: var(--modal-header-bg) !important;
-                    border-bottom: 1px solid var(--modal-header-border) !important;
-                }
-                
-                .theme-creation-modal .ant-modal-title {
-                    color: var(--modal-title-color) !important;
-                    font-family: 'Poppins', sans-serif !important;
-                    font-weight: 600 !important;
-                }
-                
-                .theme-creation-modal .ant-modal-close {
-                    color: var(--modal-close-color) !important;
-                }
-                
-                .theme-creation-modal .ant-modal-close:hover {
-                    color: var(--modal-close-hover) !important;
-                }
-                
-                .theme-creation-modal .ant-card {
-                    background: var(--card-gradient) !important;
-                    border: 1px solid var(--border) !important;
-                    border-radius: 12px !important;
-                    transition: all 0.3s ease !important;
-                }
-                
-                .theme-creation-modal .ant-card:hover {
-                    background: var(--hover-bg) !important;
-                    border-color: var(--modal-close-hover) !important;
-                    transform: translateY(-2px) !important;
-                    box-shadow: 0 8px 32px var(--selection-bg) !important;
-                }
-                
-                .theme-creation-modal .ant-card-meta-title {
-                    color: var(--text) !important;
-                    font-family: 'Poppins', sans-serif !important;
-                    font-weight: 600 !important;
-                }
-                
-                .theme-creation-modal .ant-card-meta-description {
-                    color: var(--secondary-text) !important;
-                    font-family: 'Poppins', sans-serif !important;
-                }
-                
-                .theme-creation-modal .ant-card-meta-avatar .anticon {
-                    color: var(--accent-text) !important;
-                    font-size: 24px !important;
-                }
-                
-                .theme-creation-modal .ant-card-cover img {
-                    border-radius: 8px !important;
-                    filter: brightness(0.9) !important;
-                }
-                
-                .theme-creation-modal .ant-card-cover {
-                    border-radius: 8px 8px 0 0 !important;
-                    overflow: hidden !important;
-                }
-                
-                .theme-creation-modal .ant-typography {
-                    color: var(--text) !important;
-                    font-family: 'Poppins', sans-serif !important;
-                }
-                
-                .theme-creation-modal .ant-typography.ant-typography-secondary {
-                    color: var(--secondary-text) !important;
-                }
-            `}</style>
-            <Modal
-                open={open}
-                onCancel={onCancel}
-                footer={null}
-                width={1000}
-                centered
-                className="theme-creation-modal"
-                styles={{
-                    content: {
-                        background: 'var(--modal-bg)',
-                        border: '1px solid var(--modal-border)',
-                        borderRadius: '16px',
-                    },
-                    header: {
-                        background: 'var(--modal-header-bg)',
-                        borderBottom: '1px solid var(--modal-header-border)',
-                    },
-                    title: {
-                        color: 'var(--modal-title-color)',
-                        fontFamily: 'Poppins, sans-serif',
-                        fontWeight: 600,
-                    },
-                    close: {
-                        color: 'var(--modal-close-color)',
-                    }
-                }}
-            >
-                <div className="text-center mb-8">
-                    <Title level={2} style={{ color: 'var(--text)', fontFamily: 'Poppins, sans-serif', fontWeight: 600 }}>
-                        How would you like to create your project?
-                    </Title>
-                    <Text style={{ color: 'var(--secondary-text)', fontFamily: 'Poppins, sans-serif' }}>
-                        Choose the method that works best for you
-                    </Text>
-                </div>
+        <Modal
+            open={open}
+            onCancel={onCancel}
+            footer={null}
+            width={1000}
+            centered
+            styles={{
+                content: { background: 'linear-gradient(135deg, #ffffff 0%, #f9fafb 100%)', borderRadius: '16px', border: '1px solid rgba(31,41,55,0.15)' },
+                header: { background: 'transparent', borderBottom: '1px solid rgba(31,41,55,0.1)' },
+            }}
+            className="dark:[&_.ant-modal-content]:!bg-gradient-to-br dark:[&_.ant-modal-content]:!from-[#0F2027] dark:[&_.ant-modal-content]:!via-[#203A43] dark:[&_.ant-modal-content]:!to-[#2C5364] dark:[&_.ant-modal-title]:!text-white dark:[&_.ant-modal-close]:!text-white"
+        >
+            <div className="text-center mb-8">
+                <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
+                    How would you like to create your project?
+                </h2>
+                <p className="text-gray-500 dark:text-gray-400">Choose the method that works best for you</p>
+            </div>
 
-                <Row gutter={32} justify="center">
-                    {options.map((option) => (
-                        <Col span={12} key={option.id}>
-                            <motion.div
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                            >
-                                <Card
-                                    hoverable
-                                    onClick={option.action}
-                                    cover={
-                                        <img
-                                            alt={option.title}
-                                            src={option.image}
-                                            className="p-4"
-                                        />
-                                    }
-                                >
-                                    <Card.Meta
-                                        avatar={option.icon}
-                                        title={option.title}
-                                        description={option.description}
-                                    />
-                                </Card>
-                            </motion.div>
-                        </Col>
-                    ))}
-                </Row>
-            </Modal>
-        </>
+            <div className="grid grid-cols-2 gap-8">
+                {options.map((option) => (
+                    <motion.div
+                        key={option.id}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                    >
+                        <div
+                            onClick={option.action}
+                            className="rounded-xl overflow-hidden border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 hover:border-blue-400 dark:hover:border-blue-400/50 hover:-translate-y-0.5 hover:shadow-xl transition-all duration-300 cursor-pointer"
+                        >
+                            <div className="p-4 overflow-hidden rounded-t-xl bg-gray-50 dark:bg-black/20">
+                                <img
+                                    alt={option.title}
+                                    src={option.image}
+                                    className="w-full rounded-lg brightness-90"
+                                />
+                            </div>
+                            <div className="p-4 flex items-start gap-3">
+                                <div>{option.icon}</div>
+                                <div>
+                                    <p className="font-semibold text-gray-900 dark:text-white">{option.title}</p>
+                                    <p className="text-sm text-gray-500 dark:text-gray-400">{option.description}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </motion.div>
+                ))}
+            </div>
+        </Modal>
     )
 }
 

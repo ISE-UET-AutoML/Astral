@@ -1,9 +1,2 @@
-.charts-container {
-    display: flex;
-    flex-direction: column;
-  }
-  
-.charts-container > h3 {
-    margin-left: auto;
-    margin-right: auto;
-  }
+/* charts-container is now handled via Tailwind classes at usage sites */
+/* This file is kept empty intentionally — chart components use className="flex flex-col" */

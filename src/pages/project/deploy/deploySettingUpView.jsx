@@ -1,22 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useTheme } from 'src/theme/ThemeProvider'
 import {
-    Steps,
-    Card,
-    Row,
-    Col,
-    Typography,
     Space,
-    Statistic,
-    Button,
-    Badge,
-    Tag,
-    message,
-    Progress,
-    Timeline,
-    Divider,
-    Input,
+    Typography,
+    Card,
+    Steps,
     Spin,
 } from 'antd'
 import {
@@ -32,7 +21,7 @@ import { PATHS } from 'src/constants/paths'
 import BackgroundShapes from 'src/components/landing/BackgroundShapes'
 import { useSpring, animated } from '@react-spring/web'
 
-const { Title, Text, Paragraph } = Typography
+const { Title } = Typography
 const settingUpProgress = [
     {
         title: (
@@ -215,7 +204,7 @@ export default function DeploySettingUpView() {
             try {
                 const deployModelRes = await deployAPI.getDeployData(deployId)
                 console.log("Current status:", deployModelRes.data)
-                if (deployModelRes.data?.status != deployStatus) {
+                if (deployModelRes.data?.status !== deployStatus) {
                     setCurrentSettingUpStep(prev => 0);
                 }
                 else {
@@ -235,7 +224,7 @@ export default function DeploySettingUpView() {
         fetchDeployData();
         const interval = setInterval(fetchDeployData, 30000);
         return () => clearInterval(interval);
-    }, [deployId]);
+    }, [deployId, deployStatus, navigate, projectId]);
 
 
     return (

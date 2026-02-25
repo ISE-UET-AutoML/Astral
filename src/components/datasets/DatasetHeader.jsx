@@ -1,53 +1,28 @@
 import React from 'react'
-import { Row, Col, Space, Typography, Tooltip } from 'antd'
-
-const { Title, Paragraph } = Typography
+import { Tooltip } from 'antd'
 
 const DatasetHeader = ({ onNewDataset }) => {
     return (
-        <Row justify="space-between" align="top" className="mb-4">
-            <Col>
-                <Space direction="vertical" size={1}>
-                    <Title
-                        level={1}
-                        className="text-h1 font-poppins !mb-2 inline-block"
-                        style={{
-                            color: 'var(--title-color)',
-                            background: 'var(--title-gradient)',
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'var(--title-color)',
-                            backgroundClip: 'text',
-                            margin: 0
-                        }}
+        <div className="flex justify-between items-start mb-4">
+            <div className="flex flex-col gap-1">
+                <h1 className="text-3xl font-bold mb-0 text-gray-900 dark:text-transparent dark:bg-gradient-to-r dark:from-[#5C8DFF] dark:to-[#65FFA0] dark:bg-clip-text">
+                    Datasets
+                </h1>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-0">
+                    Upload and manage your datasets. Organize your data for machine learning projects and label your data for training.
+                </p>
+            </div>
+            <div className="flex items-center gap-3">
+                <Tooltip title="Create a new dataset">
+                    <button
+                        onClick={onNewDataset}
+                        className="px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg text-white bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#0f3460] hover:from-[#16213e] hover:to-[#0f3460] border border-white/20"
                     >
-                        Datasets
-                    </Title>
-                    <Paragraph className="text-body font-poppins !mb-0" style={{ color: 'var(--secondary-text)', margin: 0 }}>
-                        Upload and manage your datasets. Organize your data
-                        for machine learning projects and label your data
-                        for training.
-                    </Paragraph>
-                </Space>
-            </Col>
-            <Col>
-                <Space size={12} align="center">
-                    {/* New Dataset Button */}
-                    <Tooltip title="Create a new dataset">
-                        <button
-                            onClick={onNewDataset}
-                            className="px-6 py-3 rounded-xl font-poppins font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg"
-                            style={{
-                                background: 'var(--button-gradient-dark)',
-                                border: '1px solid var(--border)',
-                                color: '#ffffff'
-                            }}
-                        >
-                            New Dataset
-                        </button>
-                    </Tooltip>
-                </Space>
-            </Col>
-        </Row>
+                        New Dataset
+                    </button>
+                </Tooltip>
+            </div>
+        </div>
     )
 }
 

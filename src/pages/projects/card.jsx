@@ -16,9 +16,7 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { PATHS } from 'src/constants/paths'
 import { deleteProject } from 'src/api/project'
-import { Button, Typography, Tag, Spin } from 'antd'
-import { DeleteOutlined } from '@ant-design/icons'
-import { TASK_TYPES } from 'src/constants/types'
+import { Spin, message } from 'antd'
 
 import image_classification from 'src/assets/images/image_classification.jpg'
 import text_classification from 'src/assets/images/text_classification.jpg'
@@ -38,8 +36,6 @@ import video_classification from 'src/assets/images/video_classification.jpeg'
 
 dayjs.extend(relativeTime)
 
-const { Text, Title } = Typography
-
 export default function ProjectCard({ project, getProjects }) {
     const [isStarred, setIsStarred] = useState(false)
     const [isDeleting, setIsDeleting] = useState(false)
@@ -51,27 +47,24 @@ export default function ProjectCard({ project, getProjects }) {
     }
 
     const handleDelete = async (e, projectID) => {
-        e.preventDefault() // Prevent card navigation
-        e.stopPropagation() // Prevent event bubbling
-
+        e.preventDefault()
+        e.stopPropagation()
         if (window.confirm('Are you sure you want to delete this project?')) {
             try {
-                setIsDeleting(true) // start loading
+                setIsDeleting(true)
                 await deleteProject(projectID)
-                alert('Project deleted successfully!')
+                message.success('Project deleted successfully!')
                 getProjects()
             } catch (error) {
-                alert('Failed to delete project. Please try again.')
+                message.error('Failed to delete project. Please try again.')
                 console.error(error)
             } finally {
-                setIsDeleting(false) // stop loading
+                setIsDeleting(false)
             }
         }
     }
 
     const taskType = project?.task_type
-    const tagColor =
-        TASK_TYPES[taskType]?.card || TASK_TYPES['IMAGE_CLASSIFICATION'].card // in case of no task assigned
 
     const getTaskBackgroundImage = (taskType) => {
         const imageMap = {
@@ -80,7 +73,7 @@ export default function ProjectCard({ project, getProjects }) {
             MULTILABEL_TEXT_CLASSIFICATION: multilabel_text_classification,
             TABULAR_CLASSIFICATION: tabular_classification,
             TABULAR_REGRESSION: tabular_regression,
-            MULTILABEL_TABULAR_CLASSIFICATION:multilabel_tabular_classification,
+            MULTILABEL_TABULAR_CLASSIFICATION: multilabel_tabular_classification,
             MULTIMODAL_CLASSIFICATION: multimodal_classification,
             MULTILABEL_IMAGE_CLASSIFICATION: multilabel_image_classification,
             OBJECT_DETECTION: object_detection,
@@ -95,26 +88,17 @@ export default function ProjectCard({ project, getProjects }) {
     }
 
     let IconComponent = CubeTransparentIcon
-    if (taskType?.includes('TEXT')) {
-        IconComponent = DocumentTextIcon
-    } else if (taskType?.includes('IMAGE')) {
-        IconComponent = PhotoIcon
-    } else if (taskType?.includes('TABULAR')) {
-        IconComponent = TableCellsIcon
-    } else if (taskType?.includes('SEGMENTATION')) {
-        IconComponent = PuzzlePieceIcon
-    } else if (taskType?.includes('TIME_SERIES')) {
-        IconComponent = ArrowTrendingUpIcon
-    }
+    if (taskType?.includes('TEXT')) IconComponent = DocumentTextIcon
+    else if (taskType?.includes('IMAGE')) IconComponent = PhotoIcon
+    else if (taskType?.includes('TABULAR')) IconComponent = TableCellsIcon
+    else if (taskType?.includes('SEGMENTATION')) IconComponent = PuzzlePieceIcon
+    else if (taskType?.includes('TIME_SERIES')) IconComponent = ArrowTrendingUpIcon
 
     const handleCardClick = () => {
         window.location.href = PATHS.PROJECT_INFO(project?.id)
     }
 
-    // Derive status from experiments
-    const runningCount =
-        (project?.training_experiments || 0) +
-        (project?.setting_experiments || 0)
+    const runningCount = (project?.training_experiments || 0) + (project?.setting_experiments || 0)
     const doneCount = project?.done_experiments || 0
     let projectStatus = 'Pending'
     let statusIcon = <ClockIcon className="h-4 w-4 text-gray-500" />
@@ -122,9 +106,7 @@ export default function ProjectCard({ project, getProjects }) {
 
     if (runningCount > 0) {
         projectStatus = 'Training'
-        statusIcon = (
-            <ArrowPathIcon className="h-4 w-4 animate-spin text-blue-500" />
-        )
+        statusIcon = <ArrowPathIcon className="h-4 w-4 animate-spin text-blue-500" />
         statusColor = 'text-blue-500'
     } else if (doneCount > 0) {
         projectStatus = 'Completed'
@@ -136,12 +118,7 @@ export default function ProjectCard({ project, getProjects }) {
         <Spin spinning={isDeleting} tip="Deleting..." size="large">
             <div
                 key={project.id}
-                className="group rounded-2xl shadow-lg w-full h-[320px] overflow-hidden font-poppins cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col relative"
-                style={{
-                    background: 'var(--card-gradient)',
-                    border: '1px solid var(--border)',
-                    color: 'var(--text)',
-                }}
+                className="group rounded-2xl shadow-lg w-full h-[320px] overflow-hidden font-poppins cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col relative bg-white dark:bg-[#141821] border border-gray-200 dark:border-white/10"
                 onClick={handleCardClick}
             >
                 {/* Background Image Section */}
@@ -159,42 +136,23 @@ export default function ProjectCard({ project, getProjects }) {
 
                     {/* Header with Avatar and Actions */}
                     <div className="absolute top-4 left-4 right-4 flex justify-between items-start">
-                        <div
-                            className="w-16 h-16 rounded-xl shadow-lg flex items-center justify-center"
-                            style={{
-                                background: 'var(--tag-gradient)',
-                                border: '2px solid rgba(255, 255, 255, 0.3)',
-                            }}
-                        >
+                        <div className="w-16 h-16 rounded-xl shadow-lg flex items-center justify-center bg-gray-100 dark:bg-white/10 border-2 border-white/30">
                             <IconComponent
-                                className="h-8 w-8 transition-transform duration-500 ease-out"
-                                style={{ color: 'var(--accent-color)' }}
+                                className="h-8 w-8 transition-transform duration-500 ease-out text-blue-500 dark:text-blue-400"
                                 aria-hidden="true"
                             />
                         </div>
                         <div className="flex gap-2">
                             <button
-                                className="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200"
-                                style={{
-                                    background: 'var(--tag-gradient)',
-                                    border: '1px solid rgba(255, 255, 255, 0.3)',
-                                }}
+                                className="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 bg-gray-100 dark:bg-white/10 border border-white/30 hover:bg-gray-200 dark:hover:bg-white/20"
                                 onClick={handleStarClick}
                             >
                                 <StarIcon
-                                    className={`h-4 w-4 transition-all duration-200 ${isStarred ? 'fill-current' : ''}`}
-                                    style={{
-                                        color: isStarred ? '#FFD700' : 'gray',
-                                    }}
+                                    className={`h-4 w-4 transition-all duration-200 ${isStarred ? 'fill-current text-yellow-400' : 'text-gray-400'}`}
                                 />
                             </button>
-                            {/* Delete button */}
                             <button
-                                className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-red-100 dark:hover:bg-red-900/20 transition relative"
-                                style={{
-                                    background: 'var(--tag-gradient)',
-                                    border: '1px solid rgba(255, 255, 255, 0.3)',
-                                }}
+                                className="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 bg-gray-100 dark:bg-white/10 border border-white/30 hover:bg-red-100 dark:hover:bg-red-900/20"
                                 onClick={(e) => handleDelete(e, project.id)}
                                 disabled={isDeleting}
                             >
@@ -205,14 +163,7 @@ export default function ProjectCard({ project, getProjects }) {
 
                     {/* Task Type Badge */}
                     <div className="absolute bottom-4 left-4">
-                        <span
-                            className="px-3 py-1 text-sm font-semibold rounded-full shadow-md"
-                            style={{
-                                background: 'var(--tag-gradient)',
-                                border: '1px solid rgba(255, 255, 255, 0.3)',
-                                color: 'var(--text)',
-                            }}
-                        >
+                        <span className="px-3 py-1 text-sm font-semibold rounded-full shadow-md bg-gray-100 dark:bg-white/10 border border-white/30 text-gray-700 dark:text-white">
                             {project?.task_type.replace(/_/g, ' ')}
                         </span>
                     </div>
@@ -220,18 +171,13 @@ export default function ProjectCard({ project, getProjects }) {
 
                 {/* Content Section */}
                 <div className="flex-1 p-6 flex flex-col">
-                    {/* Title & Description */}
                     <div className="flex-1">
-                        <h2
-                            className="text-xl font-bold mb-2 truncate"
-                            style={{ color: 'var(--text)' }}
-                        >
+                        <h2 className="text-xl font-bold mb-2 truncate text-gray-900 dark:text-white">
                             {project?.name}
                         </h2>
                         <p
-                            className="text-base leading-relaxed mb-4"
+                            className="text-base leading-relaxed mb-4 text-gray-500 dark:text-gray-400"
                             style={{
-                                color: 'var(--secondary-text)',
                                 display: '-webkit-box',
                                 WebkitLineClamp: 2,
                                 WebkitBoxOrient: 'vertical',
@@ -243,38 +189,21 @@ export default function ProjectCard({ project, getProjects }) {
                     </div>
 
                     {/* Divider */}
-                    <div
-                        style={{
-                            width: '100%',
-                            height: '1px',
-                            background: 'var(--divider)',
-                            marginBottom: 16,
-                            borderRadius: 2,
-                        }}
-                    />
+                    <div className="w-full h-px bg-gray-200 dark:bg-white/10 mb-4 rounded" />
 
                     {/* Meta Info */}
                     <div className="grid grid-cols-2 gap-3 text-sm">
                         <div className="flex flex-col">
-                            <span style={{ color: 'var(--secondary-text)' }}>
-                                Created
-                            </span>
-                            <span
-                                className="font-semibold truncate"
-                                style={{ color: 'var(--text)' }}
-                            >
+                            <span className="text-gray-500 dark:text-gray-400">Created</span>
+                            <span className="font-semibold truncate text-gray-900 dark:text-white">
                                 {dayjs(project?.created_at).format('MMM DD, YYYY')}
                             </span>
                         </div>
                         <div className="flex flex-col">
-                            <span style={{ color: 'var(--secondary-text)' }}>
-                                Status
-                            </span>
+                            <span className="text-gray-500 dark:text-gray-400">Status</span>
                             <div className="flex items-center gap-1.5">
                                 {statusIcon}
-                                <span className={`font-semibold ${statusColor}`}>
-                                    {projectStatus}
-                                </span>
+                                <span className={`font-semibold ${statusColor}`}>{projectStatus}</span>
                             </div>
                         </div>
                     </div>

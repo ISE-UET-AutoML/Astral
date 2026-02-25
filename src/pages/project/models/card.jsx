@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Card, CardContent, CardHeader, CardTitle } from 'src/components/ui/card'
 import { Button } from 'src/components/ui/button'
@@ -6,9 +6,6 @@ import { Tooltip } from 'src/components/ui/tooltip'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { PATHS } from 'src/constants/paths'
-import { useTheme } from 'src/theme/ThemeProvider'
-import { useEffect } from 'react'
-import { getExperimentById } from 'src/api/experiment'
 
 dayjs.extend(relativeTime)
 
@@ -240,7 +237,6 @@ const getStatusConfig = (status) => {
 }
 
 export default function ModelCard({ model }) {
-    const { theme } = useTheme()
     const { id, name, deployStatus, createdAt, project_id, experiment_id, experiment_name: experimentName } = model
     const navigate = useNavigate()
     const statusConfig = getStatusConfig('onCloud')

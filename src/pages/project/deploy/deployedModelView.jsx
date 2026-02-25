@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useTheme } from 'src/theme/ThemeProvider'
 import dayjs from 'dayjs'
 import {
@@ -21,9 +21,7 @@ import {
 import {
     DeleteOutlined,
     StopOutlined,
-    ThunderboltOutlined,
     ClockCircleOutlined,
-    RocketOutlined,
     CheckCircleOutlined,
     HourglassOutlined,
     LinkOutlined,
@@ -39,7 +37,6 @@ import {
 import { getDeployData } from 'src/api/deploy'
 import { getProjectById } from 'src/api/project'
 import { getLatestModelVersionByModelId } from 'src/api/model_version'
-import { getExperimentById } from 'src/api/experiment'
 import config from '../build/config'
 import * as modelAPI from 'src/api/model'
 import * as dataServiceAPI from 'src/api/dataset'
@@ -47,7 +44,6 @@ import * as visualizeAPI from 'src/api/visualize'
 import { validateFilesForPrediction } from 'src/utils/file'
 import UpDataDeploy from 'src/components/UpDataDeploy'
 import { formatDistanceToNow, format } from 'date-fns'
-import { file } from 'jszip'
 import axios from 'axios'
 import Papa from 'papaparse'
 import ImageHistoryViewer from 'src/components/RecentPredictView/ImageHistoryViewer'
@@ -74,7 +70,6 @@ export default function DeployedModelView() {
         useState(null)
     const simpleDataModalRef = useRef(null)
     const multilabelModalRef = useRef(null)
-    const fileInputRef = useRef(null)
     const [isGeneratingUI, setIsGeneratingUI] = useState(false)
     const [isCheckingUIStatus, setIsCheckingUIStatus] = useState(true)
     const [isUIGenerated, setIsUIGenerated] = useState(false)
@@ -206,11 +201,12 @@ export default function DeployedModelView() {
         }
 
         fetchRecentPredictions()
-    }, [model, predictResult])
+    }, [model, predictResult, projectInfo?.id])
 
     useEffect(() => {
         fetchDeployData()
         fetchProjectData()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     // Live predict file upload handler
@@ -390,7 +386,8 @@ export default function DeployedModelView() {
                 if (generatingData) {
                     try {
                         const genData = JSON.parse(generatingData)
-                        const elapsedMinutes = Math.floor(
+                        // elapsedMinutes is intentionally unused, we just skip it
+                        Math.floor(
                             (Date.now() - genData.startedAt) / (60 * 1000)
                         )
 
@@ -429,7 +426,8 @@ export default function DeployedModelView() {
                     setIsGeneratingUI(false)
                 } else {
                     // Still valid -> UI is generated
-                    const remainingMinutes = Math.floor(
+                    // remainingMinutes is intentionally unused, we just skip it
+                    Math.floor(
                         (uiData.expiresAt - currentTime) / (60 * 1000)
                     )
                     setIsUIGenerated(true)
@@ -712,11 +710,7 @@ export default function DeployedModelView() {
                                                             projectInfo?.task_type
                                                         }
                                                         featureColumns={Object.keys(
-                                                            model?.metadata.csv
-                                                                ? model
-                                                                    ?.metadata
-                                                                    .csv
-                                                                : new Object()
+                                                            model?.metadata?.csv || {}
                                                         )}
                                                         onUploadStart={null}
                                                         onUploadComplete={

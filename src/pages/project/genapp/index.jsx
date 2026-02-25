@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { getAllDeployedModel, genApp } from 'src/api/deploy'
 import { getProjectById } from 'src/api/project'
@@ -71,7 +71,7 @@ export default function ProjectGenApp() {
 	const [appName, setAppName] = useState('')
 	const [isFormOpen, setIsFormOpen] = useState(false)
 
-	const fetchDeploys = async () => {
+	const fetchDeploys = useCallback(async () => {
 		try {
 			const { data } = await getAllDeployedModel(projectId)
 			const sorted = (data || []).sort(
@@ -87,11 +87,11 @@ export default function ProjectGenApp() {
 		} catch (e) {
 			message.error('Không tải được danh sách deploy')
 		}
-	}
+	}, [projectId, selectedModelId])
 
 	useEffect(() => {
 		fetchDeploys()
-	}, [projectId])
+	}, [fetchDeploys])
 
 	useEffect(() => {
 		const fetchProject = async () => {
@@ -346,7 +346,7 @@ export default function ProjectGenApp() {
 								resolveTaskType() === 'object_detection'
 									? 'Object Detection'
 									: resolveTaskType() ===
-										  'text_classification'
+										'text_classification'
 										? 'Text Classification'
 										: 'Image Classification'
 							}

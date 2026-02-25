@@ -5,214 +5,101 @@ import {
 	DeployIcon,
 	TasksIcon,
 	InfoIcon,
-	MyAppsIcon,
 	MyAppIcon,
 } from 'src/components/icons'
 import clsx from 'clsx'
 import { PATHS } from 'src/constants/paths'
 import { NavLink, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
-import { useTheme } from 'src/theme/ThemeProvider'
 
 const ProjectSidebar = ({ projectID, className }) => {
-	const { theme } = useTheme()
 	const location = useLocation()
 
 	useEffect(() => {
 		window.scrollTo({ top: 0, behavior: 'auto' })
 	}, [location.pathname])
-	const navigation = [
-		{
-			name: 'Info',
-			href: PATHS.PROJECT_INFO(projectID),
-			icon: InfoIcon,
-		},
-		{
-			name: 'Build',
-			href: PATHS.PROJECT_BUILD(projectID),
-			icon: BuildIcon,
-		},
-		{
-			name: 'Experiment',
-			href: PATHS.PROJECT_EXPERIMENT(projectID),
-			icon: TasksIcon,
-		},
-		{
-			name: 'Model',
-			href: PATHS.PROJECT_MODEL(projectID),
-			icon: ModelIcon,
-		},
 
-		{
-			name: 'Deploy',
-			href: PATHS.PROJECT_DEPLOY(projectID),
-			icon: DeployIcon,
-		},
-		{
-			name: 'My Apps',
-			href: PATHS.PROJECT_MY_APPS(projectID),
-			icon: MyAppIcon,
-		},
+	const navigation = [
+		{ name: 'Info', href: PATHS.PROJECT_INFO(projectID), icon: InfoIcon },
+		{ name: 'Build', href: PATHS.PROJECT_BUILD(projectID), icon: BuildIcon },
+		{ name: 'Experiment', href: PATHS.PROJECT_EXPERIMENT(projectID), icon: TasksIcon },
+		{ name: 'Model', href: PATHS.PROJECT_MODEL(projectID), icon: ModelIcon },
+		{ name: 'Deploy', href: PATHS.PROJECT_DEPLOY(projectID), icon: DeployIcon },
+		{ name: 'My Apps', href: PATHS.PROJECT_MY_APPS(projectID), icon: MyAppIcon },
 	]
 
 	return (
-		<>
-			<style>{`
-                .project-sidebar {
-                    background: var(--card-gradient);
-                    border-right: 1px solid var(--border);
-                    backdrop-filter: blur(10px);
-                    width: 120px;
-                    position: fixed;
-                    top: 60px; /* align below top navbar */
-                    left: 0;
-                    bottom: 0;
-                    height: calc(100vh - 60px);
-                    overflow: hidden; /* prevent sidebar scroll */
-                }
-                
-                .sidebar-nav-item {
-                    position: relative;
-                    transition: all 0.3s ease;
-                    border-radius: 16px;
-                    margin: 6px 8px;
-                    padding: 12px 8px;
-                }
-                
-                .sidebar-nav-item:hover {
-                    background: var(--hover-bg);
-                    transform: translateX(2px);
-                }
-                
-                .sidebar-nav-item.active {
-                    background: var(--selection-bg);
-                    border: 1px solid var(--accent-text);
-                    box-shadow: 0 4px 16px var(--selection-bg);
-                }
-                
-                .sidebar-nav-item.active::before {
-                    content: '';
-                    position: absolute;
-                    left: -12px;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    width: 6px;
-                    height: 32px;
-                    background: var(--accent-gradient);
-                    border-radius: 0 3px 3px 0;
-                    box-shadow: 0 0 8px var(--accent-text);
-                }
-                
-                .sidebar-icon {
-                    transition: all 0.3s ease;
-                    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-                    color: var(--secondary-text);
-                }
-                
-                .sidebar-nav-item:hover .sidebar-icon {
-                    transform: scale(1.1);
-                    filter: drop-shadow(0 4px 8px var(--accent-text));
-                    color: var(--accent-text) !important;
-                }
-                
-                .sidebar-nav-item.active .sidebar-icon {
-                    color: var(--accent-text) !important;
-                    filter: drop-shadow(0 4px 8px var(--accent-text));
-                }
-                
-                .sidebar-text {
-                    font-family: 'Poppins', sans-serif;
-                    font-weight: 500;
-                    transition: all 0.3s ease;
-                    color: var(--secondary-text);
-                }
-                
-                .sidebar-nav-item:hover .sidebar-text {
-                    color: var(--accent-text) !important;
-                }
-                
-                .sidebar-nav-item.active .sidebar-text {
-                    color: var(--accent-text) !important;
-                    font-weight: 600;
-                }
-                
-                .sidebar-settings {
-                    border-top: 1px solid var(--border);
-                    margin-top: 16px;
-                    padding-top: 16px;
-                }
-                
-                .sidebar-settings:hover {
-                    background: var(--hover-bg);
-                    transform: translateX(2px);
-                }
-                
-                .sidebar-settings:hover .sidebar-icon {
-                    color: var(--accent-text) !important;
-                    transform: scale(1.1);
-                }
-                
-                .sidebar-settings:hover .sidebar-text {
-                    color: var(--accent-text) !important;
-                }
-                
-                /* Custom scrollbar */
-                /* Remove custom scrollbar: sidebar is fixed and not scrollable */
-             `}</style>
-			<div className={clsx('duration-300 project-sidebar', className)}>
-				<div className="h-full flex flex-grow flex-col">
-					<div className="py-6 flex flex-grow flex-col justify-between">
-						<nav className="flex flex-col gap-2 px-2 pb-4">
-							{navigation.map((item) => (
-								<NavLink
-									key={item.name}
-									to={item.href}
-									className={({ isActive }) =>
-										clsx(
-											'sidebar-nav-item',
-											isActive && 'active', // ✅ NavLink auto-applies
-											'group flex flex-col items-center justify-center text-sm font-medium'
-										)
-									}
-								>
-									<item.icon
-										className={clsx(
-											'sidebar-icon',
-											'mx-auto flex-shrink-0 rounded-xl w-10 h-10',
-											'p-2'
-										)}
-									/>
-									<span className="sidebar-text text-xs mt-1">
-										{item.name}
-									</span>
-								</NavLink>
-							))}
-						</nav>
-						<NavLink
-							to={PATHS.PROJECT_SETTINGS(projectID)}
-							className={({ isActive }) =>
-								clsx(
-									'sidebar-settings',
-									isActive && 'active', // ✅ gets same active class
-									'group flex flex-col items-center text-sm font-medium px-2 py-3 rounded-lg transition-all duration-300'
-								)
-							}
-						>
-							<SettingIcon
-								className={clsx(
-									'sidebar-icon',
-									'flex-shrink-0 rounded-xl w-10 h-10',
-									'px-2 py-2 text-gray-400'
+		<div
+			className={clsx(
+				'bg-white dark:bg-[#141821] border-r border-gray-200 dark:border-white/10 backdrop-blur-sm',
+				'w-[120px] fixed top-[60px] left-0 bottom-0 h-[calc(100vh-60px)] overflow-hidden',
+				'duration-300',
+				className
+			)}
+		>
+			<div className="h-full flex flex-grow flex-col">
+				<div className="py-6 flex flex-grow flex-col justify-between">
+					<nav className="flex flex-col gap-2 px-2 pb-4">
+						{navigation.map((item) => (
+							<NavLink
+								key={item.name}
+								to={item.href}
+								className={({ isActive }) =>
+									clsx(
+										'group flex flex-col items-center justify-center text-sm font-medium',
+										'relative rounded-2xl mx-2 my-1.5 px-2 py-3 transition-all duration-300',
+										isActive
+											? 'bg-blue-500/10 dark:bg-blue-400/20 border border-blue-500/40 dark:border-blue-400/40 shadow-md'
+											: 'hover:bg-blue-500/5 dark:hover:bg-blue-400/10 hover:translate-x-0.5'
+									)
+								}
+							>
+								{({ isActive }) => (
+									<>
+										<item.icon
+											className={clsx(
+												'mx-auto flex-shrink-0 rounded-xl w-10 h-10 p-2 transition-all duration-300',
+												isActive
+													? 'text-blue-500 dark:text-blue-400'
+													: 'text-gray-500 dark:text-gray-400 group-hover:text-blue-500 dark:group-hover:text-blue-400 group-hover:scale-110'
+											)}
+										/>
+										<span
+											className={clsx(
+												'text-xs mt-1 font-medium transition-all duration-300',
+												isActive
+													? 'text-blue-500 dark:text-blue-400 font-semibold'
+													: 'text-gray-500 dark:text-gray-400 group-hover:text-blue-500 dark:group-hover:text-blue-400'
+											)}
+										>
+											{item.name}
+										</span>
+									</>
 								)}
-							/>
-							<span className="sidebar-text text-xs text-gray-400 mt-1">
-								Settings
-							</span>
-						</NavLink>
-					</div>
+							</NavLink>
+						))}
+					</nav>
+
+					<NavLink
+						to={PATHS.PROJECT_SETTINGS(projectID)}
+						className={({ isActive }) =>
+							clsx(
+								'group flex flex-col items-center text-sm font-medium px-2 py-3 rounded-lg transition-all duration-300',
+								'border-t border-gray-200 dark:border-white/10 mt-4 pt-4 mx-2',
+								isActive
+									? 'text-blue-500 dark:text-blue-400'
+									: 'text-gray-500 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 hover:translate-x-0.5'
+							)
+						}
+					>
+						<SettingIcon
+							className="flex-shrink-0 rounded-xl w-10 h-10 px-2 py-2 group-hover:scale-110 transition-transform duration-300"
+						/>
+						<span className="text-xs mt-1">Settings</span>
+					</NavLink>
 				</div>
 			</div>
-		</>
+		</div>
 	)
 }
 

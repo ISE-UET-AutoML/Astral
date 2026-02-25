@@ -1,5 +1,5 @@
 import DeployedModelCard from './card'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { getAllDeployedModel } from 'src/api/deploy'
 import { useParams } from 'react-router-dom'
 import { Button } from 'src/components/ui/button'
@@ -10,57 +10,57 @@ import { useTheme } from 'src/theme/ThemeProvider'
 
 // Simple SVG icons
 const DeploymentIcon = ({ className, ...props }) => (
-	<svg
-		className={className}
-		width="24"
-		height="24"
-		viewBox="0 0 24 24"
-		fill="none"
-		xmlns="http://www.w3.org/2000/svg"
-		{...props}
-	>
-		<path
-			d="M12 2L2 7L12 12L22 7L12 2Z"
-			stroke="currentColor"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		/>
-		<path
-			d="M2 17L12 22L22 17"
-			stroke="currentColor"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		/>
-		<path
-			d="M2 12L12 17L22 12"
-			stroke="currentColor"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		/>
-	</svg>
+    <svg
+        className={className}
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        {...props}
+    >
+        <path
+            d="M12 2L2 7L12 12L22 7L12 2Z"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+        <path
+            d="M2 17L12 22L22 17"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+        <path
+            d="M2 12L12 17L22 12"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+    </svg>
 )
 
 const EmptyIcon = ({ className, ...props }) => (
-	<svg
-		className={className}
-		width="48"
-		height="48"
-		viewBox="0 0 24 24"
-		fill="none"
-		xmlns="http://www.w3.org/2000/svg"
-		{...props}
-	>
-		<path
-			d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"
-			stroke="currentColor"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		/>
-	</svg>
+    <svg
+        className={className}
+        width="48"
+        height="48"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        {...props}
+    >
+        <path
+            d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+    </svg>
 )
 
 const ProjectDeploy = () => {
@@ -71,7 +71,8 @@ const ProjectDeploy = () => {
     const [selectedModelId, setSelectedModelId] = useState(null)
     const [filteredDeployedModels, setFilteredDeployedModels] = useState([])
 
-    const getListDeployedModels = async () => {
+    const getListDeployedModels = useCallback(async () => {
+        if (!projectId) return;
         const { data } = await getAllDeployedModel(projectId)
         console.log("data:", data)
         const sortedData = data.sort((a, b) => b.id - a.id)
@@ -80,9 +81,9 @@ const ProjectDeploy = () => {
         setUniqueModels(prev => Array.from(
             new Set(data.map((item) => item.model_id))
         ))
-    }
+    }, [projectId])
 
-    const filterListDeployedModels = async () => {
+    const filterListDeployedModels = useCallback(async () => {
         if (!selectedModelId) {
             setFilteredDeployedModels(prev => deployedModels)
             return
@@ -90,7 +91,7 @@ const ProjectDeploy = () => {
         const filteredList = deployedModels.filter((item) => item.model_id === selectedModelId)
         console.log("new list:", filteredList)
         setFilteredDeployedModels(prev => filteredList)
-    }
+    }, [selectedModelId, deployedModels])
 
     const handleSelectModelId = (option) => {
         setSelectedModelId(option)
@@ -102,16 +103,16 @@ const ProjectDeploy = () => {
 
     useEffect(() => {
         getListDeployedModels()
-    }, [])
+    }, [getListDeployedModels])
 
     useEffect(() => {
         filterListDeployedModels()
-    }, [selectedModelId])
+    }, [filterListDeployedModels])
 
     return (
         <div className="relative min-h-screen" style={{ background: 'var(--surface)' }}>
-                {theme === 'dark' && <BackgroundShapes />}
-                <div className="relative z-10 p-6">
+            {theme === 'dark' && <BackgroundShapes />}
+            <div className="relative z-10 p-6">
                 {/* Header Section */}
                 <div className="mb-8">
                     <div className="flex items-center gap-3 mb-4">

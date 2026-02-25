@@ -14,9 +14,9 @@ const NavBar = () => {
 	const [scrolled, setScrolled] = useState(false)
 	const navigate = useNavigate()
 	const location = useLocation()
-    const { authed, logout: authLogout, user } = useAuth()
-    const { theme, toggle } = useTheme()
-    const logoSrc = theme === 'light' ? '/BlackLogo.svg' : '/PrimaryLogo.svg'
+	const { authed, logout: authLogout, user } = useAuth()
+	const { theme, toggle } = useTheme()
+	const logoSrc = theme === 'light' ? '/BlackLogo.svg' : '/PrimaryLogo.svg'
 
 	useEffect(() => {
 		const getScrollTop = () => {
@@ -25,118 +25,95 @@ const NavBar = () => {
 			const layoutY = layoutEl && typeof layoutEl.scrollTop === 'number' ? layoutEl.scrollTop : 0
 			return Math.max(winY, layoutY)
 		}
-
-		const handleScroll = () => {
-			setScrolled(getScrollTop() > 0)
-		}
-
+		const handleScroll = () => setScrolled(getScrollTop() > 0)
 		const layoutEl = document.querySelector('.ant-layout')
 		window.addEventListener('scroll', handleScroll, { passive: true })
 		if (layoutEl) layoutEl.addEventListener('scroll', handleScroll, { passive: true })
-
 		handleScroll()
-
 		return () => {
 			window.removeEventListener('scroll', handleScroll)
 			if (layoutEl) layoutEl.removeEventListener('scroll', handleScroll)
 		}
 	}, [])
 
-	// Recalculate on route changes to ensure correct initial state per page
 	useEffect(() => {
 		const y = window.pageYOffset || document.documentElement.scrollTop || 0
 		setScrolled(y > 0)
 	}, [location.pathname])
 
-	const logout = () => {
-		return new Promise((resolve) => {
+	const logout = () =>
+		new Promise((resolve) => {
 			authLogout()
 			navigate('/', { replace: true })
 			resolve()
 		})
-	}
 
-	// Navigation items for non-authenticated users
 	const publicNavigationItems = [
 		{ name: 'ABOUT', href: '#about' },
 		{ name: 'PRICING', href: '#pricing' },
 	]
-
-	// Navigation items for authenticated users
 	const authNavigationItems = [
 		{ name: 'PROJECTS', href: PATHS.PROJECTS },
 		{ name: 'DATASETS', href: PATHS.DATASETS },
 	]
 
-	const isActive = (href) => {
-		return location.pathname === href || location.pathname.startsWith(href)
-	}
+	const isActive = (href) => location.pathname === href || location.pathname.startsWith(href)
 
 	const handleNavigation = (href) => {
 		if (href.startsWith('#')) {
-			// Handle anchor links
-			const element = document.querySelector(href);
-			if (element) {
-				element.scrollIntoView({ behavior: 'smooth' });
-			}
+			document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' })
 		} else {
-			navigate(href);
+			navigate(href)
 		}
 	}
+
 	return (
-        <header 
-            className="fixed top-0 w-full z-50 transition-all duration-300" 
-            style={{ 
-                backgroundColor: scrolled ? 'var(--nav-bg)' : 'transparent',
-                color: 'var(--nav-text)',
-                backdropFilter: scrolled ? 'blur(10px)' : 'none',
-                zIndex: 999
-            }}
+		<header
+			className={clsx(
+				'fixed top-0 w-full z-[999] transition-all duration-300',
+				scrolled
+					? 'bg-white/95 dark:bg-[#01000A]/95 backdrop-blur-[10px] border-b border-gray-200/50 dark:border-white/5'
+					: 'bg-transparent'
+			)}
 		>
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				<div className="flex justify-between items-center h-16">
-					{/* Left: ASTRAL Logo */}
+					{/* Left: Logo */}
 					<div className="flex-shrink-0">
-                        <img
-                            src={logoSrc}
+						<img
+							src={logoSrc}
 							alt="ASTRAL"
 							className="h-10 w-auto cursor-pointer transition-transform duration-300 hover:scale-105"
 							onClick={() => navigate('/')}
 						/>
 					</div>
 
-					{/* Center: Navigation Items */}
+					{/* Center: Nav items */}
 					<div className="hidden md:block">
 						<div className="flex items-baseline space-x-8">
 							{(authed ? authNavigationItems : publicNavigationItems).map((item) => (
-								<div 
+								<div
 									key={item.name}
 									className="relative"
 									onMouseEnter={() => setHoveredItem(item.name)}
 									onMouseLeave={() => setHoveredItem(null)}
 								>
-					<button
-						onClick={() => handleNavigation(item.href)}
-						className={clsx(
-							"px-3 py-2 text-sm font-bold transition-all duration-200 relative",
-							isActive(item.href)
-								? "opacity-100"
-								: "opacity-80 hover:opacity-100"
-						)}
-						style={{ 
-							fontFamily: 'Poppins, sans-serif',
-							color: 'var(--nav-text)'
-						}}
-					>
+									<button
+										onClick={() => handleNavigation(item.href)}
+										className={clsx(
+											'px-3 py-2 text-sm font-bold transition-all duration-200 relative text-gray-900 dark:text-white',
+											isActive(item.href) ? 'opacity-100' : 'opacity-75 hover:opacity-100'
+										)}
+									>
 										{item.name}
-										
 										{/* Animated underline */}
 										<div
-											className={`absolute bottom-0 left-1/2 transform -translate-x-1/2 h-0.5 bg-gradient-to-r from-[#5C8DFF] to-[#65FFA0] rounded-full transition-all duration-300 ${
+											className={clsx(
+												'absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 bg-gradient-to-r from-[#5C8DFF] to-[#65FFA0] rounded-full transition-all duration-300',
 												hoveredItem === item.name || isActive(item.href)
-													? 'w-full opacity-100' 
+													? 'w-full opacity-100'
 													: 'w-0 opacity-0'
-											}`}
+											)}
 										/>
 									</button>
 								</div>
@@ -144,32 +121,21 @@ const NavBar = () => {
 						</div>
 					</div>
 
-                    {/* Right: Theme + Login/Profile */}
-                    <div className="hidden md:flex items-center gap-2">
+					{/* Right: Theme + Login/Profile */}
+					<div className="hidden md:flex items-center gap-2">
 						{authed ? (
-							/* Profile dropdown for authenticated users */
 							<Menu as="div" className="relative">
 								<div>
-                                    <Menu.Button 
-                                        className="transition flex gap-2 rounded-xl text-sm focus:outline-none py-2 px-3"
-                                        style={{
-                                            background: 'var(--hover-bg)',
-                                            border: '1px solid var(--border)',
-                                            color: 'var(--nav-text)'
-                                        }}
-                                    >
-                                        <span className="font-regular" style={{ 
-                                            fontFamily: 'Poppins, sans-serif',
-                                            color: 'var(--nav-text)'
-                                        }}>
-                                            {user?.name || user?.username || user?.email || 'User'}
-                                        </span>
-                                        <img
-                                            className="h-6 w-6 border-solid border-2 border-blue-500 rounded-full"
-                                            src={user?.avatarUrl || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'}
-                                            alt=""
-                                        />
-                                    </Menu.Button>
+									<Menu.Button className="transition flex gap-2 rounded-xl text-sm focus:outline-none py-2 px-3 bg-gray-100 dark:bg-white/10 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-white/15">
+										<span className="font-regular">
+											{user?.name || user?.username || user?.email || 'User'}
+										</span>
+										<img
+											className="h-6 w-6 border-2 border-blue-500 rounded-full"
+											src={user?.avatarUrl || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'}
+											alt=""
+										/>
+									</Menu.Button>
 								</div>
 								<Transition
 									as={Fragment}
@@ -180,18 +146,17 @@ const NavBar = () => {
 									leaveFrom="transform opacity-100 scale-100"
 									leaveTo="transform opacity-0 scale-95"
 								>
-									<Menu.Items className="absolute right-0 z-10 mt-2 w-48 bg-gray-900 bg-opacity-95 backdrop-blur-sm rounded-lg shadow-xl border border-gray-700 overflow-hidden focus:outline-none">
+									<Menu.Items className="absolute right-0 z-10 mt-2 w-48 bg-white dark:bg-gray-900 bg-opacity-95 backdrop-blur-sm rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden focus:outline-none">
 										<Menu.Item>
 											{({ active }) => (
 												<button
 													onClick={() => navigate(PATHS.PROFILE)}
 													className={clsx(
-														"block w-full text-left px-4 py-3 text-sm transition-all duration-200",
+														'block w-full text-left px-4 py-3 text-sm transition-all duration-200',
 														active
-															? "text-white bg-gradient-to-r from-[#5C8DFF]/20 to-[#65FFA0]/20"
-															: "text-gray-300"
+															? 'text-gray-900 dark:text-white bg-gradient-to-r from-[#5C8DFF]/20 to-[#65FFA0]/20'
+															: 'text-gray-600 dark:text-gray-300'
 													)}
-													style={{ fontFamily: 'Poppins, sans-serif' }}
 												>
 													Your Profile
 												</button>
@@ -202,12 +167,11 @@ const NavBar = () => {
 												<button
 													onClick={() => navigate(PATHS.SETTINGS)}
 													className={clsx(
-														"block w-full text-left px-4 py-3 text-sm border-b border-gray-700 transition-all duration-200",
+														'block w-full text-left px-4 py-3 text-sm border-b border-gray-200 dark:border-gray-700 transition-all duration-200',
 														active
-															? "text-white bg-gradient-to-r from-[#5C8DFF]/20 to-[#65FFA0]/20"
-															: "text-gray-300"
+															? 'text-gray-900 dark:text-white bg-gradient-to-r from-[#5C8DFF]/20 to-[#65FFA0]/20'
+															: 'text-gray-600 dark:text-gray-300'
 													)}
-													style={{ fontFamily: 'Poppins, sans-serif' }}
 												>
 													Settings
 												</button>
@@ -218,12 +182,11 @@ const NavBar = () => {
 												<button
 													onClick={async () => await logout()}
 													className={clsx(
-														"block w-full text-left px-4 py-3 text-sm transition-all duration-200",
+														'block w-full text-left px-4 py-3 text-sm transition-all duration-200',
 														active
-															? "text-white bg-gradient-to-r from-[#5C8DFF]/20 to-[#65FFA0]/20"
-															: "text-gray-300"
+															? 'text-gray-900 dark:text-white bg-gradient-to-r from-[#5C8DFF]/20 to-[#65FFA0]/20'
+															: 'text-gray-600 dark:text-gray-300'
 													)}
-													style={{ fontFamily: 'Poppins, sans-serif' }}
 												>
 													Sign out
 												</button>
@@ -233,43 +196,27 @@ const NavBar = () => {
 								</Transition>
 							</Menu>
 						) : (
-							/* Login button for non-authenticated users */
-							<button 
+							<button
 								onClick={() => navigate('/login')}
-								className="px-6 py-2 rounded-full text-sm font-medium transition-colors duration-200"
-								style={{ 
-									fontFamily: 'Poppins, sans-serif',
-									background: 'var(--button-gradient)',
-									color: '#ffffff',
-									border: '1px solid var(--border)'
-								}}
+								className="px-6 py-2 rounded-full text-sm font-medium transition-colors duration-200 bg-gradient-to-r from-blue-500 to-blue-600 text-white border border-blue-400/50 hover:from-blue-600 hover:to-blue-700"
 							>
 								Login
 							</button>
 						)}
-                        <button
-                            onClick={toggle}
-                            aria-label="Toggle theme"
-                            className="ml-2 h-9 w-9 rounded-full grid place-items-center transition"
-                            style={{
-                                background: 'var(--nav-hover)',
-                                color: 'var(--nav-text)',
-                                border: '1px solid rgba(0,0,0,0.06)'
-                            }}
-                        >
-                            {theme === 'dark' ? (
-                                <SunIcon className="h-5 w-5" />
-                            ) : (
-                                <MoonIcon className="h-5 w-5" />
-                            )}
-                        </button>
+						<button
+							onClick={toggle}
+							aria-label="Toggle theme"
+							className="ml-2 h-9 w-9 rounded-full grid place-items-center transition bg-gray-100 dark:bg-white/10 border border-gray-200/50 dark:border-white/10 text-gray-700 dark:text-white hover:bg-gray-200 dark:hover:bg-white/20"
+						>
+							{theme === 'dark' ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
+						</button>
 					</div>
 
 					{/* Mobile menu button */}
 					<div className="md:hidden">
 						<button
 							onClick={() => setNavbarOpen(!navbarOpen)}
-							className="bg-gray-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none"
+							className="bg-gray-200 dark:bg-gray-800 inline-flex items-center justify-center p-2 rounded-md text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-300 dark:hover:bg-gray-700 focus:outline-none"
 						>
 							<span className="sr-only">Open main menu</span>
 							{navbarOpen ? (
@@ -282,50 +229,35 @@ const NavBar = () => {
 								</svg>
 							)}
 						</button>
-						
+
 						{/* Mobile menu panel */}
 						{navbarOpen && (
-							<div className="absolute top-16 left-0 right-0 bg-black border-t border-gray-700">
+							<div className="absolute top-16 left-0 right-0 bg-white dark:bg-black border-t border-gray-200 dark:border-gray-700">
 								<div className="px-2 pt-2 pb-3 space-y-1">
 									{(authed ? authNavigationItems : publicNavigationItems).map((item) => (
 										<button
 											key={item.name}
-							onClick={() => {
-								handleNavigation(item.href)
-								setNavbarOpen(false)
-							}}
-							className="block w-full text-left px-3 py-2 text-base font-medium opacity-80 hover:opacity-100 transition-all duration-200"
-							style={{ 
-								fontFamily: 'Poppins, sans-serif',
-								color: 'var(--nav-text)',
-								backgroundColor: 'transparent'
-							}}
-							onMouseEnter={(e) => e.target.style.background = 'var(--nav-hover)'}
-							onMouseLeave={(e) => e.target.style.background = 'transparent'}
+											onClick={() => {
+												handleNavigation(item.href)
+												setNavbarOpen(false)
+											}}
+											className="block w-full text-left px-3 py-2 text-base font-medium opacity-80 hover:opacity-100 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-all duration-200"
 										>
 											{item.name}
 										</button>
 									))}
 									{!authed && (
-										<button 
-											onClick={() => {
-												navigate('/login')
-												setNavbarOpen(false)
-											}}
+										<button
+											onClick={() => { navigate('/login'); setNavbarOpen(false) }}
 											className="block w-full text-center px-3 py-2 text-base font-medium text-white bg-gray-800 hover:bg-gray-700 mt-4 rounded-full"
-											style={{ fontFamily: 'Poppins, sans-serif' }}
 										>
 											Login
 										</button>
 									)}
 									{authed && (
-										<button 
-											onClick={async () => {
-												await logout()
-												setNavbarOpen(false)
-											}}
+										<button
+											onClick={async () => { await logout(); setNavbarOpen(false) }}
 											className="block w-full text-center px-3 py-2 text-base font-medium text-white bg-red-800 hover:bg-red-700 mt-4 rounded-full"
-											style={{ fontFamily: 'Poppins, sans-serif' }}
 										>
 											Sign out
 										</button>

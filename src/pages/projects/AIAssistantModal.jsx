@@ -15,14 +15,13 @@ import {
 	DatabaseOutlined,
 	PlayCircleOutlined,
 	PlusCircleOutlined,
-	ReloadOutlined,
 	RobotOutlined,
 } from '@ant-design/icons'
 import MarkdownRenderer from 'src/components/MarkdownRenderer'
 import logoIcon from 'src/assets/images/logoIcon.png'
 
 const { TextArea } = Input
-const { Title, Paragraph } = Typography
+const { Title } = Typography
 
 const ChatMessage = ({ message, role }) => {
 	const isUser = role === 'user'
@@ -37,9 +36,8 @@ const ChatMessage = ({ message, role }) => {
 				</div>
 			)}
 			<div
-				className={`max-w-[70%] pl-2 pr-2 rounded-xl relative ${
-					isUser ? 'rounded-tr-none' : 'rounded-tl-none'
-				}`}
+				className={`max-w-[70%] pl-2 pr-2 rounded-xl relative ${isUser ? 'rounded-tr-none' : 'rounded-tl-none'
+					}`}
 				style={{
 					background: isUser ? 'var(--button-gradient)' : 'var(--card-gradient)',
 					color: isUser ? '#ffffff' : 'var(--text)',

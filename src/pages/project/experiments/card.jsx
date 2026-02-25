@@ -1,6 +1,5 @@
 import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from 'src/components/ui/card'
-import { useTheme } from 'src/theme/ThemeProvider'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { PATHS } from 'src/constants/paths'
@@ -197,8 +196,7 @@ const getStatusConfig = (status) => {
 }
 
 export default function ExperimentCard({ experiment }) {
-    const { theme } = useTheme()
-    const { id, project_id, name, start_time, end_time, status, framework } = experiment
+    const { id, project_id, name, start_time, status, framework } = experiment
     console.log('ExperimentCard render:', experiment)
     const navigate = useNavigate()
     const statusConfig = getStatusConfig(status)

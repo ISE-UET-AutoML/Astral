@@ -5,22 +5,28 @@
 /* Import universal typography */
 @import './styles/typography.css';
 
-/* Ensure full-page dark background and prevent white gaps */
-html, body, #root {
+/* Ensure full-page background */
+html,
+body,
+#root {
   min-height: 100%;
   height: 100%;
+  background-color: #ffffff;
+}
+
+html.dark body,
+html.dark #root {
   background-color: #01000A;
 }
 
-/* Remove default spacing and overscroll bounce */
-html, body {
+html,
+body {
   margin: 0;
   overscroll-behavior-y: none;
   overscroll-behavior-x: none;
-  background-color: #01000A;
 }
 
-/* Make Ant Design layout transparent by default to show dark bg */
+/* Make Ant Design layout transparent by default */
 .ant-layout,
 .ant-layout-content,
 .ant-layout-header,
@@ -29,92 +35,77 @@ html, body {
   background: transparent !important;
 }
 
-/* Ensure layout fills the viewport height */
 .ant-layout {
   min-height: 100vh;
 }
- 
+
 @layer base {
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
-
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
- 
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
- 
     --primary: 222.2 47.4% 11.2%;
     --primary-foreground: 210 40% 98%;
- 
     --secondary: 210 40% 96%;
     --secondary-foreground: 222.2 47.4% 11.2%;
- 
     --muted: 210 40% 96%;
     --muted-foreground: 215.4 16.3% 46.9%;
- 
     --accent: 210 40% 96%;
     --accent-foreground: 222.2 47.4% 11.2%;
- 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
- 
     --radius: 0.5rem;
   }
- 
+
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
- 
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
- 
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
- 
     --primary: 210 40% 98%;
     --primary-foreground: 222.2 47.4% 11.2%;
- 
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
- 
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
- 
     --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
- 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
- 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
   }
 }
- 
+
 @layer base {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
 }
 
-/* Custom gradient animations for buttons */
+/* Custom gradient animation for buttons */
 @keyframes gradient {
   0% {
     background-position: 0% 50%;
   }
+
   50% {
     background-position: 100% 50%;
   }
+
   100% {
     background-position: 0% 50%;
   }
@@ -124,4 +115,86 @@ html, body {
   .animate-gradient {
     animation: gradient 3s ease infinite;
   }
+}
+
+/* ---- Keep: special animations not achievable in Tailwind ---- */
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+
+  50% {
+    transform: translateY(-20px) rotate(180deg);
+  }
+}
+
+/* Markdown content reset */
+.markdown>* {
+  all: revert;
+}
+
+.markdown .text {
+  all: revert;
+}
+
+.markdown li ul {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+/* KaTeX math display */
+.katex-display {
+  display: block !important;
+  max-width: 100% !important;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* Spinner animation (used by Loading component) */
+.spinner {
+  width: 56px;
+  height: 56px;
+  display: grid;
+  border: 4.5px solid #0000;
+  border-radius: 50%;
+  border-color: #dbdcef #0000;
+  animation: spinner-animation 1s infinite linear;
+}
+
+.spinner::before,
+.spinner::after {
+  content: '';
+  grid-area: 1/1;
+  margin: 2.2px;
+  border: inherit;
+  border-radius: 50%;
+}
+
+.spinner::before {
+  border-color: #474bff #0000;
+  animation: inherit;
+  animation-duration: 0.5s;
+  animation-direction: reverse;
+}
+
+.spinner::after {
+  margin: 8.9px;
+}
+
+@keyframes spinner-animation {
+  100% {
+    transform: rotate(1turn);
+  }
+}
+
+/* GlassMorphism utility */
+.glassMorphism {
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  backdrop-filter: blur(17px);
+  -webkit-backdrop-filter: blur(17px);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
 }
