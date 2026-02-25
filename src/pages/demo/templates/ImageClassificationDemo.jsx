@@ -325,7 +325,7 @@ const ImageClassificationDemo = ({ metadata }) => {
 									<div className="space-y-4 mt-8 animate-in fade-in slide-in-from-top-4 duration-500">
 										<div
 											className="relative bg-black rounded-2xl overflow-hidden shadow-2xl ring-2 ring-gray-200 dark:ring-gray-700"
-											style={{ aspectRatio: '16/9' }}
+											className="aspect-video"
 										>
 											<video
 												ref={videoRef}

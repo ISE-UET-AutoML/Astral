@@ -263,23 +263,18 @@ const SelectInstance = () => {
                                 <Space
                                     direction="vertical"
                                     size="large"
-                                    style={{ width: '100%' }}
+                                    className="w-full"
                                 >
                                     <div>
                                         <Text className="dark-build-text-gradient ">
                                             Training Duration
                                         </Text>
                                         <div
-                                            style={{
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: '16px',
-                                                marginTop: 8,
-                                            }}
+                                            className="flex items-center gap-4 mt-2"
                                         >
                                             <Slider
                                                 className="dark-build-slider"
-                                                style={{ flex: 1 }}
+                                                className="flex-1"
                                                 min={0}
                                                 max={24}
                                                 step={0.5}
@@ -333,11 +328,7 @@ const SelectInstance = () => {
                                             Performance Level
                                         </Text>
                                         <div
-                                            style={{
-                                                display: 'grid',
-                                                gap: '16px',
-                                                marginTop: '16px',
-                                            }}
+                                            className="grid gap-4 mt-4"
                                         >
                                             {Object.entries(
                                                 INSTANCE_SIZE_DETAILS
@@ -406,7 +397,7 @@ const SelectInstance = () => {
                             <Space
                                 direction="vertical"
                                 size="large"
-                                style={{ width: '100%' }}
+                                className="w-full"
                             >
                                 <InstanceInfo formData={formData} />
                                 <CostEstimator
@@ -453,23 +444,18 @@ const SelectInstance = () => {
                                 <Space
                                     direction="vertical"
                                     size="large"
-                                    style={{ width: '100%' }}
+                                    className="w-full"
                                 >
                                     <div>
                                         <Text className="dark-build-text-gradient">
                                             Training Duration
                                         </Text>
                                         <div
-                                            style={{
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: '16px',
-                                                marginTop: 8,
-                                            }}
+                                            className="flex items-center gap-4 mt-2"
                                         >
                                             <Slider
                                                 className="dark-build-slider"
-                                                style={{ flex: 1 }}
+                                                className="flex-1"
                                                 min={0}
                                                 max={24}
                                                 step={0.5}
@@ -525,10 +511,7 @@ const SelectInstance = () => {
                                         <Space
                                             direction="vertical"
                                             size="middle"
-                                            style={{
-                                                width: '100%',
-                                                marginTop: 16,
-                                            }}
+                                            className="w-full mt-4"
                                         >
                                             <div>
                                                 <Text className="dark-build-text">
@@ -536,10 +519,7 @@ const SelectInstance = () => {
                                                 </Text>
                                                 <Select
                                                     className="dark-build-select"
-                                                    style={{
-                                                        width: '100%',
-                                                        marginTop: 8,
-                                                    }}
+                                                    className="w-full mt-2"
                                                     value={formData.service}
                                                     onChange={handleManualConfigChange(
                                                         'service'
@@ -565,10 +545,7 @@ const SelectInstance = () => {
                                                 </Text>
                                                 <Select
                                                     className="dark-build-select"
-                                                    style={{
-                                                        width: '100%',
-                                                        marginTop: 8,
-                                                    }}
+                                                    className="w-full mt-2"
                                                     value={formData.gpuName}
                                                     onChange={handleManualConfigChange(
                                                         'gpuName'
@@ -591,16 +568,11 @@ const SelectInstance = () => {
                                                     Number of GPUs
                                                 </Text>
                                                 <div
-                                                    style={{
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        gap: '16px',
-                                                        marginTop: 8,
-                                                    }}
+                                                    className="flex items-center gap-4 mt-2"
                                                 >
                                                     <Slider
                                                         className="dark-build-slider"
-                                                        style={{ flex: 1 }}
+                                                        className="flex-1"
                                                         min={1}
                                                         max={8}
                                                         step={1}
@@ -658,16 +630,11 @@ const SelectInstance = () => {
                                                     Disk Space
                                                 </Text>
                                                 <div
-                                                    style={{
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        gap: '16px',
-                                                        marginTop: 8,
-                                                    }}
+                                                    className="flex items-center gap-4 mt-2"
                                                 >
                                                     <Slider
                                                         className="dark-build-slider"
-                                                        style={{ flex: 1 }}
+                                                        className="flex-1"
                                                         min={10}
                                                         max={1000}
                                                         step={10}
@@ -725,7 +692,7 @@ const SelectInstance = () => {
                             <Space
                                 direction="vertical"
                                 size="large"
-                                style={{ width: '100%' }}
+                                className="w-full"
                             >
                                 <InstanceInfo formData={formData} />
                                 <CostEstimator
@@ -772,23 +739,18 @@ const SelectInstance = () => {
                                 <Space
                                     direction="vertical"
                                     size="large"
-                                    style={{ width: '100%' }}
+                                    className="w-full"
                                 >
                                     <div>
                                         <Text className="dark-build-text-gradient">
                                             Training Duration
                                         </Text>
                                         <div
-                                            style={{
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: '16px',
-                                                marginTop: 8,
-                                            }}
+                                            className="flex items-center gap-4 mt-2"
                                         >
                                             <Slider
                                                 className="dark-build-slider"
-                                                style={{ flex: 1 }}
+                                                className="flex-1"
                                                 min={0}
                                                 max={24}
                                                 step={0.5}
@@ -841,9 +803,7 @@ const SelectInstance = () => {
                                         <Space
                                             direction="vertical"
                                             size="middle"
-                                            style={{
-                                                width: '100%',
-                                            }}
+                                            className="w-full"
                                         >
                                             <div>
                                                 <Text className="dark-build-text">
@@ -854,14 +814,14 @@ const SelectInstance = () => {
                                                     value={sshKey}
                                                     rows={2}
                                                     readOnly
-                                                // style={{ marginTop: 8 }}
+                                                // className="mt-2"
                                                 />
                                                 <Button
                                                     onClick={
                                                         handleCopyToClipboard
                                                     }
                                                     type="primary"
-                                                    style={{ marginTop: 8 }}
+                                                    className="mt-2"
                                                 >
                                                     Copy
                                                 </Button>
@@ -880,7 +840,7 @@ const SelectInstance = () => {
                                                             'id'
                                                         )(e.target.value)
                                                     }
-                                                    style={{ marginTop: 8 }}
+                                                    className="mt-2"
                                                     placeholder="Enter instance ID"
                                                 />
                                             </div>
@@ -896,10 +856,7 @@ const SelectInstance = () => {
                                                     onChange={handleInfrastructureChange(
                                                         'sshPort'
                                                     )}
-                                                    style={{
-                                                        width: '100%',
-                                                        marginTop: 8,
-                                                    }}
+                                                    className="w-full mt-2"
                                                     min={1}
                                                     max={65535}
                                                     placeholder="Enter SSH port"
@@ -919,7 +876,7 @@ const SelectInstance = () => {
                                                             'publicIP'
                                                         )(e.target.value)
                                                     }
-                                                    style={{ marginTop: 8 }}
+                                                    className="mt-2"
                                                     placeholder="Enter public IP"
                                                 />
                                             </div>
@@ -935,10 +892,7 @@ const SelectInstance = () => {
                                                     onChange={handleInfrastructureChange(
                                                         'presets'
                                                     )}
-                                                    style={{
-                                                        width: '100%',
-                                                        marginTop: 8,
-                                                    }}
+                                                    className="w-full mt-2"
                                                 >
                                                     <Option value="low_quality">
                                                         Low Quality
@@ -963,10 +917,7 @@ const SelectInstance = () => {
                                                     onChange={handleInfrastructureChange(
                                                         'deployPort'
                                                     )}
-                                                    style={{
-                                                        width: '100%',
-                                                        marginTop: 8,
-                                                    }}
+                                                    className="w-full mt-2"
                                                     min={1}
                                                     max={65535}
                                                     placeholder="Enter deploy port"
@@ -986,7 +937,7 @@ const SelectInstance = () => {
                                                             'username'
                                                         )(e.target.value)
                                                     }
-                                                    style={{ marginTop: 8 }}
+                                                    className="mt-2"
                                                     placeholder="Enter username"
                                                 />
                                             </div>
@@ -1004,7 +955,7 @@ const SelectInstance = () => {
                                                             'datasetPath'
                                                         )(e.target.value)
                                                     }
-                                                    style={{ marginTop: 8 }}
+                                                    className="mt-2"
                                                     placeholder="Enter dataset path"
                                                 />
                                             </div>
@@ -1018,7 +969,7 @@ const SelectInstance = () => {
                             <Space
                                 direction="vertical"
                                 size="large"
-                                style={{ width: '100%' }}
+                                className="w-full"
                             >
                                 <InstanceInfo formData={formData} />
                                 <CostEstimator

@@ -39,7 +39,7 @@ const TaskFilter = ({
 							className="w-full"
 							onChange={onTaskChange}
 							allowClear
-							style={{ height: 40 }}
+							className="!h-10"
 						/>
 					</div>
 				</div>

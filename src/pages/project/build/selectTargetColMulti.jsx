@@ -325,7 +325,7 @@ const SelectTargetColMulti = () => {
 						size="large"
 						onClick={sendColumn}
 						disabled={!selectedTargetCol || !selectedImgCol}
-						style={{ width: '192px' }}
+						className="w-48"
 					>
 						Confirm Selection
 					</Button>

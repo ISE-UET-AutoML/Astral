@@ -58,10 +58,10 @@ export default function BuildPager({ currentPage = 1, totalItems = 0, pageSize =
         <div className="w-full flex items-center justify-center gap-4">
             <div className="flex items-center gap-2">
                 <Button ariaLabel="First page" disabled={!canPrev} onClick={() => goTo(1)}>
-                    <span aria-hidden style={{ fontSize: 14 }}>«</span>
+                    <span aria-hidden className="text-sm">«</span>
                 </Button>
                 <Button ariaLabel="Previous page" disabled={!canPrev} onClick={() => goTo(currentPage - 1)}>
-                    <span aria-hidden style={{ fontSize: 16 }}>‹</span>
+                    <span aria-hidden className="text-base">‹</span>
                 </Button>
             </div>
             <div
@@ -78,10 +78,10 @@ export default function BuildPager({ currentPage = 1, totalItems = 0, pageSize =
             </div>
             <div className="flex items-center gap-2">
                 <Button ariaLabel="Next page" disabled={!canNext} onClick={() => goTo(currentPage + 1)}>
-                    <span aria-hidden style={{ fontSize: 16 }}>›</span>
+                    <span aria-hidden className="text-base">›</span>
                 </Button>
                 <Button ariaLabel="Last page" disabled={!canNext} onClick={() => goTo(totalPages)}>
-                    <span aria-hidden style={{ fontSize: 14 }}>»</span>
+                    <span aria-hidden className="text-sm">»</span>
                 </Button>
             </div>
         </div>

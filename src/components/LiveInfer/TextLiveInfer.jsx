@@ -35,7 +35,7 @@ const EditableCell = ({
 			{editing ? (
 				<Form.Item
 					name={dataIndex}
-					style={{ margin: 0 }}
+					className="!m-0"
 					rules={[{ required: false }]}
 				>
 					<Input
@@ -182,11 +182,7 @@ const TextLiveInfer = ({ projectInfo, handleUploadFiles }) => {
 	const tableColumns = columnHeaders.map((header, index) => ({
 		title: (
 			<div
-				style={{
-					display: 'flex',
-					alignItems: 'center',
-					justifyContent: 'space-between',
-				}}
+				className="flex items-center justify-between"
 			>
 				{editingHeader === index ? (
 					<Form
@@ -194,7 +190,7 @@ const TextLiveInfer = ({ projectInfo, handleUploadFiles }) => {
 						component={false}
 						initialValues={{ header }}
 					>
-						<Form.Item name="header" style={{ margin: 0 }}>
+						<Form.Item name="header" className="!m-0">
 							<Input
 								autoFocus
 								onPressEnter={() => saveHeader(index)}
@@ -204,23 +200,19 @@ const TextLiveInfer = ({ projectInfo, handleUploadFiles }) => {
 					</Form>
 				) : (
 					<div
-						style={{
-							display: 'flex',
-							alignItems: 'center',
-							width: '100%',
-						}}
+						className="flex items-center w-full"
 					>
 						<Text
 							strong
 							onClick={() => editHeader(index)}
-							style={{ cursor: 'pointer', flexGrow: 1 }}
+							className="cursor-pointer flex-grow"
 						>
 							{header}
 						</Text>
 						<Space>
 							<EditOutlined
 								onClick={() => editHeader(index)}
-								style={{ cursor: 'pointer', fontSize: '12px' }}
+								className="cursor-pointer text-xs"
 							/>
 							{columns > 1 && (
 								<Popconfirm
@@ -230,11 +222,7 @@ const TextLiveInfer = ({ projectInfo, handleUploadFiles }) => {
 									cancelText="Cancel"
 								>
 									<DeleteOutlined
-										style={{
-											cursor: 'pointer',
-											fontSize: '12px',
-											color: '#ff4d4f',
-										}}
+										className="cursor-pointer text-xs text-[#ff4d4f]"
 									/>
 								</Popconfirm>
 							)}
@@ -249,7 +237,7 @@ const TextLiveInfer = ({ projectInfo, handleUploadFiles }) => {
 		render: (text, record) => (
 			<div
 				className="editable-cell-value-wrap"
-				style={{ minHeight: '32px', padding: '5px 12px' }}
+				className="min-h-8 px-3 py-[5px]"
 				onClick={() => !isEditing(record) && edit(record)}
 			>
 				{text !== undefined ? text : ''}
@@ -275,7 +263,7 @@ const TextLiveInfer = ({ projectInfo, handleUploadFiles }) => {
 						type="text"
 						icon={<DeleteOutlined />}
 						danger
-						style={{ padding: 0 }}
+						className="!p-0"
 					/>
 				</Popconfirm>
 			),
@@ -294,13 +282,7 @@ const TextLiveInfer = ({ projectInfo, handleUploadFiles }) => {
 					icon={<PlusOutlined />}
 					onClick={addColumn}
 					className="add-button"
-					style={{
-						width: '100%',
-						height: '100%',
-						display: 'flex',
-						justifyContent: 'center',
-						alignItems: 'center',
-					}}
+					className="w-full h-full flex justify-center items-center"
 				/>
 			),
 	}
@@ -379,7 +361,7 @@ const TextLiveInfer = ({ projectInfo, handleUploadFiles }) => {
 		<Card
 			title={<Title level={4}>Live Predict</Title>}
 			bordered={true}
-			style={{ width: '100%', marginTop: '12px' }}
+			className="w-full mt-3"
 			className="editable-grid-card"
 			extra={
 				<Tooltip title="Export and process data">

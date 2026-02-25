@@ -71,7 +71,7 @@ export default function ProjectExperiments() {
                 <div className="mb-8">
                     <div className="flex items-center gap-3 mb-4">
                         <div className="p-2 rounded-xl" style={{ background: 'var(--accent-gradient)' }}>
-                            <ExperimentIcon className="h-6 w-6" style={{ color: '#ffffff' }} />
+                            <ExperimentIcon className="h-6 w-6" className="text-white" />
                         </div>
                         <div>
                             <h1 className="text-3xl font-bold" style={{ color: 'var(--text)' }}>

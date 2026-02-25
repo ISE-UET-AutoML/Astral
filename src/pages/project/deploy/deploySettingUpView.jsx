@@ -30,7 +30,7 @@ const settingUpProgress = [
             </span>
         ),
         description: (
-            <span style={{ color: '#94a3b8' }}>
+            <span className="text-slate-400">
                 Set up a clean Python virtual environment to isolate project
                 dependencies and prevent conflicts.
             </span>
@@ -43,7 +43,7 @@ const settingUpProgress = [
             </span>
         ),
         description: (
-            <span style={{ color: '#94a3b8' }}>
+            <span className="text-slate-400">
                 Update system packages and apply the latest patches to
                 ensure compatibility and security.
             </span>
@@ -54,7 +54,7 @@ const settingUpProgress = [
             <span style={{ color: 'var(--text)' }}>Installing Tools</span>
         ),
         description: (
-            <span style={{ color: '#94a3b8' }}>
+            <span className="text-slate-400">
                 Install essential development tools such as compilers,
                 package managers, and utilities.
             </span>
@@ -67,7 +67,7 @@ const settingUpProgress = [
             </span>
         ),
         description: (
-            <span style={{ color: '#94a3b8' }}>
+            <span className="text-slate-400">
                 Download and configure required libraries and frameworks
                 from the requirements list.
             </span>
@@ -80,7 +80,7 @@ const settingUpProgress = [
             </span>
         ),
         description: (
-            <span style={{ color: '#94a3b8' }}>
+            <span className="text-slate-400">
                 Uninstall or adjust conflicting packages to ensure smooth
                 execution of the environment.
             </span>
@@ -96,7 +96,7 @@ const selectingInstanceProgress = [
             </span>
         ),
         description: (
-            <span style={{ color: '#94a3b8' }}>
+            <span className="text-slate-400">
                 Searching for a suitable machine to deploy your application efficiently.
             </span>
         ),
@@ -108,7 +108,7 @@ const selectingInstanceProgress = [
             </span>
         ),
         description: (
-            <span style={{ color: '#94a3b8' }}>
+            <span className="text-slate-400">
                 Set up a secure SSH connection to access and manage the remote machine.
             </span>
         ),
@@ -118,7 +118,7 @@ const selectingInstanceProgress = [
             <span style={{ color: 'var(--text)' }}>Installing Tools</span>
         ),
         description: (
-            <span style={{ color: '#94a3b8' }}>
+            <span className="text-slate-400">
                 Install necessary development tools and utilities required for deployment.
             </span>
         ),
@@ -134,7 +134,7 @@ const downloadModelProgress = [
             </span>
         ),
         description: (
-            <span style={{ color: '#94a3b8' }}>
+            <span className="text-slate-400">
                 Retrieving the required model files from cloud storage to your local or remote environment.
             </span>
         ),
@@ -149,7 +149,7 @@ const initServerProgress = [
             </span>
         ),
         description: (
-            <span style={{ color: '#94a3b8' }}>
+            <span className="text-slate-400">
                 Starting model prediction server on port 8680
             </span>
         ),
@@ -312,7 +312,7 @@ export default function DeploySettingUpView() {
                         <Space
                             direction="vertical"
                             size="large"
-                            style={{ width: '100%' }}
+                            className="w-full"
                         >
                             <Title
                                 level={5}
@@ -350,7 +350,7 @@ export default function DeploySettingUpView() {
                                                 <LoadingOutlined />
                                             ),
                                         description: (
-                                            <span style={{ color: '#94a3b8' }}>
+                                            <span className="text-slate-400">
                                                 Selecting suitable machine for
                                                 you
                                             </span>
@@ -371,7 +371,7 @@ export default function DeploySettingUpView() {
                                                 <LoadingOutlined />
                                             ),
                                         description: (
-                                            <span style={{ color: '#94a3b8' }}>
+                                            <span className="text-slate-400">
                                                 Setting up your machine
                                             </span>
                                         ),
@@ -391,7 +391,7 @@ export default function DeploySettingUpView() {
                                                 <LoadingOutlined />
                                             ),
                                         description: (
-                                            <span style={{ color: '#94a3b8' }}>
+                                            <span className="text-slate-400">
                                                 Fetching model from cloud storage
                                             </span>
                                         ),
@@ -411,7 +411,7 @@ export default function DeploySettingUpView() {
                                                 <LoadingOutlined />
                                             ),
                                         description: (
-                                            <span style={{ color: '#94a3b8' }}>
+                                            <span className="text-slate-400">
                                                 Serving your model
                                             </span>
                                         ),

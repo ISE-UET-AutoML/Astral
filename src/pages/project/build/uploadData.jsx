@@ -1048,30 +1048,16 @@ const UploadData = () => {
 												</div>
 											) : (
 												<div
-													style={{
-														display: 'flex',
-														flexDirection: 'column',
-														alignItems: 'center',
-														justifyContent: 'center',
-														padding: '48px 0',
-													}}
+													className="flex flex-col items-center justify-center py-12"
 												>
 													<img
 														src={create_project}
 														alt="Create project"
-														style={{
-															width: '300px',
-															maxWidth: '90%',
-															cursor: 'pointer',
-															filter: 'drop-shadow(0 10px 30px rgba(0,0,0,0.25))',
-														}}
+														className="w-[300px] max-w-[90%] cursor-pointer drop-shadow-[0_10px_30px_rgba(0,0,0,0.25)]"
 														onClick={() => setShowCreateDatasetModal(true)}
 													/>
 													<div
-														style={{
-															marginTop: 24,
-															textAlign: 'center',
-														}}
+														className="mt-6 text-center"
 													>
 														<div
 															className="font-poppins"

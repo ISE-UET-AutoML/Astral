@@ -231,7 +231,7 @@ export default function LabelView() {
 						<Progress
 							percent={Math.round(((currentImageIndex + 1) / sampleImages.length) * 100)}
 							size="small"
-							style={{ width: 200 }}
+							className="w-[200px]"
 						/>
 						<Text>{currentImageIndex + 1} / {sampleImages.length}</Text>
 						<Button type="primary" icon={<SaveOutlined />} onClick={saveAnnotations}>

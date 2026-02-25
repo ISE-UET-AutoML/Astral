@@ -140,10 +140,7 @@ const Login = () => {
 		<>
 			<main
 				className="w-full h-screen"
-				style={{
-					fontFamily: 'Poppins, sans-serif',
-					backgroundColor: '#01000A',
-				}}
+				className="font-poppins bg-[#01000A]"
 			>
 				<style>{`
                     body, html { 

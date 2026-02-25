@@ -113,7 +113,7 @@ const AudioClassificationPredict = ({
 					key={index}
 					count={
 						incorrectPredictions.includes(index) ? (
-							<CloseCircleOutlined style={{ color: '#f5222d' }} />
+							<CloseCircleOutlined className="text-red-500" />
 						) : null
 					}
 				>
@@ -121,7 +121,7 @@ const AudioClassificationPredict = ({
 						<Card
 							size="small"
 							className={`cursor-pointer ${currentIndex === index ? 'border-4 border-blue-500 bg-blue-50' : 'opacity-60'}`}
-							style={{ width: 100 }}
+							className="w-[100px]"
 							onClick={() => setCurrentIndex(index)}
 							hoverable
 						>
@@ -137,11 +137,7 @@ const AudioClassificationPredict = ({
 								/>
 								<Text
 									ellipsis
-									style={{
-										display: 'block',
-										fontSize: 10,
-										marginTop: 4,
-									}}
+									className="block text-[10px] mt-1"
 								>
 									{data.name}
 								</Text>
@@ -184,11 +180,7 @@ const AudioClassificationPredict = ({
 				>
 					<Space
 						size="large"
-						style={{
-							display: 'flex',
-							justifyContent: 'space-between',
-							alignItems: 'center',
-						}}
+						className="flex justify-between items-center"
 					>
 						<Statistic
 							title="Total Predictions"
@@ -200,7 +192,7 @@ const AudioClassificationPredict = ({
 							value={statistics.correct}
 							prefix={
 								<CheckCircleOutlined
-									style={{ color: '#52c41a' }}
+									className="text-green-500"
 								/>
 							}
 						/>
@@ -209,7 +201,7 @@ const AudioClassificationPredict = ({
 							value={statistics.incorrect}
 							prefix={
 								<CloseCircleOutlined
-									style={{ color: '#f5222d' }}
+									className="text-red-500"
 								/>
 							}
 						/>
@@ -285,7 +277,7 @@ const AudioClassificationPredict = ({
 										onTimeUpdate={handleTimeUpdate}
 										onLoadedMetadata={handleLoadedMetadata}
 										onEnded={handleAudioEnded}
-										style={{ display: 'none' }}
+										className="hidden"
 									>
 										<source
 											src={URL.createObjectURL(
@@ -302,11 +294,7 @@ const AudioClassificationPredict = ({
 
 									{/* Custom Audio Controls */}
 									<div
-										style={{
-											padding: '20px',
-											background: '#f5f5f5',
-											borderRadius: '8px',
-										}}
+										className="p-5 bg-[#f5f5f5] rounded-lg"
 									>
 										<Space
 											direction="vertical"
@@ -315,9 +303,7 @@ const AudioClassificationPredict = ({
 										>
 											{/* Play/Pause Button */}
 											<div
-												style={{
-													textAlign: 'center',
-												}}
+												className="text-center"
 											>
 												<Button
 													type="primary"
@@ -331,11 +317,7 @@ const AudioClassificationPredict = ({
 														)
 													}
 													onClick={handlePlayPause}
-													style={{
-														width: 64,
-														height: 64,
-														fontSize: 32,
-													}}
+													className="w-16 h-16 text-3xl"
 												/>
 											</div>
 
@@ -353,18 +335,10 @@ const AudioClassificationPredict = ({
 															)
 														)
 													}
-													style={{
-														width: '100%',
-														cursor: 'pointer',
-													}}
+													className="w-full cursor-pointer"
 												/>
 												<div
-													style={{
-														display: 'flex',
-														justifyContent:
-															'space-between',
-														marginTop: '8px',
-													}}
+													className="flex justify-between mt-[8px]"
 												>
 													<Text type="secondary">
 														{formatTime(
@@ -393,10 +367,7 @@ const AudioClassificationPredict = ({
 												</Text>
 												<Text
 													strong
-													style={{
-														textTransform:
-															'uppercase',
-													}}
+													className="uppercase"
 												>
 													{currentPrediction.class}
 												</Text>

@@ -219,7 +219,7 @@ export default function CreateLabelProjectModal({ visible, onCancel, onCreate })
                                             disabled={ds.processingStatus !== 'COMPLETED'}
                                             label={`${ds.title} (${ds.quantity} items)`}
                                         >
-                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <div className="flex justify-between items-center">
                                                 <span>{ds.title} ({ds.quantity} items)</span>
                                                 <Tag color={getStatusColor(ds.processingStatus)}>{ds.processingStatus}</Tag>
                                             </div>
@@ -241,9 +241,9 @@ export default function CreateLabelProjectModal({ visible, onCancel, onCreate })
                         >
                             {columnOptions.map(col => (
                                 <Option key={col.value} value={col.value}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                    <div className="flex justify-between">
                                         <span>{col.value}</span>
-                                        <i style={{ fontSize: '0.8em', color: '#999' }}>
+                                        <i className="text-[0.8em] text-[#999]">
                                             {col.label.match(/\(([^)]+)\)/)?.[1]}
                                         </i>
                                     </div>

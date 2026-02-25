@@ -179,9 +179,7 @@ const Endpoint = () => {
 			<div className="dark-build-page">
 				<Row
 					gutter={[24, 24]}
-					style={{
-						marginTop: '24px',
-					}}
+					className="mt-6"
 				>
 					<Col span={24}>
 						<Card
@@ -189,9 +187,7 @@ const Endpoint = () => {
 							title={
 								<Space>
 									<LinkOutlined
-										style={{
-											color: '#5C8DFF',
-										}}
+										className="text-[#5C8DFF]"
 									/>
 									<span className="dark-build-text-strong">Endpoint Information</span>
 								</Space>
@@ -237,9 +233,7 @@ const Endpoint = () => {
 								<Input.Group compact>
 									<Input
 										className="dark-build-input"
-										style={{
-											width: '30%',
-										}}
+										className="w-[30%]"
 										value={
 											instanceURL ||
 											'https://api.example.com/predict/model-123'

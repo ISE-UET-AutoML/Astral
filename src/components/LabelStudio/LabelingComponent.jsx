@@ -127,7 +127,7 @@
 // 	}
 
 // 	return (
-// 		<Card title="Data Labeling" style={{ width: '100%' }}>
+// 		<Card title="Data Labeling" className="w-full">
 // 			{loading ? (
 // 				<div
 // 					style={{
@@ -142,9 +142,9 @@
 // 				<>
 // 					<div
 // 						ref={labelStudioRef}
-// 						style={{ height: '600px', overflow: 'auto' }}
+// 						className="h-[600px] overflow-auto"
 // 					/>
-// 					<div style={{ marginTop: '20px', textAlign: 'right' }}>
+// 					<div className="mt-5 text-right">
 // 						<Button type="primary" onClick={handleSubmit}>
 // 							Lưu Label
 // 						</Button>

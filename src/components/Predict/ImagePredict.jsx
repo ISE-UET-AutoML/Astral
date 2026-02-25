@@ -70,7 +70,7 @@ const ImagePredict = ({ predictResult, uploadedFiles, projectInfo }) => {
 					key={index}
 					count={
 						incorrectPredictions.includes(index) ? (
-							<CloseCircleOutlined style={{ color: '#f5222d' }} />
+							<CloseCircleOutlined className="text-red-500" />
 						) : null
 					}
 				>
@@ -178,12 +178,12 @@ const ImagePredict = ({ predictResult, uploadedFiles, projectInfo }) => {
 				<Space
 					direction="vertical"
 					size="middle"
-					style={{ width: '100%' }}
+					className="w-full"
 				>
 					<Image
 						src={explainImageUrl[currentIndex]}
 						alt="AI Explanation"
-						style={{ width: '100%' }}
+						className="w-full"
 					/>
 
 					<Divider>How to Interpret</Divider>
@@ -221,11 +221,7 @@ const ImagePredict = ({ predictResult, uploadedFiles, projectInfo }) => {
 				>
 					<Space
 						size="large"
-						style={{
-							display: 'flex',
-							justifyContent: 'space-between',
-							alignItems: 'center',
-						}}
+						className="!flex !justify-between !items-center w-full"
 					>
 						<Statistic
 							title="Total Predictions"
@@ -236,18 +232,14 @@ const ImagePredict = ({ predictResult, uploadedFiles, projectInfo }) => {
 							title="Correct Predictions"
 							value={statistics.correct}
 							prefix={
-								<CheckCircleOutlined
-									style={{ color: '#52c41a' }}
-								/>
+								<CheckCircleOutlined className="text-green-500" />
 							}
 						/>
 						<Statistic
 							title="Incorrect Predictions"
 							value={statistics.incorrect}
 							prefix={
-								<CloseCircleOutlined
-									style={{ color: '#f5222d' }}
-								/>
+								<CloseCircleOutlined className="text-red-500" />
 							}
 						/>
 						<Statistic
@@ -312,10 +304,7 @@ const ImagePredict = ({ predictResult, uploadedFiles, projectInfo }) => {
 														currentIndex
 													)
 												}
-												style={{
-													backgroundColor: '#E6F7FF',
-													color: '#0050B3',
-												}} // Xanh nhạt và text xanh đậm
+											className="!bg-[#E6F7FF] !text-[#0050B3]"
 											>
 												{showExplanation[currentIndex]
 													? 'Show Original'
@@ -326,13 +315,8 @@ const ImagePredict = ({ predictResult, uploadedFiles, projectInfo }) => {
 								}
 							>
 								{loadingExplanation ? (
-									<div
-										style={{
-											padding: '40px 0',
-											textAlign: 'center',
-										}}
-									>
-										<Spin tip="Generating explanation..." />
+									<div className="py-10 text-center">
+											<Spin tip="Generating explanation..." />
 									</div>
 								) : (
 									<Image
@@ -369,10 +353,7 @@ const ImagePredict = ({ predictResult, uploadedFiles, projectInfo }) => {
 												</Text>
 												<Text
 													strong
-													style={{
-														textTransform:
-															'uppercase',
-													}}
+													className="uppercase"
 												>
 													{currentPrediction.class}
 												</Text>
@@ -453,7 +434,7 @@ const ImagePredict = ({ predictResult, uploadedFiles, projectInfo }) => {
 												)
 											}
 											loading={loadingExplanation}
-											style={{ marginLeft: 'auto' }}
+										className="ml-auto"
 											disabled={
 												explainImageUrl[
 													currentIndex
@@ -471,7 +452,7 @@ const ImagePredict = ({ predictResult, uploadedFiles, projectInfo }) => {
 									<Card
 										title="How to Interpret Explanations"
 										size="small"
-										style={{ marginTop: '16px' }}
+										className="!mt-4"
 									>
 										<Space
 											direction="vertical"

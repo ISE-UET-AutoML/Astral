@@ -176,7 +176,7 @@
 // 							src={URL.createObjectURL(selectedImageFile)}
 // 							alt="Selected"
 // 							className="rounded-md"
-// 							style={{ width: '30%' }}
+// 							className="w-[30%]"
 // 						/>
 // 					)}
 // 					{explainImageUrl && (
@@ -184,7 +184,7 @@
 // 							src={explainImageUrl}
 // 							alt="Explain"
 // 							className="rounded-md"
-// 							style={{ width: '30%' }}
+// 							className="w-[30%]"
 // 						/>
 // 					)}
 // 				</div>
@@ -204,7 +204,7 @@
 
 // 			{predictions ? (
 // 				<div>
-// 					<table style={{ maxWidth: '500px' }}>
+// 					<table className="max-w-[500px]">
 // 						<thead>
 // 							<tr>
 // 								<th>Sentence</th>
@@ -230,7 +230,7 @@
 // 									</td>
 // 			{predictions ? (
 // 				<div>
-// 					<table style={{ maxWidth: '500px' }}>
+// 					<table className="max-w-[500px]">
 // 						<thead>
 // 							<tr>
 // 								<th>Sentence</th>

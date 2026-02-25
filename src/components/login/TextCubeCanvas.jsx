@@ -204,8 +204,8 @@ export default function TextCubeCanvas({
     }, [sizeHalf, cameraZ, focalLength, mouseMaxYaw, mouseMaxPitch, followEasing, rollSpeed, offsetX, initialYaw, initialPitch, baseSpinYaw, baseSpinPitch, shapeType, glowColor, prefersReducedMotion])
 
     return (
-        <div ref={containerRef} style={{ width: '100%', height: '100%' }}>
-            <canvas ref={canvasRef} style={{ width: '100%', height: '100%', display: 'block' }} />
+        <div ref={containerRef} className="w-full h-full">
+            <canvas ref={canvasRef} className="w-full h-full block" />
         </div>
     )
 }

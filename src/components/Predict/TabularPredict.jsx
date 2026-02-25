@@ -336,7 +336,7 @@ const TabularPredict = ({ predictResult, uploadedFiles, projectInfo, handleUploa
                 <Card bordered={false} className="shadow-sm">
                     <div className="flex justify-between items-center">
                         <Space>
-                            <Title level={4} style={{ margin: 0 }}>
+                            <Title level={4} className="!m-0">
                                 <TableOutlined /> Prediction Review Dashboard
                             </Title>
                             <Dropdown
@@ -345,14 +345,14 @@ const TabularPredict = ({ predictResult, uploadedFiles, projectInfo, handleUploa
                                         {predictionHistory.map((item, index) => (
                                             <Menu.Item key={index} onClick={() => handleFileSelect(index)}>
                                                 <FileTextOutlined /> {item.fileName}
-                                                {index === currentFileIndex && <CheckOutlined style={{ marginLeft: 8 }} />}
+                                                {index === currentFileIndex && <CheckOutlined className="ml-2" />}
                                             </Menu.Item>
                                         ))}
                                     </Menu>
                                 }
                                 trigger={['click']}
                             >
-                                <Tag color="blue" icon={<FileTextOutlined />} style={{ cursor: 'pointer' }}>
+                                <Tag color="blue" icon={<FileTextOutlined />} className="cursor-pointer">
                                     {predictionHistory[currentFileIndex]?.fileName || 'No file uploaded'} <DownOutlined />
                                 </Tag>
                             </Dropdown>
@@ -361,7 +361,7 @@ const TabularPredict = ({ predictResult, uploadedFiles, projectInfo, handleUploa
                             <Tooltip title="Filter by confidence">
                                 <Select
                                     value={confidenceFilter}
-                                    style={{ width: 120 }}
+                                    className="w-[120px]"
                                     onChange={setConfidenceFilter}
                                     dropdownMatchSelectWidth={false}
                                 >
@@ -395,7 +395,7 @@ const TabularPredict = ({ predictResult, uploadedFiles, projectInfo, handleUploa
                                 type="file"
                                 ref={fileInputRef}
                                 onChange={handleChange}
-                                style={{ display: 'none' }}
+                                className="hidden"
                                 accept=".csv"
                             />
                         </Space>
@@ -404,17 +404,17 @@ const TabularPredict = ({ predictResult, uploadedFiles, projectInfo, handleUploa
             </Header>
             <Content>
                 <Card size="small" className="mb-4 border-green-500 bg-green-50 border-dashed">
-                    <Space size="large" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Space size="large" className="flex justify-between items-center">
                         <Statistic title="Total Predictions" value={csvData.length} prefix={<QuestionCircleOutlined />} />
                         <Statistic
                             title="Correct Predictions"
                             value={statistics.correct}
-                            prefix={<CheckCircleOutlined style={{ color: '#52c41a' }} />}
+                            prefix={<CheckCircleOutlined className="text-green-500" />}
                         />
                         <Statistic
                             title="Incorrect Predictions"
                             value={statistics.incorrect}
-                            prefix={<CloseCircleOutlined style={{ color: '#f5222d' }} />}
+                            prefix={<CloseCircleOutlined className="text-red-500" />}
                         />
                         <Statistic title="Accuracy" value={statistics.accuracy} suffix="%" precision={1} />
                     </Space>

@@ -176,7 +176,7 @@
 // 							src={URL.createObjectURL(selectedImageFile)}
 // 							alt="Selected"
 // 							className="rounded-md"
-// 							style={{ width: '30%' }}
+// 							className="w-[30%]"
 // 						/>
 // 					)}
 // 					{explainImageUrl && (
@@ -184,7 +184,7 @@
 // 							src={explainImageUrl}
 // 							alt="Explain"
 // 							className="rounded-md"
-// 							style={{ width: '30%' }}
+// 							className="w-[30%]"
 // 						/>
 // 					)}
 // 				</div>

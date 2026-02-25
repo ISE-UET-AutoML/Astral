@@ -6,30 +6,30 @@ const FooterSection = () => {
 	return (
 		<footer className="relative">
 			{/* Getting Started CTA Section */}
-			<section className="py-24 relative" style={{ backgroundColor: '#1a1a1a', zIndex: 20 }}>
+			<section className="py-24 relative" className="bg-[#1a1a1a] z-[20]">
 				<ContentContainer>
 					<div className="text-center">
 						<p 
 							className="text-gray-400 text-sm mb-4 uppercase tracking-wider"
-							style={{ fontFamily: 'Poppins, sans-serif' }}
+							className="font-poppins"
 						>
 							Getting Started
 						</p>
 						<h2 
 							className="text-4xl md:text-5xl font-bold text-white mb-6"
-							style={{ fontFamily: 'Poppins, sans-serif' }}
+							className="font-poppins"
 						>
 							Build your first AI with{' '}
 							<span 
 								className="bg-gradient-to-r from-[#5C8DFF] to-[#65FFA0] bg-clip-text text-transparent"
-								style={{ fontFamily: 'Russo One, sans-serif' }}
+								className="font-['Russo_One',_sans-serif]"
 							>
 								ASTRAL
 							</span>!
 						</h2>
 						<p 
 							className="text-gray-400 text-lg mb-8 max-w-2xl mx-auto"
-							style={{ fontFamily: 'Poppins, sans-serif' }}
+							className="font-poppins"
 						>
 							Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor, consectetur adipiscing elit, sed do eiusmod tempor
 						</p>
@@ -54,13 +54,13 @@ const FooterSection = () => {
 							<div className="mb-4">
 								<h3 
 									className="text-3xl font-bold text-gray-900"
-									style={{ fontFamily: 'Russo One, sans-serif' }}
+									className="font-['Russo_One',_sans-serif]"
 								>
 									ASTRAL
 								</h3>
 								<p 
 									className="text-gray-600 mt-2"
-									style={{ fontFamily: 'Poppins, sans-serif' }}
+									className="font-poppins"
 								>
 									Automated System TRAL
 								</p>
@@ -71,14 +71,14 @@ const FooterSection = () => {
 								<a 
 									href="#terms" 
 									className="text-gray-600 hover:text-gray-900 transition-colors"
-									style={{ fontFamily: 'Poppins, sans-serif' }}
+									className="font-poppins"
 								>
 									Term of service
 								</a>
 								<a 
 									href="#privacy" 
 									className="text-gray-600 hover:text-gray-900 transition-colors"
-									style={{ fontFamily: 'Poppins, sans-serif' }}
+									className="font-poppins"
 								>
 									Privacy Policy
 								</a>
@@ -89,7 +89,7 @@ const FooterSection = () => {
 						<div>
 							<h4 
 								className="font-bold text-gray-900 mb-4"
-								style={{ fontFamily: 'Poppins, sans-serif' }}
+								className="font-poppins"
 							>
 								Home
 							</h4>
@@ -100,7 +100,7 @@ const FooterSection = () => {
 						<div>
 							<h4 
 								className="font-bold text-gray-900 mb-4"
-								style={{ fontFamily: 'Poppins, sans-serif' }}
+								className="font-poppins"
 							>
 								Features
 							</h4>
@@ -109,7 +109,7 @@ const FooterSection = () => {
 									<a 
 										href="#workspace" 
 										className="text-gray-600 hover:text-gray-900 transition-colors"
-										style={{ fontFamily: 'Poppins, sans-serif' }}
+										className="font-poppins"
 									>
 										Workspace
 									</a>
@@ -118,7 +118,7 @@ const FooterSection = () => {
 									<a 
 										href="#calendar" 
 										className="text-gray-600 hover:text-gray-900 transition-colors"
-										style={{ fontFamily: 'Poppins, sans-serif' }}
+										className="font-poppins"
 									>
 										Calendar
 									</a>
@@ -132,7 +132,7 @@ const FooterSection = () => {
 							<div className="mb-8">
 								<h4 
 									className="font-bold text-gray-900 mb-4"
-									style={{ fontFamily: 'Poppins, sans-serif' }}
+									className="font-poppins"
 								>
 									Company
 								</h4>
@@ -141,7 +141,7 @@ const FooterSection = () => {
 										<a 
 											href="#about" 
 											className="text-gray-600 hover:text-gray-900 transition-colors"
-											style={{ fontFamily: 'Poppins, sans-serif' }}
+											className="font-poppins"
 										>
 											About us
 										</a>
@@ -150,7 +150,7 @@ const FooterSection = () => {
 										<a 
 											href="#contact" 
 											className="text-gray-600 hover:text-gray-900 transition-colors"
-											style={{ fontFamily: 'Poppins, sans-serif' }}
+											className="font-poppins"
 										>
 											Contact
 										</a>
@@ -162,7 +162,7 @@ const FooterSection = () => {
 							<div>
 								<h4 
 									className="font-bold text-gray-900 mb-4"
-									style={{ fontFamily: 'Poppins, sans-serif' }}
+									className="font-poppins"
 								>
 									Follow us
 								</h4>
@@ -171,7 +171,7 @@ const FooterSection = () => {
 										<a 
 											href="#facebook" 
 											className="text-gray-600 hover:text-gray-900 transition-colors"
-											style={{ fontFamily: 'Poppins, sans-serif' }}
+											className="font-poppins"
 										>
 											Facebook
 										</a>
@@ -180,7 +180,7 @@ const FooterSection = () => {
 										<a 
 											href="#instagram" 
 											className="text-gray-600 hover:text-gray-900 transition-colors"
-											style={{ fontFamily: 'Poppins, sans-serif' }}
+											className="font-poppins"
 										>
 											Instagram
 										</a>

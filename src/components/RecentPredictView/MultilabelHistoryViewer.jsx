@@ -101,7 +101,7 @@ const MultilabelHistoryViewer = forwardRef(({ data }, ref) => {
                     
                     return (
                         <Tooltip title={isTruncated ? text : null}>
-                            <span style={{ cursor: isTruncated ? 'help' : 'default' }}>
+                            <span className={isTruncated ? 'cursor-help' : 'cursor-default'}>
                                 {truncateText(text)}
                             </span>
                         </Tooltip>
@@ -120,7 +120,7 @@ const MultilabelHistoryViewer = forwardRef(({ data }, ref) => {
                     return <Tag>No prediction</Tag>;
                 }
                 return (
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                    <div className="flex flex-wrap gap-1">
                         {predictedLabels.map((label, idx) => (
                             <Tag key={idx} color="purple">
                                 {label}
@@ -161,12 +161,12 @@ const MultilabelHistoryViewer = forwardRef(({ data }, ref) => {
                 <Input.Search
                     placeholder="Search column name"
                     onChange={(e) => setFilterText(e.target.value)}
-                    style={{ marginBottom: 16 }}
+                    className="!mb-4"
                 />
-                <Space direction="vertical" style={{ width: '100%' }}>
+                <Space direction="vertical" className="w-full">
                     {filteredDrawerColumns.map((columnKey) => (
-                        <div key={columnKey} style={{ display: 'flex', justifyContent: 'space-between', width: '100%', padding: '8px', borderRadius: '4px', background: '#f5f5f5' }}>
-                            <span style={{ fontWeight: 500 }}>{columnKey}</span>
+                        <div key={columnKey} className="flex justify-between w-full p-2 rounded bg-gray-100 dark:bg-white/5">
+                            <span className="font-medium">{columnKey}</span>
                             <Switch
                                 checked={visibleColumns.includes(columnKey)}
                                 onChange={() => handleColumnToggle(columnKey)}

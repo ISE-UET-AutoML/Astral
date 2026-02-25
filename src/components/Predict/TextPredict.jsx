@@ -318,11 +318,7 @@ const TextPredict = ({ predictResult, uploadedFiles, projectInfo, s3_url }) => {
 				>
 					<Space
 						size="large"
-						style={{
-							display: 'flex',
-							justifyContent: 'space-between',
-							alignItems: 'center',
-						}}
+						className="flex justify-between items-center"
 					>
 						<Statistic
 							title="Total Predictions"
@@ -334,7 +330,7 @@ const TextPredict = ({ predictResult, uploadedFiles, projectInfo, s3_url }) => {
 							value={statistics.correct}
 							prefix={
 								<CheckCircleOutlined
-									style={{ color: '#52c41a' }}
+									className="text-green-500"
 								/>
 							}
 						/>
@@ -343,7 +339,7 @@ const TextPredict = ({ predictResult, uploadedFiles, projectInfo, s3_url }) => {
 							value={statistics.incorrect}
 							prefix={
 								<CloseCircleOutlined
-									style={{ color: '#f5222d' }}
+									className="text-red-500"
 								/>
 							}
 						/>
@@ -395,13 +391,9 @@ const TextPredict = ({ predictResult, uploadedFiles, projectInfo, s3_url }) => {
 						<Card>
 							<Space direction="vertical" className="w-full">
 								<div
-									style={{
-										display: 'flex',
-										justifyContent: 'space-between',
-										alignItems: 'center',
-									}}
+									className="flex justify-between items-center"
 								>
-									<Title level={4} style={{ margin: 0 }}>
+									<Title level={4} className="!m-0">
 										Prediction Results
 									</Title>
 									<Button
@@ -462,11 +454,7 @@ const TextPredict = ({ predictResult, uploadedFiles, projectInfo, s3_url }) => {
 									/>
 								</div>
 								<div
-									style={{
-										display: 'flex',
-										justifyContent: 'space-between',
-										alignItems: 'center',
-									}}
+									className="flex justify-between items-center"
 								>
 									<Button
 										type={

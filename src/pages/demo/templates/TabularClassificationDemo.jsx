@@ -554,10 +554,7 @@ const TabularClassificationDemo = ({ metadata }) => {
 															<th
 																key={column}
 																className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 tracking-wider"
-																style={{
-																	minWidth:
-																		'250px',
-																}}
+																className="min-w-[250px]"
 															>
 																{column}
 															</th>
@@ -635,10 +632,7 @@ const TabularClassificationDemo = ({ metadata }) => {
 																			column
 																		}
 																		className="px-6 py-4 text-sm text-gray-900 dark:text-gray-100 whitespace-nowrap group/cell relative"
-																		style={{
-																			maxWidth:
-																				'250px',
-																		}}
+																		className="max-w-[250px]"
 																	>
 																		<span
 																			className="block overflow-hidden text-ellipsis"

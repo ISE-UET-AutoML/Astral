@@ -250,27 +250,13 @@ export default function CreateDatasetForm({
             {
                 key: '1',
                 label: (
-                    <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        color: 'green',
-                        fontWeight: '500'
-                    }}>
-                        <QuestionCircleOutlined style={{ marginRight: '8px' }} />
+                    <div className="flex items-center text-green-600">
+                        <QuestionCircleOutlined className="mr-2" />
                         Task Preparation Instructions ({currentTaskInfo.displayName})
                     </div>
                 ),
                 children: (
-                    <div style={{
-                        whiteSpace: 'pre-line',
-                        fontFamily: 'Poppins, sans-serif',
-                        fontSize: '13px',
-                        lineHeight: '1.6',
-                        padding: '12px',
-                        backgroundColor: 'rgba(0, 0, 0, 0.02)',
-                        borderRadius: '6px',
-                        border: `1px solid #ccc` // Màu border chung
-                    }}>
+                    <div className="whitespace-pre-line font-poppins">
                         {currentTaskInfo.preparingInstructions}
                     </div>
                 ),
@@ -352,7 +338,7 @@ export default function CreateDatasetForm({
                             e.target.style.background = 'var(--upload-bg)'
                         }}
                     >
-                        <div style={{ textAlign: 'center', background: 'transparent' }}>
+                        <div className="text-center bg-transparent">
                             {isFolderUpload ? (
 								<FolderOutlined
 									style={{
@@ -379,7 +365,7 @@ export default function CreateDatasetForm({
                         />
                     </label>
                     <div style={{ color: 'var(--text)', fontFamily: 'Poppins, sans-serif' }}>
-                        <span style={{ fontWeight: '500' }}>{files.length} Files</span>
+                        <span className="font-medium">{files.length} Files</span>
                         <span style={{ marginLeft: '8px', color: 'var(--secondary-text)' }}>({totalKbytes} kB)</span>
                     </div>
                     {files.length > 0 && (
@@ -400,7 +386,7 @@ export default function CreateDatasetForm({
                                     color: 'var(--text)'
                                 }}>
                                     <FileOutlined style={{ marginRight: '8px', color: 'var(--upload-icon)' }} />
-                                    <span style={{ flex: 1, fontFamily: 'Poppins, sans-serif' }}>{file.path}</span>
+                                    <span className="flex-1 font-poppins">{file.path}</span>
                                     <span style={{ marginLeft: '8px', color: 'var(--secondary-text)', fontSize: '12px' }}>
                                         ({(file.fileObject?.size / 1024 || 0).toFixed(2)} kB)
                                     </span>
@@ -646,7 +632,7 @@ export default function CreateDatasetForm({
                         >
                         <Input
                             placeholder="Enter dataset title (letters and numbers only)"
-                            style={{ borderRadius: '1px' }}
+                            className="rounded-[1px]"
                         />
                         </Form.Item>
                     </Col>
@@ -689,7 +675,7 @@ export default function CreateDatasetForm({
                             onChange={(value) => {
                             setTaskType(value);
                             }}
-                            style={{ width: '100%' }}
+                            className="w-full"
                             allowClear
                             //disabled={!datasetType}
                         >
@@ -745,11 +731,11 @@ export default function CreateDatasetForm({
 
                 <Tabs defaultActiveKey="file" items={tabItems} />
 
-                <Form.Item style={{ marginTop: 8, textAlign: 'right' }}>
+                <Form.Item className="mt-2 text-right">
                     <Button type="primary" htmlType="submit">
                         Next
                     </Button>
-                    <Button style={{ marginLeft: 8 }} onClick={onCancel}>
+                    <Button className="ml-2" onClick={onCancel}>
                         Cancel
                     </Button>
                 </Form.Item>

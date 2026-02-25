@@ -90,19 +90,19 @@ const ServicesSection = () => {
 	]
 
 	return (
-		<section className="py-24 relative pt-80" style={{ zIndex: 20 }}>
+		<section className="py-24 relative pt-80" className="z-[20]">
 			<ContentContainer>
 				{/* Section Header */}
 				<div className="text-center mb-16">
 					<h2 
 						className="text-5xl font-bold text-white mb-4"
-						style={{ fontFamily: 'Poppins, sans-serif' }}
+						className="font-poppins"
 					>
 						Our Services
 					</h2>
 					<p 
 						className="text-xl text-gray-300"
-						style={{ fontFamily: 'Poppins, sans-serif' }}
+						className="font-poppins"
 					>
 						All you need is <span className="font-bold text-white">data</span>, the rest is on us!
 					</p>
@@ -123,7 +123,7 @@ const ServicesSection = () => {
 							{/* Title */}
 							<h3 
 								className="text-2xl font-bold text-white mb-4 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-[#5C8DFF] group-hover:to-[#65FFA0] group-hover:bg-clip-text transition-all duration-300"
-								style={{ fontFamily: 'Poppins, sans-serif' }}
+								className="font-poppins"
 							>
 								{service.title}
 							</h3>
@@ -131,7 +131,7 @@ const ServicesSection = () => {
 							{/* Description */}
 							<p 
 								className="text-gray-300 leading-relaxed"
-								style={{ fontFamily: 'Poppins, sans-serif' }}
+								className="font-poppins"
 							>
 								{service.description}
 							</p>

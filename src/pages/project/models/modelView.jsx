@@ -34,16 +34,16 @@ const { Panel } = Collapse;
 // Performance Metrics Configuration
 const getAccuracyStatus = (score) => {
     if (score >= 0.9) {
-        return <Tag style={{ background: 'linear-gradient(135deg, #10b981, #34d399)', border: 'none', color: 'white', fontFamily: 'Poppins, sans-serif' }}>Excellent</Tag>
+        return <Tag className="bg-gradient-to-br from-[#10b981] to-[#34d399] border-none text-white font-poppins">Excellent</Tag>
     }
     else if (score >= 0.7) {
-        return <Tag style={{ background: 'linear-gradient(135deg, #3b82f6, #60a5fa)', border: 'none', color: 'white', fontFamily: 'Poppins, sans-serif' }}>Good</Tag>
+        return <Tag className="bg-gradient-to-br from-[#3b82f6] to-[#60a5fa] border-none text-white font-poppins">Good</Tag>
     }
     else if (score >= 0.6) {
-        return <Tag style={{ background: 'linear-gradient(135deg, #f59e0b, #fbbf24)', border: 'none', color: 'white', fontFamily: 'Poppins, sans-serif' }}>Medium</Tag>
+        return <Tag className="bg-gradient-to-br from-[#f59e0b] to-[#fbbf24] border-none text-white font-poppins">Medium</Tag>
     }
     else {
-        return <Tag style={{ background: 'linear-gradient(135deg, #ef4444, #f87171)', border: 'none', color: 'white', fontFamily: 'Poppins, sans-serif' }}>Bad</Tag>
+        return <Tag className="bg-gradient-to-br from-[#ef4444] to-[#f87171] border-none text-white font-poppins">Bad</Tag>
     }
 }
 
@@ -59,9 +59,9 @@ const columns = [
         key: 'metric',
         render: (text, record) => (
             <Tooltip title={record.description}>
-                <span style={{ color: '#e2e8f0', fontFamily: 'Poppins, sans-serif' }}>{text}</span>{' '}
+                <span className="text-slate-200 font-poppins">{text}</span>{' '}
                 <InfoCircleOutlined
-                    style={{ color: '#60a5fa', marginLeft: 5 }}
+                    className="text-[#60a5fa] ml-[5px]"
                 />
             </Tooltip>
         ),
@@ -71,7 +71,7 @@ const columns = [
         dataIndex: 'value',
         key: 'value',
         render: (text) => (
-            <span style={{ color: '#e2e8f0', fontFamily: 'Poppins, sans-serif' }}>{text}</span>
+            <span className="text-slate-200 font-poppins">{text}</span>
         ),
     },
     {
@@ -228,19 +228,13 @@ const ModelView = () => {
                             <Col xs={24} sm={12} md={8}>
                                 <Card
                                     className="border-0 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300"
-                                    style={{
-                                        background: 'linear-gradient(135deg, rgba(51, 65, 85, 0.4) 0%, rgba(15, 23, 42, 0.4) 100%)',
-                                        backdropFilter: 'blur(10px)',
-                                        border: '1px solid rgba(255, 255, 255, 0.1)',
-                                        borderRadius: '12px',
-                                        fontFamily: 'Poppins, sans-serif'
-                                    }}
+                                    className="backdrop-blur-[10px] border border-white/10 rounded-xl font-poppins" style={{ background: 'linear-gradient(135deg, rgba(51, 65, 85, 0.4) 0%, rgba(15, 23, 42, 0.4) 100%)' }}
                                 >
                                     <Statistic
-                                        title={<span style={{ color: '#94a3b8', fontFamily: 'Poppins, sans-serif' }}>{`Model ${metrics[0] ? toNormalCase(metrics[0]?.metric) : "Null"} Score`}</span>}
+                                        title={<span className="text-slate-400 font-poppins">{`Model ${metrics[0] ? toNormalCase(metrics[0]?.metric) : "Null"} Score`}</span>}
                                         value={metrics[0]?.value * 100 || 0}
                                         precision={2}
-                                        prefix={<TrophyOutlined style={{ color: '#10b981' }} />}
+                                        prefix={<TrophyOutlined className="text-[#10b981]" />}
                                         suffix="%"
                                         valueStyle={{
                                             background: 'linear-gradient(135deg, #10b981, #34d399)',
@@ -255,16 +249,10 @@ const ModelView = () => {
                             <Col xs={24} sm={12} md={8}>
                                 <Card
                                     className="border-0 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300"
-                                    style={{
-                                        background: 'linear-gradient(135deg, rgba(51, 65, 85, 0.4) 0%, rgba(15, 23, 42, 0.4) 100%)',
-                                        backdropFilter: 'blur(10px)',
-                                        border: '1px solid rgba(255, 255, 255, 0.1)',
-                                        borderRadius: '12px',
-                                        fontFamily: 'Poppins, sans-serif'
-                                    }}
+                                    className="backdrop-blur-[10px] border border-white/10 rounded-xl font-poppins" style={{ background: 'linear-gradient(135deg, rgba(51, 65, 85, 0.4) 0%, rgba(15, 23, 42, 0.4) 100%)' }}
                                 >
                                     <Statistic
-                                        title={<span style={{ color: '#94a3b8', fontFamily: 'Poppins, sans-serif' }}>Model Size</span>}
+                                        title={<span className="text-slate-400 font-poppins">Model Size</span>}
                                         value={model.metadata?.model_size || 0}
                                         valueStyle={{
                                             background: 'linear-gradient(135deg, #f59e0b, #fbbf24)',
@@ -273,7 +261,7 @@ const ModelView = () => {
                                             fontFamily: 'Poppins, sans-serif',
                                             fontWeight: 'bold'
                                         }}
-                                        prefix={<CloudDownloadOutlined style={{ color: '#f59e0b' }} />}
+                                        prefix={<CloudDownloadOutlined className="text-[#f59e0b]" />}
                                         suffix="MB"
                                         precision={2}
                                     />
@@ -282,18 +270,12 @@ const ModelView = () => {
                             <Col xs={24} sm={12} md={8}>
                                 <Card
                                     className="border-0 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300"
-                                    style={{
-                                        background: 'linear-gradient(135deg, rgba(51, 65, 85, 0.4) 0%, rgba(15, 23, 42, 0.4) 100%)',
-                                        backdropFilter: 'blur(10px)',
-                                        border: '1px solid rgba(255, 255, 255, 0.1)',
-                                        borderRadius: '12px',
-                                        fontFamily: 'Poppins, sans-serif'
-                                    }}
+                                    className="backdrop-blur-[10px] border border-white/10 rounded-xl font-poppins" style={{ background: 'linear-gradient(135deg, rgba(51, 65, 85, 0.4) 0%, rgba(15, 23, 42, 0.4) 100%)' }}
                                 >
                                     <Statistic
-                                        title={<span style={{ color: '#94a3b8', fontFamily: 'Poppins, sans-serif' }}>Model Name</span>}
+                                        title={<span className="text-slate-400 font-poppins">Model Name</span>}
                                         value={model.name}
-                                        prefix={<ExperimentOutlined style={{ color: '#3b82f6' }} />}
+                                        prefix={<ExperimentOutlined className="text-[#3b82f6]" />}
                                         valueStyle={{
                                             background: 'linear-gradient(135deg, #3b82f6, #60a5fa)',
                                             WebkitBackgroundClip: 'text',
@@ -307,30 +289,18 @@ const ModelView = () => {
                         </Row>
 
                         <Card
-                            title={<span style={{ color: '#e2e8f0', fontFamily: 'Poppins, sans-serif' }}>Next Steps</span>}
+                            title={<span className="text-slate-200 font-poppins">Next Steps</span>}
                             className="border-0 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300"
-                            style={{
-                                background: 'linear-gradient(135deg, rgba(51, 65, 85, 0.4) 0%, rgba(15, 23, 42, 0.4) 100%)',
-                                backdropFilter: 'blur(10px)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
-                                borderRadius: '12px',
-                                fontFamily: 'Poppins, sans-serif'
-                            }}
+                            className="backdrop-blur-[10px] border border-white/10 rounded-xl font-poppins" style={{ background: 'linear-gradient(135deg, rgba(51, 65, 85, 0.4) 0%, rgba(15, 23, 42, 0.4) 100%)' }}
                         >
                             <Row gutter={[16, 16]}>
                                 <Col xs={24} sm={8}>
                                     <Alert
-                                        message={<span style={{ color: '#ffffff', fontFamily: 'Poppins, sans-serif', fontWeight: '600' }}>Deploy Model</span>}
-                                        description={<span style={{ color: '#e2e8f0', fontFamily: 'Poppins, sans-serif' }}>Instantly transform your trained model into a production-ready solution for real-world predictions.</span>}
+                                        message={<span className="text-white font-poppins font-semibold">Deploy Model</span>}
+                                        description={<span className="text-slate-200 font-poppins">Instantly transform your trained model into a production-ready solution for real-world predictions.</span>}
                                         type="success"
                                         showIcon
-                                        style={{
-                                            height: 130,
-                                            background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(52, 211, 153, 0.1))',
-                                            border: '1px solid rgba(16, 185, 129, 0.3)',
-                                            borderRadius: '8px',
-                                            fontFamily: 'Poppins, sans-serif'
-                                        }}
+                                        className="h-[130px] rounded-lg font-poppins" style={{ background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(52, 211, 153, 0.1))', border: '1px solid rgba(16, 185, 129, 0.3)' }}
                                     />
                                     <Button
                                         type="primary"
@@ -341,14 +311,7 @@ const ModelView = () => {
                                             )
                                         }}
                                         size="large"
-                                        style={{
-                                            width: '100%',
-                                            fontWeight: 'bold',
-                                            marginTop: 15,
-                                            background: 'linear-gradient(135deg, #10b981, #34d399)',
-                                            border: 'none',
-                                            fontFamily: 'Poppins, sans-serif'
-                                        }}
+                                        className="w-full font-bold mt-[15px] font-poppins border-none bg-gradient-to-br from-[#10b981] to-[#34d399]"
                                         className="hover:shadow-lg transition-all duration-300"
                                     >
                                         Deploy Now
@@ -356,31 +319,17 @@ const ModelView = () => {
                                 </Col>
                                 <Col xs={24} sm={8}>
                                     <Alert
-                                        message={<span style={{ color: '#ffffff', fontFamily: 'Poppins, sans-serif', fontWeight: '600' }}>Download Weights</span>}
-                                        description={<span style={{ color: '#e2e8f0', fontFamily: 'Poppins, sans-serif' }}>Securely export and preserve your model's learned parameters for future iterations or transfer learning.</span>}
+                                        message={<span className="text-white font-poppins font-semibold">Download Weights</span>}
+                                        description={<span className="text-slate-200 font-poppins">Securely export and preserve your model's learned parameters for future iterations or transfer learning.</span>}
                                         type="warning"
                                         showIcon
-                                        style={{
-                                            height: 130,
-                                            background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(251, 191, 36, 0.1))',
-                                            border: '1px solid rgba(245, 158, 11, 0.3)',
-                                            borderRadius: '8px',
-                                            fontFamily: 'Poppins, sans-serif'
-                                        }}
+                                        className="h-[130px] rounded-lg font-poppins" style={{ background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(251, 191, 36, 0.1))', border: '1px solid rgba(245, 158, 11, 0.3)' }}
                                     />
                                     <Button
                                         type="default"
                                         icon={<CloudDownloadOutlined />}
                                         size="large"
-                                        style={{
-                                            width: '100%',
-                                            fontWeight: 'bold',
-                                            marginTop: 15,
-                                            background: 'linear-gradient(135deg, #f59e0b, #fbbf24)',
-                                            color: 'white',
-                                            border: 'none',
-                                            fontFamily: 'Poppins, sans-serif'
-                                        }}
+                                        className="w-full font-bold mt-[15px] text-white font-poppins border-none bg-gradient-to-br from-[#f59e0b] to-[#fbbf24]"
                                         className="hover:shadow-lg transition-all duration-300"
                                         onClick={async (e) => {
                                             e.preventDefault()
@@ -397,31 +346,17 @@ const ModelView = () => {
                                 </Col>
                                 <Col xs={24} sm={8}>
                                     <Alert
-                                        message={<span style={{ color: '#ffffff', fontFamily: 'Poppins, sans-serif', fontWeight: '600' }}>Refine Model</span>}
-                                        description={<span style={{ color: '#e2e8f0', fontFamily: 'Poppins, sans-serif' }}>Continuously improve your model's performance by initiating a new training cycle with enhanced data or parameters.</span>}
+                                        message={<span className="text-white font-poppins font-semibold">Refine Model</span>}
+                                        description={<span className="text-slate-200 font-poppins">Continuously improve your model's performance by initiating a new training cycle with enhanced data or parameters.</span>}
                                         type="info"
                                         showIcon
-                                        style={{
-                                            height: 130,
-                                            background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(96, 165, 250, 0.1))',
-                                            border: '1px solid rgba(59, 130, 246, 0.3)',
-                                            borderRadius: '8px',
-                                            fontFamily: 'Poppins, sans-serif'
-                                        }}
+                                        className="h-[130px] rounded-lg font-poppins" style={{ background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(96, 165, 250, 0.1))', border: '1px solid rgba(59, 130, 246, 0.3)' }}
                                     />
                                     <Button
                                         type="default"
                                         icon={<HistoryOutlined />}
                                         size="large"
-                                        style={{
-                                            width: '100%',
-                                            fontWeight: 'bold',
-                                            marginTop: 15,
-                                            background: 'linear-gradient(135deg, #3b82f6, #60a5fa)',
-                                            color: 'white',
-                                            border: 'none',
-                                            fontFamily: 'Poppins, sans-serif'
-                                        }}
+                                        className="w-full font-bold mt-[15px] text-white font-poppins border-none bg-gradient-to-br from-[#3b82f6] to-[#60a5fa]"
                                         className="hover:shadow-lg transition-all duration-300"
                                         onClick={() => navigate(`/app/project/${id}/model/${modelId}/retrain`)}
                                     >
@@ -434,23 +369,14 @@ const ModelView = () => {
                         {/* Expandable Details Section */}
                         <Card
                             className="border-0 backdrop-blur-sm shadow-lg"
-                            style={{
-                                background: 'linear-gradient(135deg, rgba(51, 65, 85, 0.4) 0%, rgba(15, 23, 42, 0.4) 100%)',
-                                backdropFilter: 'blur(10px)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
-                                borderRadius: '12px',
-                                fontFamily: 'Poppins, sans-serif'
-                            }}
+                            className="backdrop-blur-[10px] border border-white/10 rounded-xl font-poppins" style={{ background: 'linear-gradient(135deg, rgba(51, 65, 85, 0.4) 0%, rgba(15, 23, 42, 0.4) 100%)' }}
                         >
                             <Button
                                 type="link"
-                                icon={<BarChartOutlined style={{ color: '#60a5fa' }} />}
+                                icon={<BarChartOutlined className="text-[#60a5fa]" />}
                                 onClick={() => setIsDetailsExpanded(!isDetailsExpanded)}
                                 className="text-xl"
-                                style={{
-                                    color: '#e2e8f0',
-                                    fontFamily: 'Poppins, sans-serif'
-                                }}
+                                className="text-[#e2e8f0] font-poppins"
                             >
                                 {isDetailsExpanded
                                     ? 'Hide Details'
@@ -467,44 +393,23 @@ const ModelView = () => {
                                     <Card
                                         title={
                                             <>
-                                                <span style={{ color: '#e2e8f0', fontFamily: 'Poppins, sans-serif' }}>Metadata</span>{" "}
+                                                <span className="text-slate-200 font-poppins">Metadata</span>{" "}
                                                 <span
-                                                    style={{
-                                                        fontSize: "12px",
-                                                        color: "#94a3b8",
-                                                        fontStyle: "italic",
-                                                        fontFamily: 'Poppins, sans-serif'
-                                                    }}
+                                                    className="text-xs text-[#94a3b8]"
                                                 >
                                                     (Details about the model and its expected input, output)
                                                 </span>
                                             </>
                                         }
                                         className="border-0 backdrop-blur-sm"
-                                        style={{
-                                            background: 'linear-gradient(135deg, rgba(51, 65, 85, 0.3) 0%, rgba(15, 23, 42, 0.3) 100%)',
-                                            backdropFilter: 'blur(10px)',
-                                            border: '1px solid rgba(255, 255, 255, 0.1)',
-                                            borderRadius: '12px',
-                                            fontFamily: 'Poppins, sans-serif'
-                                        }}
+                                        className="backdrop-blur-[10px] border border-white/10 rounded-xl font-poppins" style={{ background: 'linear-gradient(135deg, rgba(51, 65, 85, 0.3) 0%, rgba(15, 23, 42, 0.3) 100%)' }}
                                     >
                                         <Space direction="vertical" size="middle" className="w-full">
                                             {Object.entries(model.metadata || {}).map(([key, value]) => (
                                                 <div key={key}>
                                                     {/* Primary Tag */}
                                                     <Tag
-                                                        style={{
-                                                            fontSize: "14px",
-                                                            padding: "4px 8px",
-                                                            minWidth: 120,
-                                                            textAlign: "center",
-                                                            display: "inline-block",
-                                                            background: 'linear-gradient(135deg, #3b82f6, #60a5fa)',
-                                                            border: 'none',
-                                                            color: 'white',
-                                                            fontFamily: 'Poppins, sans-serif'
-                                                        }}
+                                                        className="text-sm py-[4px] px-[8px] min-w-[120px] text-center inline-block bg-gradient-to-br from-[#3b82f6] to-[#60a5fa] border-none text-white font-poppins"
                                                     >
                                                         {key}
                                                     </Tag>
@@ -513,25 +418,25 @@ const ModelView = () => {
                                                     {Array.isArray(value) ? (
                                                         key === "sample_data" && typeof value[0] === "object" && value[0] !== null ? (
                                                             // Styled table for sample_data
-                                                            <Space wrap style={{ marginLeft: 16 }}>
+                                                            <Space wrap className="ml-4">
                                                                 <Table
                                                                     dataSource={value}
                                                                     pagination={false}
                                                                     rowKey={(record, idx) => idx}
                                                                     bordered={false}
-                                                                    style={{ marginLeft: 16, borderRadius: 8 }}
+                                                                    className="ml-4 rounded-lg"
                                                                     rowClassName={() => ''} // removes Ant Design hover class
                                                                     columns={Object.keys(value[0]).map((colKey) => ({
                                                                         title: (
-                                                                            <span style={{ color: '#fff', fontFamily: 'Poppins, sans-serif' }}>
+                                                                            <span className="text-white font-poppins">
                                                                                 {colKey.charAt(0).toUpperCase() + colKey.slice(1)}
                                                                             </span>
                                                                         ),
                                                                         dataIndex: colKey,
                                                                         key: colKey,
                                                                         render: (text) => (
-                                                                            <span style={{ color: '#fff', fontFamily: 'Poppins, sans-serif' }}>
-                                                                                {text?.toString() || <em style={{ color: '#ccc' }}>(empty)</em>}
+                                                                            <span className="text-white font-poppins">
+                                                                                {text?.toString() || <em className="text-gray-300">(empty)</em>}
                                                                             </span>
                                                                         ),
                                                                     }))}
@@ -540,11 +445,7 @@ const ModelView = () => {
                                                                             cell: (props) => (
                                                                                 <th
                                                                                     {...props}
-                                                                                    style={{
-                                                                                        backgroundColor: '#111827', // dark background
-                                                                                        color: '#fff',               // white text
-                                                                                        fontFamily: 'Poppins, sans-serif',
-                                                                                    }}
+                                                                                    className="bg-[#111827] text-white font-poppins"
                                                                                 >
                                                                                     {props.children}
                                                                                 </th>
@@ -554,7 +455,7 @@ const ModelView = () => {
                                                                             row: ({ children, ...restProps }) => (
                                                                                 <tr
                                                                                     {...restProps}
-                                                                                    style={{ backgroundColor: '#1f2937' }}
+                                                                                    className="bg-[#1f2937]"
                                                                                     onMouseEnter={(e) => {
                                                                                         const tds = e.currentTarget.children;
                                                                                         for (let i = 0; i < tds.length; i++) tds[i].style.backgroundColor = '#374151';
@@ -578,7 +479,7 @@ const ModelView = () => {
                                                             </Space>
                                                         ) : (
                                                             // Your original Space + Tag handling for arrays
-                                                            <Space wrap style={{ marginLeft: 16 }}>
+                                                            <Space wrap className="ml-4">
                                                                 {value.map((item, idx) =>
                                                                     typeof item === "object" && item !== null ? (
                                                                         <Tag
@@ -596,12 +497,7 @@ const ModelView = () => {
                                                                     ) : (
                                                                         <Tag
                                                                             key={idx}
-                                                                            style={{
-                                                                                background: 'linear-gradient(135deg, #8b5cf6, #a78bfa)',
-                                                                                border: 'none',
-                                                                                color: 'white',
-                                                                                fontFamily: 'Poppins, sans-serif',
-                                                                            }}
+                                                                            className="bg-gradient-to-br from-[#8b5cf6] to-[#a78bfa] border-none text-white font-poppins"
                                                                         >
                                                                             {item}
                                                                         </Tag>
@@ -613,55 +509,32 @@ const ModelView = () => {
                                                         <Collapse
                                                             ghost
                                                             size="small"
-                                                            style={{
-                                                                display: "inline-block",
-                                                                verticalAlign: "top",
-                                                                fontFamily: 'Poppins, sans-serif'
-                                                            }}
+                                                            className="inline-block align-top"
                                                         >
                                                             <Panel
-                                                                header={<span style={{ color: '#e2e8f0', fontFamily: 'Poppins, sans-serif' }}>View Details</span>}
+                                                                header={<span className="text-slate-200 font-poppins">View Details</span>}
                                                                 key="1"
-                                                                style={{
-                                                                    background: 'transparent',
-                                                                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                                                                    borderRadius: '8px'
-                                                                }}
+                                                                className="bg-transparent border border-white/10 rounded-lg"
                                                             >
                                                                 <Space
                                                                     direction="vertical"
                                                                     size="small"
-                                                                    style={{
-                                                                        display: "inline-flex",
-                                                                        verticalAlign: "top",
-                                                                    }}
+                                                                    className="inline-flex align-top"
                                                                 >
                                                                     {Object.entries(value).map(([subKey, subValue]) => (
                                                                         <div
                                                                             key={subKey}
-                                                                            style={{
-                                                                                display: "flex",
-                                                                                alignItems: "center",
-                                                                                gap: 8,
-                                                                            }}
+                                                                            className="flex items-center"
                                                                         >
                                                                             <Tag
-                                                                                style={{
-                                                                                    minWidth: 100,
-                                                                                    textAlign: "center",
-                                                                                    marginRight: 8,
-                                                                                    background: 'linear-gradient(135deg, #10b981, #34d399)',
-                                                                                    border: 'none',
-                                                                                    color: 'white',
-                                                                                    fontFamily: 'Poppins, sans-serif'
-                                                                                }}
+                                                                                className="min-w-[100px] text-center mr-2 bg-gradient-to-br from-[#10b981] to-[#34d399] border-none text-white font-poppins"
                                                                             >
                                                                                 {subKey}
                                                                             </Tag>
 
                                                                             {Array.isArray(subValue) ? (
                                                                                 // Handle array values
-                                                                                <Space wrap style={{ marginLeft: 16 }}>
+                                                                                <Space wrap className="ml-4">
                                                                                     {subValue.map((item, idx) =>
                                                                                         typeof item === "object" && item !== null ? (
                                                                                             // Array of objects
@@ -681,12 +554,7 @@ const ModelView = () => {
                                                                                             // Array of primitives
                                                                                             <Tag
                                                                                                 key={idx}
-                                                                                                style={{
-                                                                                                    background: 'linear-gradient(135deg, #8b5cf6, #a78bfa)',
-                                                                                                    border: 'none',
-                                                                                                    color: 'white',
-                                                                                                    fontFamily: 'Poppins, sans-serif'
-                                                                                                }}
+                                                                                                className="bg-gradient-to-br from-[#8b5cf6] to-[#a78bfa] border-none text-white font-poppins"
                                                                                             >
                                                                                                 {item}
                                                                                             </Tag>
@@ -695,8 +563,8 @@ const ModelView = () => {
                                                                                 </Space>
                                                                             ) : (
                                                                                 // Primitive values
-                                                                                <span style={{ color: '#e2e8f0', fontFamily: 'Poppins, sans-serif' }}>
-                                                                                    {subValue?.toString() || <em style={{ color: '#94a3b8' }}>(empty)</em>}
+                                                                                <span className="text-slate-200 font-poppins">
+                                                                                    {subValue?.toString() || <em className="text-slate-400">(empty)</em>}
                                                                                 </span>
                                                                             )}
                                                                         </div>
@@ -706,8 +574,8 @@ const ModelView = () => {
                                                         </Collapse>
                                                     ) : (
                                                         // Handle primitives
-                                                        <span style={{ marginLeft: 10, color: '#e2e8f0', fontFamily: 'Poppins, sans-serif' }}>
-                                                            {value?.toString() || <em style={{ color: '#94a3b8' }}>(empty)</em>}
+                                                        <span className="ml-[10px] text-[#e2e8f0] font-poppins">
+                                                            {value?.toString() || <em className="text-slate-400">(empty)</em>}
                                                         </span>
                                                     )}
                                                 </div>
@@ -719,29 +587,20 @@ const ModelView = () => {
                                     <Card
                                         title={
                                             <>
-                                                <span style={{ color: '#e2e8f0', fontFamily: 'Poppins, sans-serif' }}>Model Metrics</span>{" "}
-                                                <span style={{ fontSize: "12px", color: "#94a3b8", fontStyle: "italic", fontFamily: 'Poppins, sans-serif' }}>
+                                                <span className="text-slate-200 font-poppins">Model Metrics</span>{" "}
+                                                <span className="text-xs text-[#94a3b8] italic font-poppins">
                                                     (Detail about how well the model make predictions)
                                                 </span>
                                             </>
                                         }
                                         className="border-0 backdrop-blur-sm"
-                                        style={{
-                                            background: 'linear-gradient(135deg, rgba(51, 65, 85, 0.3) 0%, rgba(15, 23, 42, 0.3) 100%)',
-                                            backdropFilter: 'blur(10px)',
-                                            border: '1px solid rgba(255, 255, 255, 0.1)',
-                                            borderRadius: '12px',
-                                            fontFamily: 'Poppins, sans-serif'
-                                        }}
+                                        className="backdrop-blur-[10px] border border-white/10 rounded-xl font-poppins" style={{ background: 'linear-gradient(135deg, rgba(51, 65, 85, 0.3) 0%, rgba(15, 23, 42, 0.3) 100%)' }}
                                     >
                                         <Table
                                             columns={columns}
                                             dataSource={metrics}
                                             pagination={false}
-                                            style={{
-                                                background: 'transparent',
-                                                fontFamily: 'Poppins, sans-serif'
-                                            }}
+                                            className="bg-transparent font-poppins"
                                             className="dark-table"
                                         />
                                     </Card>

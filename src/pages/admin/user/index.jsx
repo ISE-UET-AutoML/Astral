@@ -298,7 +298,7 @@ const AdminUserDetail = () => {
 		return (
 			<div
 				className="min-h-screen flex items-center justify-center"
-				style={{ backgroundColor: '#01000A' }}
+				className="bg-[#01000A]"
 			>
 				<div className="text-center">
 					<p className="text-white text-xl">
@@ -350,15 +350,12 @@ const AdminUserDetail = () => {
 	return (
 		<div
 			className="min-h-screen"
-			style={{
-				backgroundColor: '#01000A',
-				fontFamily: 'Poppins, sans-serif',
-			}}
+			className="bg-[#01000A] font-poppins"
 		>
 			{/* Header */}
 			<div
 				className="border-b border-white/10"
-				style={{ background: 'rgba(255,255,255,0.02)' }}
+				className="bg-white/[0.02]"
 			>
 				<div className="max-w-7xl mx-auto px-6 py-4">
 					<div className="flex items-center justify-between">
@@ -390,7 +387,7 @@ const AdminUserDetail = () => {
 				{/* User Info Card */}
 				<div
 					className="backdrop-blur-xl rounded-2xl p-8 border border-white/10 mb-8"
-					style={{ background: 'rgba(255,255,255,0.04)' }}
+					className="bg-white/[0.04]"
 				>
 					<div className="flex items-start gap-6">
 						<div className="bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl p-6 flex items-center justify-center">
@@ -447,9 +444,7 @@ const AdminUserDetail = () => {
 								<div
 									key={index}
 									className="backdrop-blur-xl rounded-2xl p-6 border border-white/10"
-									style={{
-										background: 'rgba(255,255,255,0.04)',
-									}}
+									className="bg-white/[0.04]"
 								>
 									<div className="flex items-center justify-between mb-4">
 										<div
@@ -477,7 +472,7 @@ const AdminUserDetail = () => {
 					{/* Most Active Task Types */}
 					<div
 						className="backdrop-blur-xl rounded-2xl p-8 border border-white/10"
-						style={{ background: 'rgba(255,255,255,0.04)' }}
+						className="bg-white/[0.04]"
 					>
 						<h3 className="text-white text-lg font-semibold mb-6">
 							Top Task Types
@@ -517,7 +512,7 @@ const AdminUserDetail = () => {
 					{/* Most Active Data Types */}
 					<div
 						className="backdrop-blur-xl rounded-2xl p-8 border border-white/10"
-						style={{ background: 'rgba(255,255,255,0.04)' }}
+						className="bg-white/[0.04]"
 					>
 						<h3 className="text-white text-lg font-semibold mb-6">
 							Top Data Types

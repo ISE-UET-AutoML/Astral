@@ -3,7 +3,7 @@ import React from 'react'
 export default function LoginCard({ handleLogin }) {
     return (
         <div className="w-full">
-            <div className="backdrop-blur-xl rounded-2xl p-8 border border-white/10" style={{ background: 'rgba(255,255,255,0.06)', boxShadow: '0 10px 40px rgba(0,0,0,0.4)' }}>
+            <div className="backdrop-blur-xl rounded-2xl p-8 border border-white/10" className="bg-white/[0.06] shadow-[0_10px_40px_rgba(0,0,0,0.4)]">
                 <div className="text-center">
                     <img
                         src="/PrimaryLogo.svg"
@@ -39,10 +39,7 @@ export default function LoginCard({ handleLogin }) {
                     </div>
                     <button
                         className="w-full px-4 py-2 text-white text-lg font-semibold rounded-2xl duration-200"
-                        style={{
-                            background: 'linear-gradient(135deg,rgb(37, 88, 255) 0%,rgb(64, 255, 128) 100%)',
-                            boxShadow: '0 6px 24px rgba(92,141,255,0.35)'
-                        }}
+                        className="shadow-[0_6px_24px_rgba(92,141,255,0.35)]" style={{ background: 'linear-gradient(135deg,rgb(37, 88, 255) 0%,rgb(64, 255, 128) 100%)' }}
                     >
                         Login
                     </button>
@@ -52,7 +49,7 @@ export default function LoginCard({ handleLogin }) {
                     <a
                         href="/signup"
                         className="font-medium"
-                        style={{ color: '#5C8DFF' }}
+                        className="text-[#5C8DFF]"
                     >
                         Sign up
                     </a>

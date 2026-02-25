@@ -80,10 +80,10 @@ export default function Pager({ currentPage = 1, totalItems = 0, pageSize = 10, 
         <div className="w-full flex items-center justify-center gap-4">
             <div className="flex items-center gap-3">
                 <Button ariaLabel="First page" disabled={!canPrev} onClick={() => goTo(1)}>
-                    <span aria-hidden style={{ fontSize: 16 }}>«</span>
+                    <span aria-hidden className="text-base">«</span>
                 </Button>
                 <Button ariaLabel="Previous page" disabled={!canPrev} onClick={() => goTo(currentPage - 1)}>
-                    <span aria-hidden style={{ fontSize: 18 }}>‹</span>
+                    <span aria-hidden className="text-lg">‹</span>
                 </Button>
             </div>
             <div
@@ -100,10 +100,10 @@ export default function Pager({ currentPage = 1, totalItems = 0, pageSize = 10, 
             </div>
             <div className="flex items-center gap-3">
                 <Button ariaLabel="Next page" disabled={!canNext} onClick={() => goTo(currentPage + 1)}>
-                    <span aria-hidden style={{ fontSize: 18 }}>›</span>
+                    <span aria-hidden className="text-lg">›</span>
                 </Button>
                 <Button ariaLabel="Last page" disabled={!canNext} onClick={() => goTo(totalPages)}>
-                    <span aria-hidden style={{ fontSize: 16 }}>»</span>
+                    <span aria-hidden className="text-base">»</span>
                 </Button>
             </div>
         </div>

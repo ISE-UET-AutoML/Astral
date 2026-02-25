@@ -157,15 +157,12 @@ const AdminDashboard = () => {
 	return (
 		<div
 			className="min-h-screen"
-			style={{
-				backgroundColor: '#01000A',
-				fontFamily: 'Poppins, sans-serif',
-			}}
+			className="bg-[#01000A] font-poppins"
 		>
 			{/* Header */}
 			<div
 				className="border-b border-white/10"
-				style={{ background: 'rgba(255,255,255,0.02)' }}
+				className="bg-white/[0.02]"
 			>
 				<div className="max-w-7xl mx-auto px-6 py-4">
 					<div className="flex items-center justify-between">
@@ -214,9 +211,7 @@ const AdminDashboard = () => {
 								<div
 									key={index}
 									className="backdrop-blur-xl rounded-2xl p-6 border border-white/10 hover:border-white/20 transition-all duration-200"
-									style={{
-										background: 'rgba(255,255,255,0.04)',
-									}}
+									className="bg-white/[0.04]"
 								>
 									<div className="flex items-start justify-between">
 										<div className="flex-1">
@@ -249,7 +244,7 @@ const AdminDashboard = () => {
 					</h2>
 					<div
 						className="backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden"
-						style={{ background: 'rgba(255,255,255,0.04)' }}
+						className="bg-white/[0.04]"
 					>
 						{error && (
 							<div className="px-6 py-4 bg-red-500/10 border-b border-red-500/20 text-red-400 text-sm">
@@ -274,10 +269,7 @@ const AdminDashboard = () => {
 									<thead>
 										<tr
 											className="border-b border-white/10"
-											style={{
-												background:
-													'rgba(255,255,255,0.02)',
-											}}
+											className="bg-white/[0.02]"
 										>
 											<th className="text-left text-white/80 text-sm font-semibold px-6 py-4">
 												Full Name

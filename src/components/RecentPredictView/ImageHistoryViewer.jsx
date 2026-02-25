@@ -25,85 +25,50 @@ const ImageHistoryViewer = ({ data }) => {
     const confidenceStatus = getConfidenceStatus(confidence);
 
     return (
-        <div style={{ 
-            padding: '12px',
-            display: 'flex',
-            flexDirection: 'column',
-            // Bỏ height cố định để component tự co giãn theo nội dung
-        }}>
+        <div className="p-3 flex flex-col">
             {/* Navigation */}
-            <div style={{ 
-                display: 'flex', 
-                justifyContent: 'space-between', 
-                alignItems: 'center', 
-                marginBottom: '12px',
-                padding: '8px 12px',
-                background: 'linear-gradient(135deg, #f0f2f5 0%, #e6f7ff 100%)',
-                borderRadius: '8px',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-                flexShrink: 0
-            }}>
+            <div className="flex justify-between items-center mb-3 px-3 py-2 rounded-lg shadow-sm shrink-0 bg-gradient-to-br from-[#f0f2f5] to-[#e6f7ff]">
                 <Button 
                     icon={<LeftOutlined />} 
                     onClick={() => setCurrentIndex(p => p - 1)} 
                     disabled={currentIndex === 0}
                     type="primary"
                     size="small"
-                    style={{ borderRadius: '6px', fontSize: '13px' }}
+                    className="!rounded-md !text-[13px]"
                 >
                     Prev
                 </Button>
-                <Title level={5} style={{ margin: 0, fontSize: '14px' }}>
-                    <span style={{ color: '#1890ff' }}>{currentIndex + 1}</span> / {data.length}
+                <Title level={5} className="!m-0 !text-[14px]">
+                    <span className="text-[#1890ff]">{currentIndex + 1}</span> / {data.length}
                 </Title>
                 <Button 
                     type="primary"
                     size="small"
                     onClick={() => setCurrentIndex(p => p + 1)} 
                     disabled={currentIndex === data.length - 1}
-                    style={{ borderRadius: '6px', fontSize: '13px' }}
+                    className="!rounded-md !text-[13px]"
                 >
                     Next <RightOutlined />
                 </Button>
             </div>
 
             {/* Main Content - Bỏ cuộn */}
-            <div style={{ marginBottom: '12px' }}>
+            <div className="mb-3">
                 <Row gutter={[12, 12]}>
                     {/* Image Display */}
                     <Col xs={24} md={14}>
                         <Card 
-                            title={<span style={{ fontSize: '13px', fontWeight: '500' }}>Original Image</span>}
+                            title={<span className="text-[13px] font-medium">Original Image</span>}
                             bordered={false}
                             bodyStyle={{ padding: '10px' }}
                             headStyle={{ minHeight: '38px', padding: '0 12px' }}
-                            style={{ 
-                                borderRadius: '8px',
-                                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                                height: '100%'
-                            }}
+                            className="!rounded-lg shadow-md h-full"
                         >
-                            <div style={{ 
-                                position: 'relative',
-                                borderRadius: '6px',
-                                overflow: 'hidden',
-                                background: '#f5f5f5',
-                                // Thêm chiều cao cố định cho khung chứa ảnh
-                                height: '280px', 
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center'
-                            }}>
+                            <div className="relative rounded-md overflow-hidden bg-gray-100 h-[280px] flex items-center justify-center">
                                 <img
                                     src={currentPrediction.imageUrl}
                                     alt={`Prediction ${currentPrediction.key}`}
-                                    style={{ 
-                                        width: '100%', 
-                                        display: 'block',
-                                        // CỐ ĐỊNH CHIỀU CAO ẢNH
-                                        height: '280px', 
-                                        objectFit: 'contain'
-                                    }}
+                                    className="w-full block h-[280px] object-contain"
                                 />
                             </div>
                         </Card>
@@ -111,28 +76,20 @@ const ImageHistoryViewer = ({ data }) => {
 
                     {/* Prediction Results */}
                     <Col xs={24} md={10}>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', height: '100%' }}>
+                        <div className="flex flex-col gap-3 h-full">
                             {/* Predicted Class Card */}
                             <Card 
                                 bordered={false}
                                 bodyStyle={{ padding: '12px' }}
-                                style={{ 
-                                    borderRadius: '8px',
-                                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                                }}
+                                className="!rounded-lg shadow-md"
                             >
-                                <Text type="secondary" style={{ fontSize: '13px', display: 'block', marginBottom: '6px' }}>
+                                <Text type="secondary" className="!text-[13px] block !mb-1.5">
                                     Predicted Class
                                 </Text>
-                                <Title level={3} style={{ margin: '0' }}>
+                                <Title level={3} className="!m-0">
                                     <Tag 
                                         color="blue" 
-                                        style={{ 
-                                            fontSize: '18px', 
-                                            padding: '6px 16px',
-                                            borderRadius: '6px',
-                                            fontWeight: 'bold'
-                                        }}
+                                        className="!text-lg !px-4 !py-1.5 !rounded-md !font-bold"
                                     >
                                         {currentPrediction.class?.toUpperCase()}
                                     </Tag>
@@ -143,41 +100,21 @@ const ImageHistoryViewer = ({ data }) => {
                             <Card 
                                 bordered={false}
                                 bodyStyle={{ padding: '12px' }}
-                                style={{ 
-                                    borderRadius: '8px',
-                                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                                    background: 'white',
-                                    flex: 1 // Giúp card này giãn ra để lấp đầy không gian
-                                }}
+                                className="!rounded-lg shadow-md bg-white flex-1"
                             >
                                 <div>
-                                    <Text type="secondary" style={{ fontSize: '13px', display: 'block', marginBottom: '8px' }}>
+                                    <Text type="secondary" className="!text-[13px] block !mb-2">
                                         Confidence Score
                                     </Text>
                                     
-                                    <div style={{ 
-                                        display: 'flex', 
-                                        alignItems: 'center',
-                                        justifyContent: 'space-between',
-                                        marginBottom: '12px'
-                                    }}>
-                                        <Title level={2} style={{ 
-                                            margin: 0, 
-                                            color: confidenceStatus.color,
-                                            fontSize: '36px',
-                                            fontWeight: 'bold'
-                                        }}>
+                                    <div className="flex items-center justify-between mb-3">
+                                        <Title level={2} className="!m-0 !text-4xl !font-bold" style={{ color: confidenceStatus.color }}>
                                             {confidencePercent}%
                                         </Title>
                                         <Tag 
                                             icon={confidenceStatus.icon}
                                             color={confidenceStatus.color}
-                                            style={{ 
-                                                fontSize: '14px',
-                                                padding: '6px 12px',
-                                                borderRadius: '6px',
-                                                fontWeight: 'bold'
-                                            }}
+                                            className="!text-sm !px-3 !py-1.5 !rounded-md !font-bold"
                                         >
                                             {confidenceStatus.status}
                                         </Tag>
@@ -192,16 +129,10 @@ const ImageHistoryViewer = ({ data }) => {
                                         trailColor="#f0f0f0"
                                         strokeWidth={10}
                                         showInfo={false}
-                                        style={{ marginBottom: '10px' }}
+                                        className="!mb-2.5"
                                     />
 
-                                    <div style={{ 
-                                        display: 'flex', 
-                                        justifyContent: 'space-between',
-                                        fontSize: '11px',
-                                        color: '#8c8c8c',
-                                        marginBottom: '10px'
-                                    }}>
+                                    <div className="flex justify-between text-[11px] text-[#8c8c8c] mb-2.5">
                                         <span>Low</span>
                                         <span>Medium</span>
                                         <span>High</span>
@@ -213,7 +144,7 @@ const ImageHistoryViewer = ({ data }) => {
                                         borderRadius: '6px',
                                         borderLeft: `3px solid ${confidenceStatus.color}`
                                     }}>
-                                        <Text style={{ fontSize: '12px', color: '#595959' }}>
+                                        <Text className="!text-xs !text-[#595959]">
                                             {confidence >= 0.9 && "Highly confident prediction"}
                                             {confidence >= 0.75 && confidence < 0.9 && "Good confidence level"}
                                             {confidence >= 0.6 && confidence < 0.75 && "Moderate confidence"}
@@ -228,30 +159,19 @@ const ImageHistoryViewer = ({ data }) => {
             </div>
 
             {/* Thumbnail Gallery - Cho phép xuống dòng */}
-            <div style={{ flexShrink: 0 }}>
+            <div className="shrink-0">
                 <Card 
                     title={
-                        <span style={{ fontSize: '11px', fontWeight: 'bold' }}>
+                        <span className="text-[11px] font-bold">
                             Gallery ({data.length})
                         </span>
                     }
                     bordered={false}
                     bodyStyle={{ padding: '5px' }}
                     headStyle={{ minHeight: '28px', padding: '0 8px' }}
-                    style={{ 
-                        borderRadius: '6px',
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                    }}
+                    className="!rounded-md shadow-md"
                 >
-                    <div 
-                        style={{ 
-                            display: 'flex', 
-                            gap: '5px', 
-                            // CHO PHÉP XUỐNG DÒNG
-                            flexWrap: 'wrap', 
-                            padding: '2px 0',
-                        }}
-                    >
+                    <div className="flex gap-[5px] flex-wrap py-0.5">
                         {data.map((pred, index) => {
                             const thumbConfidence = pred.confidence || 0;
                             const thumbStatus = getConfidenceStatus(thumbConfidence);
@@ -261,12 +181,7 @@ const ImageHistoryViewer = ({ data }) => {
                                 <div 
                                     key={index} 
                                     onClick={() => setCurrentIndex(index)} 
-                                    style={{ 
-                                        cursor: 'pointer',
-                                        position: 'relative',
-                                        flexShrink: 0,
-                                        transition: 'all 0.3s ease'
-                                    }}
+                                    className="cursor-pointer relative shrink-0 transition-all duration-300"
                                 >
                                     <div style={{
                                         width: '55px',
@@ -281,11 +196,7 @@ const ImageHistoryViewer = ({ data }) => {
                                         <img
                                             src={pred.imageUrl}
                                             alt={`Thumbnail ${pred.key}`}
-                                            style={{
-                                                width: '100%',
-                                                height: '100%',
-                                                objectFit: 'cover'
-                                            }}
+                                            className="w-full h-full object-cover"
                                         />
                                     </div>
                                     <div style={{

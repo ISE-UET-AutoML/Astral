@@ -152,7 +152,7 @@ const DatasetSelectionModal = ({
                     </Button>,
                 ]}
                 width={800}
-                style={{ zIndex: 1000 }}
+                className="z-[1000]"
                 className="theme-dataset-modal"
                 styles={{
                     content: {

@@ -383,7 +383,7 @@ const LunarNewYearTheme = () => {
 						aria-label="Close Lunar New Year theme"
 					>
 						<CloseOutlined
-							style={{ fontSize: '16px', color: '#fef08a' }}
+							className="text-base text-[#fef08a]"
 						/>
 					</button>
 				</div>

@@ -58,7 +58,7 @@ const Steps = ({ current = 0, items = [], className, direction = 'horizontal' })
                             )}
                             {/* Vertical connector */}
                             {!isHorizontal && !isLast && (
-                                <div className={cn('w-0.5 flex-1 mt-1 rounded', isDone ? 'bg-blue-500' : 'bg-white/10')} style={{ minHeight: 24 }} />
+                                <div className={cn('w-0.5 flex-1 mt-1 rounded min-h-6', isDone ? 'bg-blue-500' : 'bg-white/10')} />
                             )}
                         </div>
                         {/* Label */}

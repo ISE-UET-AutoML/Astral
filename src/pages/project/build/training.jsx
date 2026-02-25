@@ -122,14 +122,11 @@ const EnhancedLineGraph = ({ valMetric, data, loading, maxTrainingTime }) => {
 			<div className="flex justify-center items-center h-64 w-full border border-dashed border-slate-600/50 rounded-lg bg-slate-800/20">
 				<Space direction="vertical" align="center">
 					<LineChartOutlined
-						style={{ fontSize: 48, color: '#64748b' }}
+						className="text-5xl text-[#64748b]"
 					/>
 					<Text
 						type="secondary"
-						style={{
-							color: '#94a3b8',
-							fontFamily: 'Poppins, sans-serif',
-						}}
+						className="text-[#94a3b8] font-poppins"
 					>
 						Waiting for training data...
 					</Text>
@@ -276,19 +273,12 @@ const TrainingInfoCard = ({
 						fontFamily: 'Poppins, sans-serif',
 					}}
 				>
-					<DashboardOutlined style={{ color: '#60a5fa' }} />{' '}
+					<DashboardOutlined className="text-[#60a5fa]" />{' '}
 					Experiment Information:{' '}
 					<Tag
 						color="blue"
 						icon={<ExperimentOutlined />}
-						style={{
-							background:
-								'linear-gradient(135deg, #3b82f6, #22d3ee)',
-							border: 'none',
-							color: 'white',
-							fontFamily: 'Poppins, sans-serif',
-							marginLeft: '10px',
-						}}
+						className="bg-gradient-to-br from-[#3b82f6] to-[#22d3ee] border-none text-white font-poppins ml-[10px]"
 					>
 						{experimentName}
 					</Tag>
@@ -303,7 +293,7 @@ const TrainingInfoCard = ({
 				fontFamily: 'Poppins, sans-serif',
 			}}
 		>
-			<Space direction="vertical" size="middle" style={{ width: '100%' }}>
+			<Space direction="vertical" size="middle" className="w-full">
 				<Row>
 					<div className="w-[28%]">
 						<TrainingMetricCard
@@ -401,7 +391,7 @@ const Training = () => {
 				</span>
 			),
 			description: (
-				<span style={{ color: '#94a3b8' }}>
+				<span className="text-slate-400">
 					Set up a clean Python virtual environment to isolate project
 					dependencies and prevent conflicts.
 				</span>
@@ -414,7 +404,7 @@ const Training = () => {
 				</span>
 			),
 			description: (
-				<span style={{ color: '#94a3b8' }}>
+				<span className="text-slate-400">
 					Update system packages and apply the latest patches to
 					ensure compatibility and security.
 				</span>
@@ -425,7 +415,7 @@ const Training = () => {
 				<span style={{ color: 'var(--text)' }}>Installing Tools</span>
 			),
 			description: (
-				<span style={{ color: '#94a3b8' }}>
+				<span className="text-slate-400">
 					Install essential development tools such as compilers,
 					package managers, and utilities.
 				</span>
@@ -438,7 +428,7 @@ const Training = () => {
 				</span>
 			),
 			description: (
-				<span style={{ color: '#94a3b8' }}>
+				<span className="text-slate-400">
 					Download and configure required libraries and frameworks
 					from the requirements list.
 				</span>
@@ -451,7 +441,7 @@ const Training = () => {
 				</span>
 			),
 			description: (
-				<span style={{ color: '#94a3b8' }}>
+				<span className="text-slate-400">
 					Uninstall or adjust conflicting packages to ensure smooth
 					execution of the environment.
 				</span>
@@ -647,7 +637,7 @@ const Training = () => {
 						<Space
 							direction="vertical"
 							size="large"
-							style={{ width: '100%' }}
+							className="w-full"
 						>
 							<Steps
 								current={currentStep}
@@ -667,7 +657,7 @@ const Training = () => {
 												<LoadingOutlined />
 											),
 										description: (
-											<span style={{ color: '#94a3b8' }}>
+											<span className="text-slate-400">
 												Selecting suitable machine for
 												you
 											</span>
@@ -688,7 +678,7 @@ const Training = () => {
 												<LoadingOutlined />
 											),
 										description: (
-											<span style={{ color: '#94a3b8' }}>
+											<span className="text-slate-400">
 												Setting up your machine
 											</span>
 										),
@@ -708,7 +698,7 @@ const Training = () => {
 												<LoadingOutlined />
 											),
 										description: (
-											<span style={{ color: '#94a3b8' }}>
+											<span className="text-slate-400">
 												Fetching data from cloud storage
 											</span>
 										),
@@ -727,13 +717,13 @@ const Training = () => {
 											) : maxTrainingTime &&
 											  elapsedTime >= maxTrainingTime ? (
 												<CloseCircleOutlined
-													style={{ color: '#ef4444' }}
+													className="text-red-500"
 												/>
 											) : (
 												<LoadingOutlined />
 											),
 										description: (
-											<span style={{ color: '#94a3b8' }}>
+											<span className="text-slate-400">
 												Preparing your model
 											</span>
 										),
@@ -748,7 +738,7 @@ const Training = () => {
 										),
 										icon: <CheckCircleOutlined />,
 										description: (
-											<span style={{ color: '#94a3b8' }}>
+											<span className="text-slate-400">
 												Finished training your model
 											</span>
 										),
@@ -760,11 +750,7 @@ const Training = () => {
 								<div className="text-center py-8">
 									<div className="mb-4">
 										<CheckCircleOutlined
-											style={{
-												fontSize: '64px',
-												color: '#10b981',
-												marginBottom: '16px',
-											}}
+											className="text-[64px] text-[#10b981] mb-4"
 										/>
 									</div>
 									<Title
@@ -778,12 +764,7 @@ const Training = () => {
 										Training Completed Successfully!
 									</Title>
 									<Paragraph
-										style={{
-											color: '#94a3b8',
-											fontFamily: 'Poppins, sans-serif',
-											marginBottom: '24px',
-											fontSize: '16px',
-										}}
+										className="text-[#94a3b8] font-poppins mb-6 text-base"
 									>
 										Your model has been trained and is ready
 										for use. Click below to view the results
@@ -793,20 +774,7 @@ const Training = () => {
 										type="primary"
 										size="large"
 										onClick={handleViewResults}
-										style={{
-											background:
-												'linear-gradient(135deg, #3b82f6, #22d3ee)',
-											border: 'none',
-											borderRadius: '12px',
-											padding: '12px 32px',
-											height: 'auto',
-											fontSize: '18px',
-											fontWeight: '600',
-											fontFamily: 'Poppins, sans-serif',
-											boxShadow:
-												'0 8px 32px rgba(59, 130, 246, 0.3)',
-											transition: 'all 0.3s ease',
-										}}
+										className="bg-gradient-to-br from-[#3b82f6] to-[#22d3ee] border-none rounded-xl px-8 py-3 h-auto text-lg font-semibold font-poppins shadow-[0_8px_32px_rgba(59,130,246,0.3)] transition-all duration-300"
 										className="hover:shadow-2xl hover:scale-105"
 									>
 										<CheckCircleOutlined className="mr-2" />
@@ -948,14 +916,7 @@ const Training = () => {
 											<Tag
 												color="orange"
 												icon={<HourglassOutlined />}
-												style={{
-													background:
-														'linear-gradient(135deg, #f59e0b, #f97316)',
-													border: 'none',
-													color: 'white',
-													fontFamily:
-														'Poppins, sans-serif',
-												}}
+												className="bg-gradient-to-br from-[#f59e0b] to-[#f97316] border-none text-white font-poppins"
 											>
 												Time Limit:{' '}
 												{maxTrainingTime.toFixed(2)} min
@@ -972,9 +933,7 @@ const Training = () => {
 										maxTrainingTime={maxTrainingTime}
 									/>
 									<div
-										style={{
-											margin: '20px 0',
-										}}
+										className="my-5"
 									>
 										<TrainingInfoCard
 											valMetric={valMetric}
@@ -996,17 +955,11 @@ const Training = () => {
 										description={
 											<div>
 												<Paragraph
-													style={{
-														margin: 0,
-														fontFamily:
-															'Poppins, sans-serif',
-													}}
+													className="!m-0 font-poppins"
 												>
 													<RadarChartOutlined
 														className="mr-2"
-														style={{
-															color: '#60a5fa',
-														}}
+														className="text-[#60a5fa]"
 													/>
 													<Text
 														strong
@@ -1031,18 +984,12 @@ const Training = () => {
 
 												{maxTrainingTime && (
 													<Paragraph
-														style={{
-															margin: '12px 0 0 0',
-															fontFamily:
-																'Poppins, sans-serif',
-														}}
+														className="mt-3 font-poppins"
 													>
 														<Tooltip title="Time constraints can affect model performance">
 															<HourglassOutlined
 																className="mr-2"
-																style={{
-																	color: '#f59e0b',
-																}}
+																className="text-[#f59e0b]"
 															/>
 															<Text
 																strong
@@ -1084,13 +1031,7 @@ const Training = () => {
 											</div>
 										}
 										type="info"
-										style={{
-											background:
-												'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(34, 211, 238, 0.1))',
-											border: '1px solid rgba(59, 130, 246, 0.3)',
-											borderRadius: '12px',
-											fontFamily: 'Poppins, sans-serif',
-										}}
+										className="border border-[rgba(59,130,246,0.3)] rounded-xl font-poppins" style={{ background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(34, 211, 238, 0.1))' }}
 									/>
 								</Card>
 							)}

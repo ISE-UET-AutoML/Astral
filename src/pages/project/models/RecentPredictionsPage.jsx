@@ -470,7 +470,7 @@ export default function RecentPredictionsPage() {
                         open={isModalVisible}
                         onCancel={handleCloseModal}
                         width="90%"
-                        style={{ top: 20 }}
+                        className="top-5"
                         footer={[
                             !projectInfo.task_type.includes('IMAGE') && (
                                 <Button
@@ -503,7 +503,7 @@ export default function RecentPredictionsPage() {
                         ]}
                     >
                         {isJsonLoading ? (
-                            <div style={{ textAlign: 'center', padding: '50px' }}>
+                            <div className="text-center p-[50px]">
                                 <Spin size="large" />
                             </div>
                         ) : (

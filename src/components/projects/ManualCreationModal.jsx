@@ -396,32 +396,18 @@ const ManualCreationModal = ({
 		>
 			{/* Two-column overall layout: left = fields + task list, right = task details */}
 			<div
-				style={{
-					display: 'grid',
-					gridTemplateColumns: '1.1fr 0.9fr',
-					gap: 20,
-					alignItems: 'stretch',
-					height: 'calc(85vh - 180px)',
-					overflow: 'hidden' /* Prevent overall overflow */,
-				}}
+				className="grid grid-cols-2 gap-5"
 			>
 				{/* Left column */}
 				<div
-					style={{
-						borderRight: '2px solid #0ea5e9',
-						paddingRight: '12px',
-						display: 'flex',
-						flexDirection: 'column',
-						overflow:
-							'hidden' /* Prevent overflow in left column */,
-					}}
+					className="border-r-2 border-[#0ea5e9] pr-3 flex"
 				>
 					<Row gutter={[24, 24]}>
 						<Col span={24}>
 							<Form.Item
 								label="Project Name"
 								name="name"
-								style={{ marginBottom: 16 }}
+								className="!mb-4"
 								validateTrigger={['onChange', 'onBlur']}
 								rules={[
 									{
@@ -503,13 +489,7 @@ const ManualCreationModal = ({
 							}}
 						>
 							<div
-								style={{
-									display: 'grid',
-									gridTemplateColumns:
-										'repeat(3, minmax(0, 1fr))',
-									gap: '12px',
-									paddingTop: '12px',
-								}}
+								className="grid grid-cols-3"
 							>
 								{taskCards.map((task, idx) => {
 									const projTypeIndex = projType.findIndex(
@@ -561,22 +541,14 @@ const ManualCreationModal = ({
 											}}
 										>
 											<div
-												style={{
-													display: 'flex',
-													alignItems: 'flex-start',
-													gap: '12px',
-												}}
+												className="flex items-start gap-3"
 											>
 												<div
-													style={{
-														fontSize: '24px',
-														lineHeight: 1,
-														marginTop: '2px',
-													}}
+													className="text-2xl leading-none mt-[2px]"
 												>
 													{task.icon}
 												</div>
-												<div style={{ flex: 1 }}>
+												<div className="flex-1">
 													<Title
 														level={5}
 														style={{
@@ -630,28 +602,15 @@ const ManualCreationModal = ({
 				{/* Right column - task details */}
 				<div
 					className="task-details-column"
-					style={{
-						padding: '0 20px 20px 20px',
-						overflowY: 'auto',
-						display: 'flex',
-						flexDirection: 'column',
-						minHeight: 0 /* Quan trọng để scroll hoạt động */,
-					}}
+					className="px-5 pb-5 overflow-y-auto flex flex-col"
 				>
 					{displayTask ? (
 						<div
 							className="task-details"
-							style={{
-								width: '100%',
-								minWidth: '300px',
-								maxWidth: '100%',
-							}}
+							className="w-full min-w-[300px] max-w-full"
 						>
 							<div
-								style={{
-									textAlign: 'center',
-									marginBottom: '24px',
-								}}
+								className="text-center mb-6"
 							>
 								<Title
 									level={3}
@@ -690,11 +649,7 @@ const ManualCreationModal = ({
 								<img
 									src={displayTask.image}
 									alt={displayTask.title}
-									style={{
-										width: '100%',
-										height: '100%',
-										objectFit: 'cover',
-									}}
+									className="w-full h-full object-cover"
 								/>
 							</div>
 
@@ -747,7 +702,7 @@ const ManualCreationModal = ({
 									>
 										Example
 									</Title>
-									<div style={{ marginBottom: '12px' }}>
+									<div className="mb-3">
 										<Text
 											style={{
 												color: 'var(--secondary-text)',
@@ -806,7 +761,7 @@ const ManualCreationModal = ({
 										</Text>
 									</div>
 									{displayTask.example_explain && (
-										<div style={{ marginTop: '12px' }}>
+										<div className="mt-3">
 											<Text
 												style={{
 													color: 'var(--secondary-text)',
@@ -868,11 +823,7 @@ const ManualCreationModal = ({
 							}}
 						>
 							<div
-								style={{
-									fontSize: '48px',
-									marginBottom: '16px',
-									opacity: 0.5,
-								}}
+								className="text-[48px] mb-4 opacity-50"
 							>
 								🎯
 							</div>
@@ -904,17 +855,11 @@ const ManualCreationModal = ({
 			{/* Submit - fixed at bottom */}
 			<Row
 				justify="end"
-				style={{
-					marginTop: 'auto',
-					position: 'sticky',
-					bottom: 0,
-					background: 'transparent',
-					zIndex: 10,
-				}}
+				className="mt-auto sticky bottom-0 bg-transparent z-[1]"
 			>
 				<Button
 					onClick={onCancel}
-					style={{ marginRight: 8, marginTop: 5 }}
+					className="mr-2 mt-[5px]"
 				>
 					Cancel
 				</Button>
@@ -922,7 +867,7 @@ const ManualCreationModal = ({
 					type="primary"
 					htmlType="submit"
 					disabled={selectedIndex === -1}
-					style={{ marginTop: 5 }}
+					className="mt-[5px]"
 				>
 					Create Project
 				</Button>

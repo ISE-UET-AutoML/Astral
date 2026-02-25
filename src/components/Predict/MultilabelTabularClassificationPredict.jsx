@@ -1025,7 +1025,7 @@ const MultilabelTabularClassificationPredict = ({
 								type="file"
 								ref={fileInputRef}
 								onChange={handleChange}
-								style={{ display: 'none' }}
+								className="hidden"
 								accept=".csv"
 							/>
 						</div>

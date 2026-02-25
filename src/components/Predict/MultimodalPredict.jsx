@@ -119,7 +119,7 @@ const MultimodalPredict = ({ predictResult, uploadedFiles, projectInfo }) => {
 					key={index}
 					count={
 						incorrectPredictions.includes(index) ? (
-							<CloseCircleOutlined style={{ color: '#f5222d' }} />
+							<CloseCircleOutlined className="text-red-500" />
 						) : null
 					}
 				>
@@ -147,11 +147,7 @@ const MultimodalPredict = ({ predictResult, uploadedFiles, projectInfo }) => {
 				>
 					<Space
 						size="large"
-						style={{
-							display: 'flex',
-							justifyContent: 'space-between',
-							alignItems: 'center',
-						}}
+						className="flex justify-between items-center"
 					>
 						<Statistic
 							title="Total Predictions"
@@ -163,7 +159,7 @@ const MultimodalPredict = ({ predictResult, uploadedFiles, projectInfo }) => {
 							value={statistics.correct}
 							prefix={
 								<CheckCircleOutlined
-									style={{ color: '#52c41a' }}
+									className="text-green-500"
 								/>
 							}
 						/>
@@ -172,7 +168,7 @@ const MultimodalPredict = ({ predictResult, uploadedFiles, projectInfo }) => {
 							value={statistics.incorrect}
 							prefix={
 								<CloseCircleOutlined
-									style={{ color: '#f5222d' }}
+									className="text-red-500"
 								/>
 							}
 						/>

@@ -6,7 +6,7 @@ import robotImage from 'src/assets/images/Robot_with_light.png'
 
 const HeroSection = () => {
 	return (
-		<section className="text-gray-600 body-font relative" style={{ zIndex: 20 }}>
+		<section className="text-gray-600 body-font relative" className="z-[20]">
 			<ContentContainer className="pt-64 pb-24">
 				<div className="relative">
 					{/* Left side: Content */}
@@ -14,7 +14,7 @@ const HeroSection = () => {
 						<h1 className="text-left text-7xl lh-6 ld-04 text-white mb-6">
 							<div 
 								className="font-bold"
-								style={{ fontFamily: 'Poppins, sans-serif' }}
+								className="font-poppins"
 							>
 								Build your model
 							</div>
@@ -35,7 +35,7 @@ const HeroSection = () => {
 						
 						<h2 
 							className="text-xl font-4 font-regular lh-6 ld-04 pb-11 text-white text-left"
-							style={{ fontFamily: 'Poppins, sans-serif' }}
+							className="font-poppins"
 						>
 							Launch powerful AI models in minutes with our automated platform. <br />
 							<span className="font-bold">No coding</span> — just faster results, lower costs, and smarter decisions.
@@ -69,7 +69,7 @@ const HeroSection = () => {
 								src={robotImage} 
 								alt="AI Robot" 
 								className="max-w-7xl h-auto object-contain"
-								style={{ maxHeight: '1000px' }}
+								className="max-h-[1000px]"
 							/>
 							
 							{/* Glowing Robot Eyes */}

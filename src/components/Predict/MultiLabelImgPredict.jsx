@@ -80,7 +80,7 @@ const MultiLabelImgPredict = ({
 					key={index}
 					count={
 						incorrectPredictions.includes(index) ? (
-							<CloseCircleOutlined style={{ color: '#f5222d' }} />
+							<CloseCircleOutlined className="text-red-500" />
 						) : null
 					}
 				>
@@ -250,12 +250,12 @@ const MultiLabelImgPredict = ({
 				<Space
 					direction="vertical"
 					size="middle"
-					style={{ width: '100%' }}
+					className="w-full"
 				>
 					<Image
 						src={explainImageUrl[currentIndex]}
 						alt="AI Explanation"
-						style={{ width: '100%' }}
+						className="w-full"
 					/>
 
 					<Divider>How to Interpret</Divider>
@@ -339,10 +339,7 @@ const MultiLabelImgPredict = ({
 														currentIndex
 													)
 												}
-												style={{
-													backgroundColor: '#E6F7FF',
-													color: '#0050B3',
-												}}
+												className="!bg-[#E6F7FF] !text-[#0050B3]"
 											>
 												{showExplanation[currentIndex]
 													? 'Show Original'
@@ -354,10 +351,7 @@ const MultiLabelImgPredict = ({
 							>
 								{loadingExplanation ? (
 									<div
-										style={{
-											padding: '40px 0',
-											textAlign: 'center',
-										}}
+										className="py-10 text-center"
 									>
 										<Spin tip="Generating explanation..." />
 									</div>
@@ -441,7 +435,7 @@ const MultiLabelImgPredict = ({
 												)
 											}
 											loading={loadingExplanation}
-											style={{ marginLeft: 'auto' }}
+											className="ml-auto"
 											disabled={
 												explainImageUrl[
 													currentIndex
@@ -459,7 +453,7 @@ const MultiLabelImgPredict = ({
 									<Card
 										title="How to Interpret Explanations"
 										size="small"
-										style={{ marginTop: '16px' }}
+										className="!mt-4"
 									>
 										<Space
 											direction="vertical"

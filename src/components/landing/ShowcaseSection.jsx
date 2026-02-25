@@ -49,13 +49,13 @@ const ShowcaseSection = () => {
 	]
 
 	return (
-		<section className="py-24 relative overflow-hidden" style={{ zIndex: 20 }}>
+		<section className="py-24 relative overflow-hidden" className="z-[20]">
 			<ContentContainer>
 				{/* Section Header */}
 				<div className="text-center mb-16">
 					<h2 
 						className="text-3xl font-bold text-white mb-4"
-						style={{ fontFamily: 'Poppins, sans-serif' }}
+						className="font-poppins"
 					>
 						Building an <span 
 							className="bg-gradient-to-r from-[#FFAF40] to-[#DE64BF] bg-clip-text text-transparent"
@@ -124,13 +124,13 @@ const ShowcaseSection = () => {
 									<div className="p-6">
 										<h3 
 											className="text-xl font-bold text-white mb-2 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-[#5C8DFF] group-hover:to-[#65FFA0] group-hover:bg-clip-text transition-all duration-300"
-											style={{ fontFamily: 'Poppins, sans-serif' }}
+											className="font-poppins"
 										>
 											{item.title}
 										</h3>
 										<p 
 											className="text-gray-300 text-sm"
-											style={{ fontFamily: 'Poppins, sans-serif' }}
+											className="font-poppins"
 										>
 											{item.description}
 										</p>
@@ -139,22 +139,14 @@ const ShowcaseSection = () => {
 									{/* Glow effect */}
 									<div 
 										className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-20 transition-opacity duration-500 pointer-events-none"
-										style={{
-											background: 'linear-gradient(45deg, #5C8DFF, #65FFA0)',
-											filter: 'blur(20px)',
-											transform: 'scale(1.1)'
-										}}
+										className="bg-gradient-to-tl from-[#5C8DFF] to-[#65FFA0] blur-[20px] scale-110"
 									/>
 								</div>
 
 								{/* Reflection effect */}
 								<div 
 									className="absolute top-full left-0 right-0 h-20 opacity-0 group-hover:opacity-30 transition-opacity duration-500 pointer-events-none"
-									style={{
-										background: 'linear-gradient(to bottom, rgba(255,255,255,0.1), transparent)',
-										transform: 'rotateX(180deg) translateY(-1px)',
-										maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1), transparent)'
-									}}
+									className="bg-gradient-to-b from-white/10 to-transparent" style={{ transform: 'rotateX(180deg) translateY(-1px)' }}
 								/>
 							</div>
 						))}
@@ -165,7 +157,7 @@ const ShowcaseSection = () => {
 				<div className="text-center mt-16">
 					<p 
 						className="text-gray-300 mb-6"
-						style={{ fontFamily: 'Poppins, sans-serif' }}
+						className="font-poppins"
 					>
 						Experience the power of automated machine learning
 					</p>

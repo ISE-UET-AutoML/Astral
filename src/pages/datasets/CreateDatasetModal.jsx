@@ -306,7 +306,7 @@ const CreateDatasetModal = ({ visible, onCancel, onCreate }) => {
                 }}
             >
                 {visible && (isLoading ? (
-                    <div style={{ textAlign: 'center', padding: '50px 0' }}>
+                    <div className="text-center py-[50px]">
                         <Spin size="large" />
                         <p style={{ color: 'var(--text)', fontFamily: 'Poppins, sans-serif', marginTop: '16px' }}>
                             Processing dataset, please wait...

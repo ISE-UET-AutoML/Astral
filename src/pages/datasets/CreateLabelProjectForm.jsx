@@ -413,7 +413,7 @@ export default function CreateLabelProjectForm({
 							showSearch
 							optionFilterProp="children"
 							maxTagCount="responsive"
-							style={{ width: '100%' }}
+							className="w-full"
 						>
 							{columnOptions.map((col) => (
 								<Option key={col.value} value={col.value}>
@@ -447,7 +447,7 @@ export default function CreateLabelProjectForm({
 								showSearch
 								optionFilterProp="children"
 								maxTagCount="responsive"
-								style={{ width: '100%' }}
+								className="w-full"
 							>
 								{columnOptions.map((col) => (
 									<Option key={col.value} value={col.value}>
@@ -518,11 +518,7 @@ export default function CreateLabelProjectForm({
 											label={col.value}
 										>
 											<div
-												style={{
-													display: 'flex',
-													justifyContent:
-														'space-between',
-												}}
+												className="flex justify-between"
 											>
 												<span>{col.value}</span>
 												<i
@@ -614,7 +610,7 @@ export default function CreateLabelProjectForm({
 
 				<Form.Item>
 					<Space
-						style={{ justifyContent: 'flex-end', width: '100%' }}
+						className="flex justify-end w-full"
 					>
 						<Button onClick={onBack}>Back</Button>
 						<Button

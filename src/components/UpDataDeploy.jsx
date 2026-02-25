@@ -368,7 +368,7 @@ const UpDataDeploy = ({
 							<div className="flex items-center py-1">
 								<FolderOutlined
 									className="mr-2"
-									style={{ color: '#f5a623' }}
+									className="text-amber-400"
 								/>
 								<span className="font-medium">{name}/</span>
 								<button
@@ -387,7 +387,7 @@ const UpDataDeploy = ({
 						<div className="flex items-center py-1">
 							<FileOutlined
 								className="mr-2"
-								style={{ color: '#4a90e2' }}
+								className="text-blue-500"
 							/>
 							<span
 								className="text-sm truncate max-w-xs"

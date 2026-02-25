@@ -72,7 +72,7 @@ const TeacherDayTheme = () => {
 						className="ml-2 p-1 hover:bg-white/20 rounded-full transition-colors pointer-events-auto"
 						aria-label="Close Teacher's Day theme"
 					>
-						<CloseOutlined style={{ fontSize: '16px' }} />
+						<CloseOutlined className="!text-base" />
 					</button>
 				</div>
 			</div>{' '}

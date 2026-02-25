@@ -112,7 +112,7 @@ const LandingNavbar = ({ scrolled, navbarOpen, setNavbarOpen }) => {
 									<a
 										href={item.href}
 										className="px-3 py-2 text-sm font-bold text-white opacity-80 hover:opacity-100 transition-all duration-200 relative"
-										style={{ fontFamily: 'Poppins, sans-serif' }}
+										className="font-poppins"
 									>
 										{item.name}
 										
@@ -130,7 +130,7 @@ const LandingNavbar = ({ scrolled, navbarOpen, setNavbarOpen }) => {
 									{item.dropdownItems && activeDropdown === item.name && (
 										<div 
 											className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-48 bg-gray-900 bg-opacity-95 backdrop-blur-sm rounded-lg shadow-xl border border-gray-700 overflow-hidden"
-											style={{ zIndex: 60 }}
+											className="z-[60]"
 											onMouseEnter={() => {
 												if (hideTimeout) {
 													clearTimeout(hideTimeout)
@@ -150,7 +150,7 @@ const LandingNavbar = ({ scrolled, navbarOpen, setNavbarOpen }) => {
 													className={`block px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-[#5C8DFF]/20 hover:to-[#65FFA0]/20 transition-all duration-200 ${
 														index !== item.dropdownItems.length - 1 ? 'border-b border-gray-700' : ''
 													}`}
-													style={{ fontFamily: 'Poppins, sans-serif' }}
+													className="font-poppins"
 												>
 													{dropdownItem.name}
 												</a>
@@ -167,9 +167,7 @@ const LandingNavbar = ({ scrolled, navbarOpen, setNavbarOpen }) => {
 						<a 
 							href="/login"
 							className="bg-gray-800 text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-gray-700 transition-colors duration-200"
-                            style={{
-                                fontFamily: 'Poppins, sans-serif'
-                            }}
+                            className="font-poppins"
 						>
 							Login
 						</a>

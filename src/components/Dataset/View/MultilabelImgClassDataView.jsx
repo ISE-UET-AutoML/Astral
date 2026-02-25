@@ -155,36 +155,24 @@ const MultilabelImgClassDataView = ({ dataset, files }) => {
 				md={8}
 				lg={6}
 				key={index}
-				style={{ marginBottom: 16 }}
+				className="!mb-4"
 			>
 				<Card
 					hoverable
 					cover={
 						<div
-							style={{
-								height: 200,
-								overflow: 'hidden',
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								background: '#f0f0f0',
-								cursor: 'pointer', // Added cursor pointer
-							}}
+							className="h-[200px] overflow-hidden flex items-center"
 							onClick={() => handleImageClick(file)} // Added click handler
 						>
 							{file.content ? (
 								<img
 									alt={`${id}`}
 									src={file.content}
-									style={{
-										maxHeight: '100%',
-										maxWidth: '100%',
-										objectFit: 'contain',
-									}}
+									className="max-h-full max-w-full object-contain"
 								/>
 							) : (
 								<FileImageOutlined
-									style={{ fontSize: 64, color: '#d9d9d9' }}
+									className="text-[64px] text-[#d9d9d9]"
 								/>
 							)}
 						</div>
@@ -193,13 +181,9 @@ const MultilabelImgClassDataView = ({ dataset, files }) => {
 					<Card.Meta
 						title={
 							<div
-								style={{
-									display: 'flex',
-									justifyContent: 'space-between',
-									alignItems: 'center',
-								}}
+								className="flex justify-between items-center"
 							>
-								<Text ellipsis style={{ maxWidth: '80%' }}>
+								<Text ellipsis className="max-w-[80%]">
 									{id}
 								</Text>
 								<Tooltip title={`${labels.length} labels`}>
@@ -213,19 +197,16 @@ const MultilabelImgClassDataView = ({ dataset, files }) => {
 							<Space
 								direction="vertical"
 								size={4}
-								style={{ width: '100%' }}
+								className="w-full"
 							>
 								<div
-									style={{
-										maxHeight: 60,
-										overflow: 'hidden',
-									}}
+									className="max-h-[60px] overflow-hidden"
 								>
 									{labels.map((label, i) => (
 										<Tag
 											color="blue"
 											key={i}
-											style={{ margin: '2px' }}
+											className="m-0.5"
 										>
 											{label}
 										</Tag>
@@ -247,40 +228,23 @@ const MultilabelImgClassDataView = ({ dataset, files }) => {
 		return (
 			<div
 				key={index}
-				style={{
-					marginBottom: 16,
-					padding: 16,
-					borderRadius: 8,
-					border: '1px solid #f0f0f0',
-				}}
+				className="mb-4 p-4 rounded-lg border border-[#f0f0f0]"
 			>
 				<Row gutter={16} align="middle">
 					<Col xs={24} sm={8} md={6} lg={4}>
 						<div
-							style={{
-								height: 100,
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								background: '#f0f0f0',
-								borderRadius: 4,
-								cursor: 'pointer', // Added cursor pointer
-							}}
+							className="h-[100px] flex items-center justify-center"
 							onClick={() => handleImageClick(file)} // Added click handler
 						>
 							{file.content ? (
 								<img
 									alt={`${id}`}
 									src={file.content}
-									style={{
-										maxHeight: '100%',
-										maxWidth: '100%',
-										objectFit: 'contain',
-									}}
+									className="max-h-full max-w-full object-contain"
 								/>
 							) : (
 								<FileImageOutlined
-									style={{ fontSize: 32, color: '#d9d9d9' }}
+									className="text-3xl text-[#d9d9d9]"
 								/>
 							)}
 						</div>
@@ -289,14 +253,10 @@ const MultilabelImgClassDataView = ({ dataset, files }) => {
 						<Space
 							direction="vertical"
 							size={8}
-							style={{ width: '100%' }}
+							className="w-full"
 						>
 							<div
-								style={{
-									display: 'flex',
-									justifyContent: 'space-between',
-									alignItems: 'center',
-								}}
+								className="flex justify-between items-center"
 							>
 								<Text strong>{id}</Text>
 								<Tooltip title={`${labels.length} labels`}>
@@ -310,7 +270,7 @@ const MultilabelImgClassDataView = ({ dataset, files }) => {
 									<Tag
 										color="blue"
 										key={i}
-										style={{ margin: '2px' }}
+										className="m-0.5"
 									>
 										{label}
 									</Tag>
@@ -326,8 +286,8 @@ const MultilabelImgClassDataView = ({ dataset, files }) => {
 	console.log('Dataset:', dataset)
 
 	return (
-		<div style={{ padding: 12 }}>
-			<Space direction="vertical" size={16} style={{ width: '100%' }}>
+		<div className="!p-3">
+			<Space direction="vertical" size={16} className="w-full">
 				{/* Header */}
 				<Row justify="space-between" align="middle">
 					<Col>
@@ -375,7 +335,7 @@ const MultilabelImgClassDataView = ({ dataset, files }) => {
 					<Space
 						direction="vertical"
 						size={16}
-						style={{ width: '100%' }}
+						className="w-full"
 					>
 						{/* Label filter */}
 						<Row gutter={[16, 16]} align="middle">
@@ -388,7 +348,7 @@ const MultilabelImgClassDataView = ({ dataset, files }) => {
 							<Col xs={24} sm={16} md={18} lg={19}>
 								<Select
 									mode="multiple"
-									style={{ width: '100%' }}
+									className="w-full"
 									placeholder="Select labels to filter"
 									value={selectedLabels}
 									onChange={setSelectedLabels}
@@ -485,7 +445,7 @@ const MultilabelImgClassDataView = ({ dataset, files }) => {
 
 				{/* Pagination */}
 				{totalFiles > 0 && (
-					<Row justify="center" style={{ marginTop: 16 }}>
+					<Row justify="center" className="!mt-4">
 						<Pagination
 							current={currentPage}
 							total={totalFiles}
@@ -504,17 +464,13 @@ const MultilabelImgClassDataView = ({ dataset, files }) => {
 				footer={null}
 				width={800}
 				centered
-				style={{ padding: 0 }}
+				className="!p-0"
 			>
 				{selectedImage && (
 					<img
 						src={selectedImage.content}
 						alt={getIdFromFileName(selectedImage.fileName)}
-						style={{
-							width: '100%',
-							maxHeight: '80vh',
-							objectFit: 'contain',
-						}}
+						className="w-full max-h-[80vh] object-contain"
 					/>
 				)}
 			</Modal>

@@ -13,7 +13,7 @@ import {
 
 export const TrainingChart = ({ data, color = '#8884d8' }) => {
 	return (
-		<div style={{ width: '100%' }}>
+		<div className="w-full">
 			<ResponsiveContainer width="100%" height={300}>
 				<LineChart
 					width={500}

@@ -41,12 +41,7 @@ const getAccuracyStatus = (score) => {
     if (score >= 0.9) {
         return (
             <Tag
-                style={{
-                    background: 'linear-gradient(135deg, #10b981, #34d399)',
-                    border: 'none',
-                    color: 'white',
-                    fontFamily: 'Poppins, sans-serif',
-                }}
+                className="bg-gradient-to-br from-[#10b981] to-[#34d399] border-none text-white font-poppins"
             >
                 Excellent
             </Tag>
@@ -54,12 +49,7 @@ const getAccuracyStatus = (score) => {
     } else if (score >= 0.7) {
         return (
             <Tag
-                style={{
-                    background: 'linear-gradient(135deg, #3b82f6, #60a5fa)',
-                    border: 'none',
-                    color: 'white',
-                    fontFamily: 'Poppins, sans-serif',
-                }}
+                className="bg-gradient-to-br from-[#3b82f6] to-[#60a5fa] border-none text-white font-poppins"
             >
                 Good
             </Tag>
@@ -67,12 +57,7 @@ const getAccuracyStatus = (score) => {
     } else if (score >= 0.6) {
         return (
             <Tag
-                style={{
-                    background: 'linear-gradient(135deg, #f59e0b, #fbbf24)',
-                    border: 'none',
-                    color: 'white',
-                    fontFamily: 'Poppins, sans-serif',
-                }}
+                className="bg-gradient-to-br from-[#f59e0b] to-[#fbbf24] border-none text-white font-poppins"
             >
                 Medium
             </Tag>
@@ -80,12 +65,7 @@ const getAccuracyStatus = (score) => {
     } else {
         return (
             <Tag
-                style={{
-                    background: 'linear-gradient(135deg, #ef4444, #f87171)',
-                    border: 'none',
-                    color: 'white',
-                    fontFamily: 'Poppins, sans-serif',
-                }}
+                className="bg-gradient-to-br from-[#ef4444] to-[#f87171] border-none text-white font-poppins"
             >
                 Bad
             </Tag>
@@ -102,15 +82,12 @@ const columns = [
         render: (text, record) => (
             <Tooltip title={record.description}>
                 <span
-                    style={{
-                        color: '#e2e8f0',
-                        fontFamily: 'Poppins, sans-serif',
-                    }}
+                    className="text-[#e2e8f0] font-poppins"
                 >
                     {text}
                 </span>{' '}
                 <InfoCircleOutlined
-                    style={{ color: '#60a5fa', marginLeft: 5 }}
+                    className="text-[#60a5fa] ml-[5px]"
                 />
             </Tooltip>
         ),
@@ -121,7 +98,7 @@ const columns = [
         key: 'value',
         render: (text) => (
             <span
-                style={{ color: '#e2e8f0', fontFamily: 'Poppins, sans-serif' }}
+                className="text-slate-200 font-poppins"
             >
                 {typeof text === 'number'
                     ? text.toFixed(2)
@@ -365,11 +342,7 @@ const TrainResult = () => {
 									<Statistic
 										title={
 											<span
-												style={{
-													color: 'var(--secondary-text)',
-													fontFamily:
-														'Poppins, sans-serif',
-												}}
+												className="font-poppins" style={{ color: 'var(--secondary-text)' }}
 											>{`Final ${metrics[0]?.metric} score`}</span>
 										}
 										value={metrics[0]?.value * 100 || 0}
@@ -404,11 +377,7 @@ const TrainResult = () => {
 									<Statistic
 										title={
 											<span
-												style={{
-													color: '#94a3b8',
-													fontFamily:
-														'Poppins, sans-serif',
-												}}
+												className="text-[#94a3b8] font-poppins"
 											>
 												Training Duration
 											</span>
@@ -443,7 +412,7 @@ const TrainResult = () => {
 										}}
 										prefix={
 											<ClockCircleOutlined
-												style={{ color: '#f59e0b' }}
+												className="text-[#f59e0b]"
 											/>
 										}
 									/>
@@ -463,11 +432,7 @@ const TrainResult = () => {
 									<Statistic
 										title={
 											<span
-												style={{
-													color: '#94a3b8',
-													fontFamily:
-														'Poppins, sans-serif',
-												}}
+												className="text-[#94a3b8] font-poppins"
 											>
 												Total Epochs
 											</span>
@@ -475,7 +440,7 @@ const TrainResult = () => {
 										value={epoch || 0}
 										prefix={
 											<ExperimentOutlined
-												style={{ color: '#3b82f6' }}
+												className="text-[#3b82f6]"
 											/>
 										}
 										valueStyle={{
@@ -492,12 +457,7 @@ const TrainResult = () => {
 						</Row>
 
 						<div
-							style={{
-								width: '100%',
-								display: 'flex',
-								justifyContent: 'center',
-								alignItems: 'center',
-							}}
+							className="w-full flex justify-center items-center"
 						>
 							<Button
 								type="primary"
@@ -515,17 +475,7 @@ const TrainResult = () => {
 									)
 								}}
 								size="large"
-								style={{
-									height: '50px',
-									width: '25%',
-									fontWeight: 'bold',
-									marginTop: 15,
-									fontSize: '18px',
-									background:
-										'linear-gradient(135deg, #10b981, #34d399)',
-									border: 'none',
-									fontFamily: 'Poppins, sans-serif',
-								}}
+								className="h-[50px] w-[25%] font-bold mt-[15px] text-lg bg-gradient-to-br from-[#10b981] to-[#34d399] border-none font-poppins"
 								className="hover:shadow-lg transition-all duration-300"
 							>
 								View Model
@@ -547,17 +497,14 @@ const TrainResult = () => {
 								type="link"
 								icon={
 									<BarChartOutlined
-										style={{ color: '#60a5fa' }}
+										className="text-[#60a5fa]"
 									/>
 								}
 								onClick={() =>
 									setIsDetailsExpanded(!isDetailsExpanded)
 								}
 								className="text-xl"
-								style={{
-									color: '#e2e8f0',
-									fontFamily: 'Poppins, sans-serif',
-								}}
+								className="text-[#e2e8f0] font-poppins"
 							>
 								{isDetailsExpanded
 									? 'Hide Details'
@@ -574,11 +521,7 @@ const TrainResult = () => {
 									<Card
 										title={
 											<span
-												style={{
-													color: '#e2e8f0',
-													fontFamily:
-														'Poppins, sans-serif',
-												}}
+												className="text-[#e2e8f0] font-poppins"
 											>
 												Training Performance
 											</span>
@@ -630,11 +573,7 @@ const TrainResult = () => {
 									<Card
 										title={
 											<span
-												style={{
-													color: '#e2e8f0',
-													fontFamily:
-														'Poppins, sans-serif',
-												}}
+												className="text-[#e2e8f0] font-poppins"
 											>
 												Comprehensive Metrics
 											</span>
@@ -653,11 +592,7 @@ const TrainResult = () => {
 											columns={columns}
 											dataSource={metrics}
 											pagination={false}
-											style={{
-												background: 'transparent',
-												fontFamily:
-													'Poppins, sans-serif',
-											}}
+											className="bg-transparent font-poppins"
 											className="theme-table"
 										/>
 									</Card>

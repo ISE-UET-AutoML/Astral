@@ -35,12 +35,7 @@ const DatasetView = () => {
 	if (loading) {
 		return (
 			<div
-				style={{
-					display: 'flex',
-					justifyContent: 'center',
-					alignItems: 'center',
-					height: '100vh',
-				}}
+				className="flex justify-center items-center h-screen"
 			>
 				<Spin size="large" tip="Loading dataset..." />
 			</div>

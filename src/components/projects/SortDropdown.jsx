@@ -16,7 +16,7 @@ export default function SortDropdown({ selectedSort, onSortChange }) {
 			placeholder="Sort by"
 			className="w-full"
 			onChange={onSortChange}
-			style={{ minWidth: 140, height: 40 }}
+			className="!min-w-[140px] !h-10"
 		/>
 	)
 }

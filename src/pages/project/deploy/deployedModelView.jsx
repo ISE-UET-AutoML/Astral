@@ -539,11 +539,7 @@ export default function DeployedModelView() {
                                 <Statistic
                                     title={
                                         <span
-                                            style={{
-                                                color: 'var(--secondary-text)',
-                                                fontFamily:
-                                                    'Poppins, sans-serif',
-                                            }}
+                                            className="font-poppins" style={{ color: 'var(--secondary-text)' }}
                                         >
                                             Uptime
                                         </span>
@@ -570,11 +566,7 @@ export default function DeployedModelView() {
                                 <Statistic
                                     title={
                                         <span
-                                            style={{
-                                                color: 'var(--secondary-text)',
-                                                fontFamily:
-                                                    'Poppins, sans-serif',
-                                            }}
+                                            className="font-poppins" style={{ color: 'var(--secondary-text)' }}
                                         >
                                             Total Predictions
                                         </span>
@@ -592,25 +584,17 @@ export default function DeployedModelView() {
                     {deployData?.status === 'ONLINE' && projectInfo && (
                         <Row
                             gutter={[24, 24]}
-                            style={{
-                                marginTop: '24px',
-                            }}
+                            className="mt-6"
                         >
                             <Col span={24}>
                                 <Card
                                     title={
                                         <Space>
                                             <LinkOutlined
-                                                style={{
-                                                    color: '#1890ff',
-                                                }}
+                                                className="text-[#1890ff]"
                                             />
                                             <span
-                                                style={{
-                                                    color: 'var(--secondary-text)',
-                                                    fontFamily:
-                                                        'Poppins, sans-serif',
-                                                }}
+                                                className="font-poppins" style={{ color: 'var(--secondary-text)' }}
                                             >
                                                 Endpoint Information
                                             </span>
@@ -629,20 +613,14 @@ export default function DeployedModelView() {
                                             <Divider
                                                 orientation="left"
                                                 orientationMargin={0}
-                                                style={{
-                                                    color: 'var(--secondary-text)',
-                                                    fontFamily:
-                                                        'Poppins, sans-serif',
-                                                }}
+                                                className="font-poppins" style={{ color: 'var(--secondary-text)' }}
                                             >
                                                 API Endpoint URL
                                             </Divider>
                                             <div className="flex">
                                                 <Input.Group compact>
                                                     <Input
-                                                        style={{
-                                                            width: '30%',
-                                                        }}
+                                                        className="w-[30%]"
                                                         value={
                                                             deployData?.api_base_url ||
                                                             'https://api.example.com/predict/model-123'
@@ -773,25 +751,17 @@ export default function DeployedModelView() {
                     {deployData?.status === 'ONLINE' && projectInfo && (
                         <Row
                             gutter={[24, 24]}
-                            style={{
-                                marginTop: '24px',
-                            }}
+                            className="mt-6"
                         >
                             <Col span={24}>
                                 <Card
                                     title={
                                         <Space>
                                             <MonitorOutlined
-                                                style={{
-                                                    color: '#1890ff',
-                                                }}
+                                                className="text-[#1890ff]"
                                             />
                                             <span
-                                                style={{
-                                                    color: 'var(--secondary-text)',
-                                                    fontFamily:
-                                                        'Poppins, sans-serif',
-                                                }}
+                                                className="font-poppins" style={{ color: 'var(--secondary-text)' }}
                                             >
                                                 Monitoring
                                             </span>
@@ -810,20 +780,14 @@ export default function DeployedModelView() {
                                             <Divider
                                                 orientation="left"
                                                 orientationMargin={0}
-                                                style={{
-                                                    color: 'var(--secondary-text)',
-                                                    fontFamily:
-                                                        'Poppins, sans-serif',
-                                                }}
+                                                className="font-poppins" style={{ color: 'var(--secondary-text)' }}
                                             >
                                                 Monitor Endpoint URL
                                             </Divider>
                                             <div className="flex">
                                                 <Input.Group compact>
                                                     <Input
-                                                        style={{
-                                                            width: '30%',
-                                                        }}
+                                                        className="w-[30%]"
                                                         value={
                                                             deployData?.monitor_url ||
                                                             'https://api.example.com'
@@ -1019,11 +983,7 @@ export default function DeployedModelView() {
                                             >
                                                 <List.Item.Meta
                                                     avatar={
-                                                        <CheckCircleOutlined
-                                                            style={{
-                                                                color: '#52c41a',
-                                                            }}
-                                                        />
+                                                        <CheckCircleOutlined className="text-green-500" />
                                                     }
                                                     title={
                                                         <span
@@ -1063,7 +1023,7 @@ export default function DeployedModelView() {
                             open={isModalVisible}
                             onCancel={handleCloseModal}
                             width="90%"
-                            style={{ top: 20 }}
+                            className="top-5"
                             footer={[
                                 !projectInfo.task_type.includes('IMAGE') && (
                                     <Button
@@ -1097,10 +1057,7 @@ export default function DeployedModelView() {
                         >
                             {isJsonLoading ? (
                                 <div
-                                    style={{
-                                        textAlign: 'center',
-                                        padding: '50px',
-                                    }}
+                                    className="text-center p-[50px]"
                                 >
                                     {' '}
                                     <Spin size="large" />{' '}
@@ -1143,10 +1100,7 @@ export default function DeployedModelView() {
                     <Card
                         title={
                             <span
-                                style={{
-                                    color: 'var(--secondary-text)',
-                                    fontFamily: 'Poppins, sans-serif',
-                                }}
+                                className="font-poppins" style={{ color: 'var(--secondary-text)' }}
                             >
                                 🚀 Cloud Server
                             </span>
@@ -1166,21 +1120,13 @@ export default function DeployedModelView() {
                                     message={
                                         deployData?.status === 'ONLINE' ? (
                                             <span
-                                                style={{
-                                                    color: 'var(--secondary-text)',
-                                                    fontFamily:
-                                                        'Poppins, sans-serif',
-                                                }}
+                                                className="font-poppins" style={{ color: 'var(--secondary-text)' }}
                                             >
                                                 Shut down server instance
                                             </span>
                                         ) : (
                                             <span
-                                                style={{
-                                                    color: 'var(--secondary-text)',
-                                                    fontFamily:
-                                                        'Poppins, sans-serif',
-                                                }}
+                                                className="font-poppins" style={{ color: 'var(--secondary-text)' }}
                                             >
                                                 Start server instance
                                             </span>
@@ -1189,11 +1135,7 @@ export default function DeployedModelView() {
                                     description={
                                         deployData?.status === 'ONLINE' ? (
                                             <span
-                                                style={{
-                                                    color: 'var(--secondary-text)',
-                                                    fontFamily:
-                                                        'Poppins, sans-serif',
-                                                }}
+                                                className="font-poppins" style={{ color: 'var(--secondary-text)' }}
                                             >
                                                 Gracefully stops the running
                                                 server instance, making it
@@ -1202,11 +1144,7 @@ export default function DeployedModelView() {
                                             </span>
                                         ) : (
                                             <span
-                                                style={{
-                                                    color: 'var(--secondary-text)',
-                                                    fontFamily:
-                                                        'Poppins, sans-serif',
-                                                }}
+                                                className="font-poppins" style={{ color: 'var(--secondary-text)' }}
                                             >
                                                 Powers on a previously shut down
                                                 server, making it active and
@@ -1238,20 +1176,7 @@ export default function DeployedModelView() {
                                         )
                                     }
                                     size="large"
-                                    style={{
-                                        width: '100%',
-                                        fontWeight: 'bold',
-                                        marginTop: 15,
-                                        backgroundColor:
-                                            deployData?.status === 'ONLINE'
-                                                ? '#faad14'
-                                                : '#2b7fff',
-                                        color: 'white',
-                                        borderColor:
-                                            deployData?.status === 'ONLINE'
-                                                ? '#faad14'
-                                                : '#2b7fff',
-                                    }}
+                                    className="w-full font-bold"
                                 >
                                     {deployData?.status === 'ONLINE'
                                         ? 'Shut down'
@@ -1262,22 +1187,14 @@ export default function DeployedModelView() {
                                 <Alert
                                     message={
                                         <span
-                                            style={{
-                                                color: 'var(--secondary-text)',
-                                                fontFamily:
-                                                    'Poppins, sans-serif',
-                                            }}
+                                            className="font-poppins" style={{ color: 'var(--secondary-text)' }}
                                         >
                                             Delete server instance
                                         </span>
                                     }
                                     description={
                                         <span
-                                            style={{
-                                                color: 'var(--secondary-text)',
-                                                fontFamily:
-                                                    'Poppins, sans-serif',
-                                            }}
+                                            className="font-poppins" style={{ color: 'var(--secondary-text)' }}
                                         >
                                             Permanently removes the server and
                                             all associated data from the system.
@@ -1298,14 +1215,7 @@ export default function DeployedModelView() {
                                     type="default"
                                     icon={<DeleteOutlined />}
                                     size="large"
-                                    style={{
-                                        width: '100%',
-                                        fontWeight: 'bold',
-                                        marginTop: 15,
-                                        backgroundColor: '#d94343ff',
-                                        color: 'white',
-                                        borderColor: '#d94343ff',
-                                    }}
+                                    className="w-full font-bold mt-[15px]"
                                 >
                                     Delete Server
                                 </Button>

@@ -91,11 +91,11 @@ const Profile = () => {
 							<div className="absolute inset-0 flex">
 								<div
 									className="h-full w-1/2"
-									style={{ backgroundColor: '#0a527b' }}
+									className="bg-[#0a527b]"
 								/>
 								<div
 									className="h-full w-1/2"
-									style={{ backgroundColor: '#065d8c' }}
+									className="bg-[#065d8c]"
 								/>
 							</div>
 							<div className="relative flex justify-center">
