@@ -381,13 +381,7 @@ const ManualCreationModal = ({
 			layout="vertical"
 			onFinish={handleSubmit}
 			className="theme-form theme-manual-form"
-			style={{
-				height: '95%',
-				display: 'flex',
-				flexDirection: 'column',
-				scrollbarWidth: 'thin',
-				scrollbarColor: '#94a3b8 transparent',
-			}}
+			className="h-[95%] flex flex-col" style={{ scrollbarWidth: 'thin', scrollbarColor: '#94a3b8 transparent' }}
 			initialValues={{
 				name: initialProjectName,
 				description: initialDescription,
@@ -449,44 +443,17 @@ const ManualCreationModal = ({
 					{/* Task list box */}
 					<div
 						className="task-selection-container"
-						style={{
-							borderRadius: '16px',
-							background: 'var(--filter-bg)',
-							border: '1px solid var(--filter-border)',
-							overflow: 'hidden',
-							marginTop: 8,
-							flex: 1,
-							display: 'flex',
-							flexDirection: 'column',
-							minHeight: 0 /* Quan trọng để flex container có thể scroll */,
-							scrollbarWidth: 'thin',
-							scrollbarColor: '#94a3b8 transparent',
-						}}
+						className="rounded-2xl bg-[var(--filter-bg)] border border-[var(--filter-border)] overflow-hidden mt-2 flex-1 flex flex-col min-h-0" style={{ scrollbarWidth: 'thin', scrollbarColor: '#94a3b8 transparent' }}
 					>
 						<Title
 							level={4}
-							style={{
-								textAlign: 'center',
-								margin: '12px 0',
-								color: 'var(--title-project)',
-								fontWeight: 700,
-								fontFamily: 'Poppins, sans-serif',
-								flexShrink: 0,
-							}}
+							className="text-center my-3 text-[color:var(--title-project)] font-bold font-poppins shrink-0"
 						>
 							Choose Your Task
 						</Title>
 						<div
 							className="task-list-column"
-							style={{
-								padding: '0 16px 16px 20px',
-								borderTop: '1px solid var(--border)',
-								flex: 1,
-								overflowY: 'auto',
-								minHeight: 0 /* Quan trọng để scroll hoạt động */,
-								scrollbarWidth: 'thin',
-								scrollbarColor: '#94a3b8 transparent',
-							}}
+							className="pt-0 pr-4 pb-4 pl-5 border-t border-[var(--border)] flex-1 overflow-y-auto min-h-0" style={{ scrollbarWidth: 'thin', scrollbarColor: '#94a3b8 transparent' }}
 						>
 							<div
 								className="grid grid-cols-3"
@@ -524,20 +491,11 @@ const ManualCreationModal = ({
 											role="button"
 											aria-label={`Select ${task.title} task type`}
 											aria-pressed={isTaskSelected}
+											className="cursor-pointer p-[14px] rounded-2xl border-2 border-[var(--border)] transition-all duration-300 relative min-h-[120px] overflow-hidden flex items-center"
 											style={{
-												cursor: 'pointer',
-												padding: '14px',
-												borderRadius: '16px',
-												border: '2px solid var(--border)',
 												background: isTaskSelected
 													? 'var(--selection-bg)'
 													: 'var(--card-gradient)',
-												transition: 'all 0.3s ease',
-												position: 'relative',
-												minHeight: '120px',
-												overflow: 'hidden',
-												display: 'flex',
-												alignItems: 'center',
 											}}
 										>
 											<div
@@ -551,15 +509,7 @@ const ManualCreationModal = ({
 												<div className="flex-1">
 													<Title
 														level={5}
-														style={{
-															margin: '0 0 4px 0',
-															color: 'var(--text)',
-															fontSize: '14px',
-															fontWeight: 600,
-															fontFamily:
-																'Poppins, sans-serif',
-														}}
-														className="task-title"
+														className="task-title !mb-1 !mt-0 text-[color:var(--text)] text-sm font-semibold font-poppins"
 													>
 														{task.title}
 													</Title>
@@ -567,25 +517,7 @@ const ManualCreationModal = ({
 
 												{isTaskSelected && (
 													<div
-														style={{
-															position:
-																'absolute',
-															top: '16px',
-															right: '16px',
-															width: '24px',
-															height: '24px',
-															borderRadius: '50%',
-															background:
-																'var(--button-gradient)',
-															display: 'flex',
-															alignItems:
-																'center',
-															justifyContent:
-																'center',
-															color: '#ffffff',
-															fontSize: '14px',
-															fontWeight: 'bold',
-														}}
+														className="absolute top-4 right-4 w-6 h-6 rounded-full bg-[var(--button-gradient)] flex items-center justify-center text-white text-sm font-bold"
 													>
 														✓
 													</div>
@@ -614,37 +546,19 @@ const ManualCreationModal = ({
 							>
 								<Title
 									level={3}
-									style={{
-										margin: '0 0 8px 0',
-										color: 'var(--text)',
-										fontWeight: 700,
-										fontFamily: 'Poppins, sans-serif',
-									}}
+									className="!mb-2 !mt-0 text-[color:var(--text)] font-bold font-poppins"
 								>
 									{displayTask.title}
 								</Title>
 								<Text
-									style={{
-										color: 'var(--secondary-text)',
-										fontSize: '14px',
-										lineHeight: '1.5',
-										fontFamily: 'Poppins, sans-serif',
-									}}
+									className="text-[color:var(--secondary-text)] text-sm leading-[1.5] font-poppins"
 								>
 									{displayTask.subtitle}
 								</Text>
 							</div>
 
 							<div
-								style={{
-									width: '95%',
-									height: '320px',
-									borderRadius: '16px',
-									overflow: 'hidden',
-									marginBottom: '20px',
-									boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
-									border: '2px solid var(--border-hover)',
-								}}
+								className="w-[95%] h-[320px] rounded-2xl overflow-hidden mb-5 shadow-[0_8px_24px_rgba(0,0,0,0.15)] border-2 border-[var(--border-hover)]"
 							>
 								<img
 									src={displayTask.image}
@@ -656,22 +570,11 @@ const ManualCreationModal = ({
 							{/* Long explanation block (if provided) */}
 							{displayTask.explain && (
 								<div
-									style={{
-										background: 'var(--card-gradient)',
-										border: '2px solid var(--border)',
-										borderRadius: '16px',
-										padding: '20px',
-										marginBottom: '24px',
-									}}
+									className="bg-[var(--card-gradient)] border-2 border-[var(--border)] rounded-2xl p-5 mb-6"
 								>
 									<Title
 										level={5}
-										style={{
-											margin: '0 0 12px 0',
-											color: 'var(--text, #ffffff)',
-											fontFamily: 'Poppins, sans-serif',
-											textAlign: 'center',
-										}}
+										className="!mt-0 !mb-3 text-[color:var(--text,#ffffff)] font-poppins text-center"
 									>
 										Explanation
 									</Title>
@@ -683,79 +586,34 @@ const ManualCreationModal = ({
 
 							{displayTask.example && (
 								<div
-									style={{
-										background: 'var(--card-gradient)',
-										border: '2px solid var(--border)',
-										borderRadius: '16px',
-										padding: '20px',
-										marginBottom: '24px',
-									}}
+									className="bg-[var(--card-gradient)] border-2 border-[var(--border)] rounded-2xl p-5 mb-6"
 								>
 									<Title
 										level={5}
-										style={{
-											margin: '0 0 16px 0',
-											color: 'var(--text)',
-											fontFamily: 'Poppins, sans-serif',
-											textAlign: 'center',
-										}}
+										className="!mt-0 !mb-4 text-[color:var(--text)] font-poppins text-center"
 									>
 										Example
 									</Title>
 									<div className="mb-3">
 										<Text
-											style={{
-												color: 'var(--secondary-text)',
-												fontSize: '11px',
-												fontWeight: 700,
-												textTransform: 'uppercase',
-												letterSpacing: '0.5px',
-												fontFamily:
-													'Poppins, sans-serif',
-												display: 'block',
-												marginBottom: '6px',
-											}}
+											className="text-[color:var(--secondary-text)] text-[11px] font-bold uppercase tracking-[0.5px] font-poppins block mb-[6px]"
 										>
 											INPUT:
 										</Text>
 										<Text
-											style={{
-												color: 'var(--text)',
-												fontSize: '13px',
-												fontWeight: 500,
-												fontFamily:
-													'Poppins, sans-serif',
-												lineHeight: '1.4',
-											}}
+											className="text-[color:var(--text)] text-[13px] font-medium font-poppins leading-[1.4]"
 										>
 											{displayTask.example.input}
 										</Text>
 									</div>
 									<div>
 										<Text
-											style={{
-												color: 'var(--secondary-text)',
-												fontSize: '11px',
-												fontWeight: 700,
-												textTransform: 'uppercase',
-												letterSpacing: '0.5px',
-												fontFamily:
-													'Poppins, sans-serif',
-												display: 'block',
-												marginBottom: '6px',
-											}}
+											className="text-[color:var(--secondary-text)] text-[11px] font-bold uppercase tracking-[0.5px] font-poppins block mb-[6px]"
 										>
 											OUTPUT:
 										</Text>
 										<Text
-											style={{
-												color: 'var(--accent-text)',
-												fontSize: '13px',
-												fontWeight: 600,
-												fontFamily:
-													'Poppins, sans-serif',
-												lineHeight: '1.4',
-											}}
+											className="text-[color:var(--accent-text)] text-[13px] font-semibold font-poppins leading-[1.4]"
 										>
 											{displayTask.example.output}
 										</Text>
@@ -763,13 +621,7 @@ const ManualCreationModal = ({
 									{displayTask.example_explain && (
 										<div className="mt-3">
 											<Text
-												style={{
-													color: 'var(--secondary-text)',
-													fontSize: '12px',
-													fontFamily:
-														'Poppins, sans-serif',
-													whiteSpace: 'pre-wrap',
-												}}
+												className="text-[color:var(--secondary-text)] text-xs font-poppins whitespace-pre-wrap"
 											>
 												{displayTask.example_explain}
 											</Text>
@@ -779,36 +631,15 @@ const ManualCreationModal = ({
 							)}
 
 							<div
-								style={{
-									background: 'var(--tag-gradient)',
-									border: '1px solid var(--tag-border)',
-									borderRadius: '12px',
-									padding: '16px',
-									textAlign: 'center',
-									marginBottom: '24px',
-								}}
+								className="bg-[var(--tag-gradient)] border border-[var(--tag-border)] rounded-xl p-4 text-center mb-6"
 							>
 								<Text
-									style={{
-										color: 'var(--secondary-text)',
-										fontSize: '11px',
-										fontWeight: 600,
-										textTransform: 'uppercase',
-										letterSpacing: '0.5px',
-										fontFamily: 'Poppins, sans-serif',
-										display: 'block',
-										marginBottom: '6px',
-									}}
+									className="text-[color:var(--secondary-text)] text-[11px] font-semibold uppercase tracking-[0.5px] font-poppins block mb-[6px]"
 								>
 									Expected Training Time
 								</Text>
 								<Text
-									style={{
-										color: 'var(--text)',
-										fontSize: '14px',
-										fontWeight: 600,
-										fontFamily: 'Poppins, sans-serif',
-									}}
+									className="text-[color:var(--text)] text-sm font-semibold font-poppins"
 								>
 									{displayTask.timeToTrain}
 								</Text>
@@ -816,11 +647,7 @@ const ManualCreationModal = ({
 						</div>
 					) : (
 						<div
-							style={{
-								textAlign: 'center',
-								color: 'var(--secondary-text)',
-								fontFamily: 'Poppins, sans-serif',
-							}}
+							className="text-center text-[color:var(--secondary-text)] font-poppins"
 						>
 							<div
 								className="text-[48px] mb-4 opacity-50"
@@ -829,20 +656,12 @@ const ManualCreationModal = ({
 							</div>
 							<Title
 								level={4}
-								style={{
-									color: 'var(--secondary-text)',
-									fontFamily: 'Poppins, sans-serif',
-									fontWeight: 500,
-								}}
+								className="text-[color:var(--secondary-text)] font-poppins font-medium"
 							>
 								Select a task type to see details
 							</Title>
 							<Text
-								style={{
-									color: 'var(--secondary-text)',
-									fontSize: '14px',
-									fontFamily: 'Poppins, sans-serif',
-								}}
+								className="text-[color:var(--secondary-text)] text-sm font-poppins"
 							>
 								Choose from the options on the left to learn
 								more
@@ -1164,13 +983,7 @@ const ManualCreationModal = ({
 			>
 				<Title
 					level={4}
-					style={{
-						textAlign: 'center',
-						marginBottom: 16,
-						color: 'var(--modal-title-color)',
-						fontFamily: 'Poppins, sans-serif',
-						fontWeight: 600,
-					}}
+					className="text-center mb-4 text-[color:var(--modal-title-color)] font-poppins font-semibold"
 				>
 					Let&apos;s Create Your Project
 				</Title>

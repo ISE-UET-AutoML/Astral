@@ -199,21 +199,10 @@ const ImageHistoryViewer = ({ data }) => {
                                             className="w-full h-full object-cover"
                                         />
                                     </div>
-                                    <div style={{
-                                        position: 'absolute',
-                                        bottom: '-3px',
-                                        left: '50%',
-                                        transform: 'translateX(-50%)',
-                                        background: thumbStatus.gradient,
-                                        color: 'white',
-                                        padding: '0px 3px',
-                                        borderRadius: '5px',
-                                        fontSize: '7px',
-                                        fontWeight: 'bold',
-                                        boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
-                                        whiteSpace: 'nowrap',
-                                        lineHeight: '1.3'
-                                    }}>
+                                    <div
+                                        className="absolute bottom-[-3px] left-1/2 -translate-x-1/2 text-white px-[3px] py-0 rounded-[5px] text-[7px] font-bold shadow-[0_1px_3px_rgba(0,0,0,0.3)] whitespace-nowrap leading-[1.3]"
+                                        style={{ background: thumbStatus.gradient }}
+                                    >
                                         {(thumbConfidence * 100).toFixed(0)}%
                                     </div>
                                 </div>
