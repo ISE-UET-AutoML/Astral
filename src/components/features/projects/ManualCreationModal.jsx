@@ -1,6 +1,7 @@
 import React from 'react'
-import { Modal, Row, Col, Button, Typography, Input, Tag, Form } from 'antd'
 import MarkdownRenderer from 'src/components/shared/utilities/MarkdownRenderer'
+import ProjectBaseModal from './ProjectBaseModal'
+import { Button as GradientButton } from 'src/components/shared/ui/button'
 // Removed Info icon for cleaner inputs
 
 // import { TASK_TYPES } from 'src/constants/types'
@@ -19,9 +20,36 @@ import clustering from 'src/assets/images/clustering.jpeg'
 import audio_classification from 'src/assets/images/audio_classification.jpeg'
 import video_classification from 'src/assets/images/video_classification.jpeg'
 import anomaly_detection from 'src/assets/images/anomaly_detection.JPG'
-const { Title, Text } = Typography
-// const { TextArea } = Input
 
+// Simple replacements for Ant Design Typography components
+const Title = ({ level = 4, style = {}, children, ...props }) => {
+	const HeadingTag = `h${Math.min(Math.max(level, 1), 6)}`
+	return (
+		<HeadingTag
+			style={{
+				margin: 0,
+				fontFamily: 'Poppins, sans-serif',
+				...style,
+			}}
+			{...props}
+		>
+			{children}
+		</HeadingTag>
+	)
+}
+
+const Text = ({ style = {}, children, ...props }) => (
+	<p
+		style={{
+			margin: 0,
+			fontFamily: 'Poppins, sans-serif',
+			...style,
+		}}
+		{...props}
+	>
+		{children}
+	</p>
+)
 
 const projType = [
 	'image_classification',
@@ -334,8 +362,10 @@ const ManualCreationModal = ({
 	isSelected,
 	onSelectType,
 }) => {
-	const [form] = Form.useForm()
-	// Dark mode flag not used here
+	const [name, setName] = React.useState(initialProjectName)
+	const [description, setDescription] = React.useState(initialDescription)
+	const [taskType, setTaskType] = React.useState(initialTaskType)
+	const [errors, setErrors] = React.useState({})
 
 	const selectedIndex = Array.isArray(isSelected)
 		? isSelected.findIndex((item) => item === true)
@@ -346,40 +376,57 @@ const ManualCreationModal = ({
 
 	React.useEffect(() => {
 		if (open) {
-			form.setFieldsValue({
-				name: initialProjectName,
-				description: initialDescription,
-				task_type: initialTaskType,
-				visibility: initialVisibility,
-				license: initialLicense,
-				expected_accuracy: initialExpectedAccuracy,
-			})
+			setName(initialProjectName)
+			setDescription(initialDescription)
+			setTaskType(initialTaskType)
+			setErrors({})
 		}
 	}, [
 		open,
-		form,
 		initialProjectName,
 		initialDescription,
 		initialTaskType,
-		initialVisibility,
-		initialLicense,
-		initialExpectedAccuracy,
 	])
 
-	const handleSubmit = (values) => {
-		onSubmit(values)
+	const validate = () => {
+		const trimmedName = name.trim()
+		const newErrors = {}
+
+		if (!trimmedName) {
+			newErrors.name = 'Please enter project name!'
+		} else if (trimmedName.length < 3) {
+			newErrors.name = 'Name must be at least 3 characters'
+		} else if (!/^[\p{L}0-9 _-]+$/u.test(trimmedName)) {
+			newErrors.name =
+				'Only letters, numbers, spaces, _ and - are allowed.'
+		}
+
+		setErrors(newErrors)
+		return Object.keys(newErrors).length === 0
+	}
+
+	const handleSubmit = (e) => {
+		e.preventDefault()
+		if (!validate()) return
+
+		onSubmit({
+			name: name.trim(),
+			description: description.trim(),
+			task_type: taskType,
+			visibility: initialVisibility,
+			license: initialLicense,
+			expected_accuracy: initialExpectedAccuracy,
+		})
 	}
 
 	const handleSelectType = (e, idx) => {
 		onSelectType(e, idx)
-		form.setFieldValue('task_type', projType[idx])
+		setTaskType(projType[idx])
 	}
 
 	const content = (
-		<Form
-			form={form}
-			layout="vertical"
-			onFinish={handleSubmit}
+		<form
+			onSubmit={handleSubmit}
 			className="theme-form theme-manual-form"
 			style={{
 				height: '95%',
@@ -387,11 +434,6 @@ const ManualCreationModal = ({
 				flexDirection: 'column',
 				scrollbarWidth: 'thin',
 				scrollbarColor: '#94a3b8 transparent',
-			}}
-			initialValues={{
-				name: initialProjectName,
-				description: initialDescription,
-				task_type: initialTaskType,
 			}}
 		>
 			{/* Two-column overall layout: left = fields + task list, right = task details */}
@@ -416,49 +458,72 @@ const ManualCreationModal = ({
 							'hidden' /* Prevent overflow in left column */,
 					}}
 				>
-					<Row gutter={[24, 24]}>
-						<Col span={24}>
-							<Form.Item
-								label="Project Name"
-								name="name"
-								style={{ marginBottom: 16 }}
-								validateTrigger={['onChange', 'onBlur']}
-								rules={[
-									{
-										required: true,
-										message: 'Please enter project name!',
-									},
-									{
-										min: 3,
-										message:
-											'Name must be at least 3 characters',
-									},
-									{
-										pattern: /^[\p{L}0-9 _-]+$/u,
-										message:
-											'Only letters, numbers, spaces, _ and - are allowed.',
-									},
-								]}
+					<div style={{ marginBottom: 16 }}>
+						<label
+							htmlFor="project-name"
+							style={{
+								display: 'block',
+								marginBottom: 8,
+								color: 'var(--form-label-color)',
+								fontFamily: 'Poppins, sans-serif',
+								fontWeight: 600,
+							}}
+						>
+							Project Name
+						</label>
+						<input
+							id="project-name"
+							type="text"
+							value={name}
+							onChange={(e) => setName(e.target.value)}
+							placeholder="E.g., Customer Churn Predictor"
+							className="w-full px-3 py-2 rounded-2xl mx-1 border bg-transparent focus:outline-none focus:ring-2 focus:ring-sky-500"
+							style={{
+								borderColor: 'var(--input-border)',
+								color: 'var(--text)',
+							}}
+						/>
+						{errors.name && (
+							<p
+								style={{
+									marginTop: 4,
+									color: '#f97373',
+									fontSize: 12,
+									fontFamily: 'Poppins, sans-serif',
+								}}
 							>
-								<Input
-									placeholder="E.g., Customer Churn Predictor"
-									size="large"
-								/>
-							</Form.Item>
-						</Col>
-					</Row>
+								{errors.name}
+							</p>
+						)}
+					</div>
 
 					{/* Description */}
-					<Row gutter={[24, 24]}>
-						<Col span={24}>
-							<Form.Item label="Description" name="description">
-								<Input
-									placeholder="Describe your project's goals and requirements..."
-									size="large"
-								/>
-							</Form.Item>
-						</Col>
-					</Row>
+					<div style={{ marginBottom: 16 }}>
+						<label
+							htmlFor="project-description"
+							style={{
+								display: 'block',
+								marginBottom: 8,
+								color: 'var(--form-label-color)',
+								fontFamily: 'Poppins, sans-serif',
+								fontWeight: 600,
+							}}
+						>
+							Description
+						</label>
+						<input
+							id="project-description"
+							type="text"
+							value={description}
+							onChange={(e) => setDescription(e.target.value)}
+							placeholder="Describe your project's goals and requirements..."
+							className="w-full px-3 py-2 rounded-2xl mx-1 border bg-transparent focus:outline-none focus:ring-2 focus:ring-sky-500"
+							style={{
+								borderColor: 'var(--input-border)',
+								color: 'var(--text)',
+							}}
+						/>
+					</div>
 
 					{/* Task list box */}
 					<div
@@ -902,321 +967,45 @@ const ManualCreationModal = ({
 			</div>
 
 			{/* Submit - fixed at bottom */}
-			<Row
-				justify="end"
+			<div
 				style={{
 					marginTop: 'auto',
 					position: 'sticky',
 					bottom: 0,
 					background: 'transparent',
 					zIndex: 10,
+					display: 'flex',
+					justifyContent: 'flex-end',
+					gap: 8,
+					paddingTop: 8,
 				}}
 			>
-				<Button
+				<button
+					type="button"
 					onClick={onCancel}
-					style={{ marginRight: 8, marginTop: 5 }}
+					className="px-8 py-2 rounded-xl border border-slate-500 text-slate-200 text-sm hover:bg-slate-700/60 transition-colors"
+					style={{
+						marginTop: 5,
+					}}
 				>
 					Cancel
-				</Button>
-				<Button
-					type="primary"
-					htmlType="submit"
+				</button>
+				<GradientButton
+					type="submit"
+					size="sm"
 					disabled={selectedIndex === -1}
+					className="!h-10 !rounded-xl"
 					style={{ marginTop: 5 }}
 				>
 					Create Project
-				</Button>
-			</Row>
-		</Form>
+				</GradientButton>
+			</div>
+		</form>
 	)
 
 	return (
 		<>
-			<style>{`
-                /* Form styling for proper theme support */
-                .theme-manual-form .ant-form-item-label > label {
-                    color: var(--form-label-color) !important;
-                    font-family: 'Poppins', sans-serif !important;
-                    font-weight: 600 !important;
-                }
-
-                .theme-manual-form .ant-input {
-                    background: transparent !important;
-                    border: 1px solid var(--input-border) !important;
-                    color: var(--text) !important;
-                    border-radius: 8px !important;
-                }
-
-                .theme-manual-form .ant-input:hover {
-                    border-color: var(--input-hover-border) !important;
-                }
-
-                .theme-manual-form .ant-input:focus,
-                .theme-manual-form .ant-input-focused {
-                    border-color: var(--input-focus-border) !important;
-                    box-shadow: var(--input-shadow) !important;
-                    background: transparent !important;
-                    color: var(--text) !important;
-                    caret-color: var(--text) !important;
-                }
-
-                .theme-manual-form textarea.ant-input {
-                    background: transparent !important;
-                    color: var(--text) !important;
-                    caret-color: var(--text) !important;
-                }
-                .theme-manual-form textarea.ant-input:focus,
-                .theme-manual-form textarea.ant-input:hover {
-                    background: transparent !important;
-                }
-
-                /* Stronger override for AntD textarea wrapper */
-                .theme-manual-form .ant-input-textarea,
-                .theme-manual-form .ant-input-textarea textarea,
-                .theme-manual-form .ant-input {
-                    background: transparent !important;
-                    color: var(--text) !important;
-                }
-
-                .theme-manual-form .ant-input::placeholder {
-                    color: var(--placeholder-color) !important;
-                }
-
-                /* Fixed Size Modal */
-                .fixed-size-modal .ant-modal {
-                    max-width: 80vw !important;
-                }
-
-                .fixed-size-modal .ant-modal-content {
-                    overflow: hidden !important;
-                }
-
-                .fixed-size-modal .ant-modal-body {
-                    overflow: hidden !important;
-                }
-
-                /* Task Selection Container */
-                .task-selection-container {
-                    backdrop-filter: blur(10px);
-                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-                }
-
-                /* Task List Items */
-                .task-list-item {
-                    backdrop-filter: blur(10px);
-                    position: relative;
-                    overflow: hidden;
-                }
-
-                /* Overlay no longer used for description; keep disabled */
-                .task-list-item .task-overlay { display: none; }
-
-                .task-list-item::before {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    bottom: 0;
-                    background: linear-gradient(135deg, 
-                        rgba(255, 255, 255, 0.05) 0%, 
-                        rgba(255, 255, 255, 0.02) 100%
-                    );
-                    pointer-events: none;
-                    border-radius: 16px;
-                    z-index: 0;
-                }
-
-                .task-list-item:hover {
-                    border-color: var(--accent-text) !important;
-                    background: var(--hover-bg) !important;
-                    transform: translateY(-2px) !important;
-                    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.2) !important;
-                }
-
-                .task-list-item.selected {
-                    border-color: var(--accent-text) !important;
-                    background: var(--selection-bg) !important;
-                    transform: translateY(-1px) !important;
-                    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3) !important;
-                }
-
-                /* Hover overlay to show description */
-                .task-list-item .task-overlay { pointer-events: none; }
-                .task-list-item:hover .task-overlay { opacity: 1; }
-                .task-list-item:hover { transform: translateY(-2px) !important; }
-
-                /* Custom scrollbar for task list */
-                .task-list-column::-webkit-scrollbar {
-                    width: 6px;
-                }
-
-                .task-list-column::-webkit-scrollbar-track {
-                    background: var(--border);
-                    border-radius: 3px;
-                }
-
-                .task-list-column::-webkit-scrollbar-thumb {
-                    background: var(--accent-text);
-                    border-radius: 3px;
-                }
-
-                .task-list-column::-webkit-scrollbar-thumb:hover {
-                    background: var(--accent-text);
-                    opacity: 0.8;
-                }
-
-                /* Responsive Design for Fixed Modal */
-                @media (max-width: 1200px) {
-                    .fixed-size-modal .ant-modal {
-                        width: 95vw !important;
-                    }
-                }
-
-                @media (max-width: 768px) {
-                    .fixed-size-modal .ant-modal {
-                        width: 95vw !important;
-                        height: 70vh !important;
-                    }
-
-                    .fixed-size-modal .ant-modal-content {
-                        height: 70vh !important;
-                    }
-
-                    .fixed-size-modal .ant-modal-body {
-                        padding: 16px !important;
-                        height: calc(70vh - 120px) !important;
-                    }
-
-                    .task-selection-container {
-                        height: calc(70vh - 260px) !important;
-                    }
-
-                    .two-column-layout {
-                        grid-template-columns: 1fr !important;
-                        grid-template-rows: 45% 55% !important;
-                    }
-
-                    .task-list-column {
-                        border-right: none !important;
-                        border-bottom: 1px solid var(--border) !important;
-                        padding: 0 16px 16px 16px !important;
-                    }
-
-                    .task-details-column {
-                        padding: 16px !important;
-                    }
-
-                    .task-details {
-                        max-width: 100% !important;
-                        margin: 0 auto !important;
-                    }
-
-                    .task-details img {
-                        height: 120px !important;
-                    }
-                }
-
-                @media (max-width: 480px) {
-                    .fixed-size-modal .ant-modal {
-                        width: 98vw !important;
-                        height: 70vh !important;
-                    }
-
-                    .fixed-size-modal .ant-modal-content {
-                        height: 70vh !important;
-                    }
-
-                    .fixed-size-modal .ant-modal-body {
-                        padding: 12px !important;
-                        height: calc(70vh - 60px) !important;
-                    }
-
-                    .task-selection-container {
-                        height: calc(70vh - 120px) !important;
-                        border-radius: 12px !important;
-                    }
-
-                    .task-list-column {
-                        padding: 0 12px 12px 12px !important;
-                    }
-
-                    .task-details-column {
-                        padding: 12px !important;
-                    }
-
-                    .task-list-item {
-                        padding: 16px !important;
-                    }
-
-                    .task-details img {
-                        height: 100px !important;
-                    }
-                }
-
-                /* Focus states for accessibility */
-                .task-list-item:focus {
-                    outline: 2px solid var(--accent-text);
-                    outline-offset: 2px;
-                }
-
-                /* Loading and transition states */
-                .task-details-fade-enter {
-                    opacity: 0;
-                    transform: translateY(10px);
-                }
-
-                .task-details-fade-enter-active {
-                    opacity: 1;
-                    transform: translateY(0);
-                    transition: opacity 300ms ease, transform 300ms ease;
-                }
-
-                .task-details-fade-exit {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-
-                .task-details-fade-exit-active {
-                    opacity: 0;
-                    transform: translateY(-10px);
-                    transition: opacity 300ms ease, transform 300ms ease;
-                }
-            `}</style>
-			<Modal
-				open={open}
-				onCancel={onCancel}
-				footer={null}
-				width="90vw"
-				destroyOnClose
-				centered
-				className="theme-manual-modal fixed-size-modal"
-				styles={{
-					content: {
-						background: 'var(--modal-bg)',
-						borderRadius: '24px',
-						boxShadow: '0 25px 50px rgba(0, 0, 0, 0.3)',
-						border: '1px solid var(--modal-border)',
-						overflow: 'hidden',
-						backdropFilter: 'blur(20px)',
-						maxHeight: '90vh',
-					},
-					header: {
-						background: 'var(--modal-header-bg)',
-						borderBottom:
-							'1px solid var(--modal-header-border)',
-						padding: '20px 24px 16px 24px',
-						borderRadius: '24px 24px 0 0',
-					},
-					body: {
-						background: 'transparent',
-						padding: '20px',
-						borderRadius: '0 0 24px 24px',
-						maxHeight: 'calc(90vh - 100px)',
-						overflowY: 'auto',
-					},
-				}}
-			>
+			<ProjectBaseModal open={open} onCancel={onCancel} className="theme-manual-modal">
 				<Title
 					level={4}
 					style={{
@@ -1230,7 +1019,7 @@ const ManualCreationModal = ({
 					Let&apos;s Create Your Project
 				</Title>
 				{content}
-			</Modal>
+			</ProjectBaseModal>
 		</>
 	)
 }

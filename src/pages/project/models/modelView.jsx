@@ -28,6 +28,7 @@ import {
 import * as mlServiceAPI from 'src/api/mlService'
 import * as modelServiceAPI from 'src/api/model'
 import BackgroundShapes from 'src/components/features/landing/BackgroundShapes'
+import { useTheme } from 'src/theme/ThemeProvider'
 
 const { Panel } = Collapse;
 
@@ -52,16 +53,17 @@ function toNormalCase(str) {
 }
 
 // Enhanced Table Columns with Tooltips
-const columns = [
+const getColumns = (theme) => [
     {
         title: 'Metric',
         dataIndex: 'metric',
         key: 'metric',
         render: (text, record) => (
             <Tooltip title={record.description}>
-                <span className="text-slate-200 font-poppins">{text}</span>{' '}
+                <span style={{ color: 'var(--text)' }} className="font-poppins">{text}</span>{' '}
                 <InfoCircleOutlined
-                    className="text-[#60a5fa] ml-[5px]"
+                    style={{ color: 'var(--accent-text)' }}
+                    className="ml-[5px]"
                 />
             </Tooltip>
         ),
@@ -71,7 +73,7 @@ const columns = [
         dataIndex: 'value',
         key: 'value',
         render: (text) => (
-            <span className="text-slate-200 font-poppins">{text}</span>
+            <span style={{ color: 'var(--text)' }} className="font-poppins">{text}</span>
         ),
     },
     {
@@ -82,6 +84,7 @@ const columns = [
 ]
 
 const ModelView = () => {
+    const { theme } = useTheme()
     const navigate = useNavigate()
     const { modelId, id } = useParams()
     const [model, setModel] = useState({})
@@ -137,46 +140,46 @@ const ModelView = () => {
         <>
             <style>{`
                 body, html {
-                    background-color: #01000A !important;
+                    background-color: var(--surface) !important;
                     font-family: 'Poppins', sans-serif !important;
                 }
-                .dark-table .ant-table {
+                .theme-table .ant-table {
                     background: transparent !important;
-                    color: #e2e8f0 !important;
+                    color: var(--text) !important;
                     font-family: 'Poppins', sans-serif !important;
                 }
-                .dark-table .ant-table-thead > tr > th {
-                    background: rgba(51, 65, 85, 0.4) !important;
-                    color: #e2e8f0 !important;
-                    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+                .theme-table .ant-table-thead > tr > th {
+                    background: var(--table-header-bg) !important;
+                    color: var(--table-header-color) !important;
+                    border-bottom: 1px solid var(--table-header-border) !important;
                     font-family: 'Poppins', sans-serif !important;
                     font-weight: 600 !important;
                 }
-                .dark-table .ant-table-tbody > tr > td {
-                    background: rgba(15, 23, 42, 0.3) !important;
-                    color: #e2e8f0 !important;
-                    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+                .theme-table .ant-table-tbody > tr > td {
+                    background: var(--table-cell-bg) !important;
+                    color: var(--table-cell-color) !important;
+                    border-bottom: 1px solid var(--table-cell-border) !important;
                     font-family: 'Poppins', sans-serif !important;
                 }
-                .dark-table .ant-table-tbody > tr:hover > td {
-                    background: rgba(51, 65, 85, 0.5) !important;
+                .theme-table .ant-table-tbody > tr:hover > td {
+                    background: var(--table-row-hover) !important;
                 }
-                .dark-table .ant-empty-description {
-                    color: #94a3b8 !important;
+                .theme-table .ant-empty-description {
+                    color: var(--secondary-text) !important;
                     font-family: 'Poppins', sans-serif !important;
                 }
                 .ant-collapse-ghost > .ant-collapse-item {
                     border: none !important;
                 }
                 .ant-collapse-ghost > .ant-collapse-item > .ant-collapse-header {
-                    background: rgba(51, 65, 85, 0.3) !important;
-                    color: #e2e8f0 !important;
+                    background: var(--hover-bg) !important;
+                    color: var(--text) !important;
                     border-radius: 8px !important;
-                    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                    border: 1px solid var(--border) !important;
                 }
                 .ant-collapse-ghost > .ant-collapse-item > .ant-collapse-content {
-                    background: rgba(15, 23, 42, 0.4) !important;
-                    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                    background: var(--card-gradient) !important;
+                    border: 1px solid var(--border) !important;
                     border-top: none !important;
                     border-radius: 0 0 8px 8px !important;
                 }
@@ -184,53 +187,59 @@ const ModelView = () => {
                     padding: 12px 16px !important;
                 }
             `}</style>
-            <div className="min-h-screen bg-[#01000A] relative">
-                <BackgroundShapes
-                    width="1280px"
-                    height="1200px"
-                    shapes={[
-                        {
-                            id: 'modelBlue',
-                            shape: 'circle',
-                            size: '550px',
-                            gradient: { type: 'radial', shape: 'ellipse', colors: ['#5C8DFF 0%', '#5C8DFF 40%', 'transparent 80%'] },
-                            opacity: 0.3,
-                            blur: '220px',
-                            position: { top: '180px', right: '-150px' },
-                            transform: 'none'
-                        },
-                        {
-                            id: 'modelCyan',
-                            shape: 'rounded',
-                            size: '480px',
-                            gradient: { type: 'radial', shape: 'circle', colors: ['#40FFFF 0%', '#40FFFF 50%', 'transparent 85%'] },
-                            opacity: 0.25,
-                            blur: '190px',
-                            position: { top: '350px', left: '-160px' },
-                            transform: 'none'
-                        },
-                        {
-                            id: 'modelWarm',
-                            shape: 'rounded',
-                            size: '420px',
-                            gradient: { type: 'radial', shape: 'circle', colors: ['#FFAF40 0%', '#FFAF40 60%', 'transparent 90%'] },
-                            opacity: 0.2,
-                            blur: '170px',
-                            position: { bottom: '150px', right: '25%' },
-                            transform: 'none'
-                        }
-                    ]}
-                />
+            <div className="min-h-screen relative" style={{ background: 'var(--surface)' }}>
+                {theme === 'dark' && (
+                    <BackgroundShapes
+                        width="1280px"
+                        height="1200px"
+                        shapes={[
+                            {
+                                id: 'modelBlue',
+                                shape: 'circle',
+                                size: '550px',
+                                gradient: { type: 'radial', shape: 'ellipse', colors: ['#5C8DFF 0%', '#5C8DFF 40%', 'transparent 80%'] },
+                                opacity: 0.3,
+                                blur: '220px',
+                                position: { top: '180px', right: '-150px' },
+                                transform: 'none'
+                            },
+                            {
+                                id: 'modelCyan',
+                                shape: 'rounded',
+                                size: '480px',
+                                gradient: { type: 'radial', shape: 'circle', colors: ['#40FFFF 0%', '#40FFFF 50%', 'transparent 85%'] },
+                                opacity: 0.25,
+                                blur: '190px',
+                                position: { top: '350px', left: '-160px' },
+                                transform: 'none'
+                            },
+                            {
+                                id: 'modelWarm',
+                                shape: 'rounded',
+                                size: '420px',
+                                gradient: { type: 'radial', shape: 'circle', colors: ['#FFAF40 0%', '#FFAF40 60%', 'transparent 90%'] },
+                                opacity: 0.2,
+                                blur: '170px',
+                                position: { bottom: '150px', right: '25%' },
+                                transform: 'none'
+                            }
+                        ]}
+                    />
+                )}
                 <div className="relative z-10 p-6">
                     <Space direction="vertical" size="large" className="w-full">
                         {/* Key Metrics Cards */}
                         <Row gutter={[16, 16]}>
                             <Col xs={24} sm={12} md={8}>
                                 <Card
-                                    className="border-0 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 backdrop-blur-[10px] border border-white/10 rounded-xl font-poppins bg-[linear-gradient(135deg,rgba(51,65,85,0.4)_0%,rgba(15,23,42,0.4)_100%)]"
+                                    className="group relative overflow-hidden rounded-2xl border border-opacity-20 backdrop-blur-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 hover:border-opacity-40 font-poppins"
+                                    style={{
+                                        borderColor: 'var(--border)',
+                                        background: 'linear-gradient(135deg, var(--hover-bg) 0%, rgba(255,255,255,0.02) 100%)'
+                                    }}
                                 >
                                     <Statistic
-                                        title={<span className="text-slate-400 font-poppins">{`Model ${metrics[0] ? toNormalCase(metrics[0]?.metric) : "Null"} Score`}</span>}
+                                        title={<span style={{ color: 'var(--secondary-text)' }} className="font-poppins">{`Model ${metrics[0] ? toNormalCase(metrics[0]?.metric) : "Null"} Score`}</span>}
                                         value={metrics[0]?.value * 100 || 0}
                                         precision={2}
                                         prefix={<TrophyOutlined className="text-[#10b981]" />}
@@ -245,10 +254,14 @@ const ModelView = () => {
                             </Col>
                             <Col xs={24} sm={12} md={8}>
                                 <Card
-                                    className="border-0 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 backdrop-blur-[10px] border border-white/10 rounded-xl font-poppins bg-[linear-gradient(135deg,rgba(51,65,85,0.4)_0%,rgba(15,23,42,0.4)_100%)]"
+                                    className="group relative overflow-hidden rounded-2xl border border-opacity-20 backdrop-blur-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 hover:border-opacity-40 font-poppins"
+                                    style={{
+                                        borderColor: 'var(--border)',
+                                        background: 'linear-gradient(135deg, var(--hover-bg) 0%, rgba(255,255,255,0.02) 100%)'
+                                    }}
                                 >
                                     <Statistic
-                                        title={<span className="text-slate-400 font-poppins">Model Size</span>}
+                                        title={<span style={{ color: 'var(--secondary-text)' }} className="font-poppins">Model Size</span>}
                                         value={model.metadata?.model_size || 0}
                                         valueStyle={{
                                             fontFamily: 'Poppins, sans-serif',
@@ -263,31 +276,39 @@ const ModelView = () => {
                             </Col>
                             <Col xs={24} sm={12} md={8}>
                                 <Card
-                                    className="border-0 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 backdrop-blur-[10px] border border-white/10 rounded-xl font-poppins bg-[linear-gradient(135deg,rgba(51,65,85,0.4)_0%,rgba(15,23,42,0.4)_100%)]"
+                                    className="group relative overflow-hidden rounded-2xl border border-opacity-20 backdrop-blur-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 hover:border-opacity-40 font-poppins"
+                                    style={{
+                                        borderColor: 'var(--border)',
+                                        background: 'linear-gradient(135deg, var(--hover-bg) 0%, rgba(255,255,255,0.02) 100%)'
+                                    }}
                                 >
                                     <Statistic
-                                        title={<span className="text-slate-400 font-poppins">Model Name</span>}
+                                        title={<span style={{ color: 'var(--secondary-text)' }} className="font-poppins">Model Name</span>}
                                         value={model.name}
-                                        prefix={<ExperimentOutlined className="text-[#3b82f6]" />}
+                                        prefix={<ExperimentOutlined style={{ color: 'var(--accent-text)' }} />}
                                         valueStyle={{
                                             fontFamily: 'Poppins, sans-serif',
-                                            fontWeight: 'bold'
+                                            fontWeight: 'bold',
+                                            color: 'var(--text)'
                                         }}
-                                        className="[&_.ant-statistic-content-value]:bg-gradient-to-br [&_.ant-statistic-content-value]:from-[#3b82f6] [&_.ant-statistic-content-value]:to-[#60a5fa] [&_.ant-statistic-content-value]:bg-clip-text [&_.ant-statistic-content-value]:text-transparent"
                                     />
                                 </Card>
                             </Col>
                         </Row>
 
                         <Card
-                            title={<span className="text-slate-200 font-poppins">Next Steps</span>}
-                            className="border-0 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 backdrop-blur-[10px] border border-white/10 rounded-xl font-poppins bg-[linear-gradient(135deg,rgba(51,65,85,0.4)_0%,rgba(15,23,42,0.4)_100%)]"
+                            title={<span style={{ color: 'var(--text)' }} className="font-poppins">Next Steps</span>}
+                            className="rounded-3xl border border-white/10 backdrop-blur-xl shadow-2xl font-poppins"
+                            style={{
+                                borderColor: 'var(--border)',
+                                background: 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.1) 100%)'
+                            }}
                         >
                             <Row gutter={[16, 16]}>
                                 <Col xs={24} sm={8}>
                                     <Alert
-                                        message={<span className="text-white font-poppins font-semibold">Deploy Model</span>}
-                                        description={<span className="text-slate-200 font-poppins">Instantly transform your trained model into a production-ready solution for real-world predictions.</span>}
+                                        message={<span style={{ color: 'var(--text)' }} className="font-poppins font-semibold">Deploy Model</span>}
+                                        description={<span style={{ color: 'var(--secondary-text)' }} className="font-poppins">Instantly transform your trained model into a production-ready solution for real-world predictions.</span>}
                                         type="success"
                                         showIcon
                                         className="h-[130px] rounded-lg font-poppins bg-[linear-gradient(135deg,rgba(16,185,129,0.1),rgba(52,211,153,0.1))] border border-[rgba(16,185,129,0.3)]"
@@ -308,8 +329,8 @@ const ModelView = () => {
                                 </Col>
                                 <Col xs={24} sm={8}>
                                     <Alert
-                                        message={<span className="text-white font-poppins font-semibold">Download Weights</span>}
-                                        description={<span className="text-slate-200 font-poppins">Securely export and preserve your model's learned parameters for future iterations or transfer learning.</span>}
+                                        message={<span style={{ color: 'var(--text)' }} className="font-poppins font-semibold">Download Weights</span>}
+                                        description={<span style={{ color: 'var(--secondary-text)' }} className="font-poppins">Securely export and preserve your model's learned parameters for future iterations or transfer learning.</span>}
                                         type="warning"
                                         showIcon
                                         className="h-[130px] rounded-lg font-poppins bg-[linear-gradient(135deg,rgba(245,158,11,0.1),rgba(251,191,36,0.1))] border border-[rgba(245,158,11,0.3)]"
@@ -318,7 +339,8 @@ const ModelView = () => {
                                         type="default"
                                         icon={<CloudDownloadOutlined />}
                                         size="large"
-                                        className="w-full font-bold mt-[15px] text-white font-poppins border-none bg-gradient-to-br from-[#f59e0b] to-[#fbbf24] hover:shadow-lg transition-all duration-300"
+                                        className="w-full font-bold mt-[15px] font-poppins border-none bg-gradient-to-br from-[#f59e0b] to-[#fbbf24] hover:shadow-lg transition-all duration-300"
+                                        style={{ color: '#ffffff' }}
                                         onClick={async (e) => {
                                             e.preventDefault()
                                             const urlResponse = await mlServiceAPI.getModelUrl(modelId)
@@ -334,8 +356,8 @@ const ModelView = () => {
                                 </Col>
                                 <Col xs={24} sm={8}>
                                     <Alert
-                                        message={<span className="text-white font-poppins font-semibold">Refine Model</span>}
-                                        description={<span className="text-slate-200 font-poppins">Continuously improve your model's performance by initiating a new training cycle with enhanced data or parameters.</span>}
+                                        message={<span style={{ color: 'var(--text)' }} className="font-poppins font-semibold">Refine Model</span>}
+                                        description={<span style={{ color: 'var(--secondary-text)' }} className="font-poppins">Continuously improve your model's performance by initiating a new training cycle with enhanced data or parameters.</span>}
                                         type="info"
                                         showIcon
                                         className="h-[130px] rounded-lg font-poppins bg-[linear-gradient(135deg,rgba(59,130,246,0.1),rgba(96,165,250,0.1))] border border-[rgba(59,130,246,0.3)]"
@@ -344,7 +366,8 @@ const ModelView = () => {
                                         type="default"
                                         icon={<HistoryOutlined />}
                                         size="large"
-                                        className="w-full font-bold mt-[15px] text-white font-poppins border-none bg-gradient-to-br from-[#3b82f6] to-[#60a5fa] hover:shadow-lg transition-all duration-300"
+                                        className="w-full font-bold mt-[15px] font-poppins border-none bg-gradient-to-br from-[#3b82f6] to-[#60a5fa] hover:shadow-lg transition-all duration-300"
+                                        style={{ color: '#ffffff' }}
                                         onClick={() => navigate(`/app/project/${id}/model/${modelId}/retrain`)}
                                     >
                                         Retrain Model
@@ -355,13 +378,18 @@ const ModelView = () => {
 
                         {/* Expandable Details Section */}
                         <Card
-                            className="border-0 backdrop-blur-sm shadow-lg backdrop-blur-[10px] border border-white/10 rounded-xl font-poppins bg-[linear-gradient(135deg,rgba(51,65,85,0.4)_0%,rgba(15,23,42,0.4)_100%)]"
+                            className="rounded-3xl border border-white/10 backdrop-blur-xl shadow-2xl font-poppins"
+                            style={{
+                                borderColor: 'var(--border)',
+                                background: 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.1) 100%)'
+                            }}
                         >
                             <Button
                                 type="link"
-                                icon={<BarChartOutlined className="text-[#60a5fa]" />}
+                                icon={<BarChartOutlined style={{ color: 'var(--accent-text)' }} />}
                                 onClick={() => setIsDetailsExpanded(!isDetailsExpanded)}
-                                className="text-xl text-[#e2e8f0] font-poppins"
+                                className="text-xl font-poppins"
+                                style={{ color: 'var(--text)' }}
                             >
                                 {isDetailsExpanded
                                     ? 'Hide Details'
@@ -378,15 +406,20 @@ const ModelView = () => {
                                     <Card
                                         title={
                                             <>
-                                                <span className="text-slate-200 font-poppins">Metadata</span>{" "}
+                                                <span style={{ color: 'var(--text)' }} className="font-poppins">Metadata</span>{" "}
                                                 <span
-                                                    className="text-xs text-[#94a3b8]"
+                                                    className="text-xs"
+                                                    style={{ color: 'var(--secondary-text)' }}
                                                 >
                                                     (Details about the model and its expected input, output)
                                                 </span>
                                             </>
                                         }
-                                        className="border-0 backdrop-blur-sm backdrop-blur-[10px] border border-white/10 rounded-xl font-poppins bg-[linear-gradient(135deg,rgba(51,65,85,0.3)_0%,rgba(15,23,42,0.3)_100%)]"
+                                        className="rounded-3xl border border-white/10 backdrop-blur-xl shadow-2xl font-poppins"
+                                        style={{
+                                            borderColor: 'var(--border)',
+                                            background: 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.1) 100%)'
+                                        }}
                                     >
                                         <Space direction="vertical" size="middle" className="w-full">
                                             {Object.entries(model.metadata || {}).map(([key, value]) => (
@@ -412,15 +445,15 @@ const ModelView = () => {
                                                                     rowClassName={() => ''} // removes Ant Design hover class
                                                                     columns={Object.keys(value[0]).map((colKey) => ({
                                                                         title: (
-                                                                            <span className="text-white font-poppins">
+                                                                            <span style={{ color: 'var(--table-header-color)' }} className="font-poppins">
                                                                                 {colKey.charAt(0).toUpperCase() + colKey.slice(1)}
                                                                             </span>
                                                                         ),
                                                                         dataIndex: colKey,
                                                                         key: colKey,
                                                                         render: (text) => (
-                                                                            <span className="text-white font-poppins">
-                                                                                {text?.toString() || <em className="text-gray-300">(empty)</em>}
+                                                                            <span style={{ color: 'var(--table-cell-color)' }} className="font-poppins">
+                                                                                {text?.toString() || <em style={{ color: 'var(--secondary-text)' }}>(empty)</em>}
                                                                             </span>
                                                                         ),
                                                                     }))}
@@ -429,7 +462,11 @@ const ModelView = () => {
                                                                             cell: (props) => (
                                                                                 <th
                                                                                     {...props}
-                                                                                    className="bg-[#111827] text-white font-poppins"
+                                                                                    className="font-poppins"
+                                                                                    style={{
+                                                                                        backgroundColor: 'var(--table-header-bg)',
+                                                                                        color: 'var(--table-header-color)'
+                                                                                    }}
                                                                                 >
                                                                                     {props.children}
                                                                                 </th>
@@ -439,19 +476,23 @@ const ModelView = () => {
                                                                             row: ({ children, ...restProps }) => (
                                                                                 <tr
                                                                                     {...restProps}
-                                                                                    className="bg-[#1f2937]"
                                                                                     onMouseEnter={(e) => {
                                                                                         const tds = e.currentTarget.children;
-                                                                                        for (let i = 0; i < tds.length; i++) tds[i].style.backgroundColor = '#374151';
+                                                                                        const hoverColor = getComputedStyle(document.documentElement).getPropertyValue('--table-row-hover');
+                                                                                        for (let i = 0; i < tds.length; i++) tds[i].style.backgroundColor = hoverColor;
                                                                                     }}
                                                                                     onMouseLeave={(e) => {
                                                                                         const tds = e.currentTarget.children;
-                                                                                        for (let i = 0; i < tds.length; i++) tds[i].style.backgroundColor = '#1f2937';
+                                                                                        const cellBg = getComputedStyle(document.documentElement).getPropertyValue('--table-cell-bg');
+                                                                                        for (let i = 0; i < tds.length; i++) tds[i].style.backgroundColor = cellBg;
                                                                                     }}
                                                                                 >
                                                                                     {React.Children.map(children, (child) =>
                                                                                         React.cloneElement(child, {
-                                                                                            style: { backgroundColor: '#1f2937', color: '#fff' },
+                                                                                            style: { 
+                                                                                                backgroundColor: 'var(--table-cell-bg)', 
+                                                                                                color: 'var(--table-cell-color)' 
+                                                                                            },
                                                                                         })
                                                                                     )}
                                                                                 </tr>
@@ -496,9 +537,10 @@ const ModelView = () => {
                                                             className="inline-block align-top"
                                                         >
                                                             <Panel
-                                                                header={<span className="text-slate-200 font-poppins">View Details</span>}
+                                                                header={<span style={{ color: 'var(--text)' }} className="font-poppins">View Details</span>}
                                                                 key="1"
-                                                                className="bg-transparent border border-white/10 rounded-lg"
+                                                                className="bg-transparent rounded-lg"
+                                                                style={{ borderColor: 'var(--border)' }}
                                                             >
                                                                 <Space
                                                                     direction="vertical"
@@ -547,8 +589,8 @@ const ModelView = () => {
                                                                                 </Space>
                                                                             ) : (
                                                                                 // Primitive values
-                                                                                <span className="text-slate-200 font-poppins">
-                                                                                    {subValue?.toString() || <em className="text-slate-400">(empty)</em>}
+                                                                                <span style={{ color: 'var(--text)' }} className="font-poppins">
+                                                                                    {subValue?.toString() || <em style={{ color: 'var(--secondary-text)' }}>(empty)</em>}
                                                                                 </span>
                                                                             )}
                                                                         </div>
@@ -558,8 +600,8 @@ const ModelView = () => {
                                                         </Collapse>
                                                     ) : (
                                                         // Handle primitives
-                                                        <span className="ml-[10px] text-[#e2e8f0] font-poppins">
-                                                            {value?.toString() || <em className="text-slate-400">(empty)</em>}
+                                                        <span className="ml-[10px] font-poppins" style={{ color: 'var(--text)' }}>
+                                                            {value?.toString() || <em style={{ color: 'var(--secondary-text)' }}>(empty)</em>}
                                                         </span>
                                                     )}
                                                 </div>
@@ -571,19 +613,23 @@ const ModelView = () => {
                                     <Card
                                         title={
                                             <>
-                                                <span className="text-slate-200 font-poppins">Model Metrics</span>{" "}
-                                                <span className="text-xs text-[#94a3b8] italic font-poppins">
+                                                <span style={{ color: 'var(--text)' }} className="font-poppins">Model Metrics</span>{" "}
+                                                <span className="text-xs italic font-poppins" style={{ color: 'var(--secondary-text)' }}>
                                                     (Detail about how well the model make predictions)
                                                 </span>
                                             </>
                                         }
-                                        className="border-0 backdrop-blur-sm backdrop-blur-[10px] border border-white/10 rounded-xl font-poppins bg-[linear-gradient(135deg,rgba(51,65,85,0.3)_0%,rgba(15,23,42,0.3)_100%)]"
+                                        className="rounded-3xl border border-white/10 backdrop-blur-xl shadow-2xl font-poppins"
+                                        style={{
+                                            borderColor: 'var(--border)',
+                                            background: 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.1) 100%)'
+                                        }}
                                     >
                                         <Table
-                                            columns={columns}
+                                            columns={getColumns(theme)}
                                             dataSource={metrics}
                                             pagination={false}
-                                            className="bg-transparent font-poppins dark-table"
+                                            className="bg-transparent font-poppins theme-table"
                                         />
                                     </Card>
                                 </Space>

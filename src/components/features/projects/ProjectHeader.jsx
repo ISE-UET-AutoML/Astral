@@ -2,6 +2,7 @@ import React from 'react'
 import { Tooltip } from 'antd'
 
 const ProjectHeader = ({ onNewProject }) => {
+
 	return (
 		<div className="flex justify-between items-start mb-4">
 			<div className="flex flex-col gap-1">
@@ -16,7 +17,7 @@ const ProjectHeader = ({ onNewProject }) => {
 				<Tooltip title="Create a new project with AI assistance or manual setup">
 					<button
 						onClick={onNewProject}
-						className="px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg text-white bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#0f3460] hover:from-[#16213e] hover:to-[#0f3460] border border-white/20"
+						className="px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg text-white border-none btn-gradient-dark"
 					>
 						New Project
 					</button>

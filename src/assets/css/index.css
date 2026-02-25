@@ -644,3 +644,20 @@ body {
 	overflow-x: auto;
 	overflow-y: hidden;
 }
+
+/* Button gradient - blue to green */
+.btn-gradient-dark {
+	background: linear-gradient(to right, #2558FF, #40FF80) !important;
+	box-shadow: 0 10px 36px rgba(92, 141, 255, 0.45);
+	transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-gradient-dark:hover {
+	box-shadow: 0 16px 46px rgba(92, 141, 255, 0.65);
+	transform: translateY(-2px);
+}
+
+.btn-gradient-dark:focus {
+	outline: none;
+	box-shadow: 0 0 0 2px rgba(92, 141, 255, 0.7);
+}

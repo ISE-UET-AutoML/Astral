@@ -186,8 +186,18 @@ export default function Projects() {
 					<CreationMethodModal
 						open={projectState.showUploader}
 						onCancel={() => updateProjState({ showUploader: false })}
-						onSelectChatbot={() => updateProjState({ showUploaderChatbot: true })}
-						onSelectManual={() => updateProjState({ showUploaderManual: true })}
+						onSelectChatbot={() =>
+							updateProjState({
+								showUploader: false,
+								showUploaderChatbot: true,
+							})
+						}
+						onSelectManual={() =>
+							updateProjState({
+								showUploader: false,
+								showUploaderManual: true,
+							})
+						}
 					/>
 					<ManualCreationModal
 						open={projectState.showUploaderManual}

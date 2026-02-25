@@ -239,21 +239,21 @@ body {
   background-clip: text;
 }
 
-/* Task card shine effect (::before pseudo element) */
-@layer components {
-  .task-card-shine::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, 
-      rgba(255, 255, 255, 0.05) 0%, 
-      rgba(255, 255, 255, 0.02) 100%
-    );
-    pointer-events: none;
-    border-radius: 1rem;
-    z-index: 0;
+/* Button gradient for dark theme */
+@layer utilities {
+  .btn-gradient-dark {
+    background: linear-gradient(to right, #2558FF, #40FF80) !important;
+    box-shadow: 0 10px 36px rgba(92, 141, 255, 0.45);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .btn-gradient-dark:hover {
+    box-shadow: 0 16px 46px rgba(92, 141, 255, 0.65);
+    transform: translateY(-2px);
+  }
+
+  .btn-gradient-dark:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(92, 141, 255, 0.7);
   }
 }

@@ -62,6 +62,7 @@ const DatasetGrid = ({
             />
         )
     }
+    console.log("Total items", totalItems);
 
     return (
         <>
@@ -77,7 +78,7 @@ const DatasetGrid = ({
                 ))}
             </Row>
             
-            {totalItems > pageSize && (
+            {totalItems && totalItems > 0 && totalItems > pageSize && (
                 <div className="flex justify-center">
                     <Pagination
                         current={currentPage}
