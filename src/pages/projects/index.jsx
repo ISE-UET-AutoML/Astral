@@ -8,11 +8,11 @@ import {
 	CreationMethodModal,
 	ManualCreationModal,
 	DatasetSelectionModal,
-} from 'src/components/projects'
+} from 'src/components/features/projects'
 import AIAssistantModal from './AIAssistantModal'
-import ContentContainer from 'src/components/ContentContainer'
-import BackgroundShapes from 'src/components/landing/BackgroundShapes'
-import Pager from 'src/components/Pager'
+import ContentContainer from 'src/layouts/ContentContainer'
+import BackgroundShapes from 'src/components/features/landing/BackgroundShapes'
+import Pager from 'src/components/shared/data-display/Pager'
 import create_project from 'src/assets/images/create_project.png'
 
 // Hooks

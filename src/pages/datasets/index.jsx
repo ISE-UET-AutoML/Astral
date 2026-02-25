@@ -6,11 +6,11 @@ import {
 	DatasetHeader,
 	DatasetFilter,
 	DatasetGrid,
-} from 'src/components/datasets'
+} from 'src/components/features/datasets'
 import CreateDatasetModal from './CreateDatasetModal'
-import ContentContainer from 'src/components/ContentContainer'
-import BackgroundShapes from 'src/components/landing/BackgroundShapes'
-import Pager from 'src/components/Pager'
+import ContentContainer from 'src/layouts/ContentContainer'
+import BackgroundShapes from 'src/components/features/landing/BackgroundShapes'
+import Pager from 'src/components/shared/data-display/Pager'
 
 // Hooks
 import { useDatasets } from 'src/hooks'

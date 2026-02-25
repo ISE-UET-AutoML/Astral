@@ -1,5 +1,5 @@
 import { Outlet, useParams } from 'react-router-dom'
-import DatasetSidebar from 'src/components/DatasetSidebar'
+import DatasetSidebar from 'src/layouts/DatasetSidebar'
 
 export default function DatasetLayout() {
 	const params = useParams()

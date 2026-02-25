@@ -2,7 +2,7 @@ import { listData } from 'src/api/project'
 import { useLocation } from 'react-router-dom'
 import { useSearchParams } from 'react-router-dom'
 import React, { memo, useEffect } from 'react'
-import Loading from 'src/components/Loading'
+import Loading from 'src/components/shared/data-display/Loading'
 import config from '../config'
 
 const LabelData = ({

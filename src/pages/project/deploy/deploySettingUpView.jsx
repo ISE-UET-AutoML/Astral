@@ -18,7 +18,7 @@ import {
 } from '@ant-design/icons'
 import * as deployAPI from 'src/api/deploy'
 import { PATHS } from 'src/constants/paths'
-import BackgroundShapes from 'src/components/landing/BackgroundShapes'
+import BackgroundShapes from 'src/components/features/landing/BackgroundShapes'
 import { useSpring, animated } from '@react-spring/web'
 
 const { Title } = Typography

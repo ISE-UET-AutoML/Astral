@@ -3,8 +3,8 @@ import { validatePassword } from 'src/utils/validate'
 import { signup } from 'src/api/auth'
 import { useNavigate } from 'react-router-dom'
 import { message } from 'antd'
-import BackgroundShapes from 'src/components/landing/BackgroundShapes'
-import TextCubeCanvas from 'src/components/login/TextCubeCanvas'
+import BackgroundShapes from 'src/components/features/landing/BackgroundShapes'
+import TextCubeCanvas from 'src/components/features/auth/login/TextCubeCanvas'
 
 const SignUp = () => {
 	const navigate = useNavigate()
@@ -76,7 +76,6 @@ const SignUp = () => {
 
 			if (response) {
 				message.success('Registration successful!')
-				console.log('Đăng ký thành công:', response)
 				navigate('/login', { replace: true })
 			}
 		} catch (error) {
@@ -191,259 +190,218 @@ const SignUp = () => {
 	}
 
 	return (
-		<>
-			<style>{`
-				body, html {
-					background-color: #01000A !important;
-					font-family: 'Poppins', sans-serif !important;
-					overflow: hidden !important;
-					height: 100vh !important;
-					width: 100vw !important;
-				}
-				input[type="password"]::placeholder {
-					color: rgba(255, 255, 255, 0.5) !important;
-				}
-			`}</style>
-			<main
-				className="w-full h-screen"
-				className="font-poppins bg-[#01000A]"
-			>
-				<div className="relative w-full h-full">
-					<BackgroundShapes
-						width="100%"
-						height="100%"
-						shapes={[
-							{
-								id: 'signupBlue',
+		<main className="w-full h-screen font-poppins bg-[#01000A] overflow-hidden">
+			<div className="relative w-full h-full">
+				<BackgroundShapes
+					width="100%"
+					height="100%"
+					shapes={[
+						{
+							id: 'signupBlue',
+							shape: 'circle',
+							size: '520px',
+							gradient: {
+								type: 'radial',
+								shape: 'ellipse',
+								colors: [
+									'#5C8DFF 0%',
+									'#5C8DFF 35%',
+									'transparent 75%',
+								],
+							},
+							opacity: 0.45,
+							blur: '220px',
+							position: { top: '10%', right: '-140px' },
+							transform: 'none',
+						},
+						{
+							id: 'signupCyan',
+							shape: 'rounded',
+							size: '420px',
+							gradient: {
+								type: 'radial',
 								shape: 'circle',
-								size: '520px',
-								gradient: {
-									type: 'radial',
-									shape: 'ellipse',
-									colors: [
-										'#5C8DFF 0%',
-										'#5C8DFF 35%',
-										'transparent 75%',
-									],
-								},
-								opacity: 0.45,
-								blur: '220px',
-								position: { top: '10%', right: '-140px' },
-								transform: 'none',
+								colors: [
+									'#40FFFF 0%',
+									'#40FFFF 55%',
+									'transparent 40%',
+								],
 							},
-							{
-								id: 'signupCyan',
-								shape: 'rounded',
-								size: '420px',
-								gradient: {
-									type: 'radial',
-									shape: 'circle',
-									colors: [
-										'#40FFFF 0%',
-										'#40FFFF 55%',
-										'transparent 40%',
-									],
-								},
-								opacity: 0.3,
-								blur: '180px',
-								position: { top: '5%', left: '-120px' },
-								transform: 'none',
+							opacity: 0.3,
+							blur: '180px',
+							position: { top: '5%', left: '-120px' },
+							transform: 'none',
+						},
+						{
+							id: 'signupWarm',
+							shape: 'rounded',
+							size: '520px',
+							gradient: {
+								type: 'radial',
+								shape: 'circle',
+								colors: [
+									'#FFAF40 0%',
+									'#FFAF40 50%',
+									'transparent 85%',
+								],
 							},
-							{
-								id: 'signupWarm',
-								shape: 'rounded',
-								size: '520px',
-								gradient: {
-									type: 'radial',
-									shape: 'circle',
-									colors: [
-										'#FFAF40 0%',
-										'#FFAF40 50%',
-										'transparent 85%',
-									],
-								},
-								opacity: 0.2,
-								blur: '220px',
-								position: { bottom: '-10%', left: '50%' },
-								transform: 'translate(-50%, 0%)',
-							},
-						]}
+							opacity: 0.2,
+							blur: '220px',
+							position: { bottom: '-10%', left: '50%' },
+							transform: 'translate(-50%, 0%)',
+						},
+					]}
+				/>
+
+				{/* Background 3D shape */}
+				<div className="absolute inset-0 z-0 pointer-events-none">
+					<TextCubeCanvas
+						shapeType="icosahedron"
+						offsetX={offsetX}
+						rollSpeed={0.005}
+						mouseMaxYaw={0.6}
+						mouseMaxPitch={0.6}
+						followEasing={0.08}
+						sizeHalf={sizeHalf}
+						cameraZ={420}
+						focalLength={360}
 					/>
+				</div>
 
-					{/* Full-screen background shape layer */}
-					<div className="absolute inset-0 z-0 pointer-events-none">
-						<TextCubeCanvas
-							shapeType="cube"
-							offsetX={offsetX}
-							rollSpeed={0.008}
-							mouseMaxYaw={0.8}
-							mouseMaxPitch={0.8}
-							followEasing={0.06}
-							sizeHalf={sizeHalf}
-							cameraZ={450}
-							focalLength={380}
-							initialYaw={-0.4}
-							initialPitch={0.25}
-							baseSpinYaw={-0.004}
-							baseSpinPitch={0.003}
-							glowColor="rgba(101, 255, 160, 0.9)"
-						/>
-					</div>
+				{/* Signup form */}
+				<div className="relative z-10 w-full h-full flex items-center justify-center px-6">
+					<div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 xl:gap-24 2xl:gap-32 items-center w-full max-w-6xl">
+						<div className="hidden lg:block" />
 
-					<div className="relative z-10 w-full h-full flex items-center justify-center px-6">
-						<div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 xl:gap-24 2xl:gap-32 items-center w-full max-w-6xl">
-							{/* Left side - spacer for 3D shape */}
-							<div className="hidden lg:block" />
-
-							{/* Right side - Signup Form */}
-							<div className="w-full max-w-md mx-auto lg:mx-0">
-								{/* Form Card - Matching LoginCard styling */}
-								<div className="w-full">
-									<div
-										className="backdrop-blur-xl rounded-2xl p-8 border border-white/10"
-										className="bg-white/[0.06] shadow-[0_10px_40px_rgba(0,0,0,0.4)]"
-									>
-										<div className="text-center">
-											<img
-												src="/PrimaryLogo.svg"
-												width={150}
-												className="mx-auto"
-												alt="ASTRAL"
-											/>
-											<div className="mt-6 space-y-2">
-												<h3 className="text-white text-2xl font-semibold">
-													Create Account
-												</h3>
-												<p className="text-white/60 text-sm">
-													Join us and start your
-													journey
-												</p>
-											</div>
-										</div>
-										<form
-											onSubmit={handleSignUp}
-											className="space-y-5 mt-8"
-										>
-											<div>
-												<label className="font-medium text-white/80">
-													Full Name
-												</label>
-												<input
-													type="text"
-													name="full_name"
-													required
-													className="w-full mt-2 px-3 py-2 text-white placeholder-white/50 bg-white/10 outline-none border border-white/20 focus:border-white/40 shadow-sm rounded-2xl"
-													placeholder="Your full name"
-												/>
-											</div>
-											<div>
-												<label className="font-medium text-white/80">
-													Email
-												</label>
-												<input
-													type="email"
-													name="email"
-													value={
-														formState.email.value
-													}
-													onChange={handleEmailChange}
-													required
-													className={`w-full mt-2 px-3 py-2 text-white placeholder-white/50 bg-white/10 outline-none border shadow-sm rounded-2xl ${
-														formState.email.error
-															? 'border-red-400/50 focus:border-red-400/70'
-															: 'border-white/20 focus:border-white/40'
-													}`}
-													placeholder="you@example.com"
-												/>
-												{formState.email.touched &&
-													formState.email.error && (
-														<p className="text-red-400 text-sm mt-1">
-															{
-																formState.email
-																	.error
-															}
-														</p>
-													)}
-											</div>
-											<div>
-												<label className="font-medium text-white/80">
-													Password
-												</label>
-												<input
-													type="password"
-													name="password"
-													required
-													onChange={
-														handlePasswordChange
-													}
-													className="w-full mt-2 px-3 py-2 text-white placeholder-white/50 bg-white/10 outline-none border border-white/20 focus:border-white/40 shadow-sm rounded-2xl"
-													placeholder="••••••••"
-												/>
-												{formState.password.touched &&
-													formState.password
-														.error && (
-														<p className="text-red-400 text-sm mt-1">
-															{
-																formState
-																	.password
-																	.error
-															}
-														</p>
-													)}
-											</div>
-											<div>
-												<label className="font-medium text-white/80">
-													Confirm Password
-												</label>
-												<input
-													type="password"
-													name="confirmPassword"
-													required
-													onChange={
-														handleConfirmPasswordChange
-													}
-													className="w-full mt-2 px-3 py-2 text-white placeholder-white/50 bg-white/10 outline-none border border-white/20 focus:border-white/40 shadow-sm rounded-2xl"
-													placeholder="••••••••"
-												/>
-												{formState.confirmPassword
-													.touched &&
-													formState.confirmPassword
-														.error && (
-														<p className="text-red-400 text-sm mt-1">
-															{
-																formState
-																	.confirmPassword
-																	.error
-															}
-														</p>
-													)}
-											</div>
-											<button
-												className="w-full px-4 py-2 text-white text-lg font-semibold rounded-2xl duration-200"
-												className="shadow-[0_6px_24px_rgba(92,141,255,0.35)]" style={{ background: 'linear-gradient(135deg,rgb(37, 88, 255) 0%,rgb(64, 255, 128) 100%)' }}
-											>
+						<div className="w-full max-w-md mx-auto lg:mx-0">
+							<div className="w-full">
+								<div className="backdrop-blur-xl rounded-2xl p-8 border border-white/10 bg-white/[0.06] shadow-[0_10px_40px_rgba(0,0,0,0.4)]">
+									<div className="text-center">
+										
+										<div className="mt-6 space-y-2">
+											<h3 className="text-white text-2xl font-semibold">
 												Create Account
-											</button>
-										</form>
-
-										<p className="mt-4 text-white/70 text-sm">
-											Already have an account?{' '}
-											<a
-												href="/login"
-												className="font-medium"
-												className="text-[#5C8DFF]"
-											>
-												Log in
-											</a>
-										</p>
+											</h3>
+											<p className="text-white/60 text-sm">
+												Join us and start your journey
+											</p>
+										</div>
 									</div>
+									<form
+										onSubmit={handleSignUp}
+										className="space-y-5 mt-8"
+									>
+										<div>
+											<label className="font-medium text-white/80">
+												Full Name
+											</label>
+											<input
+												type="text"
+												name="full_name"
+												required
+												className="w-full mt-2 px-3 py-2 text-white placeholder-white/50 bg-white/10 outline-none border border-white/20 focus:border-white/40 shadow-sm rounded-2xl"
+												placeholder="Your full name"
+											/>
+										</div>
+										<div>
+											<label className="font-medium text-white/80">
+												Email
+											</label>
+											<input
+												type="email"
+												name="email"
+												value={formState.email.value}
+												onChange={handleEmailChange}
+												required
+												className={`w-full mt-2 px-3 py-2 text-white placeholder-white/50 bg-white/10 outline-none border shadow-sm rounded-2xl ${
+													formState.email.error
+														? 'border-red-400/50 focus:border-red-400/70'
+														: 'border-white/20 focus:border-white/40'
+												}`}
+												placeholder="you@example.com"
+											/>
+											{formState.email.touched &&
+												formState.email.error && (
+													<p className="text-red-400 text-sm mt-1">
+														{
+															formState.email
+																.error
+														}
+													</p>
+												)}
+										</div>
+										<div>
+											<label className="font-medium text-white/80">
+												Password
+											</label>
+											<input
+												type="password"
+												name="password"
+												required
+												onChange={handlePasswordChange}
+												className="w-full mt-2 px-3 py-2 text-white placeholder-white/50 bg-white/10 outline-none border border-white/20 focus:border-white/40 shadow-sm rounded-2xl"
+												placeholder="••••••••"
+											/>
+											{formState.password.touched &&
+												formState.password.error && (
+													<p className="text-red-400 text-sm mt-1">
+														{
+															formState.password
+																.error
+														}
+													</p>
+												)}
+										</div>
+										<div>
+											<label className="font-medium text-white/80">
+												Confirm Password
+											</label>
+											<input
+												type="password"
+												name="confirmPassword"
+												required
+												onChange={
+													handleConfirmPasswordChange
+												}
+												className="w-full mt-2 px-3 py-2 text-white placeholder-white/50 bg-white/10 outline-none border border-white/20 focus:border-white/40 shadow-sm rounded-2xl"
+												placeholder="••••••••"
+											/>
+											{formState.confirmPassword
+												.touched &&
+												formState.confirmPassword
+													.error && (
+													<p className="text-red-400 text-sm mt-1">
+														{
+															formState
+																.confirmPassword
+																.error
+														}
+													</p>
+												)}
+										</div>
+										<button
+											className="w-full px-4 py-2 text-white text-lg font-semibold rounded-2xl duration-200 shadow-[0_6px_24px_rgba(92,141,255,0.35)] bg-[linear-gradient(135deg,_rgb(37,88,255)_0%,_rgb(64,255,128)_100%)]"
+										>
+											Create Account
+										</button>
+									</form>
+
+									<p className="mt-4 text-white/70 text-sm">
+										Already have an account?{' '}
+										<a
+											href="/login"
+											className="font-medium text-[#5C8DFF]"
+										>
+											Log in
+										</a>
+									</p>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-			</main>
-		</>
+			</div>
+		</main>
 	)
 }
 

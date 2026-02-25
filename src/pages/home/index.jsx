@@ -1,5 +1,5 @@
 import React from 'react'
-import LandingPage from 'src/components/landing'
+import LandingPage from 'src/components/features/landing'
 
 /**
  * Home Page Route

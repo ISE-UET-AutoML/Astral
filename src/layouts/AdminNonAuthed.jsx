@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import useAdminAuth from 'src/hooks/useAdminAuth'
 import { useLocation, Navigate } from 'react-router-dom'
-import Loading from 'src/components/Loading'
+import Loading from 'src/components/shared/data-display/Loading'
 import { Outlet } from 'react-router-dom'
 
 export default function AdminNonAuthed() {

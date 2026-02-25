@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Outlet, useParams } from 'react-router-dom'
 import * as projectAPI from 'src/api/project'
-import BackgroundShapes from 'src/components/landing/BackgroundShapes'
+import BackgroundShapes from 'src/components/features/landing/BackgroundShapes'
 import { useTheme } from 'src/theme/ThemeProvider'
 
 export default function ProjectBuild() {

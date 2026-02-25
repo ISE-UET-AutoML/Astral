@@ -84,7 +84,45 @@ module.exports = {
 				md: "calc(var(--radius) - 2px)",
 				sm: "calc(var(--radius) - 4px)",
 			},
+			backdropBlur: {
+				'theme': 'var(--blur-amount)',
+			},
+			boxShadow: {
+				'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
+				'task-hover': '0 8px 24px rgba(14, 165, 233, 0.3)',
+				'task-selected': '0 6px 20px rgba(14, 165, 233, 0.4)',
+			},
+			brightness: {
+				110: '1.1',
+				115: '1.15',
+			},
 		},
 	},
-	plugins: [require("tailwindcss-animate")],
+	plugins: [
+		require("tailwindcss-animate"),
+		function({ addUtilities }) {
+			addUtilities({
+				'.scrollbar-thin': {
+					'scrollbar-width': 'thin',
+					'scrollbar-color': '#94a3b8 transparent',
+				},
+				'.scrollbar-theme': {
+					'&::-webkit-scrollbar': {
+						width: '6px',
+					},
+					'&::-webkit-scrollbar-track': {
+						background: 'hsl(var(--border))',
+						'border-radius': '3px',
+					},
+					'&::-webkit-scrollbar-thumb': {
+						background: 'hsl(var(--accent))',
+						'border-radius': '3px',
+					},
+					'&::-webkit-scrollbar-thumb:hover': {
+						opacity: '0.8',
+					},
+				},
+			})
+		}
+	],
 }

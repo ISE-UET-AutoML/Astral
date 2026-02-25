@@ -61,6 +61,13 @@ body {
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
     --radius: 0.5rem;
+    
+    /* Light mode - Cyan/Blue theme */
+    --bg-gradient: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+    --bg-gradient-overlay: linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(14, 165, 233, 0.2);
+    --blur-amount: 12px;
   }
 
   .dark {
@@ -83,6 +90,13 @@ body {
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
+    
+    /* Dark mode - Multi-color gradient */
+    --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    --bg-gradient-overlay: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 50%, rgba(240, 147, 251, 0.15) 100%);
+    --glass-bg: rgba(0, 0, 0, 0.4);
+    --glass-border: rgba(102, 126, 234, 0.3);
+    --blur-amount: 20px;
   }
 }
 
@@ -189,12 +203,57 @@ body {
   }
 }
 
-/* GlassMorphism utility */
+/* GlassMorphism utility - theme aware */
 .glassMorphism {
-  background: rgba(255, 255, 255, 0.5);
+  background: var(--glass-bg);
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-  backdrop-filter: blur(17px);
-  -webkit-backdrop-filter: blur(17px);
+  backdrop-filter: blur(var(--blur-amount));
+  -webkit-backdrop-filter: blur(var(--blur-amount));
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border: 1px solid var(--glass-border);
+}
+
+/* Gradient Background utilities */
+.bg-theme-gradient {
+  background: var(--bg-gradient);
+  background-size: 200% 200%;
+}
+
+.bg-theme-gradient-overlay {
+  background: var(--bg-gradient-overlay);
+}
+
+/* Animated gradient (combines with bg-theme-gradient) */
+.bg-theme-gradient-animated {
+  background: var(--bg-gradient);
+  background-size: 200% 200%;
+  animation: gradient 8s ease infinite;
+}
+
+/* Gradient Text utility */
+.text-gradient {
+  background: var(--bg-gradient);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Task card shine effect (::before pseudo element) */
+@layer components {
+  .task-card-shine::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, 
+      rgba(255, 255, 255, 0.05) 0%, 
+      rgba(255, 255, 255, 0.02) 100%
+    );
+    pointer-events: none;
+    border-radius: 1rem;
+    z-index: 0;
+  }
 }

@@ -5,11 +5,36 @@ import * as auth from 'src/api/auth'
 import useAuth from 'src/hooks/useAuth'
 import { validateEmail, validatePassword } from 'src/utils/validate'
 import { PATHS } from 'src/constants/paths'
-import BackgroundShapes from 'src/components/landing/BackgroundShapes'
-import TextCubeCanvas from 'src/components/login/TextCubeCanvas'
-import LoginCard from 'src/components/login/LoginCard'
+import BackgroundShapes from 'src/components/features/landing/BackgroundShapes'
+import TextCubeCanvas from 'src/components/features/auth/login/TextCubeCanvas'
+import LoginCard from 'src/components/features/auth/login/LoginCard'
 
-// moved TextCubeCanvas to src/components/login/TextCubeCanvas
+const RESPONSIVE_SIZES = {
+	xl4k: { minWidth: 1920, sizeHalf: 360, offsetX: -380 },
+	xl2: { minWidth: 1536, sizeHalf: 320, offsetX: -340 },
+	xl: { minWidth: 1280, sizeHalf: 280, offsetX: -310 },
+	lg: { minWidth: 1024, sizeHalf: 240, offsetX: -290 },
+	default: { sizeHalf: 200, offsetX: -240 },
+}
+
+const loginToLabelStudio = async (lsToken) => {
+	const labelStudioBaseUrl =
+		process.env.REACT_APP_LABEL_STUDIO_URL || 'http://127.0.0.1:8080'
+	const labelStudioLoginUrl = `${labelStudioBaseUrl}/user/login?user_token=${lsToken}`
+
+	try {
+		const response = await fetch(labelStudioLoginUrl, {
+			credentials: 'include',
+		})
+		const lsResponse = await response.json()
+
+		if (lsResponse.status !== 'success') {
+			console.error('Failed to log into Label Studio.', lsResponse)
+		}
+	} catch (error) {
+		console.error('Error during Label Studio background login:', error)
+	}
+}
 
 const Login = () => {
 	const navigate = useNavigate()
@@ -19,98 +44,48 @@ const Login = () => {
 	const [offsetX, setOffsetX] = React.useState(-260)
 
 	React.useEffect(() => {
-		const compute = () => {
-			const w = window.innerWidth || 1280
-			if (w >= 1920) {
-				setSizeHalf(360)
-				setOffsetX(-380)
-			} else if (w >= 1536) {
-				// 2xl
-				setSizeHalf(320)
-				setOffsetX(-340)
-			} else if (w >= 1280) {
-				// xl
-				setSizeHalf(280)
-				setOffsetX(-310)
-			} else if (w >= 1024) {
-				// lg
-				setSizeHalf(240)
-				setOffsetX(-290)
-			} else {
-				setSizeHalf(200)
-				setOffsetX(-240)
+		const computeResponsiveSize = () => {
+			const width = window.innerWidth || 1280
+
+			for (const config of Object.values(RESPONSIVE_SIZES)) {
+				if (!config.minWidth || width >= config.minWidth) {
+					setSizeHalf(config.sizeHalf)
+					setOffsetX(config.offsetX)
+					break
+				}
 			}
 		}
-		compute()
-		window.addEventListener('resize', compute)
-		return () => window.removeEventListener('resize', compute)
+
+		computeResponsiveSize()
+		window.addEventListener('resize', computeResponsiveSize)
+		return () => window.removeEventListener('resize', computeResponsiveSize)
 	}, [])
 
 	const onLogin = async (credential) => {
 		try {
 			const { data } = await auth.login(credential)
-			try {
-				await login({
-					accessToken: data.access_token,
-					refreshToken: data.refresh_token,
-					userId: data.user.id,
-					user: data.user,
-				})
 
-				console.log('Authentication state updated successfully')
+			await login({
+				accessToken: data.access_token,
+				refreshToken: data.refresh_token,
+				userId: data.user.id,
+				user: data.user,
+			})
 
-				setTimeout(() => {
-					console.log('Attempting navigation...')
-					// Check if logged-in user is admin
-					const targetPath =
-						data.user.email === 'admin@astral.io'
-							? '/admin/dashboard'
-							: state?.path || PATHS.PROJECTS
-					navigate(targetPath, { replace: true })
-
-					setTimeout(() => {
-						if (window.location.pathname !== targetPath) {
-							console.log(
-								'Navigate failed, using window.location'
-							)
-							window.location.href = targetPath
-						}
-					}, 500)
-				}, 200)
-			} catch (authError) {
-				console.error('Authentication failed:', authError)
-				message.error('Authentication failed. Please try again.')
+			// Handle Label Studio login if token exists
+			if (data.user?.ls_token) {
+				loginToLabelStudio(data.user.ls_token)
 			}
-			console.log('Login response:', data)
-			if (data.user && data.user.ls_token) {
-				console.log('Found ls_token, redirecting to Label Studio...')
-				const labelStudioBaseUrl =
-					process.env.REACT_APP_LABEL_STUDIO_URL ||
-					'http://127.0.0.1:8080'
-				const labelStudioLoginUrl = `${labelStudioBaseUrl}/user/login?user_token=${data.user.ls_token}`
-				fetch(labelStudioLoginUrl, { credentials: 'include' })
-					.then((response) => response.json())
-					.then((lsResponse) => {
-						if (lsResponse.status === 'success') {
-							console.log(
-								'Successfully logged into Label Studio.'
-							)
-						} else {
-							console.error(
-								'Failed to log into Label Studio.',
-								lsResponse
-							)
-						}
-					})
-					.catch((error) => {
-						console.error(
-							'Error during Label Studio background login:',
-							error
-						)
-					})
-			}
+
+			// Navigate to appropriate page
+			const targetPath =
+				data.user.email === 'admin@astral.io'
+					? '/admin/dashboard'
+					: state?.path || PATHS.PROJECTS
+
+			navigate(targetPath, { replace: true })
 		} catch (error) {
-			console.error(error)
+			console.error('Login error:', error)
 			message.error('Invalid login email or password')
 		}
 	}
@@ -137,106 +112,93 @@ const Login = () => {
 	}
 
 	return (
-		<>
-			<main
-				className="w-full h-screen"
-				className="font-poppins bg-[#01000A]"
-			>
-				<style>{`
-                    body, html { 
-                        background-color: #01000A !important;
-                        overflow: hidden !important;
-                        height: 100vh !important;
-                        width: 100vw !important;
-                    }
-                `}</style>
-				<div className="relative w-full h-full">
-					<BackgroundShapes
-						width="100%"
-						height="100%"
-						shapes={[
-							{
-								id: 'loginBlue',
+		<main className="w-full h-screen font-poppins bg-[#01000A] overflow-hidden">
+			<div className="relative w-full h-full">
+				<BackgroundShapes
+					width="100%"
+					height="100%"
+					shapes={[
+						{
+							id: 'loginBlue',
+							shape: 'circle',
+							size: '520px',
+							gradient: {
+								type: 'radial',
+								shape: 'ellipse',
+								colors: [
+									'#5C8DFF 0%',
+									'#5C8DFF 35%',
+									'transparent 75%',
+								],
+							},
+							opacity: 0.45,
+							blur: '220px',
+							position: { top: '10%', right: '-140px' },
+							transform: 'none',
+						},
+						{
+							id: 'loginCyan',
+							shape: 'rounded',
+							size: '420px',
+							gradient: {
+								type: 'radial',
 								shape: 'circle',
-								size: '520px',
-								gradient: {
-									type: 'radial',
-									shape: 'ellipse',
-									colors: [
-										'#5C8DFF 0%',
-										'#5C8DFF 35%',
-										'transparent 75%',
-									],
-								},
-								opacity: 0.45,
-								blur: '220px',
-								position: { top: '10%', right: '-140px' },
-								transform: 'none',
+								colors: [
+									'#40FFFF 0%',
+									'#40FFFF 55%',
+									'transparent 40%',
+								],
 							},
-							{
-								id: 'loginCyan',
-								shape: 'rounded',
-								size: '420px',
-								gradient: {
-									type: 'radial',
-									shape: 'circle',
-									colors: [
-										'#40FFFF 0%',
-										'#40FFFF 55%',
-										'transparent 40%',
-									],
-								},
-								opacity: 0.3,
-								blur: '180px',
-								position: { top: '5%', left: '-120px' },
-								transform: 'none',
+							opacity: 0.3,
+							blur: '180px',
+							position: { top: '5%', left: '-120px' },
+							transform: 'none',
+						},
+						{
+							id: 'loginWarm',
+							shape: 'rounded',
+							size: '520px',
+							gradient: {
+								type: 'radial',
+								shape: 'circle',
+								colors: [
+									'#FFAF40 0%',
+									'#FFAF40 50%',
+									'transparent 85%',
+								],
 							},
-							{
-								id: 'loginWarm',
-								shape: 'rounded',
-								size: '520px',
-								gradient: {
-									type: 'radial',
-									shape: 'circle',
-									colors: [
-										'#FFAF40 0%',
-										'#FFAF40 50%',
-										'transparent 85%',
-									],
-								},
-								opacity: 0.2,
-								blur: '220px',
-								position: { bottom: '-10%', left: '50%' },
-								transform: 'translate(-50%, 0%)',
-							},
-						]}
-					/>
-					{/* Full-screen background cube layer */}
-					<div className="absolute inset-0 z-0 pointer-events-none">
-						<TextCubeCanvas
-							shapeType="icosahedron"
-							offsetX={offsetX}
-							rollSpeed={0.005}
-							mouseMaxYaw={0.6}
-							mouseMaxPitch={0.6}
-							followEasing={0.08}
-							sizeHalf={sizeHalf}
-							cameraZ={420}
-							focalLength={360}
-						/>
-					</div>
-					<div className="relative z-10 w-full h-full flex items-center justify-center px-6">
-						<div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 xl:gap-24 2xl:gap-32 items-center w-full max-w-6xl">
-							{/* spacer column on large screens to keep layout balance */}
-							<div className="hidden lg:block" />
+							opacity: 0.2,
+							blur: '220px',
+							position: { bottom: '-10%', left: '50%' },
+							transform: 'translate(-50%, 0%)',
+						},
+					]}
+				/>
 
-							{/* Login Card */}
-							<LoginCard handleLogin={handleLogin} />
-						</div>
+				{/* Background 3D shape */}
+				<div className="absolute inset-0 z-0 pointer-events-none">
+					<TextCubeCanvas
+						shapeType="icosahedron"
+						offsetX={offsetX}
+						rollSpeed={0.005}
+						mouseMaxYaw={0.6}
+						mouseMaxPitch={0.6}
+						followEasing={0.08}
+						sizeHalf={sizeHalf}
+						cameraZ={420}
+						focalLength={360}
+					/>
+				</div>
+
+				{/* Login form */}
+				<div className="relative z-10 w-full h-full flex items-center justify-center px-6">
+					<div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 xl:gap-24 2xl:gap-32 items-center w-full max-w-6xl">
+						<div className="hidden lg:block" />
+						<LoginCard handleLogin={handleLogin} />
 					</div>
 				</div>
-			</main>
-		</>
+			</div>
+		</main>
 	)
 }
 

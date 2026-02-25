@@ -2,10 +2,10 @@ import DeployedModelCard from './card'
 import { useEffect, useState, useCallback } from 'react'
 import { getAllDeployedModel } from 'src/api/deploy'
 import { useParams } from 'react-router-dom'
-import { Button } from 'src/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'src/components/ui/card'
-import { CustomSelect, Option } from 'src/components/ui/custom-select'
-import BackgroundShapes from 'src/components/landing/BackgroundShapes'
+import { Button } from 'src/components/shared/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'src/components/shared/ui/card'
+import { CustomSelect, Option } from 'src/components/shared/ui/custom-select'
+import BackgroundShapes from 'src/components/features/landing/BackgroundShapes'
 import { useTheme } from 'src/theme/ThemeProvider'
 
 // Simple SVG icons
@@ -117,7 +117,7 @@ const ProjectDeploy = () => {
                 <div className="mb-8">
                     <div className="flex items-center gap-3 mb-4">
                         <div className="p-2 rounded-xl" style={{ background: 'var(--accent-gradient)' }}>
-                            <DeploymentIcon className="h-6 w-6" className="text-white" />
+                            <DeploymentIcon className="h-6 w-6 text-white" />
                         </div>
                         <div>
                             <h1 className="text-3xl font-bold" style={{ color: 'var(--text)' }}>

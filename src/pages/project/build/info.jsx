@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import BackgroundShapes from 'src/components/landing/BackgroundShapes'
+import BackgroundShapes from 'src/components/features/landing/BackgroundShapes'
 import { useOutletContext } from 'react-router-dom'
 import { useTheme } from 'src/theme/ThemeProvider'
 import { getAllExperiments } from 'src/api/experiment'

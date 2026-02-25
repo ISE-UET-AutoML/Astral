@@ -2,8 +2,8 @@ import React from 'react'
 import { message } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import useAdminAuth from 'src/hooks/useAdminAuth'
-import BackgroundShapes from 'src/components/landing/BackgroundShapes'
-import TextCubeCanvas from 'src/components/login/TextCubeCanvas'
+import BackgroundShapes from 'src/components/features/landing/BackgroundShapes'
+import TextCubeCanvas from 'src/components/features/auth/login/TextCubeCanvas'
 
 const AdminLogin = () => {
 	const navigate = useNavigate()
@@ -190,11 +190,10 @@ const AdminLogin = () => {
 											placeholder="••••••••"
 										/>
 									</div>
-									<button
-										type="submit"
-										className="w-full px-4 py-2 text-white text-lg font-semibold rounded-2xl duration-200"
-										className="shadow-[0_6px_24px_rgba(92,141,255,0.35)]" style={{ background: 'linear-gradient(135deg,rgb(37, 88, 255) 0%,rgb(64, 255, 128) 100%)' }}
-									>
+								<button
+									type="submit"
+									className="w-full px-4 py-2 text-white text-lg font-semibold rounded-2xl duration-200 shadow-[0_6px_24px_rgba(92,141,255,0.35)] bg-[linear-gradient(135deg,rgb(37,88,255)_0%,rgb(64,255,128)_100%)]"
+								>
 										Login as Admin
 									</button>
 								</form>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import ToastMessage from 'src/components/Toast';
+import ToastMessage from 'src/components/shared/utilities/Toast';
 const useToast = () => {
 	const [toast, setToast] = useState(null);
 

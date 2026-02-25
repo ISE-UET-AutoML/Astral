@@ -1,6 +1,6 @@
-import ImageClassDataView from 'src/components/Dataset/View/ImageClassDataView'
-import MultimodalClassDataView from 'src/components/Dataset/View/MultimodalClassDataView'
-import MultilabelImgClassDataView from 'src/components/Dataset/View/MultilabelImgClassDataView'
+import ImageClassDataView from 'src/components/features/dataset/View/ImageClassDataView'
+import MultimodalClassDataView from 'src/components/features/dataset/View/MultimodalClassDataView'
+import MultilabelImgClassDataView from 'src/components/features/dataset/View/MultilabelImgClassDataView'
 
 const config = {
 	IMAGE_CLASSIFICATION: {

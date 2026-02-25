@@ -2,8 +2,8 @@ import ModelCard from './card'
 import { useEffect, useState, useCallback } from 'react'
 import { getModels } from 'src/api/model'
 import { useParams } from 'react-router-dom'
-import { Card, CardContent } from 'src/components/ui/card'
-import BackgroundShapes from 'src/components/landing/BackgroundShapes'
+import { Card, CardContent } from 'src/components/shared/ui/card'
+import BackgroundShapes from 'src/components/features/landing/BackgroundShapes'
 import { useTheme } from 'src/theme/ThemeProvider'
 
 // Simple SVG icons
@@ -85,7 +85,7 @@ export default function ProjectModels() {
                 <div className="mb-8">
                     <div className="flex items-center gap-3 mb-4">
                         <div className="p-2 rounded-xl" style={{ background: 'var(--accent-gradient)' }}>
-                            <ModelIcon className="h-6 w-6" className="text-white" />
+                            <ModelIcon className="h-6 w-6 text-white" />
                         </div>
                         <div>
                             <h1 className="text-3xl font-bold" style={{ color: 'var(--text)' }}>

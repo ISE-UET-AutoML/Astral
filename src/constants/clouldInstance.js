@@ -161,12 +161,7 @@ export const InstanceSizeCard = ({ size, details, selected, onClick }) => (
 		}}
 		onClick={onClick}
 	>
-		<div
-			style={{
-				display: 'flex',
-				alignItems: 'center',
-			}}
-		>
+		<div className="flex items-center">
 			<Title level={5} className="mr-10" style={{ color: 'var(--text)' }}>
 				{details.title}
 			</Title>

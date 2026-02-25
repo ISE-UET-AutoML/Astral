@@ -124,12 +124,9 @@ export default function ProjectCard({ project, getProjects }) {
                 {/* Background Image Section */}
                 <div className="relative h-32 overflow-hidden">
                     <div
-                        className="w-full h-full opacity-20 group-hover:opacity-30 transition-opacity duration-300"
+                        className="w-full h-full opacity-20 group-hover:opacity-30 transition-opacity duration-300 bg-cover bg-center bg-no-repeat"
                         style={{
                             backgroundImage: `url(${getTaskBackgroundImage(taskType)})`,
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center',
-                            backgroundRepeat: 'no-repeat',
                         }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white/10 dark:to-black/20" />
@@ -175,15 +172,7 @@ export default function ProjectCard({ project, getProjects }) {
                         <h2 className="text-xl font-bold mb-2 truncate text-gray-900 dark:text-white">
                             {project?.name}
                         </h2>
-                        <p
-                            className="text-base leading-relaxed mb-4 text-gray-500 dark:text-gray-400"
-                            style={{
-                                display: '-webkit-box',
-                                WebkitLineClamp: 2,
-                                WebkitBoxOrient: 'vertical',
-                                overflow: 'hidden',
-                            }}
-                        >
+                    <p className="text-base leading-relaxed mb-4 text-gray-500 dark:text-gray-400 line-clamp-2">
                             {project?.description}
                         </p>
                     </div>

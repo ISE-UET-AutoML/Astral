@@ -6,9 +6,9 @@ import {
 	ChatPanel,
 	TreePanel,
 	CodeEditorPanel,
-} from 'src/components/CodeEditor'
+} from 'src/components/features/codeeditor'
 import { useFileTree, useFileEditor, useSaveShortcut } from 'src/hooks'
-import { Button } from 'src/components/ui/button'
+import { Button } from 'src/components/shared/ui/button'
 import {
 	ArrowLeftIcon,
 	ArrowUpTrayIcon,

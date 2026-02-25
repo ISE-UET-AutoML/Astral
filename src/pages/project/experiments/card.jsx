@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from 'src/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from 'src/components/shared/ui/card'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { PATHS } from 'src/constants/paths'

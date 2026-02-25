@@ -1,5 +1,5 @@
 import { Outlet, useParams } from 'react-router-dom'
-import ProjectSidebar from 'src/components/ProjectSidebar'
+import ProjectSidebar from 'src/layouts/ProjectSidebar'
 import { useTheme } from 'src/theme/ThemeProvider'
 
 export default function ProjectLayout() {

@@ -449,82 +449,8 @@ body,
 
 body {
 	height: 100vh;
-	/* background-color: #edf3fe; */
 }
 
-.container {
-	display: flex;
-	height: 100vh;
-}
-
-.menu {
-	width: 200px;
-	background-color: #f0f0f0;
-	padding: 20px;
-}
-
-.menu h2 {
-	margin-top: 0;
-}
-
-.menu ul {
-	list-style-type: none;
-	padding: 0;
-}
-
-.menu li {
-	cursor: pointer;
-	padding: 10px;
-}
-
-.menu li:hover {
-	background-color: #e0e0e0;
-}
-
-.content {
-	flex: 1;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-}
-
-.content img {
-	max-width: 100%;
-	max-height: 100%;
-}
-
-@keyframes drawUnderline {
-	0% {
-		transform: scaleX(0);
-	}
-
-	100% {
-		transform: scaleX(1);
-	}
-}
-
-.underline-draw {
-	position: relative;
-	display: inline-block;
-}
-
-.underline-draw::after {
-	content: '';
-	position: absolute;
-	left: 0;
-	bottom: -15px;
-	/* Khoảng cách giữa chữ và underline */
-	height: 10px;
-	/* Độ dày của underline */
-	background-color: #3b82f6;
-	/* Màu của underline (blue-400) */
-	width: 100%;
-	transform: scaleX(0);
-	/* Bắt đầu từ 0 */
-	transform-origin: bottom left;
-	/* Vị trí bắt đầu vẽ */
-	animation: drawUnderline 1s forwards;
-}
 
 /* From Uiverse.io by AlimurtuzaCodes */
 .btn {
@@ -700,28 +626,6 @@ body {
 	visibility: visible;
 }
 
-.glow {
-	box-shadow: 0px 0px 243px 20px rgba(59, 131, 246, 0.45);
-}
-
-.overlay {
-	display: block;
-	position: fixed;
-	z-index: 10;
-	left: 0;
-	top: 0;
-	width: 100%;
-	height: 100%;
-	overflow: auto;
-	background-color: rgb(0, 0, 0);
-	background-color: rgba(0, 0, 0, 0.4);
-}
-
-.modal {
-	background-color: #fefefe;
-	margin: 50px auto;
-	padding: 20px;
-}
 
 .markdown > * {
 	all: revert;

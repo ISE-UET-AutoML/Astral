@@ -9,15 +9,15 @@ import {
 	CardDescription,
 	CardHeader,
 	CardTitle,
-} from 'src/components/ui/card'
-import { Button } from 'src/components/ui/button'
-import { CustomSelect, Option } from 'src/components/ui/custom-select'
-import Modal from 'src/components/Modal'
-import BackgroundShapes from 'src/components/landing/BackgroundShapes'
+} from 'src/components/shared/ui/card'
+import { Button } from 'src/components/shared/ui/button'
+import { CustomSelect, Option } from 'src/components/shared/ui/custom-select'
+import Modal from 'src/components/shared/utilities/Modal'
+import BackgroundShapes from 'src/components/features/landing/BackgroundShapes'
 import { useTheme } from 'src/theme/ThemeProvider'
 import { message } from 'antd'
 import { PATHS } from 'src/constants/paths'
-import AppCard from 'src/components/GenApp/AppCard'
+import AppCard from 'src/components/features/genapp/AppCard'
 
 const AppIcon = ({ className, ...props }) => (
 	<svg

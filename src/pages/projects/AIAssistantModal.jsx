@@ -17,7 +17,7 @@ import {
 	PlusCircleOutlined,
 	RobotOutlined,
 } from '@ant-design/icons'
-import MarkdownRenderer from 'src/components/MarkdownRenderer'
+import MarkdownRenderer from 'src/components/shared/utilities/MarkdownRenderer'
 import logoIcon from 'src/assets/images/logoIcon.png'
 
 const { TextArea } = Input

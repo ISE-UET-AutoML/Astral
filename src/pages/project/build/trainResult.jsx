@@ -26,14 +26,14 @@ import {
     ExperimentOutlined,
 } from '@ant-design/icons'
 import { ResponsiveContainer, Tooltip as RechartsTooltip } from 'recharts'
-import LineGraph from 'src/components/LineGraph'
+import LineGraph from 'src/components/shared/charts/LineGraph'
 
 import * as experimentAPI from 'src/api/experiment'
 import * as mlServiceAPI from 'src/api/mlService'
 import * as modelServiceAPI from 'src/api/model'
 import * as experimentConfigAPI from 'src/api/experiment_config'
 import { PATHS } from 'src/constants/paths'
-import BackgroundShapes from 'src/components/landing/BackgroundShapes'
+import BackgroundShapes from 'src/components/features/landing/BackgroundShapes'
 const { Title, Text } = Typography
 
 // Performance Metrics Configuration
@@ -474,10 +474,9 @@ const TrainResult = () => {
 										)
 									)
 								}}
-								size="large"
-								className="h-[50px] w-[25%] font-bold mt-[15px] text-lg bg-gradient-to-br from-[#10b981] to-[#34d399] border-none font-poppins"
-								className="hover:shadow-lg transition-all duration-300"
-							>
+							size="large"
+							className="h-[50px] w-[25%] font-bold mt-[15px] text-lg bg-gradient-to-br from-[#10b981] to-[#34d399] border-none font-poppins hover:shadow-lg transition-all duration-300"
+						>
 								View Model
 							</Button>
 						</div>
@@ -500,12 +499,11 @@ const TrainResult = () => {
 										className="text-[#60a5fa]"
 									/>
 								}
-								onClick={() =>
-									setIsDetailsExpanded(!isDetailsExpanded)
-								}
-								className="text-xl"
-								className="text-[#e2e8f0] font-poppins"
-							>
+							onClick={() =>
+								setIsDetailsExpanded(!isDetailsExpanded)
+							}
+							className="text-xl text-[#e2e8f0] font-poppins"
+						>
 								{isDetailsExpanded
 									? 'Hide Details'
 									: 'Show Detailed Results'}
@@ -589,12 +587,11 @@ const TrainResult = () => {
 										}}
 									>
 										<Table
-											columns={columns}
-											dataSource={metrics}
-											pagination={false}
-											className="bg-transparent font-poppins"
-											className="theme-table"
-										/>
+										columns={columns}
+										dataSource={metrics}
+										pagination={false}
+										className="bg-transparent font-poppins theme-table"
+									/>
 									</Card>
 								</Space>
 							)}

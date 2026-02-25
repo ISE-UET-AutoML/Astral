@@ -47,7 +47,7 @@ import {
 	AreaChart,
 } from 'recharts'
 import { PATHS } from 'src/constants/paths'
-import BackgroundShapes from 'src/components/landing/BackgroundShapes'
+import BackgroundShapes from 'src/components/features/landing/BackgroundShapes'
 import { getExperimentById } from 'src/api/experiment'
 import { getExperimentConfig } from 'src/api/experiment_config'
 
@@ -773,10 +773,9 @@ const Training = () => {
 									<Button
 										type="primary"
 										size="large"
-										onClick={handleViewResults}
-										className="bg-gradient-to-br from-[#3b82f6] to-[#22d3ee] border-none rounded-xl px-8 py-3 h-auto text-lg font-semibold font-poppins shadow-[0_8px_32px_rgba(59,130,246,0.3)] transition-all duration-300"
-										className="hover:shadow-2xl hover:scale-105"
-									>
+									onClick={handleViewResults}
+									className="bg-gradient-to-br from-[#3b82f6] to-[#22d3ee] border-none rounded-xl px-8 py-3 h-auto text-lg font-semibold font-poppins shadow-[0_8px_32px_rgba(59,130,246,0.3)] transition-all duration-300 hover:shadow-2xl hover:scale-105"
+								>
 										<CheckCircleOutlined className="mr-2" />
 										View Training Results
 									</Button>
@@ -957,10 +956,9 @@ const Training = () => {
 												<Paragraph
 													className="!m-0 font-poppins"
 												>
-													<RadarChartOutlined
-														className="mr-2"
-														className="text-[#60a5fa]"
-													/>
+												<RadarChartOutlined
+													className="mr-2 text-[#60a5fa]"
+												/>
 													<Text
 														strong
 														style={{
@@ -987,10 +985,9 @@ const Training = () => {
 														className="mt-3 font-poppins"
 													>
 														<Tooltip title="Time constraints can affect model performance">
-															<HourglassOutlined
-																className="mr-2"
-																className="text-[#f59e0b]"
-															/>
+														<HourglassOutlined
+															className="mr-2 text-[#f59e0b]"
+														/>
 															<Text
 																strong
 																style={{
@@ -1031,7 +1028,7 @@ const Training = () => {
 											</div>
 										}
 										type="info"
-										className="border border-[rgba(59,130,246,0.3)] rounded-xl font-poppins" style={{ background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(34, 211, 238, 0.1))' }}
+										className="border border-[rgba(59,130,246,0.3)] rounded-xl font-poppins bg-[linear-gradient(135deg,rgba(59,130,246,0.1),rgba(34,211,238,0.1))]"
 									/>
 								</Card>
 							)}

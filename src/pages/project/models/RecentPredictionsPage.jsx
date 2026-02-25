@@ -25,10 +25,10 @@ import * as dataServiceAPI from 'src/api/dataset'
 import { formatDistanceToNow, format } from 'date-fns'
 import axios from 'axios'
 import Papa from 'papaparse'
-import ImageHistoryViewer from 'src/components/RecentPredictView/ImageHistoryViewer'
-import TextHistoryViewer from 'src/components/RecentPredictView/TextHistoryViewer'
-import MultilabelHistoryViewer from 'src/components/RecentPredictView/MultilabelHistoryViewer'
-import BackgroundShapes from 'src/components/landing/BackgroundShapes'
+import ImageHistoryViewer from 'src/components/features/predictions/ImageHistoryViewer'
+import TextHistoryViewer from 'src/components/features/predictions/TextHistoryViewer'
+import MultilabelHistoryViewer from 'src/components/features/predictions/MultilabelHistoryViewer'
+import BackgroundShapes from 'src/components/features/landing/BackgroundShapes'
 
 const { Title } = Typography
 

@@ -27,7 +27,7 @@ import {
 
 import * as mlServiceAPI from 'src/api/mlService'
 import * as modelServiceAPI from 'src/api/model'
-import BackgroundShapes from 'src/components/landing/BackgroundShapes'
+import BackgroundShapes from 'src/components/features/landing/BackgroundShapes'
 
 const { Panel } = Collapse;
 
@@ -227,8 +227,7 @@ const ModelView = () => {
                         <Row gutter={[16, 16]}>
                             <Col xs={24} sm={12} md={8}>
                                 <Card
-                                    className="border-0 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300"
-                                    className="backdrop-blur-[10px] border border-white/10 rounded-xl font-poppins" style={{ background: 'linear-gradient(135deg, rgba(51, 65, 85, 0.4) 0%, rgba(15, 23, 42, 0.4) 100%)' }}
+                                    className="border-0 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 backdrop-blur-[10px] border border-white/10 rounded-xl font-poppins bg-[linear-gradient(135deg,rgba(51,65,85,0.4)_0%,rgba(15,23,42,0.4)_100%)]"
                                 >
                                     <Statistic
                                         title={<span className="text-slate-400 font-poppins">{`Model ${metrics[0] ? toNormalCase(metrics[0]?.metric) : "Null"} Score`}</span>}
@@ -237,30 +236,25 @@ const ModelView = () => {
                                         prefix={<TrophyOutlined className="text-[#10b981]" />}
                                         suffix="%"
                                         valueStyle={{
-                                            background: 'linear-gradient(135deg, #10b981, #34d399)',
-                                            WebkitBackgroundClip: 'text',
-                                            WebkitTextFillColor: 'transparent',
                                             fontFamily: 'Poppins, sans-serif',
                                             fontWeight: 'bold'
                                         }}
+                                        className="[&_.ant-statistic-content-value]:bg-gradient-to-br [&_.ant-statistic-content-value]:from-[#10b981] [&_.ant-statistic-content-value]:to-[#34d399] [&_.ant-statistic-content-value]:bg-clip-text [&_.ant-statistic-content-value]:text-transparent"
                                     />
                                 </Card>
                             </Col>
                             <Col xs={24} sm={12} md={8}>
                                 <Card
-                                    className="border-0 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300"
-                                    className="backdrop-blur-[10px] border border-white/10 rounded-xl font-poppins" style={{ background: 'linear-gradient(135deg, rgba(51, 65, 85, 0.4) 0%, rgba(15, 23, 42, 0.4) 100%)' }}
+                                    className="border-0 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 backdrop-blur-[10px] border border-white/10 rounded-xl font-poppins bg-[linear-gradient(135deg,rgba(51,65,85,0.4)_0%,rgba(15,23,42,0.4)_100%)]"
                                 >
                                     <Statistic
                                         title={<span className="text-slate-400 font-poppins">Model Size</span>}
                                         value={model.metadata?.model_size || 0}
                                         valueStyle={{
-                                            background: 'linear-gradient(135deg, #f59e0b, #fbbf24)',
-                                            WebkitBackgroundClip: 'text',
-                                            WebkitTextFillColor: 'transparent',
                                             fontFamily: 'Poppins, sans-serif',
                                             fontWeight: 'bold'
                                         }}
+                                        className="[&_.ant-statistic-content-value]:bg-gradient-to-br [&_.ant-statistic-content-value]:from-[#f59e0b] [&_.ant-statistic-content-value]:to-[#fbbf24] [&_.ant-statistic-content-value]:bg-clip-text [&_.ant-statistic-content-value]:text-transparent"
                                         prefix={<CloudDownloadOutlined className="text-[#f59e0b]" />}
                                         suffix="MB"
                                         precision={2}
@@ -269,20 +263,17 @@ const ModelView = () => {
                             </Col>
                             <Col xs={24} sm={12} md={8}>
                                 <Card
-                                    className="border-0 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300"
-                                    className="backdrop-blur-[10px] border border-white/10 rounded-xl font-poppins" style={{ background: 'linear-gradient(135deg, rgba(51, 65, 85, 0.4) 0%, rgba(15, 23, 42, 0.4) 100%)' }}
+                                    className="border-0 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 backdrop-blur-[10px] border border-white/10 rounded-xl font-poppins bg-[linear-gradient(135deg,rgba(51,65,85,0.4)_0%,rgba(15,23,42,0.4)_100%)]"
                                 >
                                     <Statistic
                                         title={<span className="text-slate-400 font-poppins">Model Name</span>}
                                         value={model.name}
                                         prefix={<ExperimentOutlined className="text-[#3b82f6]" />}
                                         valueStyle={{
-                                            background: 'linear-gradient(135deg, #3b82f6, #60a5fa)',
-                                            WebkitBackgroundClip: 'text',
-                                            WebkitTextFillColor: 'transparent',
                                             fontFamily: 'Poppins, sans-serif',
                                             fontWeight: 'bold'
                                         }}
+                                        className="[&_.ant-statistic-content-value]:bg-gradient-to-br [&_.ant-statistic-content-value]:from-[#3b82f6] [&_.ant-statistic-content-value]:to-[#60a5fa] [&_.ant-statistic-content-value]:bg-clip-text [&_.ant-statistic-content-value]:text-transparent"
                                     />
                                 </Card>
                             </Col>
@@ -290,8 +281,7 @@ const ModelView = () => {
 
                         <Card
                             title={<span className="text-slate-200 font-poppins">Next Steps</span>}
-                            className="border-0 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300"
-                            className="backdrop-blur-[10px] border border-white/10 rounded-xl font-poppins" style={{ background: 'linear-gradient(135deg, rgba(51, 65, 85, 0.4) 0%, rgba(15, 23, 42, 0.4) 100%)' }}
+                            className="border-0 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 backdrop-blur-[10px] border border-white/10 rounded-xl font-poppins bg-[linear-gradient(135deg,rgba(51,65,85,0.4)_0%,rgba(15,23,42,0.4)_100%)]"
                         >
                             <Row gutter={[16, 16]}>
                                 <Col xs={24} sm={8}>
@@ -300,7 +290,7 @@ const ModelView = () => {
                                         description={<span className="text-slate-200 font-poppins">Instantly transform your trained model into a production-ready solution for real-world predictions.</span>}
                                         type="success"
                                         showIcon
-                                        className="h-[130px] rounded-lg font-poppins" style={{ background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(52, 211, 153, 0.1))', border: '1px solid rgba(16, 185, 129, 0.3)' }}
+                                        className="h-[130px] rounded-lg font-poppins bg-[linear-gradient(135deg,rgba(16,185,129,0.1),rgba(52,211,153,0.1))] border border-[rgba(16,185,129,0.3)]"
                                     />
                                     <Button
                                         type="primary"
@@ -311,8 +301,7 @@ const ModelView = () => {
                                             )
                                         }}
                                         size="large"
-                                        className="w-full font-bold mt-[15px] font-poppins border-none bg-gradient-to-br from-[#10b981] to-[#34d399]"
-                                        className="hover:shadow-lg transition-all duration-300"
+                                        className="w-full font-bold mt-[15px] font-poppins border-none bg-gradient-to-br from-[#10b981] to-[#34d399] hover:shadow-lg transition-all duration-300"
                                     >
                                         Deploy Now
                                     </Button>
@@ -323,14 +312,13 @@ const ModelView = () => {
                                         description={<span className="text-slate-200 font-poppins">Securely export and preserve your model's learned parameters for future iterations or transfer learning.</span>}
                                         type="warning"
                                         showIcon
-                                        className="h-[130px] rounded-lg font-poppins" style={{ background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(251, 191, 36, 0.1))', border: '1px solid rgba(245, 158, 11, 0.3)' }}
+                                        className="h-[130px] rounded-lg font-poppins bg-[linear-gradient(135deg,rgba(245,158,11,0.1),rgba(251,191,36,0.1))] border border-[rgba(245,158,11,0.3)]"
                                     />
                                     <Button
                                         type="default"
                                         icon={<CloudDownloadOutlined />}
                                         size="large"
-                                        className="w-full font-bold mt-[15px] text-white font-poppins border-none bg-gradient-to-br from-[#f59e0b] to-[#fbbf24]"
-                                        className="hover:shadow-lg transition-all duration-300"
+                                        className="w-full font-bold mt-[15px] text-white font-poppins border-none bg-gradient-to-br from-[#f59e0b] to-[#fbbf24] hover:shadow-lg transition-all duration-300"
                                         onClick={async (e) => {
                                             e.preventDefault()
                                             const urlResponse = await mlServiceAPI.getModelUrl(modelId)
@@ -350,14 +338,13 @@ const ModelView = () => {
                                         description={<span className="text-slate-200 font-poppins">Continuously improve your model's performance by initiating a new training cycle with enhanced data or parameters.</span>}
                                         type="info"
                                         showIcon
-                                        className="h-[130px] rounded-lg font-poppins" style={{ background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(96, 165, 250, 0.1))', border: '1px solid rgba(59, 130, 246, 0.3)' }}
+                                        className="h-[130px] rounded-lg font-poppins bg-[linear-gradient(135deg,rgba(59,130,246,0.1),rgba(96,165,250,0.1))] border border-[rgba(59,130,246,0.3)]"
                                     />
                                     <Button
                                         type="default"
                                         icon={<HistoryOutlined />}
                                         size="large"
-                                        className="w-full font-bold mt-[15px] text-white font-poppins border-none bg-gradient-to-br from-[#3b82f6] to-[#60a5fa]"
-                                        className="hover:shadow-lg transition-all duration-300"
+                                        className="w-full font-bold mt-[15px] text-white font-poppins border-none bg-gradient-to-br from-[#3b82f6] to-[#60a5fa] hover:shadow-lg transition-all duration-300"
                                         onClick={() => navigate(`/app/project/${id}/model/${modelId}/retrain`)}
                                     >
                                         Retrain Model
@@ -368,15 +355,13 @@ const ModelView = () => {
 
                         {/* Expandable Details Section */}
                         <Card
-                            className="border-0 backdrop-blur-sm shadow-lg"
-                            className="backdrop-blur-[10px] border border-white/10 rounded-xl font-poppins" style={{ background: 'linear-gradient(135deg, rgba(51, 65, 85, 0.4) 0%, rgba(15, 23, 42, 0.4) 100%)' }}
+                            className="border-0 backdrop-blur-sm shadow-lg backdrop-blur-[10px] border border-white/10 rounded-xl font-poppins bg-[linear-gradient(135deg,rgba(51,65,85,0.4)_0%,rgba(15,23,42,0.4)_100%)]"
                         >
                             <Button
                                 type="link"
                                 icon={<BarChartOutlined className="text-[#60a5fa]" />}
                                 onClick={() => setIsDetailsExpanded(!isDetailsExpanded)}
-                                className="text-xl"
-                                className="text-[#e2e8f0] font-poppins"
+                                className="text-xl text-[#e2e8f0] font-poppins"
                             >
                                 {isDetailsExpanded
                                     ? 'Hide Details'
@@ -401,8 +386,7 @@ const ModelView = () => {
                                                 </span>
                                             </>
                                         }
-                                        className="border-0 backdrop-blur-sm"
-                                        className="backdrop-blur-[10px] border border-white/10 rounded-xl font-poppins" style={{ background: 'linear-gradient(135deg, rgba(51, 65, 85, 0.3) 0%, rgba(15, 23, 42, 0.3) 100%)' }}
+                                        className="border-0 backdrop-blur-sm backdrop-blur-[10px] border border-white/10 rounded-xl font-poppins bg-[linear-gradient(135deg,rgba(51,65,85,0.3)_0%,rgba(15,23,42,0.3)_100%)]"
                                     >
                                         <Space direction="vertical" size="middle" className="w-full">
                                             {Object.entries(model.metadata || {}).map(([key, value]) => (
@@ -593,15 +577,13 @@ const ModelView = () => {
                                                 </span>
                                             </>
                                         }
-                                        className="border-0 backdrop-blur-sm"
-                                        className="backdrop-blur-[10px] border border-white/10 rounded-xl font-poppins" style={{ background: 'linear-gradient(135deg, rgba(51, 65, 85, 0.3) 0%, rgba(15, 23, 42, 0.3) 100%)' }}
+                                        className="border-0 backdrop-blur-sm backdrop-blur-[10px] border border-white/10 rounded-xl font-poppins bg-[linear-gradient(135deg,rgba(51,65,85,0.3)_0%,rgba(15,23,42,0.3)_100%)]"
                                     >
                                         <Table
                                             columns={columns}
                                             dataSource={metrics}
                                             pagination={false}
-                                            className="bg-transparent font-poppins"
-                                            className="dark-table"
+                                            className="bg-transparent font-poppins dark-table"
                                         />
                                     </Card>
                                 </Space>

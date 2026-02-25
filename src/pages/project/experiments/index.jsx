@@ -2,8 +2,8 @@ import ExperimentCard from './card'
 import { useEffect, useState, useCallback } from 'react'
 import { getAllExperiments } from 'src/api/experiment'
 import { useParams } from 'react-router-dom'
-import { Card, CardContent } from 'src/components/ui/card'
-import BackgroundShapes from 'src/components/landing/BackgroundShapes'
+import { Card, CardContent } from 'src/components/shared/ui/card'
+import BackgroundShapes from 'src/components/features/landing/BackgroundShapes'
 import { useTheme } from 'src/theme/ThemeProvider'
 
 // Simple SVG icons
@@ -71,7 +71,7 @@ export default function ProjectExperiments() {
                 <div className="mb-8">
                     <div className="flex items-center gap-3 mb-4">
                         <div className="p-2 rounded-xl" style={{ background: 'var(--accent-gradient)' }}>
-                            <ExperimentIcon className="h-6 w-6" className="text-white" />
+                            <ExperimentIcon className="h-6 w-6 text-white" />
                         </div>
                         <div>
                             <h1 className="text-3xl font-bold" style={{ color: 'var(--text)' }}>

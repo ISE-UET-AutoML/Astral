@@ -9,16 +9,16 @@ import { useNavigate, useOutletContext } from 'react-router-dom'
 import CreateLabelProjectModal from 'src/pages/labels/CreateLabelProjectModal'
 import config from './config'
 import { PATHS } from 'src/constants/paths'
-import { Button } from 'src/components/ui/button'
+import { Button } from 'src/components/shared/ui/button'
 import {
 	Card,
 	CardContent,
 	CardDescription,
 	CardHeader,
 	CardTitle,
-} from 'src/components/ui/card'
-import { CustomSelect, Option } from 'src/components/ui/custom-select'
-import { RadioGroup, RadioGroupItem } from 'src/components/ui/radio-group'
+} from 'src/components/shared/ui/card'
+import { CustomSelect, Option } from 'src/components/shared/ui/custom-select'
+import { RadioGroup, RadioGroupItem } from 'src/components/shared/ui/radio-group'
 import {
 	Table,
 	TableBody,
@@ -26,10 +26,10 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
-} from 'src/components/ui/table'
-import { Alert, AlertDescription, AlertTitle } from 'src/components/ui/alert'
-import { Tooltip } from 'src/components/ui/tooltip'
-import BackgroundShapes from 'src/components/landing/BackgroundShapes'
+} from 'src/components/shared/ui/table'
+import { Alert, AlertDescription, AlertTitle } from 'src/components/shared/ui/alert'
+import { Tooltip } from 'src/components/shared/ui/tooltip'
+import BackgroundShapes from 'src/components/features/landing/BackgroundShapes'
 import { message } from 'antd'
 import { useTheme } from 'src/theme/ThemeProvider'
 import BuildPager from './BuildPager'
