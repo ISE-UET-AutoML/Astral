@@ -1,5 +1,10 @@
-// Temporary dump data for App messages API (/apps/{app_id}/messages)
-// Mirrors the shape of AppMessageList from the backend.
+import { useState, useCallback, useRef } from 'react'
+import { streamChat } from 'src/api/amta'
+
+// ---------------------------------------------------------------------------
+// Hard-coded message list (version info, history) – unchanged as requested.
+// Only the LLM streaming part is replaced with real API calls.
+// ---------------------------------------------------------------------------
 
 const DUMP_APP_MESSAGES = {
 	total: 4,
@@ -46,19 +51,103 @@ const DUMP_APP_MESSAGES = {
 }
 
 /**
- * Temporary hook that returns dump messages
- * shaped like the /apps/{app_id}/messages API response.
- *
- * Later you can replace the implementation with a real fetch call.
+ * Returns the static hard-coded message list (version history, etc.).
+ * Replace with a real API call when the backend is ready.
  *
  * @param {string} appId
  * @returns {{ total: number, items: Array }}
  */
 export const useAmtaMessages = (appId) => {
-	// appId is currently unused but kept for future API wiring
 	void appId
 	return DUMP_APP_MESSAGES
 }
 
-export default useAmtaMessages
+// ---------------------------------------------------------------------------
+// LLM streaming chat hook
+// ---------------------------------------------------------------------------
 
+/**
+ * Hook that manages the streaming conversation with the LLM.
+ *
+ * Returns:
+ *   chatInput        - current text in the input box
+ *   setChatInput     - update input box
+ *   isStreaming      - true while waiting for / receiving LLM response
+ *   streamingContent - partial assistant reply being received right now
+ *   liveMessages     - [{ role, content }] – the live in-memory conversation
+ *                      (separate from the hard-coded version history above)
+ *   sendMessage      - send chatInput to the LLM and stream the reply
+ *
+ * @returns {object}
+ */
+export const useAmtaChat = () => {
+	const [chatInput, setChatInput] = useState('')
+	const [isStreaming, setIsStreaming] = useState(false)
+	const [streamingContent, setStreamingContent] = useState('')
+	const [liveMessages, setLiveMessages] = useState([])
+	const abortRef = useRef(null)
+
+	const sendMessage = useCallback(async () => {
+		const text = chatInput.trim()
+		if (!text || isStreaming) return
+
+		// Add user message immediately
+		const userMsg = { role: 'user', content: text, id: `user-${Date.now()}`, created_at: new Date().toISOString() }
+		setLiveMessages((prev) => [...prev, userMsg])
+		setChatInput('')
+		setIsStreaming(true)
+		setStreamingContent('')
+
+		// Cancel any previous in-flight request
+		if (abortRef.current) abortRef.current.abort()
+		const controller = new AbortController()
+		abortRef.current = controller
+
+		try {
+			let accumulated = ''
+			await streamChat(
+				text,
+				(chunk) => {
+					accumulated += chunk
+					setStreamingContent(accumulated)
+				},
+				controller.signal
+			)
+
+			// Commit the completed assistant message
+			const assistantMsg = {
+				role: 'assistant',
+				content: accumulated,
+				id: `assistant-${Date.now()}`,
+				created_at: new Date().toISOString(),
+			}
+			setLiveMessages((prev) => [...prev, assistantMsg])
+		} catch (err) {
+			if (err.name !== 'AbortError') {
+				console.error('[useAmtaChat] stream error:', err)
+				const errMsg = {
+					role: 'assistant',
+					content: `❌ Error: ${err.message}`,
+					id: `err-${Date.now()}`,
+					created_at: new Date().toISOString(),
+				}
+				setLiveMessages((prev) => [...prev, errMsg])
+			}
+		} finally {
+			setIsStreaming(false)
+			setStreamingContent('')
+			abortRef.current = null
+		}
+	}, [chatInput, isStreaming])
+
+	return {
+		chatInput,
+		setChatInput,
+		isStreaming,
+		streamingContent,
+		liveMessages,
+		sendMessage,
+	}
+}
+
+export default useAmtaMessages

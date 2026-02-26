@@ -7,7 +7,7 @@ import {
 	TreePanel,
 	CodeEditorPanel,
 } from 'src/components/CodeEditor'
-import { useFileTree, useFileEditor, useSaveShortcut } from 'src/hooks'
+import { useFileTree, useFileEditor, useSaveShortcut, useAmtaChat } from 'src/hooks'
 import { Button } from 'src/components/ui/button'
 import CodeEditorLayout from 'src/layouts/CodeEditorLayout'
 
@@ -16,8 +16,16 @@ const EditAppPage = () => {
 	const navigate = useNavigate()
 	const [currentFile, setCurrentFile] = useState('')
 	const [originalCode, setOriginalCode] = useState('')
-	const [chatInput, setChatInput] = useState('')
 	const [isAdapting, setIsAdapting] = useState(false)
+
+	const {
+		chatInput,
+		setChatInput,
+		isStreaming,
+		streamingContent,
+		liveMessages,
+		sendMessage: sendChatMessage,
+	} = useAmtaChat()
 
 	const { tree, refetch: refetchTree } = useFileTree(appId)
 	const { code, setCode, isSaving } = useFileEditor(appId, currentFile, originalCode)
@@ -86,28 +94,7 @@ const EditAppPage = () => {
 		}
 	}, [tree, currentFile, findIndexHtml, loadFile])
 
-	const sendMessage = useCallback(async () => {
-		if (!chatInput.trim() || isAdapting) return
-		const prompt = chatInput
-		setChatInput('')
-		setIsAdapting(true)
-		try {
-			const adaptResponse = await workspaceApi.startAdapt(appId, prompt)
-			const finalResult = await workspaceApi.pollAdaptCompletion(appId, adaptResponse.adapt_id)
-			if (finalResult.status === 'completed') {
-				message.success('Adaptation completed!')
-				if (refetchTree) refetchTree()
-				if (currentFile) loadFile(currentFile)
-			} else {
-				message.error(`Adaptation failed: ${finalResult.error || 'Unknown error'}`)
-			}
-		} catch (error) {
-			console.error('Adapt error:', error)
-			message.error('Failed to adapt')
-		} finally {
-			setIsAdapting(false)
-		}
-	}, [chatInput, isAdapting, appId, refetchTree, currentFile, loadFile])
+	// sendChatMessage from useAmtaChat handles the LLM streaming
 
 	if (!appId) {
 		return (
@@ -124,13 +111,16 @@ const EditAppPage = () => {
 
 	return (
 		<CodeEditorLayout
-			isAdapting={isAdapting}
+			isAdapting={isAdapting || isStreaming}
 			chatSlot={
 				<ChatPanel
 					appId={appId}
 					input={chatInput}
 					onInputChange={setChatInput}
-					onSendMessage={sendMessage}
+					onSendMessage={sendChatMessage}
+					isStreaming={isStreaming}
+					streamingContent={streamingContent}
+					liveMessages={liveMessages}
 				/>
 			}
 			treeSlot={<TreePanel tree={tree} onOpen={loadFile} />}

@@ -7,9 +7,17 @@ import MessagesPanel from './MessagesPanel'
  * - MessagesPanel: scrollable middle (flex-1 min-h-0)
  * - Input bar: pinned bottom (shrink-0)
  *
- * @param {{ appId?: string, input: string, onInputChange: Function, onSendMessage: Function }} props
+ * @param {{
+ *   appId?: string,
+ *   input: string,
+ *   onInputChange: Function,
+ *   onSendMessage: Function,
+ *   isStreaming?: boolean,
+ *   streamingContent?: string,
+ *   liveMessages?: Array,
+ * }} props
  */
-const ChatPanel = ({ appId, input, onInputChange, onSendMessage }) => {
+const ChatPanel = ({ appId, input, onInputChange, onSendMessage, isStreaming, streamingContent, liveMessages }) => {
 	return (
 		<div className="flex flex-col h-full min-h-0 bg-white dark:bg-[#1e1e1e] border-r border-gray-200 dark:border-[#333]">
 			<div className="shrink-0 px-4 py-3 border-b border-gray-200 dark:border-[#333] bg-gray-50 dark:bg-[#252526] font-semibold text-gray-700 dark:text-[#cccccc]">
@@ -17,7 +25,12 @@ const ChatPanel = ({ appId, input, onInputChange, onSendMessage }) => {
 			</div>
 
 			<div className="flex-1 min-h-0 overflow-hidden">
-				<MessagesPanel appId={appId} />
+				<MessagesPanel
+					appId={appId}
+					liveMessages={liveMessages}
+					streamingContent={streamingContent}
+					isStreaming={isStreaming}
+				/>
 			</div>
 
 			<div className="shrink-0 p-3 border-t border-gray-200 dark:border-[#333] bg-gray-50 dark:bg-[#252526] flex gap-2">
@@ -25,12 +38,13 @@ const ChatPanel = ({ appId, input, onInputChange, onSendMessage }) => {
 					type="text"
 					value={input}
 					onChange={(e) => onInputChange(e.target.value)}
-					onKeyDown={(e) => e.key === 'Enter' && onSendMessage()}
-					placeholder="Enter message..."
-					className="flex-1 px-3 py-2 bg-white dark:bg-[#3c3c3c] border border-gray-300 dark:border-[#555] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-[#007acc] text-gray-900 dark:text-[#cccccc] placeholder:text-gray-400 dark:placeholder:text-[#888]"
+					onKeyDown={(e) => e.key === 'Enter' && !isStreaming && onSendMessage()}
+					placeholder={isStreaming ? 'Waiting for response...' : 'Enter message...'}
+					disabled={isStreaming}
+					className="flex-1 px-3 py-2 bg-white dark:bg-[#3c3c3c] border border-gray-300 dark:border-[#555] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-[#007acc] text-gray-900 dark:text-[#cccccc] placeholder:text-gray-400 dark:placeholder:text-[#888] disabled:opacity-50"
 				/>
-				<Button onClick={onSendMessage} size="sm" className="px-4">
-					Send
+				<Button onClick={onSendMessage} size="sm" className="px-4" disabled={isStreaming}>
+					{isStreaming ? '...' : 'Send'}
 				</Button>
 			</div>
 		</div>
