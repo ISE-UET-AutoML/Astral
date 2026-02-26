@@ -17,7 +17,7 @@ const DatasetHeader = ({ onNewDataset }) => {
                 <Tooltip title="Create a new dataset">
                     <button
                         onClick={onNewDataset}
-                        className="px-6 py-3 rounded-xl text-base font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg text-white border-none btn-gradient-dark"
+                        className="px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg text-white border-none bg-gradient-to-r from-blue-700 to-blue-600"
                         
                     >
                         New Dataset

@@ -247,7 +247,7 @@
     --button-default-border: rgba(255, 255, 255, 0.2);
     --button-default-color: white;
     --button-dashed-bg: rgba(255, 255, 255, 0.05);
-    --button-dashed-border: rgba(255, 255, 255, 0.3);
+    --button-dashed-border: rgb(0, 255, 255,0.3);
     --button-dashed-color: white;
     
     /* Table styling - preserve original dark theme */

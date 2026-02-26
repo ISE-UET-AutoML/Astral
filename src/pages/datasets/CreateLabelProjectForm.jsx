@@ -5,6 +5,7 @@ import { Select } from 'src/components/shared/ui/Select'
 import { Alert, AlertDescription } from 'src/components/shared/ui/alert'
 import { Tag } from 'src/components/shared/ui/tag'
 import { TASK_TYPES } from 'src/constants/types'
+import { Info } from 'lucide-react'
 
 /* ── Shared style helpers ─────────────────────────────────────────────── */
 const inputStyle = {
@@ -475,7 +476,7 @@ export default function CreateLabelProjectForm({
 							</div>
 
 							{expectedLabels.length > 0 ? (
-								<div className="flex flex-wrap gap-2 mt-2">
+								<div className="flex flex-wrap gap-2 mt-2 dark:text-white text-blue-500">
 									{expectedLabels.map(label => (
 										<div key={label} className="flex items-center gap-1.5">
 											<Tag variant="primary" className="flex items-center gap-1">
@@ -509,9 +510,10 @@ export default function CreateLabelProjectForm({
 									))}
 								</div>
 							) : (
-								<Alert variant="info" className="mt-2">
-									<AlertDescription>At least one label is required</AlertDescription>
-								</Alert>
+								<div variant="info" className="mt-2">
+									<div className="flex items-center gap-2 pt-4 text-red-500">At least one label is required <div className="text-blue-500"><Info className="h-4 w-4 text-red-500"/></div> </div> 
+								   
+								</div>
 							)}
 						</>
 					)}
@@ -534,6 +536,7 @@ export default function CreateLabelProjectForm({
 						opacity: loading || expectedLabels.length === 0 ? 0.6 : 1,
 						cursor: loading || expectedLabels.length === 0 ? 'not-allowed' : 'pointer',
 					}}
+					className="px-8 py-2 rounded-xl border border-blue-500 text-white text-sm !bg-gradient-to-r !from-blue-600 !to-blue-500 !hover:from-blue-700 !hover:to-blue-600 transition-colors shadow-lg"
 				>
 					{loading ? 'Creating...' : 'Create'}
 				</button>

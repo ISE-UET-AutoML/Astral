@@ -1,122 +1,65 @@
-// CreateDatasetForm.jsx
 import React, { useState, useRef, useEffect } from 'react';
-import {
-    FolderIcon,
-    DocumentIcon,
-    TrashIcon,
-    QuestionMarkCircleIcon,
-    ChevronDownIcon,
-    ChevronUpIcon,
-} from '@heroicons/react/24/outline';
-import { Select } from 'src/components/shared/ui/Select';
-import { Alert, AlertDescription } from 'src/components/shared/ui/alert';
+import { 
+    FolderOutlined, 
+    FileOutlined, 
+    DeleteOutlined, 
+    QuestionCircleOutlined 
+} from '@ant-design/icons';
+// Đảm bảo đường dẫn import này khớp với cấu trúc thư mục của bạn
+import { Select } from 'src/components/shared/ui/Select'; 
 import { DATASET_TYPES } from 'src/constants/types';
 import { organizeFiles, createChunks, extractCSVMetaData } from 'src/utils/file';
 import { DATASET_TASK_MAPPING, TASK_TYPE_INFO } from 'src/constants/dataset_task_mapping';
-import ToastMessage from 'src/components/shared/utilities/Toast';
 
-/* ── Shared style helpers ─────────────────────────────────────────────── */
-const inputStyle = {
-    width: '100%',
-    background: 'var(--input-bg)',
-    border: '1px solid var(--input-border)',
-    color: 'var(--input-color)',
-    fontFamily: 'Poppins, sans-serif',
-    borderRadius: '10px',
-    padding: '8px 12px',
-    fontSize: '14px',
-    outline: 'none',
-    boxSizing: 'border-box',
-    transition: 'border-color 0.2s, box-shadow 0.2s',
-};
-
-const primaryBtnStyle = {
-    background: 'var(--button-primary-bg)',
-    border: '1px solid var(--button-primary-border)',
-    color: 'var(--button-primary-color)',
-    fontFamily: 'Poppins, sans-serif',
-    fontWeight: 500,
-    padding: '8px 20px',
-    borderRadius: '8px',
-    cursor: 'pointer',
-    fontSize: '14px',
-};
-
-const defaultBtnStyle = {
-    background: 'var(--button-default-bg)',
-    border: '1px solid var(--button-default-border)',
-    color: 'var(--button-default-color)',
-    fontFamily: 'Poppins, sans-serif',
-    padding: '8px 20px',
-    borderRadius: '8px',
-    cursor: 'pointer',
-    fontSize: '14px',
-};
-
-/* ── FormField helper ─────────────────────────────────────────────────── */
-const FormField = ({ label, error, required, children, className }) => (
-    <div className={`mb-4 ${className || ''}`}>
-        <label
-            className="block text-sm font-medium mb-1"
-            style={{ color: 'var(--form-label-color)', fontFamily: 'Poppins, sans-serif' }}
-        >
-            {label}
-            {required && <span style={{ color: '#ef4444', marginLeft: '4px' }}>*</span>}
-        </label>
-        {children}
-        {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
-    </div>
-);
-
-/* ── Main component ───────────────────────────────────────────────────── */
 export default function CreateDatasetForm({
     onNext,
     onCancel,
     initialValues,
     initialFiles = [],
     initialDetectedLabels = [],
-    initialCsvMetadata = null,
+    initialCsvMetadata = null
 }) {
+    // Form States
     const [title, setTitle] = useState(initialValues?.title || '');
     const [description, setDescription] = useState(initialValues?.description || '');
-    const [datasetType, setDatasetType] = useState(initialValues?.dataset_type || null);
-    const [taskType, setTaskType] = useState(initialValues?.taskType || null);
+    const [datasetType, setDatasetType] = useState(initialValues?.dataset_type || '');
+    const [taskType, setTaskType] = useState(initialValues?.taskType || '');
     const [service, setService] = useState(initialValues?.service || 'AWS_S3');
     const [bucketName, setBucketName] = useState(initialValues?.bucket_name || 'user-private-dataset');
-    const [remoteUrl, setRemoteUrl] = useState(initialValues?.url || '');
+    const [url, setUrl] = useState(initialValues?.url || '');
+    
+    // UI States
+    const [activeTab, setActiveTab] = useState('file'); // 'file' or 'url'
+    const [errors, setErrors] = useState({});
+    const [isDragging, setIsDragging] = useState(false);
+    
+    // File States
     const [files, setFiles] = useState(initialFiles);
-    const [totalKbytes, setTotalKbytes] = useState(() => {
-        const total = initialFiles.reduce((s, f) => s + (f.fileObject?.size || 0), 0);
-        return total > 0 ? (total / 1024).toFixed(2) : '0.00';
-    });
     const [detectedLabels, setDetectedLabels] = useState(initialDetectedLabels);
     const [csvMetadata, setCsvMetadata] = useState(initialCsvMetadata);
-    const [isDragging, setIsDragging] = useState(false);
-    const [activeTab, setActiveTab] = useState('file');
-    const [instructionsOpen, setInstructionsOpen] = useState(false);
-    const [formErrors, setFormErrors] = useState({});
-    const [toast, setToast] = useState({ show: false, message: '', type: 'error' });
-
     const fileInputRef = useRef(null);
     const fileRefs = useRef(new Map());
 
-    const showError = (msg) => setToast({ show: true, message: msg, type: 'error' });
+    const calcSizeKB = (fileArr) => {
+        const totalSize = fileArr.reduce((sum, f) => sum + (f.fileObject?.size || 0), 0);
+        return totalSize > 0 ? (totalSize / 1024).toFixed(2) : '0.00';
+    };
+    const [totalKbytes, setTotalKbytes] = useState(calcSizeKB(initialFiles));
 
     useEffect(() => {
         if (initialFiles.length) {
             setFiles(initialFiles);
-            const total = initialFiles.reduce((s, f) => s + (f.fileObject?.size || 0), 0);
-            setTotalKbytes(total > 0 ? (total / 1024).toFixed(2) : '0.00');
+            setTotalKbytes(calcSizeKB(initialFiles));
         }
         if (initialDetectedLabels.length) setDetectedLabels(initialDetectedLabels);
         if (initialCsvMetadata) setCsvMetadata(initialCsvMetadata);
     }, [initialFiles, initialDetectedLabels, initialCsvMetadata]);
 
-    const validateFiles = (fileList, type) => {
+    const validateFiles = (files, datasetType) => {
         const allowedImageTypes = ['image/jpeg', 'image/png'];
         const allowedTextTypes = ['text/plain', 'text/csv', 'application/xml', 'text/xml'];
         const allowedAudioTypes = ['audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/mp4', 'audio/x-m4a', 'audio/flac'];
-        const allowedVideoTypes = ['video/mp4', 'video/x-m4v', 'video/webm', 'video/quicktime', 'video/avi'];
+        const allowedVideoTypes = ['video/mp4', 'video/x-m4v','video/webm', 'video/quicktime', 'video/avi'];
         const allowedTypes = {
             IMAGE: [...allowedImageTypes, ...allowedTextTypes],
             TEXT: allowedTextTypes,
@@ -126,47 +69,48 @@ export default function CreateDatasetForm({
             AUDIO: [...allowedAudioTypes, ...allowedTextTypes],
             VIDEO: [...allowedVideoTypes, ...allowedTextTypes],
         };
-        return fileList.filter(f => f?.type && allowedTypes[type]?.includes(f.type));
+        return files.filter((file) => file?.type && allowedTypes[datasetType]?.includes(file.type));
     };
 
     const handleFileChange = async (event) => {
         const uploadedFiles = Array.from(event.target.files || []);
         const validatedFiles = validateFiles(uploadedFiles, datasetType);
-
-        const hasImageFolder = validatedFiles.some(f =>
-            f.webkitRelativePath && f.webkitRelativePath.includes('/images/')
+        
+        const hasImageFolder = validatedFiles.some((file) =>
+            file.webkitRelativePath && file.webkitRelativePath.includes('/images/')
         );
-        const hasCSVFile = validatedFiles.some(f =>
-            (f.webkitRelativePath || f.name || '').toLowerCase().endsWith('.csv')
+        const hasCSVFile = validatedFiles.some((file) =>
+            (file.webkitRelativePath || file.name || '').toLowerCase().endsWith('.csv')
         );
 
         if (datasetType === 'MULTIMODAL' && (!hasImageFolder || !hasCSVFile)) {
-            showError('For MULTIMODAL datasets, upload a folder with images and a CSV file.');
+            alert('Error: For MULTIMODAL datasets, upload a folder with images and a CSV file.');
             return;
         }
 
-        const totalSize = validatedFiles.reduce((sum, f) => sum + (f.size || 0), 0);
+        const totalSize = validatedFiles.reduce((sum, file) => sum + (file.size || 0), 0);
         const totalSizeInKB = totalSize > 0 ? (totalSize / 1024).toFixed(2) : '0.00';
 
-        const fileMetadata = validatedFiles.map(f => ({
-            path: f.webkitRelativePath || f.name,
-            fileObject: f,
+        const fileMetadata = validatedFiles.map((file) => ({
+            path: file.webkitRelativePath || file.name,
+            fileObject: file,
         }));
 
         const fileMap = organizeFiles(fileMetadata);
-        const labels = Array.from(fileMap.keys()).filter(l => l !== 'unlabeled');
+        const labels = Array.from(fileMap.keys()).filter(label => label !== 'unlabeled');
         setDetectedLabels(labels);
 
-        const csvFile = validatedFiles.find(f =>
-            (f.webkitRelativePath || f.name || '').toLowerCase().endsWith('.csv')
+        const csvFile = validatedFiles.find(file =>
+            (file.webkitRelativePath || file.name || '').toLowerCase().endsWith('.csv')
         );
+
         if (csvFile) {
             try {
                 const metadata = await extractCSVMetaData(csvFile);
                 setCsvMetadata(metadata);
             } catch (err) {
                 console.error('Failed to extract CSV metadata:', err);
-                showError('Failed to analyze CSV file');
+                alert('Failed to analyze CSV file');
             }
         }
 
@@ -174,66 +118,116 @@ export default function CreateDatasetForm({
         setTotalKbytes(totalSizeInKB);
     };
 
-    const handleDeleteFile = (filePath) => {
-        const updatedFiles = files.filter(f => f.path !== filePath);
+    const handleDeleteFile = (fileId) => {
+        const updatedFiles = files.filter((file) => file.fileId !== fileId);
+        fileRefs.current.delete(fileId);
         setFiles(updatedFiles);
         setDetectedLabels([]);
         setCsvMetadata(null);
-        const total = updatedFiles.reduce((s, f) => s + (f.fileObject?.size || 0), 0);
-        setTotalKbytes(total > 0 ? (total / 1024).toFixed(2) : '0.00');
+        const totalSize = updatedFiles.reduce((sum, file) => {
+            const fileObj = fileRefs.current.get(file.fileId);
+            return sum + (fileObj?.size || 0);
+        }, 0);
+        setTotalKbytes(totalSize > 0 ? (totalSize / 1024).toFixed(2) : '0.00');
     };
 
     const handleReset = () => {
         if (fileInputRef.current) fileInputRef.current.value = null;
         setFiles([]);
-        setTotalKbytes('0.00');
+        setTotalKbytes(0);
         setDetectedLabels([]);
         setCsvMetadata(null);
     };
 
-    const handleDragEnter = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (e.dataTransfer.items?.length > 0) setIsDragging(true);
+    const handleDragEnter = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        if (event.dataTransfer.items && event.dataTransfer.items.length > 0) setIsDragging(true);
     };
-    const handleDragLeave = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (!e.currentTarget.contains(e.relatedTarget)) setIsDragging(false);
+
+    const handleDragLeave = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        if (!event.currentTarget.contains(event.relatedTarget)) setIsDragging(false);
     };
-    const handleDragOver = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
+
+    const handleDragOver = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
         setIsDragging(true);
     };
-    const handleDrop = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
+
+    const handleDrop = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
         setIsDragging(false);
-        const droppedFiles = e.dataTransfer.files;
-        if (droppedFiles?.length > 0) {
-            if (fileInputRef.current) fileInputRef.current.files = droppedFiles;
-            handleFileChange({ target: { files: droppedFiles } });
+
+        const files = event.dataTransfer.files;
+        if (files && files.length > 0) {
+            const simulatedEvent = { target: { files: files } };
+            if(fileInputRef.current) fileInputRef.current.files = files;
+            handleFileChange(simulatedEvent);
         }
     };
 
     const getAvailableTaskTypes = () => {
         if (!datasetType) return [];
         const availableTypes = DATASET_TASK_MAPPING[datasetType] || [];
-        return availableTypes.map(typeKey => ({ key: typeKey, ...TASK_TYPE_INFO[typeKey] }));
+        return availableTypes.map(typeKey => ({
+            key: typeKey,
+            ...TASK_TYPE_INFO[typeKey]
+        }));
     };
 
+    const validateForm = () => {
+        const newErrors = {};
+        if (!title.trim()) newErrors.title = "Please enter a title";
+        if (!datasetType) newErrors.datasetType = "Please select a type";
+        if (!taskType) newErrors.taskType = "Please select a task type";
+        if (activeTab === 'url' && !url.trim()) newErrors.url = "Please enter a URL";
+        
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (!validateForm()) return;
+
+        const payload = {
+            title,
+            description,
+            dataset_type: datasetType,
+            taskType,
+            service,
+            bucket_name: bucketName,
+            url: activeTab === 'url' ? url : undefined,
+            files: activeTab === 'file' ? files : [],
+            totalKbytes: activeTab === 'file' ? totalKbytes : 0,
+            detectedLabels,
+            csvMetadata,
+            meta_data: {
+                detectedLabels,
+                csvMetadata
+            }
+        };
+        onNext(payload);
+    };
+
+    // Chuẩn bị Props cho input file
     const isFolderUpload = ['IMAGE', 'MULTIMODAL', 'AUDIO', 'VIDEO'].includes(datasetType);
     const fileInputProps = {
         ref: fileInputRef,
         type: 'file',
+        name: 'file',
+        id: 'file',
         multiple: true,
-        style: { display: 'none' },
+        className: 'hidden',
         onChange: handleFileChange,
     };
     if (isFolderUpload) {
-        fileInputProps.webkitdirectory = '';
-        fileInputProps.directory = '';
+        fileInputProps.webkitdirectory = "";
+        fileInputProps.directory = "";
     } else if (datasetType) {
         const allowedExtensions = {
             TEXT: '.csv,.xlsx,.xls',
@@ -247,329 +241,264 @@ export default function CreateDatasetForm({
 
     const currentTaskInfo = TASK_TYPE_INFO[taskType];
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const errors = {};
-        if (!title.trim()) errors.title = 'Please enter a title';
-        if (!datasetType) errors.dataset_type = 'Please select a type';
-        if (!taskType) errors.taskType = 'Please select a task type';
-        if (activeTab === 'url' && !remoteUrl.trim()) errors.url = 'Please enter a URL';
-        if (Object.keys(errors).length > 0) {
-            setFormErrors(errors);
-            return;
-        }
-        setFormErrors({});
-        onNext({
-            title,
-            description,
-            dataset_type: datasetType,
-            taskType,
-            service,
-            bucket_name: bucketName,
-            url: remoteUrl,
-            files,
-            totalKbytes,
-            detectedLabels,
-            csvMetadata,
-            meta_data: { detectedLabels, csvMetadata },
-        });
-    };
+    // Tạo mảng Options cho Custom Select
+    const dataTypeOptions = Object.entries(DATASET_TYPES).map(([key, value]) => ({
+        label: value.type,
+        value: key
+    }));
+
+    const taskTypeOptions = datasetType 
+        ? getAvailableTaskTypes().map((task) => ({
+            label: `${task.displayName} (${task.description})`,
+            value: task.key
+        })) 
+        : [];
+
+    const bucketOptions = [
+        { label: 'user-private-dataset', value: 'user-private-dataset' },
+        { label: 'bucket-2', value: 'bucket-2' }
+    ];
+
+    // CSS classes cho Input
+    const inputClass = "w-full px-3 py-2 rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--input-color)] placeholder-[var(--placeholder-color)] focus:outline-none focus:border-[var(--input-focus-border)] focus:shadow-[var(--input-shadow)] transition-all disabled:opacity-50 disabled:cursor-not-allowed";
+    const labelClass = "block mb-2 font-medium text-[var(--form-label-color)] text-sm";
 
     return (
-        <>
-            <ToastMessage
-                show={toast.show}
-                message={toast.message}
-                type={toast.type}
-                onClose={() => setToast(prev => ({ ...prev, show: false }))}
-            />
+        <form onSubmit={handleSubmit} className="flex flex-col gap-5 font-poppins">
+            
+            {/* Hàng 1: Title */}
+            <div>
+                <label className={labelClass}>Title <span className="text-red-500">*</span></label>
+                <input
+                    type="text"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="Enter dataset title (letters and numbers only)"
+                    className={inputClass}
+                />
+                {errors.title && <span className="text-red-500 text-xs mt-1 block">{errors.title}</span>}
+            </div>
 
-            <form onSubmit={handleSubmit}>
-                {/* Row 1: Title */}
-                <FormField label="Title" required error={formErrors.title}>
-                    <input
-                        style={inputStyle}
-                        placeholder="Enter dataset title"
-                        value={title}
-                        onChange={e => setTitle(e.target.value)}
-                        onFocus={e => { e.target.style.borderColor = 'var(--input-focus-border)'; e.target.style.boxShadow = 'var(--input-shadow)'; }}
-                        onBlur={e => { e.target.style.borderColor = 'var(--input-border)'; e.target.style.boxShadow = 'none'; }}
+            {/* Hàng 2: Data Type và Task Type */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label className={labelClass}>Data Type <span className="text-red-500">*</span></label>
+                    <Select
+                        value={datasetType || undefined} // Tránh lỗi controlled state ban đầu
+                        onChange={(val) => {
+                            setDatasetType(val);
+                            setTaskType('');
+                            handleReset();
+                        }}
+                        placeholder="Select dataset type"
+                        options={dataTypeOptions}
                     />
-                </FormField>
-
-                {/* Row 2: Data Type + Task Type */}
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                    <FormField label="Data Type" required error={formErrors.dataset_type} className="mb-0">
-                        <Select
-                            placeholder="Select dataset type"
-                            value={datasetType}
-                            options={Object.entries(DATASET_TYPES).map(([key, value]) => ({ value: key, label: value.type }))}
-                            onChange={(value) => {
-                                setDatasetType(value);
-                                setTaskType(null);
-                                setInstructionsOpen(false);
-                                handleReset();
-                            }}
-                        />
-                    </FormField>
-
-                    <FormField label="Task Type" required error={formErrors.taskType} className="mb-0">
-                        <Select
-                            placeholder={!datasetType ? '-- Select Data Type first --' : 'Select task type'}
-                            value={taskType}
-                            allowClear
-                            options={datasetType
-                                ? getAvailableTaskTypes().map(task => ({
-                                    value: task.key,
-                                    label: `${task.displayName} (${task.description})`,
-                                }))
-                                : []
-                            }
-                            onChange={(value) => {
-                                setTaskType(value);
-                                setInstructionsOpen(false);
-                            }}
-                        />
-                    </FormField>
+                    {errors.datasetType && <span className="text-red-500 text-xs mt-1 block">{errors.datasetType}</span>}
                 </div>
 
-                {/* Task preparation instructions collapsible */}
-                {taskType && currentTaskInfo?.preparingInstructions && (
-                    <div
-                        className="mb-4 rounded-md overflow-hidden"
-                        style={{ border: '1px solid #ddd', borderRadius: '6px', backgroundColor: 'rgba(255,255,255,0.97)' }}
+                <div>
+                    <label className={labelClass}>Task Type <span className="text-red-500">*</span></label>
+                    <Select
+                        value={taskType || undefined}
+                        onChange={(val) => setTaskType(val)}
+                        disabled={!datasetType}
+                        placeholder={!datasetType ? '-- Select Data Type first --' : 'Select task type'}
+                        options={taskTypeOptions}
+                    />
+                    {errors.taskType && <span className="text-red-500 text-xs mt-1 block">{errors.taskType}</span>}
+                </div>
+            </div>
+
+            {/* Preparing Instructions */}
+            {currentTaskInfo?.preparingInstructions && (
+                <details className="group border border-[#ddd] rounded-lg bg-[rgba(255,255,255,0.97)] overflow-hidden">
+                    <summary className="flex items-center cursor-pointer p-3 font-medium text-green-600 outline-none list-none select-none">
+                        <QuestionCircleOutlined className="mr-2" />
+                        Task Preparation Instructions ({currentTaskInfo.displayName})
+                        <span className="ml-auto transition-transform group-open:rotate-180">▼</span>
+                    </summary>
+                    <div className="p-4 pt-0 border-t border-[#ddd] whitespace-pre-line text-[var(--text)] text-sm mt-2">
+                        {currentTaskInfo.preparingInstructions}
+                    </div>
+                </details>
+            )}
+
+            {/* Hàng 3: Description */}
+            <div>
+                <label className={labelClass}>Description</label>
+                <textarea
+                    rows={2}
+                    maxLength={500}
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    className={`${inputClass} resize-none`}
+                />
+                <div className="text-right text-xs text-[var(--secondary-text)] mt-1">
+                    {description.length} / 500
+                </div>
+            </div>
+
+            {/* Hàng 4: Provider & Bucket */}
+            <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-4">
+                <div>
+                    <label className={labelClass}>Storage Provider</label>
+                    <div className="flex gap-4 mt-2">
+                        <label className="flex items-center gap-2 cursor-pointer text-[var(--text)] text-sm">
+                            <input
+                                type="radio"
+                                value="AWS_S3"
+                                checked={service === 'AWS_S3'}
+                                onChange={(e) => setService(e.target.value)}
+                                className="accent-[var(--button-primary-bg)] w-4 h-4 cursor-pointer"
+                            />
+                            AWS S3
+                        </label>
+                        <label className="flex items-center gap-2 cursor-pointer text-[var(--text)] text-sm">
+                            <input
+                                type="radio"
+                                value="GCP_STORAGE"
+                                checked={service === 'GCP_STORAGE'}
+                                onChange={(e) => setService(e.target.value)}
+                                className="accent-[var(--button-primary-bg)] w-4 h-4 cursor-pointer"
+                            />
+                            Google Cloud
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label className={labelClass}>Bucket Name</label>
+                    <Select
+                        value={bucketName}
+                        onChange={(val) => setBucketName(val)}
+                        options={bucketOptions}
+                    />
+                </div>
+            </div>
+
+            {/* Custom Tabs */}
+            <div className="mt-2">
+                <div className="flex border-b border-[var(--divider-color)] mb-4">
+                    <button
+                        type="button"
+                        onClick={() => setActiveTab('file')}
+                        className={`py-2 px-4 font-medium text-sm transition-colors border-b-2 ${
+                            activeTab === 'file' 
+                                ? 'border-[var(--tabs-ink-bar)] text-[var(--tabs-active-text)]' 
+                                : 'border-transparent text-[var(--tabs-text)] hover:text-[var(--tabs-active-text)]'
+                        }`}
                     >
-                        <button
-                            type="button"
-                            className="flex items-center gap-2 w-full px-4 py-3 text-sm text-left"
-                            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#16a34a', fontFamily: 'Poppins, sans-serif' }}
-                            onClick={() => setInstructionsOpen(o => !o)}
+                        File Upload
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setActiveTab('url')}
+                        className={`py-2 px-4 font-medium text-sm transition-colors border-b-2 ${
+                            activeTab === 'url' 
+                                ? 'border-[var(--tabs-ink-bar)] text-[var(--tabs-active-text)]' 
+                                : 'border-transparent text-[var(--tabs-text)] hover:text-[var(--tabs-active-text)]'
+                        }`}
+                    >
+                        Remote URL
+                    </button>
+                </div>
+
+                {/* Tab Content: File Upload */}
+                {activeTab === 'file' && (
+                    <div>
+                        <label
+                            htmlFor="file"
+                            className="flex flex-col justify-center items-center h-[120px] rounded-xl cursor-pointer transition-all duration-300 mb-4"
+                            style={{
+                                border: isDragging ? '2px dashed var(--modal-close-hover)' : '2px dashed var(--upload-border)',
+                                background: isDragging ? 'var(--hover-bg)' : 'var(--upload-bg)',
+                            }}
+                            onDragEnter={handleDragEnter}
+                            onDragLeave={handleDragLeave}
+                            onDragOver={handleDragOver}
+                            onDrop={handleDrop}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.borderColor = 'var(--modal-close-hover)';
+                                e.currentTarget.style.background = 'var(--hover-bg)';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.borderColor = 'var(--upload-border)';
+                                e.currentTarget.style.background = 'var(--upload-bg)';
+                            }}
                         >
-                            <QuestionMarkCircleIcon className="h-4 w-4 shrink-0" />
-                            <span className="font-medium">
-                                Task Preparation Instructions ({currentTaskInfo.displayName})
-                            </span>
-                            <span className="ml-auto">
-                                {instructionsOpen
-                                    ? <ChevronUpIcon className="h-4 w-4" />
-                                    : <ChevronDownIcon className="h-4 w-4" />
-                                }
-                            </span>
-                        </button>
-                        {instructionsOpen && (
-                            <div
-                                className="px-4 pb-4 text-sm whitespace-pre-line"
-                                style={{ color: '#374151', fontFamily: 'Poppins, sans-serif', borderTop: '1px solid #ddd' }}
-                            >
-                                {currentTaskInfo.preparingInstructions}
+                            <div className="text-center">
+                                {isFolderUpload ? (
+                                    <FolderOutlined className="text-[64px] text-[var(--upload-icon)]" />
+                                ) : (
+                                    <FileOutlined className="text-[64px] text-[var(--upload-icon)]" />
+                                )}
+                                <p className="mt-2 text-[var(--upload-text)] text-sm">
+                                    {isFolderUpload ? 'Drag and drop a folder or click to upload' : 'Drag and drop files or click to upload'}
+                                </p>
+                            </div>
+                            <input {...fileInputProps} />
+                        </label>
+
+                        <div className="text-[var(--text)] text-sm">
+                            <span className="font-medium">{files.length} Files</span>
+                            <span className="ml-2 text-[var(--secondary-text)]">({totalKbytes} kB)</span>
+                        </div>
+
+                        {files.length > 0 && (
+                            <div className="max-h-[200px] overflow-y-auto bg-[var(--upload-bg)] rounded-lg p-2 mt-3 [scrollbar-width:thin]">
+                                {files.map((file) => (
+                                    <div key={file.path} className="flex items-center border-b border-[var(--divider-color)] py-2 text-[var(--text)] text-sm last:border-0">
+                                        <FileOutlined className="mr-2 text-[var(--upload-icon)]" />
+                                        <span className="flex-1 truncate">{file.path}</span>
+                                        <span className="ml-2 text-[var(--secondary-text)] text-xs mr-2">
+                                            ({(file.fileObject?.size / 1024 || 0).toFixed(2)} kB)
+                                        </span>
+                                        <button
+                                            type="button"
+                                            onClick={() => handleDeleteFile(file.fileId)}
+                                            className="text-[var(--secondary-text)] hover:text-red-500 transition-colors bg-transparent border-none cursor-pointer px-2"
+                                        >
+                                            <DeleteOutlined />
+                                        </button>
+                                    </div>
+                                ))}
                             </div>
                         )}
                     </div>
                 )}
 
-                {/* Description */}
-                <FormField label="Description">
-                    <textarea
-                        style={{ ...inputStyle, resize: 'vertical', minHeight: '64px' }}
-                        rows={2}
-                        maxLength={500}
-                        placeholder="Enter description (optional)"
-                        value={description}
-                        onChange={e => setDescription(e.target.value)}
-                        onFocus={e => { e.target.style.borderColor = 'var(--input-focus-border)'; e.target.style.boxShadow = 'var(--input-shadow)'; }}
-                        onBlur={e => { e.target.style.borderColor = 'var(--input-border)'; e.target.style.boxShadow = 'none'; }}
-                    />
-                    <div className="text-right text-xs mt-1" style={{ color: 'var(--secondary-text)', fontFamily: 'Poppins, sans-serif' }}>
-                        {description.length}/500
+                {/* Tab Content: URL */}
+                {activeTab === 'url' && (
+                    <div>
+                        <label className={labelClass}>URL <span className="text-red-500">*</span></label>
+                        <input
+                            type="text"
+                            value={url}
+                            onChange={(e) => setUrl(e.target.value)}
+                            placeholder="Enter remote URL"
+                            className={inputClass}
+                        />
+                        {errors.url && <span className="text-red-500 text-xs mt-1 block">{errors.url}</span>}
                     </div>
-                </FormField>
+                )}
+            </div>
 
-                {/* Storage provider + Bucket */}
-                <div className="grid grid-cols-12 gap-4 mb-4">
-                    <div className="col-span-5">
-                        <label
-                            className="block text-sm font-medium mb-2"
-                            style={{ color: 'var(--form-label-color)', fontFamily: 'Poppins, sans-serif' }}
-                        >
-                            Storage Provider
-                        </label>
-                        <div className="flex flex-col gap-2">
-                            {['AWS_S3', 'GCP_STORAGE'].map(val => (
-                                <label
-                                    key={val}
-                                    className="flex items-center gap-2 cursor-pointer text-sm"
-                                    style={{ color: 'var(--text)', fontFamily: 'Poppins, sans-serif' }}
-                                >
-                                    <input
-                                        type="radio"
-                                        name="storage-provider"
-                                        value={val}
-                                        checked={service === val}
-                                        onChange={() => setService(val)}
-                                        style={{ accentColor: 'var(--button-primary-bg)' }}
-                                    />
-                                    {val === 'AWS_S3' ? 'AWS S3' : 'Google Cloud Storage'}
-                                </label>
-                            ))}
-                        </div>
-                    </div>
-                    <div className="col-span-7">
-                        <FormField label="Bucket Name" className="mb-0">
-                            <Select
-                                value={bucketName}
-                                onChange={setBucketName}
-                                options={[
-                                    { value: 'user-private-dataset', label: 'user-private-dataset' },
-                                    { value: 'bucket-2', label: 'bucket-2' },
-                                ]}
-                            />
-                        </FormField>
-                    </div>
-                </div>
-
-                {/* Tabs: File Upload / Remote URL */}
-                <div className="mb-4">
-                    <div
-                        className="flex border-b"
-                        style={{ borderColor: 'var(--divider-color)' }}
-                    >
-                        {['file', 'url'].map(tab => (
-                            <button
-                                key={tab}
-                                type="button"
-                                onClick={() => setActiveTab(tab)}
-                                className="px-4 py-2 text-sm font-medium transition-colors"
-                                style={{
-                                    background: 'none',
-                                    border: 'none',
-                                    cursor: 'pointer',
-                                    fontFamily: 'Poppins, sans-serif',
-                                    color: activeTab === tab ? 'var(--tabs-active-text)' : 'var(--tabs-text)',
-                                    borderBottom: activeTab === tab ? '2px solid var(--tabs-ink-bar)' : '2px solid transparent',
-                                    marginBottom: '-1px',
-                                }}
-                            >
-                                {tab === 'file' ? 'File Upload' : 'Remote URL'}
-                            </button>
-                        ))}
-                    </div>
-
-                    <div className="pt-4">
-                        {activeTab === 'file' && (
-                            <>
-                                <label
-                                    htmlFor="file-upload-input"
-                                    style={{
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        height: '120px',
-                                        border: isDragging
-                                            ? '2px dashed var(--modal-close-hover)'
-                                            : '2px dashed var(--upload-border)',
-                                        background: isDragging ? 'var(--hover-bg)' : 'var(--upload-bg)',
-                                        borderRadius: '12px',
-                                        cursor: 'pointer',
-                                        marginBottom: '16px',
-                                        transition: 'all 0.3s ease',
-                                    }}
-                                    onDragEnter={handleDragEnter}
-                                    onDragLeave={handleDragLeave}
-                                    onDragOver={handleDragOver}
-                                    onDrop={handleDrop}
-                                    onMouseEnter={e => {
-                                        e.currentTarget.style.borderColor = 'var(--modal-close-hover)';
-                                        e.currentTarget.style.background = 'var(--hover-bg)';
-                                    }}
-                                    onMouseLeave={e => {
-                                        e.currentTarget.style.borderColor = 'var(--upload-border)';
-                                        e.currentTarget.style.background = 'var(--upload-bg)';
-                                    }}
-                                >
-                                    <div className="text-center">
-                                        {isFolderUpload
-                                            ? <FolderIcon style={{ width: 48, height: 48, color: 'var(--upload-icon)', margin: '0 auto' }} />
-                                            : <DocumentIcon style={{ width: 48, height: 48, color: 'var(--upload-icon)', margin: '0 auto' }} />
-                                        }
-                                        <p style={{ marginTop: '8px', color: 'var(--upload-text)', fontFamily: 'Poppins, sans-serif', fontSize: '14px' }}>
-                                            {isFolderUpload
-                                                ? 'Drag and drop a folder or click to upload'
-                                                : 'Drag and drop files or click to upload'
-                                            }
-                                        </p>
-                                    </div>
-                                    <input id="file-upload-input" {...fileInputProps} />
-                                </label>
-
-                                <div style={{ color: 'var(--text)', fontFamily: 'Poppins, sans-serif', fontSize: '14px' }}>
-                                    <span className="font-medium">{files.length} Files</span>
-                                    <span style={{ marginLeft: '8px', color: 'var(--secondary-text)' }}>({totalKbytes} kB)</span>
-                                </div>
-
-                                {files.length > 0 && (
-                                    <div style={{
-                                        maxHeight: '200px',
-                                        overflowY: 'auto',
-                                        background: 'var(--upload-bg)',
-                                        borderRadius: '8px',
-                                        padding: '8px',
-                                        marginTop: '12px',
-                                    }}>
-                                        {files.map(file => (
-                                            <div
-                                                key={file.path}
-                                                className="flex items-center"
-                                                style={{
-                                                    borderBottom: '1px solid var(--divider-color)',
-                                                    padding: '8px 0',
-                                                    color: 'var(--text)',
-                                                }}
-                                            >
-                                                <DocumentIcon style={{ width: 16, height: 16, marginRight: '8px', color: 'var(--upload-icon)', flexShrink: 0 }} />
-                                                <span className="flex-1 text-sm font-poppins truncate">{file.path}</span>
-                                                <span style={{ marginLeft: '8px', color: 'var(--secondary-text)', fontSize: '12px', whiteSpace: 'nowrap' }}>
-                                                    ({(file.fileObject?.size / 1024 || 0).toFixed(2)} kB)
-                                                </span>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => handleDeleteFile(file.path)}
-                                                    className="ml-2 p-1 rounded hover:bg-white/10 transition-colors"
-                                                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--secondary-text)' }}
-                                                >
-                                                    <TrashIcon style={{ width: 16, height: 16 }} />
-                                                </button>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </>
-                        )}
-
-                        {activeTab === 'url' && (
-                            <FormField label="URL" required error={formErrors.url}>
-                                <input
-                                    style={inputStyle}
-                                    placeholder="Enter remote URL"
-                                    value={remoteUrl}
-                                    onChange={e => setRemoteUrl(e.target.value)}
-                                    onFocus={e => { e.target.style.borderColor = 'var(--input-focus-border)'; e.target.style.boxShadow = 'var(--input-shadow)'; }}
-                                    onBlur={e => { e.target.style.borderColor = 'var(--input-border)'; e.target.style.boxShadow = 'none'; }}
-                                />
-                            </FormField>
-                        )}
-                    </div>
-                </div>
-
-                {/* Actions */}
-                <div className="flex justify-end gap-2 mt-2">
-                    <button type="submit" style={primaryBtnStyle}>
-                        Next
-                    </button>
-                    <button type="button" onClick={onCancel} style={defaultBtnStyle}>
-                        Cancel
-                    </button>
-                </div>
-            </form>
-        </>
+            {/* Buttons */}
+            <div className="mt-4 flex justify-end gap-3">
+                <button
+                    type="button"
+                    onClick={onCancel}
+                    className="px-6 py-2 rounded-xl text-sm font-medium bg-[var(--button-default-bg)] text-[var(--button-default-color)] border border-[var(--button-default-border)] hover:bg-[var(--hover-bg)] hover:border-[var(--border-hover)] hover:text-[var(--text)] transition-colors"
+                >
+                    Cancel
+                </button>
+                <button
+                    type="submit"
+                    className="px-6 py-2 rounded-xl text-sm font-medium bg-[var(--button-primary-bg)] text-[var(--button-primary-color)] border border-[var(--button-primary-border)] hover:border-[var(--modal-close-hover)] hover:-translate-y-[1px] transition-all text-white border-none bg-gradient-to-r from-blue-700 to-blue-600"
+                >
+                    Next
+                </button>
+            </div>
+        </form>
     );
 }

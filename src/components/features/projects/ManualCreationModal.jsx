@@ -622,14 +622,12 @@ const ManualCreationModal = ({
 				>
 					Cancel
 				</button>
-				<GradientButton
-					type="submit"
-					size="sm"
-					disabled={selectedIndex === -1}
-					className="!h-10 !rounded-xl mt-1"
-				>
-					Create Project
-				</GradientButton>
+				<button
+                    type="submit"
+                    className="px-8 py-2 rounded-xl border border-blue-500 text-white text-sm bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 transition-colors shadow-lg"
+                >
+                    Create Project
+                </button>
 			</div>
 		</form>
 	)
