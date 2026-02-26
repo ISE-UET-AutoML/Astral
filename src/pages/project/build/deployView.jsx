@@ -82,7 +82,7 @@ const DeployView = () => {
             description: 'Deploy for immediate, real-time predictions',
             icon: (
                 <ThunderboltOutlined
-                    className="text-[32px] text-[#faad14]"
+                    style={{ fontSize: '32px', color: '#faad14' }}
                 />
             ),
             tags: ['Low Latency', 'High Availability', 'Auto Scaling'],
@@ -99,7 +99,7 @@ const DeployView = () => {
             title: 'Asynchronous Processing',
             description: 'Optimal for handling large batch requests',
             icon: (
-                <ApiOutlined className="text-[32px] text-[#52c41a]" />
+                <ApiOutlined style={{ fontSize: '32px', color: '#52c41a' }} />
             ),
             tags: ['High Throughput', 'Cost Effective', 'Durable'],
             stats: {
@@ -115,7 +115,7 @@ const DeployView = () => {
             description: 'Process large datasets efficiently',
             icon: (
                 <DatabaseOutlined
-                    className="text-[32px] text-[#1890ff]"
+                    style={{ fontSize: '32px', color: '#1890ff' }}
                 />
             ),
             tags: ['Large Scale', 'Cost Optimized', 'Scheduled'],
@@ -132,7 +132,7 @@ const DeployView = () => {
             description: 'Pay-per-use with zero infrastructure management',
             icon: (
                 <CloudDownloadOutlined
-                    className="text-[32px] text-[#722ed1]"
+                    style={{ fontSize: '32px', color: '#722ed1' }}
                 />
             ),
             tags: ['Zero Maintenance', 'Auto Scaling', 'Cost Efficient'],
@@ -305,15 +305,15 @@ const DeployView = () => {
                 }
             `}</style>
             <div className="theme-build-page">
-                <div className="mx-auto">
+                <div style={{ margin: '0 auto' }}>
                     <>
                         <Card
                             className="theme-build-card"
-                            className="mb-6"
+                            style={{ marginBottom: '24px' }}
                         >
                             <Row
                                 align="middle"
-                                className="mb-6"
+                                style={{ marginBottom: '24px' }}
                             >
                                 <Col span={24}>
                                     <Space align="center">
@@ -326,14 +326,17 @@ const DeployView = () => {
                                         <Title
                                             level={3}
                                             className="theme-build-title"
-                                            className="!m-0"
+                                            style={{ margin: 0 }}
                                         >
                                             Deploy Model {modelId}
                                         </Title>
                                     </Space>
                                     <Paragraph
                                         className="theme-build-text"
-                                        className="mt-4 text-base"
+                                        style={{
+                                            margin: '16px 0 0',
+                                            fontSize: '16px',
+                                        }}
                                     >
                                         Choose your deployment option and launch
                                         your application with our optimized
@@ -360,7 +363,7 @@ const DeployView = () => {
                                                 <Space
                                                     direction="vertical"
                                                     size="middle"
-                                                    className="w-full"
+                                                    style={{ width: '100%' }}
                                                 >
                                                     <Row
                                                         justify="space-between"
@@ -381,7 +384,9 @@ const DeployView = () => {
                                                             <Title
                                                                 level={4}
                                                                 className="theme-build-text-strong"
-                                                                className="!m-0"
+                                                                style={{
+                                                                    margin: 0,
+                                                                }}
                                                             >
                                                                 {option.title}
                                                             </Title>
@@ -403,7 +408,9 @@ const DeployView = () => {
 
                                                     <Text
                                                         className="theme-build-text"
-                                                        className="!text-sm"
+                                                        style={{
+                                                            fontSize: '14px',
+                                                        }}
                                                     >
                                                         {option.description}
                                                     </Text>
@@ -435,7 +442,10 @@ const DeployView = () => {
                                                                     <Statistic
                                                                         title={
                                                                             <span
-                                                                                className="font-bold"
+                                                                                style={{
+                                                                                    fontWeight:
+                                                                                        'bold',
+                                                                                }}
                                                                             >
                                                                                 {key
                                                                                     .charAt(
@@ -486,7 +496,7 @@ const DeployView = () => {
                                 <Button
                                     type="primary"
                                     size="large"
-                                    className="font-bold"
+                                    style={{ fontWeight: 'bold' }}
                                     onClick={startDeployment}
                                     disabled={!selectedOption}
                                     className="theme-build-button"

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Select } from 'antd'
+import { Select } from 'src/components/shared/ui/Select'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 
 const statusOptions = [

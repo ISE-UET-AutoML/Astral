@@ -3,7 +3,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import {
     Form,
     Input,
-    Select,
     Radio,
     Button,
     message,
@@ -13,11 +12,11 @@ import {
     Alert,
     Collapse,
 } from 'antd';
+import { Select } from 'src/components/shared/ui/Select';
 import { FolderOutlined, FileOutlined, DeleteOutlined, InfoCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { DATASET_TYPES } from 'src/constants/types';
 import { organizeFiles, createChunks, extractCSVMetaData } from 'src/utils/file';
 import { DATASET_TASK_MAPPING, TASK_TYPE_INFO } from 'src/constants/dataset_task_mapping';
-const { Option } = Select;
 const { TextArea } = Input;
 
 export default function CreateDatasetForm({
@@ -648,19 +647,14 @@ export default function CreateDatasetForm({
                         >
                         <Select
                             placeholder="Select dataset type"
+                            options={Object.entries(DATASET_TYPES).map(([key, value]) => ({ value: key, label: value.type }))}
                             onChange={(value) => {
-                            setDatasetType(value);
-                            setTaskType(null);
-                            form.setFieldsValue({ taskType: null });
-                            handleReset();
+                                setDatasetType(value);
+                                setTaskType(null);
+                                form.setFieldsValue({ taskType: null });
+                                handleReset();
                             }}
-                        >
-                            {Object.entries(DATASET_TYPES).map(([key, value]) => (
-                            <Option key={key} value={key}>
-                                {value.type}
-                            </Option>
-                            ))}
-                        </Select>
+                        />
                         </Form.Item>
                     </Col>
 
@@ -671,35 +665,17 @@ export default function CreateDatasetForm({
                         rules={[{ required: true, message: 'Please select a task type' }]}
                         >
                         <Select
-                            placeholder="Select task type"
-                            onChange={(value) => {
-                            setTaskType(value);
-                            }}
-                            className="w-full"
+                            placeholder={!datasetType ? '-- Select Data Type first --' : 'Select task type'}
                             allowClear
-                            //disabled={!datasetType}
-                        >
-                            {!datasetType && (
-                            <Option key="__placeholder_task" value="" disabled>
-                                -- Select Data Type first --
-                            </Option>
-                            )}
-                            {datasetType &&
-                            getAvailableTaskTypes().map((task) => (
-                                <Option key={task.key} value={task.key}>
-                                {task.displayName}
-                                <span
-                                    style={{
-                                    fontSize: '0.8em',
-                                    color: 'var(--secondary-text)',
-                                    marginLeft: '8px',
-                                    }}
-                                >
-                                    ({task.description})
-                                </span>
-                                </Option>
-                            ))}
-                        </Select>
+                            options={datasetType
+                                ? getAvailableTaskTypes().map((task) => ({
+                                    value: task.key,
+                                    label: `${task.displayName} (${task.description})`,
+                                }))
+                                : []
+                            }
+                            onChange={(value) => setTaskType(value)}
+                        />
                         </Form.Item>
                     </Col>
                 </Row>
@@ -721,10 +697,14 @@ export default function CreateDatasetForm({
                     </Col>
                     <Col span={17}>
                         <Form.Item label="Bucket Name">
-                            <Select value={bucketName} onChange={(value) => setBucketName(value)}>
-                                <Option value="user-private-dataset">user-private-dataset</Option>
-                                <Option value="bucket-2">bucket-2</Option>
-                            </Select>
+                            <Select
+                                value={bucketName}
+                                onChange={(value) => setBucketName(value)}
+                                options={[
+                                    { value: 'user-private-dataset', label: 'user-private-dataset' },
+                                    { value: 'bucket-2', label: 'bucket-2' },
+                                ]}
+                            />
                         </Form.Item>
                     </Col>
                 </Row>

@@ -1,20 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import {
-    Card,
-    Tag,
-    Row,
-    Col,
-    Alert,
-    Space,
-    Statistic,
-    Table,
-    Button,
-    Tooltip,
-    Collapse,
-    message
-} from 'antd'
-
+import { Tooltip, message } from 'antd'
 import {
     HistoryOutlined,
     CloudDownloadOutlined,
@@ -23,6 +9,7 @@ import {
     BarChartOutlined,
     InfoCircleOutlined,
     ExperimentOutlined,
+    DownOutlined
 } from '@ant-design/icons'
 
 import * as mlServiceAPI from 'src/api/mlService'
@@ -30,58 +17,19 @@ import * as modelServiceAPI from 'src/api/model'
 import BackgroundShapes from 'src/components/features/landing/BackgroundShapes'
 import { useTheme } from 'src/theme/ThemeProvider'
 
-const { Panel } = Collapse;
-
-// Performance Metrics Configuration
+// Hàm render Tag trạng thái
 const getAccuracyStatus = (score) => {
-    if (score >= 0.9) {
-        return <Tag className="bg-gradient-to-br from-[#10b981] to-[#34d399] border-none text-white font-poppins">Excellent</Tag>
-    }
-    else if (score >= 0.7) {
-        return <Tag className="bg-gradient-to-br from-[#3b82f6] to-[#60a5fa] border-none text-white font-poppins">Good</Tag>
-    }
-    else if (score >= 0.6) {
-        return <Tag className="bg-gradient-to-br from-[#f59e0b] to-[#fbbf24] border-none text-white font-poppins">Medium</Tag>
-    }
-    else {
-        return <Tag className="bg-gradient-to-br from-[#ef4444] to-[#f87171] border-none text-white font-poppins">Bad</Tag>
-    }
+    const baseClass = "px-3 py-1 rounded text-xs text-white font-poppins font-medium inline-block text-center min-w-[90px]"
+    if (score >= 0.9) return <span className={`${baseClass} bg-gradient-to-br from-[#10b981] to-[#34d399]`}>Excellent</span>
+    if (score >= 0.7) return <span className={`${baseClass} bg-gradient-to-br from-[#3b82f6] to-[#60a5fa]`}>Good</span>
+    if (score >= 0.6) return <span className={`${baseClass} bg-gradient-to-br from-[#f59e0b] to-[#fbbf24]`}>Medium</span>
+    return <span className={`${baseClass} bg-gradient-to-br from-[#ef4444] to-[#f87171]`}>Bad</span>
 }
 
 function toNormalCase(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+    if (!str) return "Null"
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
 }
-
-// Enhanced Table Columns with Tooltips
-const getColumns = (theme) => [
-    {
-        title: 'Metric',
-        dataIndex: 'metric',
-        key: 'metric',
-        render: (text, record) => (
-            <Tooltip title={record.description}>
-                <span style={{ color: 'var(--text)' }} className="font-poppins">{text}</span>{' '}
-                <InfoCircleOutlined
-                    style={{ color: 'var(--accent-text)' }}
-                    className="ml-[5px]"
-                />
-            </Tooltip>
-        ),
-    },
-    {
-        title: 'Value',
-        dataIndex: 'value',
-        key: 'value',
-        render: (text) => (
-            <span style={{ color: 'var(--text)' }} className="font-poppins">{text}</span>
-        ),
-    },
-    {
-        title: 'Status',
-        dataIndex: 'status',
-        key: 'status',
-    },
-]
 
 const ModelView = () => {
     const { theme } = useTheme()
@@ -95,12 +43,10 @@ const ModelView = () => {
         const fetchModel = async () => {
             try {
                 const modelRes = await modelServiceAPI.getModelById(modelId)
-                if (modelRes.status !== 200) {
-                    throw new Error("Cannot find model")
-                }
+                if (modelRes.status !== 200) throw new Error("Cannot find model")
+                
                 const modelData = modelRes.data
-                setModel(prev => modelData)
-                console.log("model:", modelData)
+                setModel(modelData)
                 await fetchExperimentMetrics(modelData.experiment_id)
             }
             catch (error) {
@@ -109,536 +55,269 @@ const ModelView = () => {
         }
 
         const fetchExperimentMetrics = async (experimentId) => {
-            setMetrics((prev) => [])
+            setMetrics([])
             try {
                 const metricsRes = await mlServiceAPI.getFinalMetrics(experimentId)
-                if (metricsRes.status !== 200) {
-                    throw new Error("Cannot get metrics")
-                }
-                for (const key in metricsRes.data) {
-                    const metricData = {
-                        key: key,
-                        metric: metricsRes.data[key].name,
-                        value: parseFloat(metricsRes.data[key].score).toFixed(
-                            2
-                        ),
-                        description: metricsRes.data[key].description,
-                        status: getAccuracyStatus(metricsRes.data[key].score),
-                    }
-                    setMetrics((prev) => [...prev, metricData])
-                }
+                if (metricsRes.status !== 200) throw new Error("Cannot get metrics")
+                
+                const formattedMetrics = Object.keys(metricsRes.data).map(key => ({
+                    key: key,
+                    metric: metricsRes.data[key].name,
+                    value: parseFloat(metricsRes.data[key].score).toFixed(2),
+                    description: metricsRes.data[key].description,
+                    status: getAccuracyStatus(metricsRes.data[key].score),
+                }))
+                setMetrics(formattedMetrics)
             }
             catch (error) {
                 console.log("Error while getting metrics", error)
             }
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
         fetchModel()
     }, [modelId])
 
     return (
-        <>
-            <style>{`
-                body, html {
-                    background-color: var(--surface) !important;
-                    font-family: 'Poppins', sans-serif !important;
-                }
-                .theme-table .ant-table {
-                    background: transparent !important;
-                    color: var(--text) !important;
-                    font-family: 'Poppins', sans-serif !important;
-                }
-                .theme-table .ant-table-thead > tr > th {
-                    background: var(--table-header-bg) !important;
-                    color: var(--table-header-color) !important;
-                    border-bottom: 1px solid var(--table-header-border) !important;
-                    font-family: 'Poppins', sans-serif !important;
-                    font-weight: 600 !important;
-                }
-                .theme-table .ant-table-tbody > tr > td {
-                    background: var(--table-cell-bg) !important;
-                    color: var(--table-cell-color) !important;
-                    border-bottom: 1px solid var(--table-cell-border) !important;
-                    font-family: 'Poppins', sans-serif !important;
-                }
-                .theme-table .ant-table-tbody > tr:hover > td {
-                    background: var(--table-row-hover) !important;
-                }
-                .theme-table .ant-empty-description {
-                    color: var(--secondary-text) !important;
-                    font-family: 'Poppins', sans-serif !important;
-                }
-                .ant-collapse-ghost > .ant-collapse-item {
-                    border: none !important;
-                }
-                .ant-collapse-ghost > .ant-collapse-item > .ant-collapse-header {
-                    background: var(--hover-bg) !important;
-                    color: var(--text) !important;
-                    border-radius: 8px !important;
-                    border: 1px solid var(--border) !important;
-                }
-                .ant-collapse-ghost > .ant-collapse-item > .ant-collapse-content {
-                    background: var(--card-gradient) !important;
-                    border: 1px solid var(--border) !important;
-                    border-top: none !important;
-                    border-radius: 0 0 8px 8px !important;
-                }
-                .ant-collapse-ghost > .ant-collapse-item > .ant-collapse-content > .ant-collapse-content-box {
-                    padding: 12px 16px !important;
-                }
-            `}</style>
-            <div className="min-h-screen relative" style={{ background: 'var(--surface)' }}>
-                {theme === 'dark' && (
-                    <BackgroundShapes
-                        width="1280px"
-                        height="1200px"
-                        shapes={[
-                            {
-                                id: 'modelBlue',
-                                shape: 'circle',
-                                size: '550px',
-                                gradient: { type: 'radial', shape: 'ellipse', colors: ['#5C8DFF 0%', '#5C8DFF 40%', 'transparent 80%'] },
-                                opacity: 0.3,
-                                blur: '220px',
-                                position: { top: '180px', right: '-150px' },
-                                transform: 'none'
-                            },
-                            {
-                                id: 'modelCyan',
-                                shape: 'rounded',
-                                size: '480px',
-                                gradient: { type: 'radial', shape: 'circle', colors: ['#40FFFF 0%', '#40FFFF 50%', 'transparent 85%'] },
-                                opacity: 0.25,
-                                blur: '190px',
-                                position: { top: '350px', left: '-160px' },
-                                transform: 'none'
-                            },
-                            {
-                                id: 'modelWarm',
-                                shape: 'rounded',
-                                size: '420px',
-                                gradient: { type: 'radial', shape: 'circle', colors: ['#FFAF40 0%', '#FFAF40 60%', 'transparent 90%'] },
-                                opacity: 0.2,
-                                blur: '170px',
-                                position: { bottom: '150px', right: '25%' },
-                                transform: 'none'
-                            }
-                        ]}
-                    />
-                )}
-                <div className="relative z-10 p-6">
-                    <Space direction="vertical" size="large" className="w-full">
-                        {/* Key Metrics Cards */}
-                        <Row gutter={[16, 16]}>
-                            <Col xs={24} sm={12} md={8}>
-                                <Card
-                                    className="group relative overflow-hidden rounded-2xl border border-opacity-20 backdrop-blur-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 hover:border-opacity-40 font-poppins"
-                                    style={{
-                                        borderColor: 'var(--border)',
-                                        background: 'linear-gradient(135deg, var(--hover-bg) 0%, rgba(255,255,255,0.02) 100%)'
-                                    }}
-                                >
-                                    <Statistic
-                                        title={<span style={{ color: 'var(--secondary-text)' }} className="font-poppins">{`Model ${metrics[0] ? toNormalCase(metrics[0]?.metric) : "Null"} Score`}</span>}
-                                        value={metrics[0]?.value * 100 || 0}
-                                        precision={2}
-                                        prefix={<TrophyOutlined className="text-[#10b981]" />}
-                                        suffix="%"
-                                        valueStyle={{
-                                            fontFamily: 'Poppins, sans-serif',
-                                            fontWeight: 'bold'
-                                        }}
-                                        className="[&_.ant-statistic-content-value]:bg-gradient-to-br [&_.ant-statistic-content-value]:from-[#10b981] [&_.ant-statistic-content-value]:to-[#34d399] [&_.ant-statistic-content-value]:bg-clip-text [&_.ant-statistic-content-value]:text-transparent"
-                                    />
-                                </Card>
-                            </Col>
-                            <Col xs={24} sm={12} md={8}>
-                                <Card
-                                    className="group relative overflow-hidden rounded-2xl border border-opacity-20 backdrop-blur-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 hover:border-opacity-40 font-poppins"
-                                    style={{
-                                        borderColor: 'var(--border)',
-                                        background: 'linear-gradient(135deg, var(--hover-bg) 0%, rgba(255,255,255,0.02) 100%)'
-                                    }}
-                                >
-                                    <Statistic
-                                        title={<span style={{ color: 'var(--secondary-text)' }} className="font-poppins">Model Size</span>}
-                                        value={model.metadata?.model_size || 0}
-                                        valueStyle={{
-                                            fontFamily: 'Poppins, sans-serif',
-                                            fontWeight: 'bold'
-                                        }}
-                                        className="[&_.ant-statistic-content-value]:bg-gradient-to-br [&_.ant-statistic-content-value]:from-[#f59e0b] [&_.ant-statistic-content-value]:to-[#fbbf24] [&_.ant-statistic-content-value]:bg-clip-text [&_.ant-statistic-content-value]:text-transparent"
-                                        prefix={<CloudDownloadOutlined className="text-[#f59e0b]" />}
-                                        suffix="MB"
-                                        precision={2}
-                                    />
-                                </Card>
-                            </Col>
-                            <Col xs={24} sm={12} md={8}>
-                                <Card
-                                    className="group relative overflow-hidden rounded-2xl border border-opacity-20 backdrop-blur-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 hover:border-opacity-40 font-poppins"
-                                    style={{
-                                        borderColor: 'var(--border)',
-                                        background: 'linear-gradient(135deg, var(--hover-bg) 0%, rgba(255,255,255,0.02) 100%)'
-                                    }}
-                                >
-                                    <Statistic
-                                        title={<span style={{ color: 'var(--secondary-text)' }} className="font-poppins">Model Name</span>}
-                                        value={model.name}
-                                        prefix={<ExperimentOutlined style={{ color: 'var(--accent-text)' }} />}
-                                        valueStyle={{
-                                            fontFamily: 'Poppins, sans-serif',
-                                            fontWeight: 'bold',
-                                            color: 'var(--text)'
-                                        }}
-                                    />
-                                </Card>
-                            </Col>
-                        </Row>
+        <div className="min-h-screen relative w-full bg-[var(--surface)] font-poppins text-[var(--text)]">
+            {theme === 'dark' && (
+                <BackgroundShapes
+                    width="100%"
+                    height="100%"
+                    shapes={[
+                        { id: 'modelBlue', shape: 'circle', size: '550px', gradient: { type: 'radial', shape: 'ellipse', colors: ['#5C8DFF 0%', '#5C8DFF 40%', 'transparent 80%'] }, opacity: 0.15, blur: '220px', position: { top: '10%', right: '-5%' } },
+                        { id: 'modelCyan', shape: 'rounded', size: '480px', gradient: { type: 'radial', shape: 'circle', colors: ['#40FFFF 0%', '#40FFFF 50%', 'transparent 85%'] }, opacity: 0.1, blur: '190px', position: { top: '40%', left: '-5%' } }
+                    ]}
+                />
+            )}
+            
+            {/* Chỉnh lại padding và giới hạn chiều rộng để cân đối với Sidebar */}
+            <div className="relative z-10 w-full p-6 lg:p-8 flex flex-col gap-6">
+                
+                {/* 1. TOP METRICS CARDS */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="group rounded-2xl border border-[var(--border)] border-opacity-20 shadow-lg p-6 bg-[linear-gradient(135deg,var(--hover-bg)_0%,rgba(255,255,255,0.02)_100%)]">
+                        <div className="text-[var(--secondary-text)] text-sm mb-3">Model {toNormalCase(metrics[0]?.metric)} Score</div>
+                        <div className="text-4xl font-bold flex items-center gap-3">
+                            <TrophyOutlined className="text-[#10b981]" />
+                            <span className="bg-gradient-to-br from-[#10b981] to-[#34d399] bg-clip-text text-transparent">
+                                {metrics[0]?.value ? (metrics[0]?.value * 100).toFixed(2) : 'NaN'}%
+                            </span>
+                        </div>
+                    </div>
 
-                        <Card
-                            title={<span style={{ color: 'var(--text)' }} className="font-poppins">Next Steps</span>}
-                            className="rounded-3xl border border-white/10 backdrop-blur-xl shadow-2xl font-poppins"
-                            style={{
-                                borderColor: 'var(--border)',
-                                background: 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.1) 100%)'
-                            }}
-                        >
-                            <Row gutter={[16, 16]}>
-                                <Col xs={24} sm={8}>
-                                    <Alert
-                                        message={<span style={{ color: 'var(--text)' }} className="font-poppins font-semibold">Deploy Model</span>}
-                                        description={<span style={{ color: 'var(--secondary-text)' }} className="font-poppins">Instantly transform your trained model into a production-ready solution for real-world predictions.</span>}
-                                        type="success"
-                                        showIcon
-                                        className="h-[130px] rounded-lg font-poppins bg-[linear-gradient(135deg,rgba(16,185,129,0.1),rgba(52,211,153,0.1))] border border-[rgba(16,185,129,0.3)]"
-                                    />
-                                    <Button
-                                        type="primary"
-                                        icon={<RocketOutlined />}
-                                        onClick={() => {
-                                            navigate(
-                                                `/app/project/${id}/build/deployView?modelId=${modelId}`
-                                            )
-                                        }}
-                                        size="large"
-                                        className="w-full font-bold mt-[15px] font-poppins border-none bg-gradient-to-br from-[#10b981] to-[#34d399] hover:shadow-lg transition-all duration-300"
-                                    >
-                                        Deploy Now
-                                    </Button>
-                                </Col>
-                                <Col xs={24} sm={8}>
-                                    <Alert
-                                        message={<span style={{ color: 'var(--text)' }} className="font-poppins font-semibold">Download Weights</span>}
-                                        description={<span style={{ color: 'var(--secondary-text)' }} className="font-poppins">Securely export and preserve your model's learned parameters for future iterations or transfer learning.</span>}
-                                        type="warning"
-                                        showIcon
-                                        className="h-[130px] rounded-lg font-poppins bg-[linear-gradient(135deg,rgba(245,158,11,0.1),rgba(251,191,36,0.1))] border border-[rgba(245,158,11,0.3)]"
-                                    />
-                                    <Button
-                                        type="default"
-                                        icon={<CloudDownloadOutlined />}
-                                        size="large"
-                                        className="w-full font-bold mt-[15px] font-poppins border-none bg-gradient-to-br from-[#f59e0b] to-[#fbbf24] hover:shadow-lg transition-all duration-300"
-                                        style={{ color: '#ffffff' }}
-                                        onClick={async (e) => {
-                                            e.preventDefault()
-                                            const urlResponse = await mlServiceAPI.getModelUrl(modelId)
-                                            if (urlResponse.status !== 200) {
-                                                message.error("Failed to download model.")
-                                            }
-                                            const url = urlResponse.data
-                                            window.location.href = url
-                                        }}
-                                    >
-                                        Download
-                                    </Button>
-                                </Col>
-                                <Col xs={24} sm={8}>
-                                    <Alert
-                                        message={<span style={{ color: 'var(--text)' }} className="font-poppins font-semibold">Refine Model</span>}
-                                        description={<span style={{ color: 'var(--secondary-text)' }} className="font-poppins">Continuously improve your model's performance by initiating a new training cycle with enhanced data or parameters.</span>}
-                                        type="info"
-                                        showIcon
-                                        className="h-[130px] rounded-lg font-poppins bg-[linear-gradient(135deg,rgba(59,130,246,0.1),rgba(96,165,250,0.1))] border border-[rgba(59,130,246,0.3)]"
-                                    />
-                                    <Button
-                                        type="default"
-                                        icon={<HistoryOutlined />}
-                                        size="large"
-                                        className="w-full font-bold mt-[15px] font-poppins border-none bg-gradient-to-br from-[#3b82f6] to-[#60a5fa] hover:shadow-lg transition-all duration-300"
-                                        style={{ color: '#ffffff' }}
-                                        onClick={() => navigate(`/app/project/${id}/model/${modelId}/retrain`)}
-                                    >
-                                        Retrain Model
-                                    </Button>
-                                </Col>
-                            </Row>
-                        </Card>
+                    <div className="group rounded-2xl border border-[var(--border)] border-opacity-20 shadow-lg p-6 bg-[linear-gradient(135deg,var(--hover-bg)_0%,rgba(255,255,255,0.02)_100%)]">
+                        <div className="text-[var(--secondary-text)] text-sm mb-3">Model Size</div>
+                        <div className="text-4xl font-bold flex items-center gap-3">
+                            <CloudDownloadOutlined className="text-[#f59e0b]" />
+                            <span className="bg-gradient-to-br from-[#f59e0b] to-[#fbbf24] bg-clip-text text-transparent">
+                                {model.metadata?.model_size || 0} MB
+                            </span>
+                        </div>
+                    </div>
 
-                        {/* Expandable Details Section */}
-                        <Card
-                            className="rounded-3xl border border-white/10 backdrop-blur-xl shadow-2xl font-poppins"
-                            style={{
-                                borderColor: 'var(--border)',
-                                background: 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.1) 100%)'
-                            }}
-                        >
-                            <Button
-                                type="link"
-                                icon={<BarChartOutlined style={{ color: 'var(--accent-text)' }} />}
-                                onClick={() => setIsDetailsExpanded(!isDetailsExpanded)}
-                                className="text-xl font-poppins"
-                                style={{ color: 'var(--text)' }}
+                    <div className="group rounded-2xl border border-[var(--border)] border-opacity-20 shadow-lg p-6 bg-[linear-gradient(135deg,var(--hover-bg)_0%,rgba(255,255,255,0.02)_100%)] overflow-hidden">
+                        <div className="text-[var(--secondary-text)] text-sm mb-3">Model Name</div>
+                        <div className="text-3xl font-bold flex items-center gap-3 truncate">
+                            <ExperimentOutlined className="text-[#3b82f6]" />
+                            <span className="text-[var(--text)] truncate">{model.name || 'Unknown'}</span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* 2. NEXT STEPS SECTION */}
+                <div className="rounded-3xl border border-[var(--border)] border-opacity-10 shadow-2xl p-6 lg:p-8 bg-[linear-gradient(135deg,rgba(255,255,255,0.03)_0%,rgba(255,255,255,0.06)_100%)]">
+                    <h2 className="text-xl font-bold text-[var(--text)] mb-6">Next Steps</h2>
+                    
+                    {/* Chỉnh các card bên trong đồng đều bằng h-full */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+                        
+                        {/* Deploy Card */}
+                        <div className="flex flex-col h-full rounded-2xl border bg-[linear-gradient(135deg,rgba(16,185,129,0.05),rgba(52,211,153,0.05))] border-[rgba(16,185,129,0.2)]">
+                            <div className="p-6 flex flex-col gap-2 flex-1">
+                                <div className="flex items-center gap-2 text-[var(--text)] font-semibold text-lg">
+                                    <RocketOutlined className="text-emerald-500" /> Deploy Model
+                                </div>
+                                <div className="text-[var(--secondary-text)] text-sm leading-relaxed">
+                                    Instantly transform your trained model into a production-ready solution for real-world predictions.
+                                </div>
+                            </div>
+                            <button 
+                                onClick={() => navigate(`/app/project/${id}/build/deployView?modelId=${modelId}`)}
+                                className="mx-6 mb-6 mt-auto py-3 rounded-xl font-bold flex justify-center items-center gap-2 bg-gradient-to-br from-[#10b981] to-[#34d399] text-white hover:opacity-90 transition-opacity"
                             >
-                                {isDetailsExpanded
-                                    ? 'Hide Details'
-                                    : 'Show Detailed Model'}
-                            </Button>
+                                <RocketOutlined /> Deploy Now
+                            </button>
+                        </div>
 
-                            {isDetailsExpanded && (
-                                <Space
-                                    direction="vertical"
-                                    size="large"
-                                    className="w-full mt-4"
-                                >
-                                    {/* Input Data Display */}
-                                    <Card
-                                        title={
-                                            <>
-                                                <span style={{ color: 'var(--text)' }} className="font-poppins">Metadata</span>{" "}
-                                                <span
-                                                    className="text-xs"
-                                                    style={{ color: 'var(--secondary-text)' }}
-                                                >
-                                                    (Details about the model and its expected input, output)
-                                                </span>
-                                            </>
-                                        }
-                                        className="rounded-3xl border border-white/10 backdrop-blur-xl shadow-2xl font-poppins"
-                                        style={{
-                                            borderColor: 'var(--border)',
-                                            background: 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.1) 100%)'
-                                        }}
-                                    >
-                                        <Space direction="vertical" size="middle" className="w-full">
-                                            {Object.entries(model.metadata || {}).map(([key, value]) => (
-                                                <div key={key}>
-                                                    {/* Primary Tag */}
-                                                    <Tag
-                                                        className="text-sm py-[4px] px-[8px] min-w-[120px] text-center inline-block bg-gradient-to-br from-[#3b82f6] to-[#60a5fa] border-none text-white font-poppins"
-                                                    >
-                                                        {key}
-                                                    </Tag>
+                        {/* Download Card */}
+                        <div className="flex flex-col h-full rounded-2xl border bg-[linear-gradient(135deg,rgba(245,158,11,0.05),rgba(251,191,36,0.05))] border-[rgba(245,158,11,0.2)]">
+                            <div className="p-6 flex flex-col gap-2 flex-1">
+                                <div className="flex items-center gap-2 text-[var(--text)] font-semibold text-lg">
+                                    <CloudDownloadOutlined className="text-amber-500" /> Download Weights
+                                </div>
+                                <div className="text-[var(--secondary-text)] text-sm leading-relaxed">
+                                    Securely export and preserve your model's learned parameters for future iterations or transfer learning.
+                                </div>
+                            </div>
+                            <button 
+                                onClick={async () => {
+                                    const urlResponse = await mlServiceAPI.getModelUrl(modelId)
+                                    if (urlResponse.status !== 200) message.error("Failed to download model.")
+                                    else window.location.href = urlResponse.data
+                                }}
+                                className="mx-6 mb-6 mt-auto py-3 rounded-xl font-bold flex justify-center items-center gap-2 bg-gradient-to-br from-[#f59e0b] to-[#fbbf24] text-white hover:opacity-90 transition-opacity"
+                            >
+                                <CloudDownloadOutlined /> Download
+                            </button>
+                        </div>
 
-                                                    {/* Render based on type */}
-                                                    {Array.isArray(value) ? (
-                                                        key === "sample_data" && typeof value[0] === "object" && value[0] !== null ? (
-                                                            // Styled table for sample_data
-                                                            <Space wrap className="ml-4">
-                                                                <Table
-                                                                    dataSource={value}
-                                                                    pagination={false}
-                                                                    rowKey={(record, idx) => idx}
-                                                                    bordered={false}
-                                                                    className="ml-4 rounded-lg"
-                                                                    rowClassName={() => ''} // removes Ant Design hover class
-                                                                    columns={Object.keys(value[0]).map((colKey) => ({
-                                                                        title: (
-                                                                            <span style={{ color: 'var(--table-header-color)' }} className="font-poppins">
-                                                                                {colKey.charAt(0).toUpperCase() + colKey.slice(1)}
-                                                                            </span>
-                                                                        ),
-                                                                        dataIndex: colKey,
-                                                                        key: colKey,
-                                                                        render: (text) => (
-                                                                            <span style={{ color: 'var(--table-cell-color)' }} className="font-poppins">
-                                                                                {text?.toString() || <em style={{ color: 'var(--secondary-text)' }}>(empty)</em>}
-                                                                            </span>
-                                                                        ),
-                                                                    }))}
-                                                                    components={{
-                                                                        header: {
-                                                                            cell: (props) => (
-                                                                                <th
-                                                                                    {...props}
-                                                                                    className="font-poppins"
-                                                                                    style={{
-                                                                                        backgroundColor: 'var(--table-header-bg)',
-                                                                                        color: 'var(--table-header-color)'
-                                                                                    }}
-                                                                                >
-                                                                                    {props.children}
-                                                                                </th>
-                                                                            ),
-                                                                        },
-                                                                        body: {
-                                                                            row: ({ children, ...restProps }) => (
-                                                                                <tr
-                                                                                    {...restProps}
-                                                                                    onMouseEnter={(e) => {
-                                                                                        const tds = e.currentTarget.children;
-                                                                                        const hoverColor = getComputedStyle(document.documentElement).getPropertyValue('--table-row-hover');
-                                                                                        for (let i = 0; i < tds.length; i++) tds[i].style.backgroundColor = hoverColor;
-                                                                                    }}
-                                                                                    onMouseLeave={(e) => {
-                                                                                        const tds = e.currentTarget.children;
-                                                                                        const cellBg = getComputedStyle(document.documentElement).getPropertyValue('--table-cell-bg');
-                                                                                        for (let i = 0; i < tds.length; i++) tds[i].style.backgroundColor = cellBg;
-                                                                                    }}
-                                                                                >
-                                                                                    {React.Children.map(children, (child) =>
-                                                                                        React.cloneElement(child, {
-                                                                                            style: { 
-                                                                                                backgroundColor: 'var(--table-cell-bg)', 
-                                                                                                color: 'var(--table-cell-color)' 
-                                                                                            },
-                                                                                        })
-                                                                                    )}
-                                                                                </tr>
-                                                                            ),
-                                                                        },
-                                                                    }}
+                        {/* Retrain Card */}
+                        <div className="flex flex-col h-full rounded-2xl border bg-[linear-gradient(135deg,rgba(59,130,246,0.05),rgba(96,165,250,0.05))] border-[rgba(59,130,246,0.2)]">
+                            <div className="p-6 flex flex-col gap-2 flex-1">
+                                <div className="flex items-center gap-2 text-[var(--text)] font-semibold text-lg">
+                                    <HistoryOutlined className="text-blue-500" /> Refine Model
+                                </div>
+                                <div className="text-[var(--secondary-text)] text-sm leading-relaxed">
+                                    Continuously improve your model's performance by initiating a new training cycle with enhanced data.
+                                </div>
+                            </div>
+                            <button 
+                                onClick={() => navigate(`/app/project/${id}/model/${modelId}/retrain`)}
+                                className="mx-6 mb-6 mt-auto py-3 rounded-xl font-bold flex justify-center items-center gap-2 bg-gradient-to-br from-[#3b82f6] to-[#60a5fa] text-white hover:opacity-90 transition-opacity"
+                            >
+                                <HistoryOutlined /> Retrain Model
+                            </button>
+                        </div>
 
-                                                                />
-                                                            </Space>
-                                                        ) : (
-                                                            // Your original Space + Tag handling for arrays
-                                                            <Space wrap className="ml-4">
-                                                                {value.map((item, idx) =>
-                                                                    typeof item === "object" && item !== null ? (
-                                                                        <Tag
-                                                                            key={idx}
-                                                                            style={{
-                                                                                minWidth: 100,
-                                                                                textAlign: "center",
-                                                                                borderColor: item.color,
-                                                                                color: item.color,
-                                                                                backgroundColor: `${item.color}20`,
-                                                                            }}
-                                                                        >
-                                                                            {item.name} {item.label ? `(${item.label})` : ""}
-                                                                        </Tag>
-                                                                    ) : (
-                                                                        <Tag
-                                                                            key={idx}
-                                                                            className="bg-gradient-to-br from-[#8b5cf6] to-[#a78bfa] border-none text-white font-poppins"
-                                                                        >
-                                                                            {item}
-                                                                        </Tag>
-                                                                    )
-                                                                )}
-                                                            </Space>
-                                                        )
-                                                    ) : typeof value === "object" && value !== null ? (
-                                                        <Collapse
-                                                            ghost
-                                                            size="small"
-                                                            className="inline-block align-top"
-                                                        >
-                                                            <Panel
-                                                                header={<span style={{ color: 'var(--text)' }} className="font-poppins">View Details</span>}
-                                                                key="1"
-                                                                className="bg-transparent rounded-lg"
-                                                                style={{ borderColor: 'var(--border)' }}
-                                                            >
-                                                                <Space
-                                                                    direction="vertical"
-                                                                    size="small"
-                                                                    className="inline-flex align-top"
-                                                                >
-                                                                    {Object.entries(value).map(([subKey, subValue]) => (
-                                                                        <div
-                                                                            key={subKey}
-                                                                            className="flex items-center"
-                                                                        >
-                                                                            <Tag
-                                                                                className="min-w-[100px] text-center mr-2 bg-gradient-to-br from-[#10b981] to-[#34d399] border-none text-white font-poppins"
-                                                                            >
-                                                                                {subKey}
-                                                                            </Tag>
+                    </div>
+                </div>
 
-                                                                            {Array.isArray(subValue) ? (
-                                                                                // Handle array values
-                                                                                <Space wrap className="ml-4">
-                                                                                    {subValue.map((item, idx) =>
-                                                                                        typeof item === "object" && item !== null ? (
-                                                                                            // Array of objects
-                                                                                            <Tag
-                                                                                                key={idx}
-                                                                                                style={{
-                                                                                                    minWidth: 100,
-                                                                                                    textAlign: "center",
-                                                                                                    borderColor: item.color,
-                                                                                                    color: item.color,
-                                                                                                    backgroundColor: `${item.color}20`,
-                                                                                                }}
-                                                                                            >
-                                                                                                {item.name} {item.label ? `(${item.label})` : ""}
-                                                                                            </Tag>
-                                                                                        ) : (
-                                                                                            // Array of primitives
-                                                                                            <Tag
-                                                                                                key={idx}
-                                                                                                className="bg-gradient-to-br from-[#8b5cf6] to-[#a78bfa] border-none text-white font-poppins"
-                                                                                            >
-                                                                                                {item}
-                                                                                            </Tag>
-                                                                                        )
-                                                                                    )}
-                                                                                </Space>
-                                                                            ) : (
-                                                                                // Primitive values
-                                                                                <span style={{ color: 'var(--text)' }} className="font-poppins">
-                                                                                    {subValue?.toString() || <em style={{ color: 'var(--secondary-text)' }}>(empty)</em>}
-                                                                                </span>
-                                                                            )}
-                                                                        </div>
+                {/* 3. EXPANDABLE DETAILS SECTION */}
+                <div className="rounded-3xl border border-[var(--border)] border-opacity-10 shadow-2xl p-6 lg:p-8 bg-[linear-gradient(135deg,rgba(255,255,255,0.03)_0%,rgba(255,255,255,0.06)_100%)]">
+                    <button 
+                        onClick={() => setIsDetailsExpanded(!isDetailsExpanded)}
+                        className="text-lg font-bold text-[var(--text)] hover:text-[#3b82f6] transition-colors flex items-center gap-3 w-fit"
+                    >
+                        <BarChartOutlined className="text-[#3b82f6]" />
+                        {isDetailsExpanded ? 'Hide Details' : 'Show Detailed Model'}
+                    </button>
+
+                    {isDetailsExpanded && (
+                        <div className="flex flex-col gap-6 mt-6">
+                            
+                            {/* Metadata */}
+                            <div className="rounded-2xl border border-[var(--border)] border-opacity-20 p-6 bg-[var(--hover-bg)]">
+                                <div className="flex items-baseline gap-2 mb-6">
+                                    <h3 className="text-lg font-bold text-[var(--text)]">Metadata</h3>
+                                    <span className="text-xs text-[var(--secondary-text)]">(Details about the model and its expected input, output)</span>
+                                </div>
+                                
+                                <div className="flex flex-col gap-4">
+                                    {Object.entries(model.metadata || {}).map(([key, value]) => (
+                                        <div key={key} className="flex flex-col sm:flex-row sm:items-start gap-4 pb-4 border-b border-[var(--border)] border-opacity-30 last:border-0 last:pb-0">
+                                            <span className="px-4 py-1.5 rounded bg-gradient-to-br from-[#3b82f6] to-[#60a5fa] text-white text-sm font-medium min-w-[140px] text-center shrink-0">
+                                                {key}
+                                            </span>
+
+                                            <div className="flex-1 overflow-x-auto pt-1">
+                                                {Array.isArray(value) ? (
+                                                    key === "sample_data" && typeof value[0] === "object" && value[0] !== null ? (
+                                                        <table className="w-full text-left border-collapse rounded-xl overflow-hidden border border-[var(--border)]">
+                                                            <thead className="bg-[#1e293b] text-slate-300 text-sm">
+                                                                <tr>
+                                                                    {Object.keys(value[0]).map((colKey) => (
+                                                                        <th key={colKey} className="px-4 py-3 font-semibold capitalize border-b border-[var(--border)]">{colKey}</th>
                                                                     ))}
-                                                                </Space>
-                                                            </Panel>
-                                                        </Collapse>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody className="text-sm">
+                                                                {value.map((row, idx) => (
+                                                                    <tr key={idx} className="bg-transparent hover:bg-slate-800/50 border-b border-[var(--border)] last:border-0 transition-colors">
+                                                                        {Object.values(row).map((cellVal, cIdx) => (
+                                                                            <td key={cIdx} className="px-4 py-3 text-[var(--text)]">
+                                                                                {cellVal?.toString() || <em className="text-slate-500">(empty)</em>}
+                                                                            </td>
+                                                                        ))}
+                                                                    </tr>
+                                                                ))}
+                                                            </tbody>
+                                                        </table>
                                                     ) : (
-                                                        // Handle primitives
-                                                        <span className="ml-[10px] font-poppins" style={{ color: 'var(--text)' }}>
-                                                            {value?.toString() || <em style={{ color: 'var(--secondary-text)' }}>(empty)</em>}
-                                                        </span>
-                                                    )}
-                                                </div>
-                                            ))}
-                                        </Space>
-                                    </Card>
+                                                        <div className="flex flex-wrap gap-2">
+                                                            {value.map((item, idx) =>
+                                                                typeof item === "object" && item !== null ? (
+                                                                    <span key={idx} style={{ borderColor: item.color, color: item.color, backgroundColor: `${item.color}15` }} className="px-3 py-1 border rounded text-sm text-center min-w-[100px]">
+                                                                        {item.name} {item.label ? `(${item.label})` : ""}
+                                                                    </span>
+                                                                ) : (
+                                                                    <span key={idx} className="px-3 py-1 bg-gradient-to-br from-[#8b5cf6] to-[#a78bfa] text-white rounded text-sm">
+                                                                        {item}
+                                                                    </span>
+                                                                )
+                                                            )}
+                                                        </div>
+                                                    )
+                                                ) : typeof value === "object" && value !== null ? (
+                                                    <details className="group border border-[var(--border)] rounded-xl overflow-hidden bg-slate-800/30 w-fit min-w-[300px]">
+                                                        <summary className="cursor-pointer px-5 py-2.5 font-medium text-sm flex justify-between items-center outline-none list-none text-[#3b82f6]">
+                                                            View Details <DownOutlined className="text-xs transition-transform group-open:-rotate-180" />
+                                                        </summary>
+                                                        <div className="p-5 bg-black/20 border-t border-[var(--border)] flex flex-col gap-3">
+                                                            {Object.entries(value).map(([subKey, subValue]) => (
+                                                                <div key={subKey} className="flex flex-wrap items-center gap-3">
+                                                                    <span className="px-3 py-1 bg-gradient-to-br from-[#10b981] to-[#34d399] text-white rounded text-xs min-w-[100px] text-center font-medium">{subKey}</span>
+                                                                    <span className="text-sm text-[var(--text)]">{subValue?.toString() || <em className="text-slate-500">(empty)</em>}</span>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </details>
+                                                ) : (
+                                                    <span className="text-sm flex items-center">{value?.toString() || <em className="text-slate-500">(empty)</em>}</span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
 
-                                    {/* Detailed Metrics Table */}
-                                    <Card
-                                        title={
-                                            <>
-                                                <span style={{ color: 'var(--text)' }} className="font-poppins">Model Metrics</span>{" "}
-                                                <span className="text-xs italic font-poppins" style={{ color: 'var(--secondary-text)' }}>
-                                                    (Detail about how well the model make predictions)
-                                                </span>
-                                            </>
-                                        }
-                                        className="rounded-3xl border border-white/10 backdrop-blur-xl shadow-2xl font-poppins"
-                                        style={{
-                                            borderColor: 'var(--border)',
-                                            background: 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.1) 100%)'
-                                        }}
-                                    >
-                                        <Table
-                                            columns={getColumns(theme)}
-                                            dataSource={metrics}
-                                            pagination={false}
-                                            className="bg-transparent font-poppins theme-table"
-                                        />
-                                    </Card>
-                                </Space>
-                            )}
-                        </Card>
-                    </Space>
+                            {/* Metrics Table */}
+                            <div className="rounded-2xl border border-[var(--border)] border-opacity-20 p-6 bg-[var(--hover-bg)]">
+                                <div className="flex items-baseline gap-2 mb-6">
+                                    <h3 className="text-lg font-bold text-[var(--text)]">Model Metrics</h3>
+                                    <span className="text-xs italic text-[var(--secondary-text)]">(Detail about how well the model make predictions)</span>
+                                </div>
+                                
+                                <div className="overflow-x-auto rounded-xl border border-[var(--border)]">
+                                    <table className="w-full text-left border-collapse whitespace-nowrap">
+                                        <thead className="bg-[#1e293b] text-slate-300 text-sm">
+                                            <tr>
+                                                <th className="px-6 py-4 font-semibold border-b border-[var(--border)]">Metric</th>
+                                                <th className="px-6 py-4 font-semibold border-b border-[var(--border)]">Value</th>
+                                                <th className="px-6 py-4 font-semibold border-b border-[var(--border)]">Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="text-sm">
+                                            {metrics.map((record) => (
+                                                <tr key={record.key} className="bg-transparent hover:bg-slate-800/50 text-[var(--text)] border-b border-[var(--border)] last:border-0 transition-colors">
+                                                    <td className="px-6 py-4">
+                                                        <Tooltip title={record.description}>
+                                                            <span className="cursor-help font-medium">{record.metric}</span>
+                                                            <InfoCircleOutlined className="text-[#3b82f6] ml-2" />
+                                                        </Tooltip>
+                                                    </td>
+                                                    <td className="px-6 py-4 font-semibold">{record.value}</td>
+                                                    <td className="px-6 py-4">{record.status}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                    )}
                 </div>
             </div>
-        </>
+        </div>
     )
 }
 

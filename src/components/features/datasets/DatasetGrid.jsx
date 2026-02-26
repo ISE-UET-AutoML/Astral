@@ -62,7 +62,7 @@ const DatasetGrid = ({
             />
         )
     }
-    console.log("Total items", totalItems);
+   
 
     return (
         <>

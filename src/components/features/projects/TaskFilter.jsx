@@ -1,5 +1,5 @@
 import React from 'react'
-import { Select } from 'antd'
+import { Select } from 'src/components/shared/ui/Select'
 import { TrainingTask } from 'src/constants/trainingTasks'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { SortDropdown, ProjectSearchBar } from 'src/components/features/projects'
@@ -23,7 +23,7 @@ const TaskFilter = ({
 		<div className="mb-6 p-4 rounded-xl backdrop-blur-sm transition-all duration-300 bg-gray-50/80 dark:bg-white/5 border border-gray-200 dark:border-white/10">
 			<div className="flex flex-wrap gap-3 items-end">
 				{/* Search */}
-				<div className="flex-1 min-w-[200px]">
+				<div className="flex-1 ">
 					<ProjectSearchBar onSearch={onSearch} isReset={isReset} compact searchValue={searchValue} />
 				</div>
 
@@ -39,7 +39,7 @@ const TaskFilter = ({
 							className="w-full"
 							onChange={onTaskChange}
 							allowClear
-							className="!h-10"
+							size="default"
 						/>
 					</div>
 				</div>

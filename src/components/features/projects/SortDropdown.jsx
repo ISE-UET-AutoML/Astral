@@ -1,5 +1,5 @@
 import React from 'react'
-import { Select } from 'antd'
+import { Select } from 'src/components/shared/ui/Select'
 
 const SORT_OPTIONS = [
 	{ value: 'latest', label: 'Latest' },
@@ -16,7 +16,6 @@ export default function SortDropdown({ selectedSort, onSortChange }) {
 			placeholder="Sort by"
 			className="w-full"
 			onChange={onSortChange}
-			className="!min-w-[140px] !h-10"
 		/>
 	)
 }

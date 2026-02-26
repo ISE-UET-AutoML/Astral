@@ -1,4 +1,5 @@
-import { Upload, Button, Modal, message, Select, Alert } from 'antd'
+import { Upload, Button, Modal, message, Alert } from 'antd'
+import { Select } from 'src/components/shared/ui/Select'
 import {
 	InboxOutlined,
 	CloseOutlined,

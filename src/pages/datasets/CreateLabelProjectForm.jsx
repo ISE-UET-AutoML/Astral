@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import {
 	Form,
 	Input,
-	Select,
+	Select as AntSelect,
 	Button,
 	Space,
 	Tag,
@@ -11,11 +11,12 @@ import {
 	Alert,
 	ColorPicker,
 } from 'antd'
+import { Select } from 'src/components/shared/ui/Select'
 import { PlusOutlined } from '@ant-design/icons'
 import { getDatasets } from 'src/api/dataset'
 import { TASK_TYPES } from 'src/constants/types'
 
-const { Option } = Select
+const { Option } = AntSelect
 
 export default function CreateLabelProjectForm({
 	onSubmit,
@@ -314,21 +315,14 @@ export default function CreateLabelProjectForm({
 				</Form.Item>
 
 				{datasetType === 'TIME_SERIES' && (
-					<Form.Item label="Series Column" required>
-						<Select
-							placeholder="Select series column"
-							value={selectedSeriesColumn || undefined}
-							onChange={setSelectedSeriesColumn}
-							allowClear
-							optionFilterProp="children"
-							maxTagCount="responsive"
-						>
-							{columnOptions.map((col) => (
-								<Option key={col.value} value={col.value}>
-									{col.label}
-								</Option>
-							))}
-						</Select>
+			<Form.Item label="Series Column" required>
+					<Select
+						placeholder="Select series column"
+						value={selectedSeriesColumn || undefined}
+						onChange={setSelectedSeriesColumn}
+						allowClear
+						options={columnOptions}
+					/>
 						{!selectedSeriesColumn && (
 							<Alert
 								message="Please select a series column for TIME_SERIES datasets."
@@ -341,21 +335,14 @@ export default function CreateLabelProjectForm({
 				)}
 
 				{datasetType === 'TEXT' && (
-					<Form.Item label="Text Column" required>
-						<Select
-							placeholder="Select text column"
-							value={selectedTextColumn || undefined}
-							onChange={setSelectedTextColumn}
-							allowClear
-							optionFilterProp="children"
-							maxTagCount="responsive"
-						>
-							{columnOptions.map((col) => (
-								<Option key={col.value} value={col.value}>
-									{col.label}
-								</Option>
-							))}
-						</Select>
+			<Form.Item label="Text Column" required>
+					<Select
+						placeholder="Select text column"
+						value={selectedTextColumn || undefined}
+						onChange={setSelectedTextColumn}
+						allowClear
+						options={columnOptions}
+					/>
 						{!selectedTextColumn && (
 							<Alert
 								message="Please select a text column for TEXT datasets."
@@ -368,21 +355,14 @@ export default function CreateLabelProjectForm({
 				)}
 
 				{datasetType === 'MULTIMODAL' && (
-					<Form.Item label="Image Column" required>
-						<Select
-							placeholder="Select image column"
-							value={selectedImageColumn || undefined}
-							onChange={setSelectedImageColumn}
-							allowClear
-							optionFilterProp="children"
-							maxTagCount="responsive"
-						>
-							{columnOptions.map((col) => (
-								<Option key={col.value} value={col.value}>
-									{col.label}
-								</Option>
-							))}
-						</Select>
+			<Form.Item label="Image Column" required>
+					<Select
+						placeholder="Select image column"
+						value={selectedImageColumn || undefined}
+						onChange={setSelectedImageColumn}
+						allowClear
+						options={columnOptions}
+					/>
 						{!selectedImageColumn && (
 							<Alert
 								message="Please select an image column for MULTIMODAL datasets."

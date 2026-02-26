@@ -21,7 +21,6 @@ import {
 	ReloadOutlined,
 	AppstoreOutlined,
 	BarsOutlined,
-	ZoomInOutlined,
 	TagsOutlined,
 } from '@ant-design/icons'
 

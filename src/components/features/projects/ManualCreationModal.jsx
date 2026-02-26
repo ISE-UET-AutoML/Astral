@@ -2,9 +2,7 @@ import React from 'react'
 import MarkdownRenderer from 'src/components/shared/utilities/MarkdownRenderer'
 import ProjectBaseModal from './ProjectBaseModal'
 import { Button as GradientButton } from 'src/components/shared/ui/button'
-// Removed Info icon for cleaner inputs
 
-// import { TASK_TYPES } from 'src/constants/types'
 import image_classification from 'src/assets/images/image_classification.jpeg'
 import text_classification from 'src/assets/images/text_classification.jpeg'
 import multilabel_text_classification from 'src/assets/images/multilabel_text_classification.jpeg'
@@ -22,15 +20,11 @@ import video_classification from 'src/assets/images/video_classification.jpeg'
 import anomaly_detection from 'src/assets/images/anomaly_detection.JPG'
 
 // Simple replacements for Ant Design Typography components
-const Title = ({ level = 4, style = {}, children, ...props }) => {
+const Title = ({ level = 4, className = '', children, ...props }) => {
 	const HeadingTag = `h${Math.min(Math.max(level, 1), 6)}`
 	return (
 		<HeadingTag
-			style={{
-				margin: 0,
-				fontFamily: 'Poppins, sans-serif',
-				...style,
-			}}
+			className={`m-0 font-['Poppins',sans-serif] ${className}`}
 			{...props}
 		>
 			{children}
@@ -38,13 +32,9 @@ const Title = ({ level = 4, style = {}, children, ...props }) => {
 	)
 }
 
-const Text = ({ style = {}, children, ...props }) => (
+const Text = ({ className = '', children, ...props }) => (
 	<p
-		style={{
-			margin: 0,
-			fontFamily: 'Poppins, sans-serif',
-			...style,
-		}}
+		className={`m-0 font-['Poppins',sans-serif] ${className}`}
 		{...props}
 	>
 		{children}
@@ -67,8 +57,6 @@ const projType = [
 	'video_classification',
 	'anomaly_detection',
 ]
-
-// const tagIcons = { ...unused icon map removed }
 
 const imgArray = [
 	image_classification,
@@ -215,10 +203,7 @@ You have a table of customer information (such as: age, salary, and account bala
 You have a table with information about houses (such as: square footage, number of bedrooms, and location), and you want the system to predict **the price of each house**.
 
 🏡 For example:  
-House #1: 80 sq ft, 2 bedrooms, Suburban → Predicted price: **1.2M**  
-House #2: 120 sq ft, 3 bedrooms, Suburban → Predicted price: **1.8M**    
-House #3: 100 sq ft, 3 bedrooms, Downtown → Predicted price: **3.0M**    
-House #4: 150 sq ft, 4 bedrooms, Downtown → Predicted price: **4.5M**`,
+House #1: 80 sq ft, 2 bedrooms, Suburban → Predicted price: **1.2M** House #2: 120 sq ft, 3 bedrooms, Suburban → Predicted price: **1.8M** House #3: 100 sq ft, 3 bedrooms, Downtown → Predicted price: **3.0M** House #4: 150 sq ft, 4 bedrooms, Downtown → Predicted price: **4.5M**`,
 		image: tabular_regression,
 		difficulty: 'Intermediate',
 		timeToTrain: '10-30 minutes',
@@ -230,12 +215,9 @@ House #4: 150 sq ft, 4 bedrooms, Downtown → Predicted price: **4.5M**`,
 		description:
 			'Advanced analysis when data needs multiple classifications - essential for comprehensive customer profiling and risk assessment.',
 		icon: '🔍',
-		explain: `📌 **This example shows how Multilabel Classification works using movies.**  
-		You have a table with information about movies (such as: title and release year), and you want the system to identify all the genres each movie belongs to.  
+		explain: `📌 **This example shows how Multilabel Classification works using movies.** You have a table with information about movies (such as: title and release year), and you want the system to identify all the genres each movie belongs to.  
 		🎬 For example:  
-		Movie #1: "Avengers: Endgame" — The system assigns: **Action, Adventure, Sci-Fi**  
-		Movie #2: "Titanic" — The system assigns: **Romance, Disaster, Historical**  
-		Movie #3: "The Hangover" — The system assigns: **Comedy, Adventure**`,
+		Movie #1: "Avengers: Endgame" — The system assigns: **Action, Adventure, Sci-Fi** Movie #2: "Titanic" — The system assigns: **Romance, Disaster, Historical** Movie #3: "The Hangover" — The system assigns: **Comedy, Adventure**`,
 		image: multilabel_tabular_classification,
 		difficulty: 'Advanced',
 		timeToTrain: '20-40 minutes',
@@ -257,11 +239,8 @@ You have customer feedback that can include **text**, **a photo**, or even a **v
 
 For example:  
 **#1**: A review with written comments, a happy photo of the product, and a cheerful voice message  
- → The system classifies it as **Positive**  
-**#2**: A review with a complaint in text, a damaged product image, and a frustrated voice recording  
- → The system classifies it as **Negative**  
-
--------
+ → The system classifies it as **Positive** **#2**: A review with a complaint in text, a damaged product image, and a frustrated voice recording  
+ → The system classifies it as **Negative** -------
 **Positive**: the customer is happy and satisfied  
 **Negative**: the customer is unhappy and disappointed`,
 		image: multimodal_classification,
@@ -347,8 +326,6 @@ For example:
 	}
 ]
 
-// const getImageByProjectType = (selectedProjectType) => projectTypeImages[selectedProjectType] || image_classification
-
 const ManualCreationModal = ({
 	open,
 	onCancel,
@@ -370,7 +347,6 @@ const ManualCreationModal = ({
 	const selectedIndex = Array.isArray(isSelected)
 		? isSelected.findIndex((item) => item === true)
 		: -1
-	// const selectedProjectType = selectedIndex !== -1 ? projType[selectedIndex] : null
 	const selectedTask = selectedIndex !== -1 ? taskCards[selectedIndex] : null
 	const displayTask = selectedTask
 
@@ -427,47 +403,19 @@ const ManualCreationModal = ({
 	const content = (
 		<form
 			onSubmit={handleSubmit}
-			className="theme-form theme-manual-form"
-			style={{
-				height: '95%',
-				display: 'flex',
-				flexDirection: 'column',
-				scrollbarWidth: 'thin',
-				scrollbarColor: '#94a3b8 transparent',
-			}}
+			className="theme-form theme-manual-form h-[95%] flex flex-col [scrollbar-width:thin] [scrollbar-color:#94a3b8_transparent]"
 		>
-			{/* Two-column overall layout: left = fields + task list, right = task details */}
-			<div
-				style={{
-					display: 'grid',
-					gridTemplateColumns: '1.1fr 0.9fr',
-					gap: 20,
-					alignItems: 'stretch',
-					height: 'calc(85vh - 180px)',
-					overflow: 'hidden' /* Prevent overall overflow */,
-				}}
-			>
+			{/* Two-column overall layout */}
+			<div className="grid grid-cols-[1.1fr_0.9fr] gap-5 items-stretch h-[calc(85vh-180px)] overflow-hidden">
+				
 				{/* Left column */}
-				<div
-					style={{
-						borderRight: '2px solid #0ea5e9',
-						paddingRight: '12px',
-						display: 'flex',
-						flexDirection: 'column',
-						overflow:
-							'hidden' /* Prevent overflow in left column */,
-					}}
-				>
-					<div style={{ marginBottom: 16 }}>
+				<div className="border-r-2 border-sky-500 pr-3 flex flex-col overflow-hidden">
+					
+					{/* Project Name */}
+					<div className="mb-4">
 						<label
 							htmlFor="project-name"
-							style={{
-								display: 'block',
-								marginBottom: 8,
-								color: 'var(--form-label-color)',
-								fontFamily: 'Poppins, sans-serif',
-								fontWeight: 600,
-							}}
+							className="block mb-2 text-[var(--form-label-color)] font-['Poppins',sans-serif] font-semibold"
 						>
 							Project Name
 						</label>
@@ -477,37 +425,20 @@ const ManualCreationModal = ({
 							value={name}
 							onChange={(e) => setName(e.target.value)}
 							placeholder="E.g., Customer Churn Predictor"
-							className="w-full px-3 py-2 rounded-2xl mx-1 border bg-transparent focus:outline-none focus:ring-2 focus:ring-sky-500"
-							style={{
-								borderColor: 'var(--input-border)',
-								color: 'var(--text)',
-							}}
+							className="w-full px-3 py-2 rounded-2xl mx-1 border border-[var(--input-border)] bg-transparent focus:outline-none focus:ring-2 focus:ring-sky-500 text-[var(--text)]"
 						/>
 						{errors.name && (
-							<p
-								style={{
-									marginTop: 4,
-									color: '#f97373',
-									fontSize: 12,
-									fontFamily: 'Poppins, sans-serif',
-								}}
-							>
+							<p className="mt-1 text-[#f97373] text-xs font-['Poppins',sans-serif]">
 								{errors.name}
 							</p>
 						)}
 					</div>
 
 					{/* Description */}
-					<div style={{ marginBottom: 16 }}>
+					<div className="mb-4">
 						<label
 							htmlFor="project-description"
-							style={{
-								display: 'block',
-								marginBottom: 8,
-								color: 'var(--form-label-color)',
-								fontFamily: 'Poppins, sans-serif',
-								fontWeight: 600,
-							}}
+							className="block mb-2 text-[var(--form-label-color)] font-['Poppins',sans-serif] font-semibold"
 						>
 							Description
 						</label>
@@ -517,169 +448,61 @@ const ManualCreationModal = ({
 							value={description}
 							onChange={(e) => setDescription(e.target.value)}
 							placeholder="Describe your project's goals and requirements..."
-							className="w-full px-3 py-2 rounded-2xl mx-1 border bg-transparent focus:outline-none focus:ring-2 focus:ring-sky-500"
-							style={{
-								borderColor: 'var(--input-border)',
-								color: 'var(--text)',
-							}}
+							className="w-full px-3 py-2 rounded-2xl mx-1 border border-[var(--input-border)] bg-transparent focus:outline-none focus:ring-2 focus:ring-sky-500 text-[var(--text)]"
 						/>
 					</div>
 
 					{/* Task list box */}
-					<div
-						className="task-selection-container"
-						style={{
-							borderRadius: '16px',
-							background: 'var(--filter-bg)',
-							border: '1px solid var(--filter-border)',
-							overflow: 'hidden',
-							marginTop: 8,
-							flex: 1,
-							display: 'flex',
-							flexDirection: 'column',
-							minHeight: 0 /* Quan trọng để flex container có thể scroll */,
-							scrollbarWidth: 'thin',
-							scrollbarColor: '#94a3b8 transparent',
-						}}
-					>
+					<div className="task-selection-container rounded-2xl bg-[var(--filter-bg)] border border-[var(--filter-border)] overflow-hidden mt-2 flex-1 flex flex-col min-h-0 [scrollbar-width:thin] [scrollbar-color:#94a3b8_transparent]">
 						<Title
 							level={4}
-							style={{
-								textAlign: 'center',
-								margin: '12px 0',
-								color: 'var(--title-project)',
-								fontWeight: 700,
-								fontFamily: 'Poppins, sans-serif',
-								flexShrink: 0,
-							}}
+							className="text-center my-3 text-[var(--title-project)] font-bold shrink-0"
 						>
 							Choose Your Task
 						</Title>
-						<div
-							className="task-list-column"
-							style={{
-								padding: '0 16px 16px 20px',
-								borderTop: '1px solid var(--border)',
-								flex: 1,
-								overflowY: 'auto',
-								minHeight: 0 /* Quan trọng để scroll hoạt động */,
-								scrollbarWidth: 'thin',
-								scrollbarColor: '#94a3b8 transparent',
-							}}
-						>
-							<div
-								style={{
-									display: 'grid',
-									gridTemplateColumns:
-										'repeat(3, minmax(0, 1fr))',
-									gap: '12px',
-									paddingTop: '12px',
-								}}
-							>
+						<div className="task-list-column pl-5 pr-4 pb-4 border-t border-[var(--border)] flex-1 overflow-y-auto min-h-0 [scrollbar-width:thin] [scrollbar-color:#94a3b8_transparent]">
+							<div className="grid grid-cols-3 gap-3 pt-3">
 								{taskCards.map((task, idx) => {
 									const projTypeIndex = projType.findIndex(
 										(type) => type === task.id
 									)
-									const isTaskSelected =
-										isSelected && isSelected[projTypeIndex]
+									const isTaskSelected = isSelected && isSelected[projTypeIndex]
 
 									return (
 										<div
 											key={task.id}
-											className={`task-list-item ${isTaskSelected ? 'selected' : ''}`}
-											onClick={(e) =>
-												handleSelectType(
-													e,
-													projTypeIndex
-												)
-											}
+											className={`task-list-item cursor-pointer p-[14px] rounded-2xl border-2 border-[var(--border)] transition-all duration-300 ease-in-out relative min-h-[120px] overflow-hidden flex items-center ${
+												isTaskSelected
+													? 'selected bg-[var(--selection-bg)]'
+													: 'bg-[var(--card-gradient)]'
+											}`}
+											onClick={(e) => handleSelectType(e, projTypeIndex)}
 											onKeyDown={(e) => {
-												if (
-													e.key === 'Enter' ||
-													e.key === ' '
-												) {
+												if (e.key === 'Enter' || e.key === ' ') {
 													e.preventDefault()
-													handleSelectType(
-														e,
-														projTypeIndex
-													)
+													handleSelectType(e, projTypeIndex)
 												}
 											}}
 											tabIndex={0}
 											role="button"
 											aria-label={`Select ${task.title} task type`}
 											aria-pressed={isTaskSelected}
-											style={{
-												cursor: 'pointer',
-												padding: '14px',
-												borderRadius: '16px',
-												border: '2px solid var(--border)',
-												background: isTaskSelected
-													? 'var(--selection-bg)'
-													: 'var(--card-gradient)',
-												transition: 'all 0.3s ease',
-												position: 'relative',
-												minHeight: '120px',
-												overflow: 'hidden',
-												display: 'flex',
-												alignItems: 'center',
-											}}
 										>
-											<div
-												style={{
-													display: 'flex',
-													alignItems: 'flex-start',
-													gap: '12px',
-												}}
-											>
-												<div
-													style={{
-														fontSize: '24px',
-														lineHeight: 1,
-														marginTop: '2px',
-													}}
-												>
+											<div className="flex items-start gap-3">
+												<div className="text-2xl leading-none mt-0.5">
 													{task.icon}
 												</div>
-												<div style={{ flex: 1 }}>
+												<div className="flex-1">
 													<Title
 														level={5}
-														style={{
-															margin: '0 0 4px 0',
-															color: 'var(--text)',
-															fontSize: '14px',
-															fontWeight: 600,
-															fontFamily:
-																'Poppins, sans-serif',
-														}}
-														className="task-title"
+														className="task-title mb-1 text-[var(--text)] text-sm font-semibold"
 													>
 														{task.title}
 													</Title>
 												</div>
 
 												{isTaskSelected && (
-													<div
-														style={{
-															position:
-																'absolute',
-															top: '16px',
-															right: '16px',
-															width: '24px',
-															height: '24px',
-															borderRadius: '50%',
-															background:
-																'var(--button-gradient)',
-															display: 'flex',
-															alignItems:
-																'center',
-															justifyContent:
-																'center',
-															color: '#ffffff',
-															fontSize: '14px',
-															fontWeight: 'bold',
-														}}
-													>
+													<div className="absolute top-4 right-4 w-6 h-6 rounded-full bg-[var(--button-gradient)] flex items-center justify-center text-white text-sm font-bold">
 														✓
 													</div>
 												)}
@@ -693,194 +516,70 @@ const ManualCreationModal = ({
 				</div>
 
 				{/* Right column - task details */}
-				<div
-					className="task-details-column"
-					style={{
-						padding: '0 20px 20px 20px',
-						overflowY: 'auto',
-						display: 'flex',
-						flexDirection: 'column',
-						minHeight: 0 /* Quan trọng để scroll hoạt động */,
-					}}
-				>
+				<div className="task-details-column px-5 pb-5 overflow-y-auto flex flex-col min-h-0 [scrollbar-width:thin] [scrollbar-color:#94a3b8_transparent]">
 					{displayTask ? (
-						<div
-							className="task-details"
-							style={{
-								width: '100%',
-								minWidth: '300px',
-								maxWidth: '100%',
-							}}
-						>
-							<div
-								style={{
-									textAlign: 'center',
-									marginBottom: '24px',
-								}}
-							>
+						<div className="task-details w-full min-w-[300px]">
+							<div className="text-center mb-6">
 								<Title
 									level={3}
-									style={{
-										margin: '0 0 8px 0',
-										color: 'var(--text)',
-										fontWeight: 700,
-										fontFamily: 'Poppins, sans-serif',
-									}}
+									className="mb-2 text-[var(--text)] font-bold"
 								>
 									{displayTask.title}
 								</Title>
-								<Text
-									style={{
-										color: 'var(--secondary-text)',
-										fontSize: '14px',
-										lineHeight: '1.5',
-										fontFamily: 'Poppins, sans-serif',
-									}}
-								>
+								<Text className="text-[var(--secondary-text)] text-sm leading-relaxed">
 									{displayTask.subtitle}
 								</Text>
 							</div>
 
-							<div
-								style={{
-									width: '95%',
-									height: '320px',
-									borderRadius: '16px',
-									overflow: 'hidden',
-									marginBottom: '20px',
-									boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
-									border: '2px solid var(--border-hover)',
-								}}
-							>
+							<div className="w-[95%] h-[320px] mx-auto rounded-2xl overflow-hidden mb-5 shadow-[0_8px_24px_rgba(0,0,0,0.15)] border-2 border-[var(--border-hover)]">
 								<img
 									src={displayTask.image}
 									alt={displayTask.title}
-									style={{
-										width: '100%',
-										height: '100%',
-										objectFit: 'cover',
-									}}
+									className="w-full h-full object-cover"
 								/>
 							</div>
 
-							{/* Long explanation block (if provided) */}
+							{/* Long explanation block */}
 							{displayTask.explain && (
-								<div
-									style={{
-										background: 'var(--card-gradient)',
-										border: '2px solid var(--border)',
-										borderRadius: '16px',
-										padding: '20px',
-										marginBottom: '24px',
-									}}
-								>
+								<div className="bg-[var(--card-gradient)] border-2 border-[var(--border)] rounded-2xl p-5 mb-6">
 									<Title
 										level={5}
-										style={{
-											margin: '0 0 12px 0',
-											color: 'var(--text, #ffffff)',
-											fontFamily: 'Poppins, sans-serif',
-											textAlign: 'center',
-										}}
+										className="mb-3 text-[var(--text,#ffffff)] text-center"
 									>
 										Explanation
 									</Title>
-									<MarkdownRenderer
-										markdownText={displayTask.explain}
-									/>
+									<MarkdownRenderer markdownText={displayTask.explain} />
 								</div>
 							)}
 
+							{/* Example block */}
 							{displayTask.example && (
-								<div
-									style={{
-										background: 'var(--card-gradient)',
-										border: '2px solid var(--border)',
-										borderRadius: '16px',
-										padding: '20px',
-										marginBottom: '24px',
-									}}
-								>
+								<div className="bg-[var(--card-gradient)] border-2 border-[var(--border)] rounded-2xl p-5 mb-6">
 									<Title
 										level={5}
-										style={{
-											margin: '0 0 16px 0',
-											color: 'var(--text)',
-											fontFamily: 'Poppins, sans-serif',
-											textAlign: 'center',
-										}}
+										className="mb-4 text-[var(--text)] text-center"
 									>
 										Example
 									</Title>
-									<div style={{ marginBottom: '12px' }}>
-										<Text
-											style={{
-												color: 'var(--secondary-text)',
-												fontSize: '11px',
-												fontWeight: 700,
-												textTransform: 'uppercase',
-												letterSpacing: '0.5px',
-												fontFamily:
-													'Poppins, sans-serif',
-												display: 'block',
-												marginBottom: '6px',
-											}}
-										>
+									<div className="mb-3">
+										<Text className="text-[var(--secondary-text)] text-[11px] font-bold uppercase tracking-[0.5px] block mb-1.5">
 											INPUT:
 										</Text>
-										<Text
-											style={{
-												color: 'var(--text)',
-												fontSize: '13px',
-												fontWeight: 500,
-												fontFamily:
-													'Poppins, sans-serif',
-												lineHeight: '1.4',
-											}}
-										>
+										<Text className="text-[var(--text)] text-[13px] font-medium leading-[1.4]">
 											{displayTask.example.input}
 										</Text>
 									</div>
 									<div>
-										<Text
-											style={{
-												color: 'var(--secondary-text)',
-												fontSize: '11px',
-												fontWeight: 700,
-												textTransform: 'uppercase',
-												letterSpacing: '0.5px',
-												fontFamily:
-													'Poppins, sans-serif',
-												display: 'block',
-												marginBottom: '6px',
-											}}
-										>
+										<Text className="text-[var(--secondary-text)] text-[11px] font-bold uppercase tracking-[0.5px] block mb-1.5">
 											OUTPUT:
 										</Text>
-										<Text
-											style={{
-												color: 'var(--accent-text)',
-												fontSize: '13px',
-												fontWeight: 600,
-												fontFamily:
-													'Poppins, sans-serif',
-												lineHeight: '1.4',
-											}}
-										>
+										<Text className="text-[var(--accent-text)] text-[13px] font-semibold leading-[1.4]">
 											{displayTask.example.output}
 										</Text>
 									</div>
 									{displayTask.example_explain && (
-										<div style={{ marginTop: '12px' }}>
-											<Text
-												style={{
-													color: 'var(--secondary-text)',
-													fontSize: '12px',
-													fontFamily:
-														'Poppins, sans-serif',
-													whiteSpace: 'pre-wrap',
-												}}
-											>
+										<div className="mt-3">
+											<Text className="text-[var(--secondary-text)] text-xs whitespace-pre-wrap">
 												{displayTask.example_explain}
 											</Text>
 										</div>
@@ -888,78 +587,26 @@ const ManualCreationModal = ({
 								</div>
 							)}
 
-							<div
-								style={{
-									background: 'var(--tag-gradient)',
-									border: '1px solid var(--tag-border)',
-									borderRadius: '12px',
-									padding: '16px',
-									textAlign: 'center',
-									marginBottom: '24px',
-								}}
-							>
-								<Text
-									style={{
-										color: 'var(--secondary-text)',
-										fontSize: '11px',
-										fontWeight: 600,
-										textTransform: 'uppercase',
-										letterSpacing: '0.5px',
-										fontFamily: 'Poppins, sans-serif',
-										display: 'block',
-										marginBottom: '6px',
-									}}
-								>
+							<div className="bg-[var(--tag-gradient)] border border-[var(--tag-border)] rounded-xl p-4 text-center mb-6">
+								<Text className="text-[var(--secondary-text)] text-[11px] font-semibold uppercase tracking-[0.5px] block mb-1.5">
 									Expected Training Time
 								</Text>
-								<Text
-									style={{
-										color: 'var(--text)',
-										fontSize: '14px',
-										fontWeight: 600,
-										fontFamily: 'Poppins, sans-serif',
-									}}
-								>
+								<Text className="text-[var(--text)] text-sm font-semibold">
 									{displayTask.timeToTrain}
 								</Text>
 							</div>
 						</div>
 					) : (
-						<div
-							style={{
-								textAlign: 'center',
-								color: 'var(--secondary-text)',
-								fontFamily: 'Poppins, sans-serif',
-							}}
-						>
-							<div
-								style={{
-									fontSize: '48px',
-									marginBottom: '16px',
-									opacity: 0.5,
-								}}
-							>
-								🎯
-							</div>
+						<div className="text-center text-[var(--secondary-text)] font-['Poppins',sans-serif]">
+							<div className="text-5xl mb-4 opacity-50">🎯</div>
 							<Title
 								level={4}
-								style={{
-									color: 'var(--secondary-text)',
-									fontFamily: 'Poppins, sans-serif',
-									fontWeight: 500,
-								}}
+								className="text-[var(--secondary-text)] font-medium mb-2"
 							>
 								Select a task type to see details
 							</Title>
-							<Text
-								style={{
-									color: 'var(--secondary-text)',
-									fontSize: '14px',
-									fontFamily: 'Poppins, sans-serif',
-								}}
-							>
-								Choose from the options on the left to learn
-								more
+							<Text className="text-[var(--secondary-text)] text-sm">
+								Choose from the options on the left to learn more
 							</Text>
 						</div>
 					)}
@@ -967,26 +614,11 @@ const ManualCreationModal = ({
 			</div>
 
 			{/* Submit - fixed at bottom */}
-			<div
-				style={{
-					marginTop: 'auto',
-					position: 'sticky',
-					bottom: 0,
-					background: 'transparent',
-					zIndex: 10,
-					display: 'flex',
-					justifyContent: 'flex-end',
-					gap: 8,
-					paddingTop: 8,
-				}}
-			>
+			<div className="mt-auto sticky bottom-0 bg-transparent z-10 flex justify-end gap-2 pt-2">
 				<button
 					type="button"
 					onClick={onCancel}
-					className="px-8 py-2 rounded-xl border border-slate-500 text-slate-200 text-sm hover:bg-slate-700/60 transition-colors"
-					style={{
-						marginTop: 5,
-					}}
+					className="px-8 py-2 rounded-xl border border-slate-500 text-slate-200 text-sm hover:bg-slate-700/60 transition-colors mt-1"
 				>
 					Cancel
 				</button>
@@ -994,8 +626,7 @@ const ManualCreationModal = ({
 					type="submit"
 					size="sm"
 					disabled={selectedIndex === -1}
-					className="!h-10 !rounded-xl"
-					style={{ marginTop: 5 }}
+					className="!h-10 !rounded-xl mt-1"
 				>
 					Create Project
 				</GradientButton>
@@ -1004,23 +635,15 @@ const ManualCreationModal = ({
 	)
 
 	return (
-		<>
-			<ProjectBaseModal open={open} onCancel={onCancel} className="theme-manual-modal">
-				<Title
-					level={4}
-					style={{
-						textAlign: 'center',
-						marginBottom: 16,
-						color: 'var(--modal-title-color)',
-						fontFamily: 'Poppins, sans-serif',
-						fontWeight: 600,
-					}}
-				>
-					Let&apos;s Create Your Project
-				</Title>
-				{content}
-			</ProjectBaseModal>
-		</>
+		<ProjectBaseModal open={open} onCancel={onCancel} className="theme-manual-modal">
+			<Title
+				level={4}
+				className="text-center mb-4 text-[var(--modal-title-color)] font-semibold"
+			>
+				Let&apos;s Create Your Project
+			</Title>
+			{content}
+		</ProjectBaseModal>
 	)
 }
 
