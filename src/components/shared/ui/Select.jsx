@@ -117,7 +117,7 @@ const Select = React.forwardRef(
 			<div
 				ref={dropdownRef}
 				className={cn(
-					'rounded-lg border shadow-lg max-h-60 overflow-y-auto',
+					'rounded-xl border shadow-lg max-h-60 overflow-y-auto',
 					'border-gray-200 dark:border-white/20',
 					'scrollbar-theme'
 				)}
@@ -140,7 +140,7 @@ const Select = React.forwardRef(
 									'px-4 py-2.5 text-sm cursor-pointer transition-colors duration-150',
 									'hover:bg-blue-50 dark:hover:bg-blue-500/10',
 									'first:rounded-t-lg last:rounded-b-lg',
-									isSelected && 'bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 font-medium',
+									isSelected && 'bg-blue-100 dark:bg-blue-500/20 text-black dark:text-white font-medium',
 									!isSelected && 'text-gray-900 dark:text-white'
 								)}
 								onMouseDown={(e) => e.preventDefault()}
@@ -160,13 +160,13 @@ const Select = React.forwardRef(
 				<div
 					ref={triggerRef}
 					className={cn(
-						'flex w-full items-center justify-between rounded-lg border cursor-pointer transition-all duration-200',
+						'flex w-full items-center justify-between rounded-xl border cursor-pointer transition-all duration-200',
 						'bg-white dark:bg-white/10',
 						'border-gray-200 dark:border-white/20',
 						'hover:border-blue-400 dark:hover:border-blue-400/50',
 						'focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400',
 						heightClass,
-						disabled && 'opacity-50 cursor-not-allowed pointer-events-none',
+						disabled && 'opacity-50 cursor-not-allowed pointer-eventsring-none',
 						isOpen && 'ring-2 ring-blue-500/50 border-blue-400'
 					)}
 					onClick={() => !disabled && setIsOpen(!isOpen)}
@@ -181,7 +181,7 @@ const Select = React.forwardRef(
 							setIsOpen(false)
 						}
 					}}
-					{...props}
+					{...props}plac
 				>
 					<span
 						className={cn(

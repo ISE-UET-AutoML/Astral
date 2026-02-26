@@ -36,7 +36,7 @@ const DatasetFilter = ({
   onSortChange,
 }) => {
   return (
-    <div className="mb-6 p-4 rounded-xl backdrop-blur-sm bg-gray-50/80 dark:bg-white/5 border border-gray-200 dark:border-white/10">
+    <div className="mb-6 p-4 rounded-xl backdrop-blur-sm bg-gray-50/80 dark:bg-white/5 border border-gray-200 dark:border-white/10 shadow-xl">
       <div className="flex flex-wrap gap-3 items-center">
         {/* Search */}
         <div className="flex items-center gap-2 flex-1 min-w-[200px]">
@@ -46,7 +46,7 @@ const DatasetFilter = ({
             placeholder="Search datasets..."
             value={searchTerm || ''}
             onChange={(e) => onSearchChange && onSearchChange(e.target.value)}
-            className="w-full h-10 px-3 rounded-lg border border-gray-200 dark:border-white/20 bg-white dark:bg-white/10 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400/50 transition-all"
+            className="w-full h-10 px-3 rounded-xl border border-gray-200 dark:border-white/20 bg-white dark:bg-white/10 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400/50 transition-all"
           />
         </div>
 
@@ -84,7 +84,7 @@ const DatasetFilter = ({
         <div className="flex justify-end pt-3">
           <button
             onClick={onReset}
-            className="px-4 py-2 rounded-lg flex items-center gap-2 text-sm transition-all duration-200 text-gray-700 dark:text-gray-300 bg-blue-500/5 dark:bg-blue-400/10 hover:bg-blue-500/10 dark:hover:bg-blue-400/20 border border-gray-200 dark:border-white/10"
+            className="px-4 py-2 rounded-xl flex items-center gap-2 text-sm transition-all duration-200 text-gray-700 dark:text-gray-300 bg-blue-500/5 dark:bg-blue-400/10 hover:bg-blue-500/10 dark:hover:bg-blue-400/20 border border-gray-200 dark:border-white/10"
           >
             <XMarkIcon className="h-4 w-4" />
             Reset Filters

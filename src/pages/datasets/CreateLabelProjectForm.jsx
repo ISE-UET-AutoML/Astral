@@ -1,23 +1,215 @@
 // CreateLabelProjectForm.jsx
-import React, { useState, useEffect } from 'react'
-import {
-	Form,
-	Input,
-	Select as AntSelect,
-	Button,
-	Space,
-	Tag,
-	Divider,
-	Alert,
-	ColorPicker,
-} from 'antd'
+import React, { useState, useEffect, useRef } from 'react'
+import { PlusIcon, XMarkIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
 import { Select } from 'src/components/shared/ui/Select'
-import { PlusOutlined } from '@ant-design/icons'
-import { getDatasets } from 'src/api/dataset'
+import { Alert, AlertDescription } from 'src/components/shared/ui/alert'
+import { Tag } from 'src/components/shared/ui/tag'
 import { TASK_TYPES } from 'src/constants/types'
 
-const { Option } = AntSelect
+/* ── Shared style helpers ─────────────────────────────────────────────── */
+const inputStyle = {
+	width: '100%',
+	background: 'var(--input-bg)',
+	border: '1px solid var(--input-border)',
+	color: 'var(--input-color)',
+	fontFamily: 'Poppins, sans-serif',
+	borderRadius: '10px',
+	padding: '8px 12px',
+	fontSize: '14px',
+	outline: 'none',
+	boxSizing: 'border-box',
+	transition: 'border-color 0.2s',
+}
 
+const primaryBtnStyle = {
+	background: 'var(--button-primary-bg)',
+	border: '1px solid var(--button-primary-border)',
+	color: 'var(--button-primary-color)',
+	fontFamily: 'Poppins, sans-serif',
+	fontWeight: 500,
+	padding: '8px 20px',
+	borderRadius: '8px',
+	cursor: 'pointer',
+	fontSize: '14px',
+}
+
+const defaultBtnStyle = {
+	background: 'var(--button-default-bg)',
+	border: '1px solid var(--button-default-border)',
+	color: 'var(--button-default-color)',
+	fontFamily: 'Poppins, sans-serif',
+	padding: '8px 20px',
+	borderRadius: '8px',
+	cursor: 'pointer',
+	fontSize: '14px',
+}
+
+const dashedBtnStyle = {
+	background: 'var(--button-dashed-bg, transparent)',
+	border: '1px dashed var(--button-dashed-border, var(--input-border))',
+	color: 'var(--button-dashed-color, var(--text))',
+	fontFamily: 'Poppins, sans-serif',
+	padding: '6px 14px',
+	borderRadius: '8px',
+	cursor: 'pointer',
+	fontSize: '14px',
+	display: 'inline-flex',
+	alignItems: 'center',
+	gap: '4px',
+}
+
+/* ── FormField helper ─────────────────────────────────────────────────── */
+const FormField = ({ label, required, children }) => (
+	<div className="mb-4">
+		<label
+			className="block text-sm font-medium mb-1"
+			style={{ color: 'var(--form-label-color)', fontFamily: 'Poppins, sans-serif' }}
+		>
+			{label}
+			{required && <span style={{ color: '#ef4444', marginLeft: '4px' }}>*</span>}
+		</label>
+		{children}
+	</div>
+)
+
+/* ── MultiSelect – multi-value dropdown ───────────────────────────────── */
+const MultiSelect = ({
+	options = [],
+	value = [],
+	onChange,
+	placeholder = 'Select options',
+	allowClear = false,
+	showSearch = false,
+}) => {
+	const [isOpen, setIsOpen] = useState(false)
+	const [search, setSearch] = useState('')
+	const containerRef = useRef(null)
+
+	useEffect(() => {
+		const handleOutside = (e) => {
+			if (containerRef.current && !containerRef.current.contains(e.target)) {
+				setIsOpen(false)
+			}
+		}
+		document.addEventListener('mousedown', handleOutside)
+		return () => document.removeEventListener('mousedown', handleOutside)
+	}, [])
+
+	const toggle = (optValue) => {
+		const newValue = value.includes(optValue)
+			? value.filter(v => v !== optValue)
+			: [...value, optValue]
+		onChange(newValue)
+	}
+
+	const filteredOptions = showSearch && search
+		? options.filter(o => o.label.toLowerCase().includes(search.toLowerCase()))
+		: options
+
+	return (
+		<div ref={containerRef} className="relative w-full">
+			<div
+				className="flex items-center justify-between rounded-xl border cursor-pointer transition-all duration-200 min-h-[40px] px-3 py-2"
+				style={{
+					background: 'var(--input-bg)',
+					borderColor: isOpen ? 'var(--input-focus-border)' : 'var(--input-border)',
+					color: 'var(--input-color)',
+				}}
+				onClick={() => setIsOpen(o => !o)}
+			>
+				<div className="flex flex-wrap gap-1 flex-1">
+					{value.length > 0 ? (
+						value.map(v => {
+							const opt = options.find(o => o.value === v)
+							return (
+								<span
+									key={v}
+									className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs border"
+									style={{ background: 'var(--tag-bg)', borderColor: 'var(--tag-border)', color: 'var(--tag-color)' }}
+								>
+									{opt ? opt.label : v}
+									<button
+										type="button"
+										onClick={(e) => { e.stopPropagation(); toggle(v) }}
+										style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', lineHeight: 1, padding: 0 }}
+									>
+										<XMarkIcon className="h-3 w-3" />
+									</button>
+								</span>
+							)
+						})
+					) : (
+						<span style={{ color: 'var(--placeholder-color)', fontSize: '14px' }}>{placeholder}</span>
+					)}
+				</div>
+				<div className="flex items-center gap-1 ml-2 shrink-0">
+					{allowClear && value.length > 0 && (
+						<button
+							type="button"
+							onClick={(e) => { e.stopPropagation(); onChange([]) }}
+							style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--secondary-text)' }}
+						>
+							<XMarkIcon className="h-3.5 w-3.5" />
+						</button>
+					)}
+					<ChevronDownIcon
+						className={`h-4 w-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+						style={{ color: 'var(--secondary-text)' }}
+					/>
+				</div>
+			</div>
+
+			{isOpen && (
+				<div
+					className="absolute z-[9999] w-full mt-1 rounded-xl border shadow-lg max-h-60 overflow-y-auto"
+					style={{ background: 'var(--modal-bg, #fff)', borderColor: 'var(--input-border)' }}
+				>
+					{showSearch && (
+						<div className="p-2">
+							<input
+								type="text"
+								value={search}
+								onChange={e => setSearch(e.target.value)}
+								placeholder="Search..."
+								style={{ width: '100%', padding: '4px 8px', borderRadius: '6px', border: '1px solid var(--input-border)', background: 'var(--input-bg)', color: 'var(--input-color)', outline: 'none', fontSize: '13px', boxSizing: 'border-box' }}
+								onClick={e => e.stopPropagation()}
+							/>
+						</div>
+					)}
+					{filteredOptions.length === 0 ? (
+						<div className="px-4 py-3 text-sm text-center" style={{ color: 'var(--secondary-text)' }}>
+							No options available
+						</div>
+					) : (
+						filteredOptions.map(opt => (
+							<div
+								key={opt.value}
+								className="px-4 py-2.5 text-sm cursor-pointer transition-colors"
+								style={{
+									color: 'var(--input-color)',
+									background: value.includes(opt.value) ? 'var(--hover-bg)' : 'transparent',
+								}}
+								onClick={() => toggle(opt.value)}
+							>
+								<div className="flex items-center gap-2">
+									<input
+										type="checkbox"
+										readOnly
+										checked={value.includes(opt.value)}
+										style={{ accentColor: 'var(--button-primary-bg)', cursor: 'pointer' }}
+									/>
+									<span>{opt.label}</span>
+								</div>
+							</div>
+						))
+					)}
+				</div>
+			)}
+		</div>
+	)
+}
+
+/* ── Main component ───────────────────────────────────────────────────── */
 export default function CreateLabelProjectForm({
 	onSubmit,
 	onCancel,
@@ -26,50 +218,41 @@ export default function CreateLabelProjectForm({
 	loading,
 	detectedLabels = [],
 	csvMetadata = null,
-	datasetType, // IMAGE | TEXT | TABULAR | MULTIMODAL
+	datasetType,
 	taskType,
 	description,
 }) {
-	const [form] = Form.useForm()
+	const [projectName] = useState(initialValues?.name || '')
 	const [expectedLabels, setLabels] = useState([])
 	const [newLabel, setNewLabel] = useState('')
 	const [columnOptions, setColumnOptions] = useState([])
-	const [selectedImageColumn, setSelectedImageColumn] = useState(null) // State cho cột ảnh
-	const [selectedSeriesColumn, setSelectedSeriesColumn] = useState(null) // State cho cột chuỗi
-	const [selectedTextColumn, setSelectedTextColumn] = useState(null) // State cho cột text
-	const [selectedFeaturesColumn, setSelectedFeaturesColumn] = useState(null) // State cho cột features
-
+	const [selectedImageColumn, setSelectedImageColumn] = useState(null)
+	const [selectedSeriesColumn, setSelectedSeriesColumn] = useState(null)
+	const [selectedTextColumn, setSelectedTextColumn] = useState(null)
+	const [selectedFeaturesColumn, setSelectedFeaturesColumn] = useState(null)
 	const [labelColors, setLabelColors] = useState({})
-	// watch task type selection
+
 	const selectedTaskType = taskType
-	console.log('Selected Task Type:', selectedTaskType)
-	const isManualLabelTask = (taskType) =>
-		['SEMANTIC_SEGMENTATION', 'OBJECT_DETECTION'].includes(taskType)
+	const isManualLabelTask = (type) => ['SEMANTIC_SEGMENTATION', 'OBJECT_DETECTION'].includes(type)
 
 	useEffect(() => {
 		if (
 			detectedLabels?.length > 0 &&
-			(selectedTaskType === 'IMAGE_CLASSIFICATION' || selectedTaskType === 'AUDIO_CLASSIFICATION'|| selectedTaskType === 'VIDEO_CLASSIFICATION')
+			(selectedTaskType === 'IMAGE_CLASSIFICATION' ||
+				selectedTaskType === 'AUDIO_CLASSIFICATION' ||
+				selectedTaskType === 'VIDEO_CLASSIFICATION')
 		) {
-			console.log(
-				'Setting detected labels from folder structure:',
-				detectedLabels
-			)
 			setLabels(detectedLabels)
 		}
 	}, [detectedLabels, selectedTaskType])
 
 	useEffect(() => {
-		// Xử lý cho dataset loại TEXT/TABULAR/MULTIMODAL với CSV
 		if (csvMetadata?.columns) {
-			console.log('Setting columns from CSV:', csvMetadata.columns)
-			const options = Object.entries(csvMetadata.columns).map(
-				([key, val]) => ({
-					value: key,
-					label: `${key} (${val.unique_class_count ?? 0} classes)`,
-					uniqueClassCount: val.unique_class_count ?? 0,
-				})
-			)
+			const options = Object.entries(csvMetadata.columns).map(([key, val]) => ({
+				value: key,
+				label: `${key} (${val.unique_class_count ?? 0} classes)`,
+				uniqueClassCount: val.unique_class_count ?? 0,
+			}))
 			setColumnOptions(options)
 			if (options.length === 1 && !isManualLabelTask(selectedTaskType)) {
 				setLabels([options[0].value])
@@ -82,43 +265,42 @@ export default function CreateLabelProjectForm({
 	const handleAddLabel = () => {
 		const v = newLabel.trim()
 		if (v && !expectedLabels.includes(v)) {
-			setLabels((prev) => [...prev, v])
-			setLabelColors((prev) => ({
+			setLabels(prev => [...prev, v])
+			setLabelColors(prev => ({
 				...prev,
-				[v]: '#' + Math.floor(Math.random() * 16777215).toString(16), // Màu random
+				[v]: '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0'),
 			}))
 			setNewLabel('')
 		}
 	}
 
 	const handleRemoveLabel = (labelToRemove) => {
-		setLabels((prev) => prev.filter((l) => l !== labelToRemove))
-		setLabelColors((prev) => {
+		setLabels(prev => prev.filter(l => l !== labelToRemove))
+		setLabelColors(prev => {
 			const copy = { ...prev }
 			delete copy[labelToRemove]
 			return copy
 		})
 	}
+
 	const handleColorChange = (label, color) => {
-		setLabelColors((prev) => ({
-			...prev,
-			[label]: color.toHexString(),
-		}))
+		setLabelColors(prev => ({ ...prev, [label]: color }))
 	}
 
-	const handleSubmit = (values) => {
+	const handleSubmit = (e) => {
+		e.preventDefault()
 		const selectedLabel = expectedLabels[0]
-		const column = columnOptions.find((opt) => opt.value === selectedLabel)
+		const column = columnOptions.find(opt => opt.value === selectedLabel)
 		const uniqueClassCount = column?.uniqueClassCount ?? 0
 		const is_binary_class = uniqueClassCount === 2
 
 		const payload = {
-			...values,
-			taskType: taskType,
-			description: description,
+			name: projectName,
+			taskType,
+			description,
 			expectedLabels,
 			meta_data: {
-				is_binary_class: is_binary_class,
+				is_binary_class,
 				image_column: selectedImageColumn,
 				label_colors: labelColors,
 				series_column: selectedSeriesColumn,
@@ -129,193 +311,29 @@ export default function CreateLabelProjectForm({
 		onSubmit(payload)
 	}
 
-	return (
-		<>
-			<style>{`
-                .theme-form .ant-form-item-label > label {
-                    color: var(--form-label-color) !important;
-                    font-family: 'Poppins', sans-serif !important;
-                    font-weight: 500 !important;
-                }
-                
-                .theme-form .ant-input {
-                    background: var(--input-bg) !important;
-                    border: 1px solid var(--input-border) !important;
-                    color: var(--input-color) !important;
-                    font-family: 'Poppins', sans-serif !important;
-                }
-                
-                .theme-form .ant-input::placeholder {
-                    color: var(--placeholder-color) !important;
-                }
-                
-                .theme-form .ant-input:hover {
-                    border-color: var(--input-hover-border) !important;
-                }
-                
-                .theme-form .ant-input:focus {
-                    border-color: var(--input-focus-border) !important;
-                    box-shadow: var(--input-shadow) !important;
-                }
-                
-                .theme-form .ant-input:disabled {
-                    background: var(--input-disabled-bg) !important;
-                    color: var(--input-disabled-color) !important;
-                }
-                
-                .theme-form .ant-select-selector {
-                    background: var(--select-selector-bg) !important;
-                    border: 1px solid var(--select-selector-border) !important;
-                    color: var(--select-selector-color) !important;
-                }
-                
-                .theme-form .ant-select-selection-item {
-                    color: var(--select-item-color) !important;
-                }
-                
-                .theme-form .ant-select-selection-placeholder {
-                    color: var(--select-placeholder-color) !important;
-                }
-                
-                .theme-form .ant-select-arrow {
-                    color: var(--select-arrow-color) !important;
-                }
-                
-                .theme-form .ant-btn-primary {
-                    background: var(--button-primary-bg) !important;
-                    border: 1px solid var(--button-primary-border) !important;
-                    color: var(--button-primary-color) !important;
-                    font-family: 'Poppins', sans-serif !important;
-                    font-weight: 500 !important;
-                }
-                
-                .theme-form .ant-btn-primary:hover {
-                    background: var(--button-primary-bg) !important;
-                    border-color: var(--modal-close-hover) !important;
-                    transform: translateY(-1px) !important;
-                }
-                
-                .theme-form .ant-btn-default {
-                    background: var(--button-default-bg) !important;
-                    border: 1px solid var(--button-default-border) !important;
-                    color: var(--button-default-color) !important;
-                    font-family: 'Poppins', sans-serif !important;
-                }
-                
-                .theme-form .ant-btn-default:hover {
-                    background: var(--hover-bg) !important;
-                    border-color: var(--border-hover) !important;
-                    color: var(--text) !important;
-                }
-                
-                .theme-form .ant-btn-dashed {
-                    background: var(--button-dashed-bg) !important;
-                    border: 1px dashed var(--button-dashed-border) !important;
-                    color: var(--button-dashed-color) !important;
-                    font-family: 'Poppins', sans-serif !important;
-                }
-                
-                .theme-form .ant-btn-dashed:hover {
-                    background: var(--hover-bg) !important;
-                    border-color: var(--modal-close-hover) !important;
-                    color: var(--modal-close-hover) !important;
-                }
-                
-                .theme-form .ant-tag {
-                    background: var(--tag-bg) !important;
-                    border: 1px solid var(--tag-border) !important;
-                    color: var(--tag-color) !important;
-                    font-family: 'Poppins', sans-serif !important;
-                }
-                
-                .theme-form .ant-tag .ant-tag-close-icon {
-                    color: var(--tag-close-icon-color) !important;
-                }
-                
-                .theme-form .ant-alert {
-                    background: var(--alert-bg) !important;
-                    border: 1px solid var(--alert-border) !important;
-                    color: var(--alert-color) !important;
-                }
-                
-                .theme-form .ant-alert-warning {
-                    background: var(--alert-warning-bg) !important;
-                    border-color: var(--alert-warning-border) !important;
-                }
-                
-                .theme-form .ant-alert-info {
-                    background: var(--alert-info-bg) !important;
-                    border-color: var(--alert-info-border) !important;
-                }
-                
-                .theme-form .ant-divider {
-                    border-color: var(--divider-color) !important;
-                }
-                
-                /* TextArea styling */
-                .theme-form .ant-input-textarea .ant-input {
-                    background: var(--input-bg) !important;
-                    border: 1px solid var(--input-border) !important;
-                    color: var(--input-color) !important;
-                    border-radius: 12px !important;
-                    box-shadow: none !important;
-                }
-                
-                .theme-form .ant-input-textarea .ant-input:focus {
-                    background: var(--input-bg) !important;
-                    border-color: var(--input-focus-border) !important;
-                    box-shadow: var(--input-shadow) !important;
-                    color: var(--input-color) !important;
-                }
-                
-                .theme-form .ant-input-textarea .ant-input:hover {
-                    border-color: var(--input-hover-border) !important;
-                }
-                
-                .theme-form .ant-input-textarea {
-                    background: transparent !important;
-                }
-                
-                .theme-form .ant-input-textarea-show-count .ant-input {
-                    background: var(--input-bg) !important;
-                    border: 1px solid var(--input-border) !important;
-                    color: var(--input-color) !important;
-                    border-radius: 12px !important;
-                }
-                
-                .theme-form .ant-input-textarea-show-count .ant-input:focus {
-                    background: var(--input-bg) !important;
-                    border-color: var(--input-focus-border) !important;
-                    box-shadow: var(--input-shadow) !important;
-                    color: var(--input-color) !important;
-                }
-                
-                .theme-form .ant-input-textarea-show-count::after {
-                    color: var(--secondary-text) !important;
-                    font-family: 'Poppins', sans-serif !important;
-                }
-            `}</style>
-			<Form
-				form={form}
-				layout="vertical"
-				initialValues={{ ...initialValues }}
-				onFinish={handleSubmit}
-				className="theme-form"
-			>
-				<Form.Item
-					name="name"
-					label="Project Name"
-					rules={[{ required: true, message: 'Enter project name' }]}
-				>
-					<Input
-						placeholder="Enter project name"
-						disabled
-						style={{ color: 'var(--input-disabled-color)' }}
-					/>
-				</Form.Item>
+	const isMultiLabel = selectedTaskType?.startsWith('MULTILABEL')
+	const isClusteringOrAnomaly = selectedTaskType === 'CLUSTERING' || selectedTaskType === 'ANOMALY_DETECTION'
 
-				{datasetType === 'TIME_SERIES' && (
-			<Form.Item label="Series Column" required>
+	return (
+		<form onSubmit={handleSubmit}>
+			{/* Project Name (disabled) */}
+			<FormField label="Project Name" required>
+				<input
+					style={{
+						...inputStyle,
+						background: 'var(--input-disabled-bg)',
+						color: 'var(--input-disabled-color)',
+						cursor: 'not-allowed',
+					}}
+					value={projectName}
+					readOnly
+					placeholder="Project name"
+				/>
+			</FormField>
+
+			{/* TIME_SERIES: Series Column */}
+			{datasetType === 'TIME_SERIES' && (
+				<FormField label="Series Column" required>
 					<Select
 						placeholder="Select series column"
 						value={selectedSeriesColumn || undefined}
@@ -323,19 +341,17 @@ export default function CreateLabelProjectForm({
 						allowClear
 						options={columnOptions}
 					/>
-						{!selectedSeriesColumn && (
-							<Alert
-								message="Please select a series column for TIME_SERIES datasets."
-								type="warning"
-								showIcon
-								className="mt-2"
-							/>
-						)}
-					</Form.Item>
-				)}
+					{!selectedSeriesColumn && (
+						<Alert variant="warning" className="mt-2">
+							<AlertDescription>Please select a series column for TIME_SERIES datasets.</AlertDescription>
+						</Alert>
+					)}
+				</FormField>
+			)}
 
-				{datasetType === 'TEXT' && (
-			<Form.Item label="Text Column" required>
+			{/* TEXT: Text Column */}
+			{datasetType === 'TEXT' && (
+				<FormField label="Text Column" required>
 					<Select
 						placeholder="Select text column"
 						value={selectedTextColumn || undefined}
@@ -343,19 +359,17 @@ export default function CreateLabelProjectForm({
 						allowClear
 						options={columnOptions}
 					/>
-						{!selectedTextColumn && (
-							<Alert
-								message="Please select a text column for TEXT datasets."
-								type="warning"
-								showIcon
-								className="mt-2"
-							/>
-						)}
-					</Form.Item>
-				)}
+					{!selectedTextColumn && (
+						<Alert variant="warning" className="mt-2">
+							<AlertDescription>Please select a text column for TEXT datasets.</AlertDescription>
+						</Alert>
+					)}
+				</FormField>
+			)}
 
-				{datasetType === 'MULTIMODAL' && (
-			<Form.Item label="Image Column" required>
+			{/* MULTIMODAL: Image Column */}
+			{datasetType === 'MULTIMODAL' && (
+				<FormField label="Image Column" required>
 					<Select
 						placeholder="Select image column"
 						value={selectedImageColumn || undefined}
@@ -363,247 +377,167 @@ export default function CreateLabelProjectForm({
 						allowClear
 						options={columnOptions}
 					/>
-						{!selectedImageColumn && (
-							<Alert
-								message="Please select an image column for MULTIMODAL datasets."
-								type="warning"
-								showIcon
-								className="mt-2"
-							/>
-						)}
-					</Form.Item>
-				)}
-				{datasetType === "TABULAR" &&
-					(
-						<Form.Item
-						label="Features Column"
-						required
-						// Không dùng name ở đây nếu bạn muốn tự quản lý qua state,
-						// hoặc thêm name="featureColumns" nếu vẫn muốn form.validateFields()
-					>
-						<Select
-							mode="multiple"
-							placeholder="Select one or more feature columns"
-							value={selectedFeaturesColumn}
-							onChange={(vals) =>
-								setSelectedFeaturesColumn(vals)
-								//setLabels(vals)
-							}
-							allowClear
-							showSearch
-							optionFilterProp="children"
-							maxTagCount="responsive"
-							className="w-full"
-						>
-							{columnOptions.map((col) => (
-								<Option key={col.value} value={col.value}>
-									{col.label}
-								</Option>
-							))}
-						</Select>
-
-					</Form.Item>
-					)
-				}
-				
-
-				<>
-					{selectedTaskType === 'CLUSTERING' || selectedTaskType === 'ANOMALY_DETECTION' ? (
-						<Form.Item
-							label="Features Column"
-							required
-							// Không dùng name ở đây nếu bạn muốn tự quản lý qua state,
-							// hoặc thêm name="featureColumns" nếu vẫn muốn form.validateFields()
-						>
-							<Select
-								mode="multiple"
-								placeholder="Select one or more feature columns"
-								value={selectedFeaturesColumn}
-								onChange={(vals) =>
-									setSelectedFeaturesColumn(vals) &
-									setLabels(vals)
-								}
-								allowClear
-								showSearch
-								optionFilterProp="children"
-								maxTagCount="responsive"
-								className="w-full"
-							>
-								{columnOptions.map((col) => (
-									<Option key={col.value} value={col.value}>
-										{col.label}
-									</Option>
-								))}
-							</Select>
-
-							{(!selectedFeaturesColumn ||
-								selectedFeaturesColumn.length === 0) && (
-								<Alert
-									message="Please select one or more feature columns for CLUSTERING datasets."
-									type="warning"
-									showIcon
-									className="mt-2"
-								/>
-							)}
-						</Form.Item>
-					) : (
-						<Form.Item label="Expected Labels" required>
-							{!selectedTaskType ? (
-								<Alert
-									message="Please select Task Type first"
-									type="warning"
-									showIcon
-								/>
-							) : columnOptions.length > 0 &&
-							  !isManualLabelTask(selectedTaskType) ? (
-								// 1. Dành cho TEXT/TABULAR/MULTIMODAL: Chọn cột từ CSV
-								<Select
-									mode={
-										selectedTaskType.startsWith(
-											'MULTILABEL'
-										)
-											? 'multiple'
-											: undefined
-									}
-									placeholder={
-										selectedTaskType.startsWith(
-											'MULTILABEL'
-										)
-											? 'Select one or more label columns'
-											: 'Select a label column'
-									}
-									value={
-										selectedTaskType.startsWith(
-											'MULTILABEL'
-										)
-											? expectedLabels
-											: expectedLabels[0] || undefined
-									}
-									onChange={(value) => {
-										const isMultiLabel =
-											selectedTaskType.startsWith(
-												'MULTILABEL'
-											)
-										setLabels(
-											isMultiLabel ? value : [value]
-										)
-									}}
-									optionLabelProp="label"
-									allowClear
-								>
-									{columnOptions.map((col) => (
-										<Option
-											key={col.value}
-											value={col.value}
-											label={col.value}
-										>
-											<div
-												className="flex justify-between"
-											>
-												<span>{col.value}</span>
-												<i
-													style={{
-														fontSize: '0.8em',
-														color: 'var(--secondary-text)',
-													}}
-												>
-													{`${col.uniqueClassCount} classes`}
-												</i>
-											</div>
-										</Option>
-									))}
-								</Select>
-							) : (
-								// 2. Dành cho IMAGE, SEGMENTATION, DETECTION: Nhập/sửa thủ công
-								<>
-									<div className="flex gap-2">
-										<Input
-											placeholder="Enter label name"
-											value={newLabel}
-											onChange={(e) =>
-												setNewLabel(e.target.value)
-											}
-											onPressEnter={handleAddLabel}
-										/>
-										<Button
-											type="dashed"
-											icon={<PlusOutlined />}
-											onClick={handleAddLabel}
-											disabled={!newLabel.trim()}
-										>
-											Add
-										</Button>
-									</div>
-
-									{expectedLabels.length > 0 ? (
-										<div className="flex flex-wrap gap-2 mt-2">
-											{expectedLabels.map((label) => (
-												<div
-													key={label}
-													className="flex items-center gap-2"
-												>
-													<Tag
-														closable
-														onClose={() =>
-															handleRemoveLabel(
-																label
-															)
-														}
-														color="blue"
-													>
-														{label}
-													</Tag>
-													{selectedTaskType ===
-														'SEMANTIC_SEGMENTATION' && (
-														<ColorPicker
-															value={
-																labelColors[
-																	label
-																] || '#ffffff'
-															}
-															onChange={(color) =>
-																handleColorChange(
-																	label,
-																	color
-																)
-															}
-														/>
-													)}
-												</div>
-											))}
-										</div>
-									) : (
-										<Alert
-											message="At least one label is required"
-											type="info"
-											showIcon
-											className="mt-2"
-										/>
-									)}
-								</>
-							)}
-						</Form.Item>
+					{!selectedImageColumn && (
+						<Alert variant="warning" className="mt-2">
+							<AlertDescription>Please select an image column for MULTIMODAL datasets.</AlertDescription>
+						</Alert>
 					)}
-				</>
+				</FormField>
+			)}
 
-				<Divider />
+			{/* TABULAR: Features Column */}
+			{datasetType === 'TABULAR' && (
+				<FormField label="Features Column" required>
+					<MultiSelect
+						placeholder="Select one or more feature columns"
+						value={selectedFeaturesColumn || []}
+						onChange={setSelectedFeaturesColumn}
+						allowClear
+						showSearch
+						options={columnOptions}
+					/>
+				</FormField>
+			)}
 
-				<Form.Item>
-					<Space
-						className="flex justify-end w-full"
-					>
-						<Button onClick={onBack}>Back</Button>
-						<Button
-							type="primary"
-							htmlType="submit"
-							loading={loading}
-							disabled={expectedLabels.length === 0 }
-						>
-							Create
-						</Button>
-					</Space>
-				</Form.Item>
-			</Form>
-		</>
+			{/* Clustering / Anomaly Detection: Features Column */}
+			{isClusteringOrAnomaly ? (
+				<FormField label="Features Column" required>
+					<MultiSelect
+						placeholder="Select one or more feature columns"
+						value={selectedFeaturesColumn || []}
+						onChange={(vals) => {
+							setSelectedFeaturesColumn(vals)
+							setLabels(vals)
+						}}
+						allowClear
+						showSearch
+						options={columnOptions}
+					/>
+					{(!selectedFeaturesColumn || selectedFeaturesColumn.length === 0) && (
+						<Alert variant="warning" className="mt-2">
+							<AlertDescription>Please select one or more feature columns for CLUSTERING datasets.</AlertDescription>
+						</Alert>
+					)}
+				</FormField>
+			) : (
+				/* Expected Labels */
+				<FormField label="Expected Labels" required>
+					{!selectedTaskType ? (
+						<Alert variant="warning">
+							<AlertDescription>Please select Task Type first</AlertDescription>
+						</Alert>
+					) : columnOptions.length > 0 && !isManualLabelTask(selectedTaskType) ? (
+						/* CSV-based: pick column(s) */
+						isMultiLabel ? (
+							<MultiSelect
+								placeholder="Select one or more label columns"
+								value={expectedLabels}
+								onChange={(value) => setLabels(value)}
+								allowClear
+								options={columnOptions}
+							/>
+						) : (
+							<Select
+								placeholder="Select a label column"
+								value={expectedLabels[0] || undefined}
+								onChange={(value) => setLabels(value ? [value] : [])}
+								allowClear
+								options={columnOptions}
+							/>
+						)
+					) : (
+						/* Manual entry: for IMAGE / SEGMENTATION / DETECTION */
+						<>
+							<div className="flex gap-2">
+								<input
+									style={inputStyle}
+									placeholder="Enter label name"
+									value={newLabel}
+									onChange={e => setNewLabel(e.target.value)}
+									onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleAddLabel() } }}
+									onFocus={e => { e.target.style.borderColor = 'var(--input-focus-border)' }}
+									onBlur={e => { e.target.style.borderColor = 'var(--input-border)' }}
+								/>
+								<button
+									type="button"
+									onClick={handleAddLabel}
+									disabled={!newLabel.trim()}
+									style={{
+										...dashedBtnStyle,
+										opacity: !newLabel.trim() ? 0.5 : 1,
+										cursor: !newLabel.trim() ? 'not-allowed' : 'pointer',
+										whiteSpace: 'nowrap',
+									}}
+								>
+									<PlusIcon className="h-4 w-4" />
+									Add
+								</button>
+							</div>
+
+							{expectedLabels.length > 0 ? (
+								<div className="flex flex-wrap gap-2 mt-2">
+									{expectedLabels.map(label => (
+										<div key={label} className="flex items-center gap-1.5">
+											<Tag variant="primary" className="flex items-center gap-1">
+												{label}
+												<button
+													type="button"
+													onClick={() => handleRemoveLabel(label)}
+													style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', lineHeight: 1, padding: 0 }}
+												>
+													<XMarkIcon className="h-3 w-3" />
+												</button>
+											</Tag>
+											{selectedTaskType === 'SEMANTIC_SEGMENTATION' && (
+												<input
+													type="color"
+													value={labelColors[label] || '#ffffff'}
+													onChange={e => handleColorChange(label, e.target.value)}
+													title={`Color for ${label}`}
+													style={{
+														width: '28px',
+														height: '28px',
+														border: '1px solid var(--input-border)',
+														borderRadius: '6px',
+														cursor: 'pointer',
+														padding: '2px',
+														background: 'var(--input-bg)',
+													}}
+												/>
+											)}
+										</div>
+									))}
+								</div>
+							) : (
+								<Alert variant="info" className="mt-2">
+									<AlertDescription>At least one label is required</AlertDescription>
+								</Alert>
+							)}
+						</>
+					)}
+				</FormField>
+			)}
+
+			{/* Divider */}
+			<hr style={{ borderColor: 'var(--divider-color)', margin: '16px 0' }} />
+
+			{/* Actions */}
+			<div className="flex justify-end gap-2">
+				<button type="button" onClick={onBack} style={defaultBtnStyle}>
+					Back
+				</button>
+				<button
+					type="submit"
+					disabled={loading || expectedLabels.length === 0}
+					style={{
+						...primaryBtnStyle,
+						opacity: loading || expectedLabels.length === 0 ? 0.6 : 1,
+						cursor: loading || expectedLabels.length === 0 ? 'not-allowed' : 'pointer',
+					}}
+				>
+					{loading ? 'Creating...' : 'Create'}
+				</button>
+			</div>
+		</form>
 	)
 }

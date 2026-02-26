@@ -16,7 +16,7 @@ import { DATASET_TYPES } from 'src/constants/types'
 dayjs.extend(relativeTime)
 
 const PROCESSING_STATUS = {
-    COMPLETED: { text: 'Completed', badge: 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-700' },
+    COMPLETED: { text: 'Completed', badge: 'bg-green-100 text-green-800 dark:text-white border-green-200 dark:bg-green-400/60 dark:text-green-400 dark:border-green-700' },
     CREATING_DATASET: { text: 'Creating Dataset...', badge: 'bg-blue-50 text-blue-800 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-700' },
     PROCESSING: { text: 'Processing', badge: 'bg-blue-50 text-blue-800 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-700' },
     CREATING_LABEL_PROJECT: { text: 'Creating Label Project...', badge: 'bg-blue-50 text-blue-800 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-700' },
@@ -108,7 +108,7 @@ export default function DatasetCard({ dataset, onDelete, isDeleting }) {
     return (
         <div
             key={dataset.id}
-            className={`group rounded-2xl shadow-lg w-full min-h-[360px] overflow-hidden font-poppins transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col relative bg-white dark:bg-[#141821] ${borderClass} ${isCompleted ? 'cursor-pointer' : 'cursor-default'} ${isProcessing ? 'opacity-75' : ''}`}
+            className={`group rounded-2xl shadow-lg w-full min-h-[360px] overflow-hidden font-poppins transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col relative bg-white dark:bg-[#141821] ${borderClass} ${isCompleted ? 'cursor-pointer' : 'cursor-default'} ${isProcessing ? 'opacity-25' : ''}`}
             onClick={handleCardClick}
         >
             {/* Header Section */}
@@ -129,7 +129,7 @@ export default function DatasetCard({ dataset, onDelete, isDeleting }) {
                         </div>
                         <div className="flex gap-1.5">
                             <button className="w-7 h-7 rounded-full flex items-center justify-center transition-all duration-200 bg-white dark:bg-white/10 border border-gray-200 dark:border-white/20 hover:bg-gray-100 dark:hover:bg-white/20">
-                                <StarIcon className="h-3.5 w-3.5 text-gray-400 dark:text-gray-500" />
+                                <StarIcon className="h-3.5 w-3.5 text-yellow-500" />
                             </button>
                             <button
                                 className="w-7 h-7 rounded-full flex items-center justify-center transition-all duration-200 bg-white dark:bg-white/10 border border-gray-200 dark:border-white/20 hover:bg-red-50 dark:hover:bg-red-900/20"

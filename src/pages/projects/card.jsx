@@ -118,7 +118,7 @@ export default function ProjectCard({ project, getProjects }) {
         <Spin spinning={isDeleting} tip="Deleting..." size="large">
             <div
                 key={project.id}
-                className="group rounded-2xl shadow-lg w-full h-[320px] overflow-hidden font-poppins cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col relative bg-white dark:bg-[#141821] border border-gray-200 dark:border-white/10"
+                className="group rounded-2xl shadow-lg w-full h-[320px] overflow-hidden font-poppins cursor-pointer transition-all duration-300 border-2 hover:-translate-y-1 hover:shadow-xl flex flex-col relative bg-white dark:bg-[#141821] border-gray-300 border-5 dark:border-white/10"
                 onClick={handleCardClick}
             >
                 {/* Background Image Section */}
@@ -145,7 +145,7 @@ export default function ProjectCard({ project, getProjects }) {
                                 onClick={handleStarClick}
                             >
                                 <StarIcon
-                                    className={`h-4 w-4 transition-all duration-200 ${isStarred ? 'fill-current text-yellow-400' : 'text-gray-400'}`}
+                                    className={`h-4 w-4 transition-all duration-200 ${isStarred ? 'fill-current text-yellow-400' : 'text-yellow-400'}`}
                                 />
                             </button>
                             <button

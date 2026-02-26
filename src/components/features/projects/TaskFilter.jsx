@@ -20,7 +20,7 @@ const TaskFilter = ({
 	searchValue,
 }) => {
 	return (
-		<div className="mb-6 p-4 rounded-xl backdrop-blur-sm transition-all duration-300 bg-gray-50/80 dark:bg-white/5 border border-gray-200 dark:border-white/10">
+		<div className="mb-6 p-4 shadow-lg rounded-xl backdrop-blur-sm transition-all duration-300 bg-gray-50/80 dark:bg-white/5 border border-gray-200 dark:border-white/10">
 			<div className="flex flex-wrap gap-3 items-end">
 				{/* Search */}
 				<div className="flex-1 ">
@@ -57,7 +57,7 @@ const TaskFilter = ({
 				<div className="flex justify-end pt-2">
 					<button
 						onClick={onReset}
-						className="px-4 py-2 rounded-lg flex items-center gap-2 text-sm transition-all duration-200 text-gray-700 dark:text-gray-300 bg-blue-500/5 dark:bg-blue-400/10 hover:bg-blue-500/10 dark:hover:bg-blue-400/20 border border-gray-200 dark:border-white/10"
+						className="px-2 py-2 rounded-xl flex items-center gap-2 text-sm transition-all duration-200 text-white dark:text-gray-300 dark:bg-blue-300/10 hover:bg-blue-500/10 dark:hover:bg-blue-400/20 border border-gray-200 dark:border-white/10 bg-blue-500 hover:bg-blue-600"
 					>
 						<XMarkIcon className="h-4 w-4" />
 						Reset Filters

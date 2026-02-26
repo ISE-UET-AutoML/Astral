@@ -1,10 +1,11 @@
-import React, { useState, useRef } from 'react';
-import { Modal, Steps, Spin, message } from 'antd';
-import JSZip, { file } from 'jszip';
+import React, { useState } from 'react';
+import JSZip from 'jszip';
 import { createChunks, organizeFiles, extractCSVMetaData } from 'src/utils/file';
 import { uploadToS3 } from 'src/utils/s3';
 import { IMG_NUM_IN_ZIP } from 'src/constants/file';
 import * as datasetAPI from 'src/api/dataset';
+import { SpinnerOverlay } from 'src/components/shared/ui/spinner';
+import ToastMessage from 'src/components/shared/utilities/Toast';
 import CreateDatasetForm from './CreateDatasetForm';
 import CreateLabelProjectForm from './CreateLabelProjectForm';
 
@@ -13,15 +14,19 @@ const CreateDatasetModal = ({ visible, onCancel, onCreate }) => {
     const [datasetFormValues, setDatasetFormValues] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [labelProjectData, setLabelProjectData] = useState(null);
+    const [toast, setToast] = useState({ show: false, message: '', type: 'error' });
+
+    const showError = (msg) => setToast({ show: true, message: msg, type: 'error' });
 
     const handleNext = async (values) => {
         setDatasetFormValues(values);
         setCurrentStep(1);
     };
-    
+
     const handleBack = () => {
         setCurrentStep(0);
     };
+
     const isImageFolder = (files) => {
         const allowedImageExtensions = ['jpg', 'jpeg', 'png', 'webp'];
         return files.every((file) => allowedImageExtensions.includes(file.path.split('.').pop().toLowerCase()));
@@ -33,24 +38,22 @@ const CreateDatasetModal = ({ visible, onCancel, onCreate }) => {
     const isVideoFolder = (files) => {
         const allowedVideoExtensions = ['mp4', 'm4v', 'avi'];
         return files.every((file) => allowedVideoExtensions.includes(file.path.split('.').pop().toLowerCase()));
-    }
+    };
+
     const handleSubmit = async (labelProjectValues) => {
         try {
             setIsLoading(true);
             console.log('handleSubmit called with labelProjectValues:', labelProjectValues);
             const { files, totalKbytes, dataset_type, service, bucket_name, title, description, taskType } = datasetFormValues;
-        
+
             console.log('Initial dataset:', title);
-            const initialDatasetPayload = {
-                title,
-                dataset_type
-            };
+            const initialDatasetPayload = { title, dataset_type };
             const initialResponse = await datasetAPI.initializeDataset(initialDatasetPayload);
             console.log('Initial dataset created:', initialResponse.data);
             const createdDataset = initialResponse.data;
             const datasetID = createdDataset.id;
             if (!datasetID) {
-                throw new Error("Không thể khởi tạo dataset trên server.");
+                throw new Error('Không thể khởi tạo dataset trên server.');
             }
             console.log('Dataset ID:', datasetID);
 
@@ -70,10 +73,7 @@ const CreateDatasetModal = ({ visible, onCancel, onCreate }) => {
                     const folderChunk = createChunks(new Map([[label, folderFiles]]), IMG_NUM_IN_ZIP);
                     chunks.push(...folderChunk);
                 } else {
-                    zips.push({
-                        name: `chunk_unlabel_0.zip`,
-                        files: folderFiles,
-                    });
+                    zips.push({ name: `chunk_unlabel_0.zip`, files: folderFiles });
                 }
             }
 
@@ -135,7 +135,6 @@ const CreateDatasetModal = ({ visible, onCancel, onCreate }) => {
             };
 
             const { data: presignedUrls } = await datasetAPI.createPresignedUrls(presignPayload);
-            const fileTypes = Array.from(new Set(files.map(file => file.path.split('.').pop().toLowerCase())));
             for (const file of s3Files) {
                 const url = presignedUrls.find(u => u.key === file.key)?.url;
                 if (!url) throw new Error(`Missing presigned URL for ${file.key}`);
@@ -145,7 +144,7 @@ const CreateDatasetModal = ({ visible, onCancel, onCreate }) => {
                 } else {
                     const zip = new JSZip();
                     for (const f of file.files) {
-                        let zipPath = f.path.split('/').slice(-2).join('/');
+                        let zipPath;
                         if (f.path.split('/').length === 2) {
                             const name = f.path.split('/').pop();
                             zipPath = `unlabel_${name}`;
@@ -172,17 +171,15 @@ const CreateDatasetModal = ({ visible, onCancel, onCreate }) => {
                 })),
                 status: 'active',
                 meta_data: extraMeta,
-                //ls_project_creation_data: labelProjectValues 
             };
-            console.log("ID đang được dùng để finalize:", datasetID);
+            console.log('ID đang được dùng để finalize:', datasetID);
             await datasetAPI.finalizeDataset(datasetID, finalizePayload);
             console.log('Dataset finalized on server');
-            // Đóng modal ngay lập tức và chuyển polling sang Zustand store
             onCreate(createdDataset, labelProjectValues);
             handleCancel();
         } catch (err) {
             console.error('Submit error:', err);
-            message.error('Failed to create dataset and label project');
+            showError('Failed to create dataset and label project');
         } finally {
             setIsLoading(false);
         }
@@ -196,151 +193,89 @@ const CreateDatasetModal = ({ visible, onCancel, onCreate }) => {
         onCancel();
     };
 
+    if (!visible) return null;
+
     return (
         <>
-            <style>{`
-                .theme-modal .ant-modal-content {
-                    background: var(--modal-bg) !important;
-                    border: 1px solid var(--modal-border) !important;
-                    border-radius: 16px !important;
-                }
-                
-                .theme-modal .ant-modal-header {
-                    background: var(--modal-header-bg) !important;
-                    border-bottom: 1px solid var(--modal-header-border) !important;
-                }
-                
-                .theme-modal .ant-modal-title {
-                    color: var(--modal-title-color) !important;
-                    font-family: 'Poppins', sans-serif !important;
-                    font-weight: 600 !important;
-                }
-                
-                .theme-modal .ant-modal-close {
-                    color: var(--modal-close-color) !important;
-                }
-                
-                .theme-modal .ant-modal-close:hover {
-                    color: var(--modal-close-hover) !important;
-                }
-                
-                .theme-modal .ant-steps-item-title {
-                    color: var(--steps-title-color) !important;
-                    font-family: 'Poppins', sans-serif !important;
-                }
-                
-                .theme-modal .ant-steps-item-description {
-                    color: var(--steps-description-color) !important;
-                }
-                
-                .theme-modal .ant-steps-item-icon {
-                    background: var(--steps-icon-bg) !important;
-                    border-color: var(--steps-icon-border) !important;
-                }
-                
-                .theme-modal .ant-steps-item-icon .ant-steps-icon {
-                    color: var(--steps-icon-color) !important;
-                }
-                
-                .theme-modal .ant-steps-item-process .ant-steps-item-icon {
-                    background: var(--steps-process-icon-bg) !important;
-                    border-color: var(--steps-process-icon-border) !important;
-                }
-                
-                .theme-modal .ant-steps-item-finish .ant-steps-item-icon {
-                    background: var(--steps-finish-icon-bg) !important;
-                    border-color: var(--steps-finish-icon-border) !important;
-                }
-                
-                .theme-modal .ant-steps-item-finish .ant-steps-icon {
-                    color: var(--steps-finish-icon-color) !important;
-                }
-                
-                /* Hide scrollbar but keep scrolling functionality */
-                .theme-modal .ant-modal-body {
-                    scrollbar-width: none !important; /* Firefox */
-                    -ms-overflow-style: none !important; /* IE and Edge */
-                }
-                
-                .theme-modal .ant-modal-body::-webkit-scrollbar {
-                    display: none !important; /* Chrome, Safari, Opera */
-                }
-                
-                /* Hide scrollbar for the entire modal content */
-                .theme-modal {
-                    scrollbar-width: none !important; /* Firefox */
-                    -ms-overflow-style: none !important; /* IE and Edge */
-                }
-                
-                .theme-modal::-webkit-scrollbar {
-                    display: none !important; /* Chrome, Safari, Opera */
-                }
-            `}</style>
-            <Modal
-                title="Create New Dataset"
-                open={visible}
-                onCancel={handleCancel}
-                footer={null}
-                width={800}
-                destroyOnClose
-                centered
-                className="theme-modal"
-                styles={{
-                    content: {
+            <ToastMessage
+                show={toast.show}
+                message={toast.message}
+                type={toast.type}
+                onClose={() => setToast(prev => ({ ...prev, show: false }))}
+            />
+            <div className="fixed inset-0 z-50 flex items-center justify-center">
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={handleCancel} />
+                <div
+                    className="relative z-50 w-full mx-4 flex flex-col"
+                    style={{
+                        maxWidth: '800px',
+                        maxHeight: '90vh',
                         background: 'var(--modal-bg)',
                         border: '1px solid var(--modal-border)',
                         borderRadius: '16px',
-                    },
-                    header: {
-                        background: 'var(--modal-header-bg)',
-                        borderBottom: '1px solid var(--modal-header-border)',
-                    },
-                    title: {
-                        color: 'var(--modal-title-color)',
-                        fontFamily: 'Poppins, sans-serif',
-                        fontWeight: 600,
-                    },
-                    close: {
-                        color: 'var(--modal-close-color)',
-                    }
-                }}
-            >
-                {visible && (isLoading ? (
-                    <div className="text-center py-[50px]">
-                        <Spin size="large" />
-                        <p style={{ color: 'var(--text)', fontFamily: 'Poppins, sans-serif', marginTop: '16px' }}>
-                            Processing dataset, please wait...
-                        </p>
+                        boxShadow: '0 25px 50px rgba(0,0,0,0.4)',
+                    }}
+                    onClick={e => e.stopPropagation()}
+                >
+                    {/* Header */}
+                    <div
+                        className="flex items-center justify-between px-6 py-4 shrink-0"
+                        style={{
+                            background: 'var(--modal-header-bg)',
+                            borderBottom: '1px solid var(--modal-header-border)',
+                            borderRadius: '16px 16px 0 0',
+                        }}
+                    >
+                        <h2
+                            className="m-0 text-lg font-semibold"
+                            style={{ color: 'var(--modal-title-color)', fontFamily: 'Poppins, sans-serif' }}
+                        >
+                            Create New Dataset
+                        </h2>
+                        <button
+                            type="button"
+                            onClick={handleCancel}
+                            className="flex items-center justify-center w-8 h-8 rounded-full transition-colors hover:bg-white/10"
+                            style={{ color: 'var(--modal-close-color)', background: 'none', border: 'none', cursor: 'pointer', fontSize: '18px' }}
+                        >
+                            ✕
+                        </button>
                     </div>
-                ) : (
-                    <>
-                        
-                        {currentStep === 0 ? (
-                            <CreateDatasetForm
-                                onNext={handleNext}
-                                onCancel={handleCancel}
-                                initialValues={datasetFormValues}
-                                initialFiles={datasetFormValues?.files || []}
-                                initialDetectedLabels={datasetFormValues?.detectedLabels || []}
-                                initialCsvMetadata={datasetFormValues?.csvMetadata || null}
-                            />
+
+                    {/* Body */}
+                    <div className="overflow-y-auto p-6" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                        {isLoading ? (
+                            <SpinnerOverlay text="Processing dataset, please wait..." />
                         ) : (
-                            <CreateLabelProjectForm
-                                onSubmit={handleSubmit}
-                                onBack={handleBack}
-                                onCancel={handleCancel}
-                                loading={isLoading}
-                                datasetType={datasetFormValues?.dataset_type}
-                                taskType={datasetFormValues?.taskType}
-                                description={datasetFormValues?.description}
-                                initialValues={{ name: datasetFormValues?.title }}
-                                detectedLabels={datasetFormValues?.detectedLabels || []}
-                                csvMetadata={datasetFormValues?.csvMetadata}
-                            />
+                            <>
+                                {currentStep === 0 ? (
+                                    <CreateDatasetForm
+                                        onNext={handleNext}
+                                        onCancel={handleCancel}
+                                        initialValues={datasetFormValues}
+                                        initialFiles={datasetFormValues?.files || []}
+                                        initialDetectedLabels={datasetFormValues?.detectedLabels || []}
+                                        initialCsvMetadata={datasetFormValues?.csvMetadata || null}
+                                    />
+                                ) : (
+                                    <CreateLabelProjectForm
+                                        onSubmit={handleSubmit}
+                                        onBack={handleBack}
+                                        onCancel={handleCancel}
+                                        loading={isLoading}
+                                        datasetType={datasetFormValues?.dataset_type}
+                                        taskType={datasetFormValues?.taskType}
+                                        description={datasetFormValues?.description}
+                                        initialValues={{ name: datasetFormValues?.title }}
+                                        detectedLabels={datasetFormValues?.detectedLabels || []}
+                                        csvMetadata={datasetFormValues?.csvMetadata}
+                                    />
+                                )}
+                            </>
                         )}
-                    </>
-                ))}
-            </Modal>
+                    </div>
+                </div>
+            </div>
         </>
     );
 };
