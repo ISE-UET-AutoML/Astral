@@ -13,7 +13,7 @@ export const workspaceApi = {
 	 */
 	async getTree(appId) {
 		const response = await axiosClient.get(
-			`/api/service/adaptive_model_to_app/workspace/${appId}/tree`
+			`/api/service/adaptive_model_to_app/apps/${appId}/draft/tree`
 		)
 		return response.data
 	},
@@ -26,12 +26,10 @@ export const workspaceApi = {
 	 */
 	async getFile(appId, path) {
 		const response = await axiosClient.get(
-			`/api/service/adaptive_model_to_app/workspace/${appId}/file`,
-			{
-				params: { path },
-			}
+			`/api/service/adaptive_model_to_app/apps/${appId}/draft/files/${path}`,
 		)
-		return response.data
+		console.log(response.data)
+		return response.data;
 	},
 
 	/**
@@ -43,7 +41,7 @@ export const workspaceApi = {
 	 */
 	async saveFile(appId, path, content) {
 		await axiosClient.post(
-			`/api/service/adaptive_model_to_app/workspace/${appId}/file`,
+			`/api/service/adaptive_model_to_app/apps/${appId}/draft/files`,
 			{
 				path,
 				content,
@@ -60,7 +58,7 @@ export const workspaceApi = {
 	 */
 	async startAdapt(appId, prompt) {
 		const response = await axiosClient.post(
-			`/api/service/adaptive_model_to_app/workspace/${appId}/adapt`,
+			`/api/service/adaptive_model_to_app/apps/${appId}/adapt`,
 			{
 				prompt,
 			}

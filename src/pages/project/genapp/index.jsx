@@ -213,6 +213,7 @@ export default function ProjectGenApp() {
 			setGenLoading(false)
 		}
 	}
+	console.log("Gen app:", apps);
 
 	return (
 		<div className="relative min-h-screen bg-gray-50 dark:bg-slate-900">
@@ -339,7 +340,7 @@ export default function ProjectGenApp() {
 								onViewDetails={(app) => {
 									// Navigate to code editor page for this app
 									navigate(
-										`/app/project/${projectId}/my-apps/${app.run_id}/edit`
+										`/app/project/${projectId}/my-apps/${app.id}/edit`
 									)
 								}}
 							/>
@@ -423,7 +424,7 @@ export default function ProjectGenApp() {
 								resolveTaskType() === 'object_detection'
 									? 'Object Detection'
 									: resolveTaskType() ===
-										  'text_classification'
+										'text_classification'
 										? 'Text Classification'
 										: 'Image Classification'
 							}
