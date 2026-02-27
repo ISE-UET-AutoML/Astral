@@ -19,6 +19,7 @@ const buttonVariants = {
     gradientHover: "text-white",
     outline: "border-2 border-current text-gray-300 hover:text-white hover:border-white bg-transparent",
     ghost: "text-gray-300 hover:text-white hover:bg-white/10",
+    default: "bg-blue-500 hover:bg-blue-500 text-white",
   },
   size: {
     sm: "px-6 py-2 text-sm h-10",
@@ -30,7 +31,7 @@ const buttonVariants = {
 
 const Button = React.forwardRef(({ 
   className, 
-  variant = "gradient", 
+  variant = "default", 
   size = "default", 
   width,
   children,

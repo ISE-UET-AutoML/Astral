@@ -62,26 +62,49 @@ const MessageCard = ({ msg, isOldVersion, streaming }) => {
 
 			{/* Version box – inside agent card (hard-coded history only) */}
 			{isAssistant && msg.version_number && (
-				<div className="mx-4 my-3 flex items-center justify-between rounded-xl border border-gray-200 dark:border-[#444] bg-white dark:bg-[#2d2d2d] px-4 py-3">
-					<div className="flex flex-col gap-0.5">
-						<span className="text-sm font-medium text-gray-900 dark:text-[#cccccc]">
-							Version {msg.version_number}
-						</span>
-						{msg.adapt_id && (
-							<span className="text-[11px] text-gray-500 dark:text-[#888]">
-								{msg.adapt_id}
+				<div className="mx-4 my-3 rounded-xl border border-gray-200 dark:border-[#444] bg-white dark:bg-[#2d2d2d] px-4 py-3">
+					<div className="flex items-start justify-between gap-3">
+						<div className="flex flex-col gap-1.5 min-w-0 flex-1">
+							<span className="text-sm font-medium text-gray-900 dark:text-[#cccccc]">
+								Version {msg.version_number}
 							</span>
+							{msg.adapt_id && (
+								<span className="text-[11px] text-gray-500 dark:text-[#888]">
+									{msg.adapt_id}
+								</span>
+							)}
+							{/* Summary of changes – like Git commit, for non-tech users */}
+							{msg.version_summary && Array.isArray(msg.version_summary) && msg.version_summary.length > 0 && (
+								<div className="mt-2 pt-2 border-t border-gray-100 dark:border-[#444]">
+									<span className="text-[11px] font-medium text-gray-500 dark:text-[#888] uppercase tracking-wide">
+										Changes
+									</span>
+									<ul className="mt-1.5 space-y-1 text-[13px] text-gray-700 dark:text-[#aaa]">
+										{msg.version_summary.map((item, i) => (
+											<li key={i} className="flex items-start gap-2">
+												<span className="text-gray-400 dark:text-[#666] mt-0.5">•</span>
+												<span>{item}</span>
+											</li>
+										))}
+									</ul>
+								</div>
+							)}
+							{msg.version_summary && typeof msg.version_summary === 'string' && (
+								<p className="mt-2 pt-2 border-t border-gray-100 dark:border-[#444] text-[13px] text-gray-700 dark:text-[#aaa]">
+									{msg.version_summary}
+								</p>
+							)}
+						</div>
+						{isOldVersion && (
+							<button
+								type="button"
+								title={`Revert to Version ${msg.version_number}`}
+								className="shrink-0 p-1.5 rounded-full text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:text-[#888] dark:hover:text-white dark:hover:bg-[#3c3c3c] transition-colors"
+							>
+								<RevertIcon />
+							</button>
 						)}
 					</div>
-					{isOldVersion && (
-						<button
-							type="button"
-							title={`Revert to Version ${msg.version_number}`}
-							className="p-1.5 rounded-full text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:text-[#888] dark:hover:text-white dark:hover:bg-[#3c3c3c] transition-colors"
-						>
-							<RevertIcon />
-						</button>
-					)}
 				</div>
 			)}
 		</div>

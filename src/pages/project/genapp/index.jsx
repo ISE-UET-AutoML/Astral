@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { getAllDeployedModel, genApp, getDeployData } from 'src/api/deploy'
+import { initDraft } from 'src/api/workspace'
 import { getProjectById } from 'src/api/project'
 import { getLatestModelVersionByModelId } from 'src/api/model_version'
 import { useGenApps } from 'src/hooks/useGenApps'
@@ -14,8 +15,6 @@ import {
 import { Button } from 'src/components/ui/button'
 import { Select } from 'src/components/ui/select'
 import Modal from 'src/components/Modal'
-import BackgroundShapes from 'src/components/landing/BackgroundShapes'
-import { useTheme } from 'src/theme/ThemeProvider'
 import { message } from 'antd'
 import { PATHS } from 'src/constants/paths'
 import AppCard from 'src/components/GenApp/AppCard'
@@ -63,7 +62,6 @@ const EmptyIcon = ({ className, ...props }) => (
 export default function ProjectGenApp() {
 	const { id: projectId } = useParams()
 	const navigate = useNavigate()
-	const { theme } = useTheme()
 	const { apps, loading, error, refetch } = useGenApps(projectId)
 	const [projectInfo, setProjectInfo] = useState(null)
 	const [deploys, setDeploys] = useState([])
@@ -216,14 +214,13 @@ export default function ProjectGenApp() {
 	console.log("Gen app:", apps);
 
 	return (
-		<div className="relative min-h-screen bg-gray-50 dark:bg-slate-900">
-			{theme === 'dark' && <BackgroundShapes />}
+		<div className="relative min-h-screen bg-gray-50 dark:bg-[#111111]">
 			<div className="relative z-10 p-6">
 				{/* Header */}
 				<div className="mb-8">
 					<div className="flex items-center gap-3 mb-4">
-						<div className="p-2 rounded-xl bg-gradient-to-br from-blue-100 to-blue-200 dark:from-slate-700 dark:to-slate-600">
-							<AppIcon className="h-6 w-6 text-blue-600 dark:text-blue-300" />
+						<div className="p-2 rounded-xl bg-gray-200 dark:bg-[#2a2a2a]">
+							<AppIcon className="h-6 w-6 text-gray-600 dark:text-gray-300" />
 						</div>
 						<div>
 							<h1 className="text-3xl font-bold text-gray-900 dark:text-white">
@@ -239,10 +236,10 @@ export default function ProjectGenApp() {
 				</div>
 
 				{/* Gen App: chọn deploy_id rồi bấm Gen App */}
-				<Card className="rounded-2xl shadow-2xl mb-6 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700">
+				<Card className="rounded-2xl shadow-2xl mb-6 bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#2a2a2a]">
 					<CardHeader>
 						<CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
-							<span className="w-2 h-2 rounded-full bg-blue-500" />
+							<span className="w-2 h-2 rounded-full bg-gray-400 dark:bg-gray-500" />
 							Gen App
 						</CardTitle>
 						<CardDescription className="text-gray-500 dark:text-gray-400">
@@ -262,7 +259,7 @@ export default function ProjectGenApp() {
 											PATHS.PROJECT_DEPLOY(projectId)
 										)
 									}
-									className="bg-blue-600 hover:bg-blue-700 text-white"
+									className="bg-gray-600 hover:bg-gray-500 text-white"
 								>
 									Go to Deploy page
 								</Button>
@@ -285,7 +282,7 @@ export default function ProjectGenApp() {
 												setAppName(found.name ?? '')
 											}
 										}}
-										className="bg-gray-50 dark:bg-slate-900 border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white"
+										className="bg-gray-50 dark:bg-[#1e1e1e] border-gray-200 dark:border-[#333] text-gray-900 dark:text-white"
 									>
 										<option value="" disabled>
 											Select a model...
@@ -306,7 +303,7 @@ export default function ProjectGenApp() {
 									<Button
 										onClick={() => setIsFormOpen(true)}
 										disabled={!selectedModelId}
-										className="w-full bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50"
+										className="w-full bg-gray-600 hover:bg-gray-500 text-white disabled:opacity-50"
 									>
 										Gen App
 									</Button>
@@ -326,7 +323,7 @@ export default function ProjectGenApp() {
 					</Card>
 				)}
 				{loading ? (
-					<Card className="rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700">
+					<Card className="rounded-2xl shadow-2xl bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#2a2a2a]">
 						<CardContent className="flex flex-col items-center justify-center py-16 text-gray-500 dark:text-gray-400">
 							Loading...
 						</CardContent>
@@ -337,8 +334,13 @@ export default function ProjectGenApp() {
 							<AppCard
 								key={app.id ?? i}
 								app={app}
-								onViewDetails={(app) => {
-									// Navigate to code editor page for this app
+								onViewDetails={async (app) => {
+									// Init draft before navigating so workspace is ready on edit page
+									try {
+										await initDraft(app.id)
+									} catch (e) {
+										console.warn('[GenApp] initDraft before nav:', e)
+									}
 									navigate(
 										`/app/project/${projectId}/my-apps/${app.id}/edit`
 									)
@@ -347,9 +349,9 @@ export default function ProjectGenApp() {
 						))}
 					</div>
 				) : (
-					<Card className="rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700">
+					<Card className="rounded-2xl shadow-2xl bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#2a2a2a]">
 						<CardContent className="flex flex-col items-center justify-center py-16">
-							<div className="p-4 rounded-full mb-4 bg-blue-50 dark:bg-blue-500/10">
+							<div className="p-4 rounded-full mb-4 bg-gray-100 dark:bg-[#2a2a2a]">
 								<EmptyIcon className="h-12 w-12 text-gray-400 dark:text-gray-500" />
 							</div>
 							<h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
@@ -387,7 +389,7 @@ export default function ProjectGenApp() {
 									setAppName(found.name ?? '')
 								}
 							}}
-							className="bg-gray-50 dark:bg-slate-900 border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white"
+							className="bg-gray-50 dark:bg-[#1e1e1e] border-gray-200 dark:border-[#333] text-gray-900 dark:text-white"
 						>
 							<option value="" disabled>
 								Select a model...
@@ -410,7 +412,7 @@ export default function ProjectGenApp() {
 							value={appName}
 							onChange={(e) => setAppName(e.target.value)}
 							placeholder="Please enter the app name"
-							className="w-full rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-4 py-3 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+							className="w-full rounded-xl border border-gray-300 dark:border-[#333] bg-white dark:bg-[#1e1e1e] px-4 py-3 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-500"
 						/>
 					</div>
 
@@ -429,7 +431,7 @@ export default function ProjectGenApp() {
 										: 'Image Classification'
 							}
 							readOnly
-							className="w-full rounded-2xl border border-gray-300 dark:border-slate-600 bg-gray-100 dark:bg-slate-800 px-3 py-3 text-sm text-gray-500 dark:text-gray-300 cursor-not-allowed"
+							className="w-full rounded-2xl border border-gray-300 dark:border-[#333] bg-gray-100 dark:bg-[#222] px-3 py-3 text-sm text-gray-500 dark:text-gray-400 cursor-not-allowed"
 						/>
 						<p className="mt-1 text-xs text-gray-400">
 							Task type is automatically determined from the
@@ -448,7 +450,7 @@ export default function ProjectGenApp() {
 						<Button
 							onClick={handleConfirmGenApp}
 							disabled={genLoading}
-							className="bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50"
+							className="bg-gray-600 hover:bg-gray-500 text-white disabled:opacity-50"
 						>
 							{genLoading ? 'Processing...' : 'Confirm'}
 						</Button>

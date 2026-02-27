@@ -1,10 +1,19 @@
 import axiosClient from './axios'
 
 /**
+ * Init draft workspace – call when entering edit page or clicking Details
+ */
+export async function initDraft(appId) {
+	const res = await axiosClient.post(
+		`/api/service/adaptive_model_to_app/apps/${appId}/draft/init`
+	)
+	return res.data
+}
+
+/**
  * Workspace API for interacting with generated apps.
  * Maps to backend gateway endpoint: /api/service/adaptive_model_to_app/workspace/
  */
-
 export const workspaceApi = {
 	/**
 	 * Get file tree structure for a generated app
@@ -40,13 +49,19 @@ export const workspaceApi = {
 	 * @returns {Promise<void>}
 	 */
 	async saveFile(appId, path, content) {
-		await axiosClient.post(
-			`/api/service/adaptive_model_to_app/apps/${appId}/draft/files`,
-			{
-				path,
-				content,
-			}
+		await axiosClient.put(
+			`/api/service/adaptive_model_to_app/apps/${appId}/draft/files/${path.split('/').map(encodeURIComponent).join('/')}`,
+			{ content, user_id: 'default' }
 		)
+	},
+
+	/** Save draft snapshot (commit to Git) */
+	async saveDraftSnapshot(appId, description) {
+		const res = await axiosClient.post(
+			`/api/service/adaptive_model_to_app/apps/${appId}/draft/save`,
+			{ description: description || 'Draft snapshot' }
+		)
+		return res.data
 	},
 
 	/**
@@ -119,5 +134,36 @@ export const workspaceApi = {
 		}
 
 		throw new Error('Adapt operation timed out')
+		},
+
+	initDraft,
+
+	/** List versions for app */
+	async getVersions(appId) {
+		const res = await axiosClient.get(
+			`/api/service/adaptive_model_to_app/apps/${appId}/versions`
+		)
+		return res.data
+	},
+
+	/** Deploy a specific version via versions/{version_number}/deploy */
+	async deployVersion(appId, versionNumber) {
+		const res = await axiosClient.post(
+			`/api/service/adaptive_model_to_app/apps/${appId}/versions/${versionNumber}/deploy`
+		)
+		return res.data
+	},
+
+	/**
+	 * Deploy draft as NEW version (latest + 1). Creates version from current draft, then deploys.
+	 * @param {string} appId
+	 * @param {Object} [files] - Optional: { [path]: content } to merge unsaved editor content
+	 */
+	async deployDraft(appId, files = {}) {
+		const res = await axiosClient.post(
+			`/api/service/adaptive_model_to_app/apps/${appId}/draft/deploy`,
+			{ files: Object.keys(files).length ? files : undefined }
+		)
+		return res.data
 	},
 }

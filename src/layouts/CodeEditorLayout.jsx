@@ -22,15 +22,9 @@ export default function CodeEditorLayout({ chatSlot, treeSlot, editorSlot, isAda
 		<div className="fixed inset-0 z-50 flex flex-col bg-gray-100 dark:bg-[#1e1e1e]">
 			{/* Top bar – always visible */}
 			<div className="shrink-0 flex items-center gap-2 px-4 py-2 bg-white dark:bg-[#252526] border-b border-gray-200 dark:border-[#333]">
-				<Button
-					variant="ghost"
-					size="sm"
-					className="dark:text-[#cccccc] dark:hover:text-white dark:hover:bg-white/10"
-					onClick={() => navigate(`/app/project/${projectId}/my-apps`)}
-				>
-					<ArrowLeftOutlined className="h-4 w-4 mr-2" />
-					Back to Apps
-				</Button>
+				<div className="text-sm text-gray-600 dark:text-[#cccccc] bg-gray-100 dark:bg-[#252526] rounded-full px-4 py-2">
+					Animal Classification (current version: 5.0)
+				</div>
 				{isAdapting && (
 					<span className="text-sm text-orange-600 dark:text-orange-400 ml-4">
 						🔄 Adapting...

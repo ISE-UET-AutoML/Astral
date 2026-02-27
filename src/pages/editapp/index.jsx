@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { message } from 'antd'
-import { workspaceApi } from 'src/api/workspace'
+import { workspaceApi, initDraft } from 'src/api/workspace'
 import {
 	ChatPanel,
 	TreePanel,
@@ -10,6 +10,8 @@ import {
 import { useFileTree, useFileEditor, useSaveShortcut, useAmtaChat } from 'src/hooks'
 import { Button } from 'src/components/ui/button'
 import CodeEditorLayout from 'src/layouts/CodeEditorLayout'
+
+const AUTOSAVE_DEBOUNCE_MS = 1500
 
 const EditAppPage = () => {
 	const { appId, id: projectId } = useParams()
@@ -30,6 +32,12 @@ const EditAppPage = () => {
 	const { tree, refetch: refetchTree } = useFileTree(appId)
 	const { code, setCode, isSaving } = useFileEditor(appId, currentFile, originalCode)
 	const hasAutoLoadedRef = useRef(false)
+	const autoSaveTimerRef = useRef(null)
+	// Track latest code/file for beforeunload (avoid stale closure)
+	const latestRef = useRef({ code, currentFile, appId })
+	useEffect(() => {
+		latestRef.current = { code, currentFile, appId }
+	}, [code, currentFile, appId])
 
 	const findIndexHtml = useCallback((node, currentPath = '') => {
 		if (!node.children) return null
@@ -53,22 +61,80 @@ const EditAppPage = () => {
 		return null
 	}, [])
 
+	// Auto-save vào Redis sau khi dừng gõ 1.5s
+	const handleCodeChange = useCallback((newCode) => {
+		setCode(newCode)
+		if (!currentFile || !appId) return
+		clearTimeout(autoSaveTimerRef.current)
+		autoSaveTimerRef.current = setTimeout(() => {
+			workspaceApi.saveFile(appId, currentFile, newCode).catch(() => {})
+		}, AUTOSAVE_DEBOUNCE_MS)
+	}, [appId, currentFile, setCode])
+
+	// Ctrl+S: save Redis + Git snapshot
 	const handleSaveFile = useCallback(async () => {
 		if (!currentFile) {
 			message.warning('No file opened!')
 			return
 		}
+		clearTimeout(autoSaveTimerRef.current)
 		try {
 			await workspaceApi.saveFile(appId, currentFile, code)
+			await workspaceApi.saveDraftSnapshot(appId)
 			setOriginalCode(code)
-			message.success('Saved successfully!')
+			message.success('Saved!')
 		} catch (error) {
 			console.error('Failed to save file:', error)
 			message.error('Failed to save file!')
 		}
 	}, [appId, currentFile, code])
 
+	// Deploy: create NEW version (latest + 1) from draft and deploy via draft/deploy
+	const [isDeploying, setIsDeploying] = useState(false)
+	const handleDeploy = useCallback(async () => {
+		if (!appId || isDeploying) return
+		setIsDeploying(true)
+		try {
+			// Pass current file if unsaved so it's included in deploy
+			const files = currentFile && code !== originalCode
+				? { [currentFile]: code }
+				: {}
+			const result = await workspaceApi.deployDraft(appId, files)
+			message.success(`Deploying version ${result?.version_number ?? '?'}...`)
+		} catch (error) {
+			console.error('Deploy failed:', error)
+			message.error(error?.response?.data?.detail || 'Deploy failed!')
+		} finally {
+			setIsDeploying(false)
+		}
+	}, [appId, isDeploying, currentFile, code, originalCode])
+
+	// Git snapshot khi rời trang
+	useEffect(() => {
+		const handleBeforeUnload = () => {
+			const { code: c, currentFile: f, appId: id } = latestRef.current
+			if (!f || !id) return
+			// save Redis sync (best-effort, navigator.sendBeacon không support PUT nên dùng fetch keepalive)
+			fetch(`/api/service/adaptive_model_to_app/apps/${id}/draft/save`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ description: 'Auto-save on exit' }),
+				keepalive: true,
+			}).catch(() => {})
+		}
+		window.addEventListener('beforeunload', handleBeforeUnload)
+		return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+	}, [])
+
 	useSaveShortcut(currentFile, code, handleSaveFile)
+
+	// Init draft workspace when entering edit page (covers: Details click + direct URL)
+	useEffect(() => {
+		if (!appId) return
+		initDraft(appId).catch((err) => {
+			console.warn('[EditAppPage] initDraft failed:', err)
+		})
+	}, [appId])
 
 	const loadFile = useCallback(
 		async (path) => {
@@ -130,8 +196,10 @@ const EditAppPage = () => {
 					code={code}
 					originalCode={originalCode}
 					isSaving={isSaving}
-					onCodeChange={setCode}
+					isDeploying={isDeploying}
+					onCodeChange={handleCodeChange}
 					onSave={handleSaveFile}
+					onDeploy={handleDeploy}
 				/>
 			}
 		/>

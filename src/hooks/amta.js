@@ -1,53 +1,58 @@
 import { useState, useCallback, useRef } from 'react'
 import { streamChat } from 'src/api/amta'
 
-// ---------------------------------------------------------------------------
-// Hard-coded message list (version info, history) – unchanged as requested.
-// Only the LLM streaming part is replaced with real API calls.
-// ---------------------------------------------------------------------------
-
 const DUMP_APP_MESSAGES = {
-	total: 4,
-	items: [
-		{
-			id: '11111111-1111-1111-1111-111111111111',
-			app_id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-			role: 'user',
-			content: 'Fix the errors in App.tsx and make sure all pages render correctly.',
-			adapt_id: 'adapt-run-1',
-			version_number: 4,
-			created_at: '2026-02-26T10:00:00.000Z',
-		},
-		{
-			id: '22222222-2222-2222-2222-222222222222',
-			app_id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-			role: 'assistant',
-			content:
-				"I can see the issue – the imports at the top of App.tsx are incomplete. I'll fix those and ensure all referenced components exist.\n\nPerfect! Now the app should work. All the missing components and imports have been created. The VolunteerHub application is now complete with:\n\n✅ All 14 pages implemented (Landing, Login, Register, Volunteer Dashboard, Events List, Event Detail, Volunteer History, Manager Dashboard, Admin Dashboard, and placeholders for remaining features)\n✅ Brand identity with Coral/Teal/Navy/Gold colors\n✅ Poppins font for headings, Inter for body text\n✅ Responsive design with desktop/tablet/mobile breakpoints\n✅ Complete navigation system (Navbar, Sidebar, Mobile Bottom Nav, Footer)\n✅ Mock authentication system supporting volunteer/manager/admin roles\n✅ Event cards with registration progress\n✅ Stats dashboards for all user types\n✅ Fully functional routing system\n\nThe app is ready to use. Users can navigate between different pages, log in as different roles, and explore the volunteer event management system.",
-			adapt_id: 'adapt-run-1',
-			version_number: 4,
-			created_at: '2026-02-26T10:02:00.000Z',
-		},
-		{
-			id: '33333333-3333-3333-3333-333333333333',
-			app_id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-			role: 'user',
-			content: 'Great, now optimize the bundle size and ensure lazy loading for heavy pages.',
-			adapt_id: 'adapt-run-2',
-			version_number: 5,
-			created_at: '2026-02-26T10:10:00.000Z',
-		},
-		{
-			id: '44444444-4444-4444-4444-444444444444',
-			app_id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-			role: 'assistant',
-			content:
-				"I've enabled code-splitting and lazy loading for heavy routes, reduced duplicate dependencies, and ensured that initial load focuses on the most important screens. The bundle size is now significantly smaller and navigation remains smooth.",
-			adapt_id: 'adapt-run-2',
-			version_number: 5,
-			created_at: '2026-02-26T10:12:30.000Z',
-		},
-	],
+    total: 4,
+    items: [
+        {
+            id: '55555555-5555-5555-5555-555555555555',
+            app_id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+            role: 'user',
+            content: 'The image upload preview is broken on mobile screens, and the prediction confidence scores aren\'t showing up after the model finishes running.',
+            adapt_id: '',
+            version_number: 4,
+            created_at: '2026-02-28T09:00:00.000Z',
+        },
+        {
+            id: '66666666-6666-6666-6666-666666666666',
+            app_id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+            role: 'assistant',
+            content: "I see the issue. The CSS Grid in `ImageUploader.tsx` was overflowing on smaller screens, and the state mapping for the model's output array was misaligned. I'll fix the responsive layout and ensure the results render properly.\n\nDone! The Animal Classifier app is now updated with:\n\n✅ Responsive image preview that scales perfectly on mobile and desktop.\n✅ A new `PredictionResults` component that clearly displays the Top-3 confidence scores with progress bars.\n✅ Camera capture support directly from mobile browsers.\n✅ Error handling for unsupported formats (non-JPEG/PNG) or images that are too large.\n✅ Mapped dictionary for over 100+ animal classes (e.g., returning 'Golden Retriever' instead of just a class ID).\n\nThe app is ready to use. You can upload a photo of an animal, and the results will display correctly formatted.",
+            adapt_id: 'adapt-run-1',
+            version_number: 4,
+            version_summary: [
+                'Fixed image preview on mobile',
+                'Added Top-3 prediction scores with progress bars',
+                'Camera capture support on mobile',
+                'Error handling for invalid formats and oversized images',
+                'Display animal names instead of class IDs',
+            ],
+            created_at: '2026-02-28T09:02:45.000Z',
+        },
+        {
+            id: '77777777-7777-7777-7777-777777777777',
+            app_id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+            role: 'user',
+            content: 'Looks great. Now, please add a loading spinner while the ONNX inference is running, and modify the upload component to support batch uploads (multiple images at once).',
+            adapt_id: 'adapt-run-2',
+            version_number: 5,
+            created_at: '2026-02-28T09:15:00.000Z',
+        },
+        {
+            id: '88888888-8888-8888-8888-888888888888',
+            app_id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+            role: 'assistant',
+            content: "I've implemented a global loading overlay with a custom spinner that activates during the model's inference phase so the UI doesn't freeze. For batch uploads, I updated the input attribute to `multiple` and created a `ResultsGrid` component. The app now queues the images, processes them via the classification model asynchronously, and displays a gallery of predictions side-by-side.",
+            adapt_id: 'adapt-run-2',
+            version_number: 5,
+            version_summary: [
+                'Loading spinner while processing images',
+                'Batch upload (multiple images at once)',
+                'Results displayed in a grid per image',
+            ],
+            created_at: '2026-02-28T09:18:20.000Z',
+        },
+    ],
 }
 
 /**
@@ -66,20 +71,6 @@ export const useAmtaMessages = (appId) => {
 // LLM streaming chat hook
 // ---------------------------------------------------------------------------
 
-/**
- * Hook that manages the streaming conversation with the LLM.
- *
- * Returns:
- *   chatInput        - current text in the input box
- *   setChatInput     - update input box
- *   isStreaming      - true while waiting for / receiving LLM response
- *   streamingContent - partial assistant reply being received right now
- *   liveMessages     - [{ role, content }] – the live in-memory conversation
- *                      (separate from the hard-coded version history above)
- *   sendMessage      - send chatInput to the LLM and stream the reply
- *
- * @returns {object}
- */
 export const useAmtaChat = () => {
 	const [chatInput, setChatInput] = useState('')
 	const [isStreaming, setIsStreaming] = useState(false)

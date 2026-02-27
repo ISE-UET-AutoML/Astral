@@ -40,9 +40,9 @@ const getLanguageFromFile = (filename) => {
 
 /**
  * Code editor panel with Monaco editor – dark/light aware.
- * @param {{currentFile: string, code: string, originalCode: string, isSaving: boolean, onCodeChange: Function, onSave: Function}} props
+ * @param {{currentFile: string, code: string, originalCode: string, isSaving: boolean, isDeploying?: boolean, onCodeChange: Function, onSave: Function, onDeploy: Function}} props
  */
-const CodeEditorPanel = ({ currentFile, code, originalCode, isSaving, onCodeChange, onSave }) => {
+const CodeEditorPanel = ({ currentFile, code, originalCode, isSaving, isDeploying, onCodeChange, onSave, onDeploy }) => {
 	const { theme } = useTheme()
 	const isDark = theme === 'dark'
 	const hasUnsavedChanges = code !== originalCode
@@ -55,8 +55,11 @@ const CodeEditorPanel = ({ currentFile, code, originalCode, isSaving, onCodeChan
 					<div className="flex gap-2 items-center">
 						{isSaving && <span className="text-xs text-gray-500 dark:text-[#888]">Saving...</span>}
 						{!isSaving && hasUnsavedChanges && <span className="text-orange-500 text-sm">●</span>}
-						<Button onClick={onSave} disabled={isSaving} size="sm" variant={isSaving ? 'secondary' : 'default'}>
+						<Button variant="outline" size="sm" onClick={onSave} disabled={isSaving}>
 							Save
+						</Button>
+						<Button onClick={onDeploy} disabled={isDeploying} size="sm" variant={isDeploying ? 'secondary' : 'default'}>
+							{isDeploying ? 'Deploying...' : 'Deploy'}
 						</Button>
 					</div>
 				</div>
