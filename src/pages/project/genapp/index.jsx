@@ -12,7 +12,7 @@ import {
 	CardTitle,
 } from 'src/components/ui/card'
 import { Button } from 'src/components/ui/button'
-import { CustomSelect, Option } from 'src/components/ui/custom-select'
+import { Select } from 'src/components/ui/select'
 import Modal from 'src/components/Modal'
 import BackgroundShapes from 'src/components/landing/BackgroundShapes'
 import { useTheme } from 'src/theme/ThemeProvider'
@@ -267,14 +267,15 @@ export default function ProjectGenApp() {
 								</Button>
 							</div>
 						) : (
-							<div className="flex flex-wrap gap-4 items-end">
-								<div className="flex-1 min-w-[200px]">
+							<div className="flex flex-col gap-4">
+								<div>
 									<label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
 										Model
 									</label>
-									<CustomSelect
-										value={selectedModelId}
-										onChange={(val) => {
+									<Select
+										value={selectedModelId ?? ''}
+										onChange={(e) => {
+											const val = e.target.value || null
 											setSelectedModelId(val)
 											const found = deploys.find(
 												(d) => d.model_id === val
@@ -283,28 +284,32 @@ export default function ProjectGenApp() {
 												setAppName(found.name ?? '')
 											}
 										}}
-										placeholder="Select a model..."
 										className="bg-gray-50 dark:bg-slate-900 border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white"
 									>
+										<option value="" disabled>
+											Select a model...
+										</option>
 										{deploys.map((d) => (
-											<Option
+											<option
 												key={d.model_id}
 												value={d.model_id}
 											>
 												{d.name ??
 													`Model #${d.model_id}`}{' '}
 												(ID: {d.model_id})
-											</Option>
+											</option>
 										))}
-									</CustomSelect>
+									</Select>
 								</div>
-								<Button
-									onClick={() => setIsFormOpen(true)}
-									disabled={!selectedModelId}
-									className="bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50"
-								>
-									Gen App
-								</Button>
+								<div>
+									<Button
+										onClick={() => setIsFormOpen(true)}
+										disabled={!selectedModelId}
+										className="w-full bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50"
+									>
+										Gen App
+									</Button>
+								</div>
 							</div>
 						)}
 					</CardContent>
@@ -369,9 +374,10 @@ export default function ProjectGenApp() {
 						<label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
 							Model
 						</label>
-						<CustomSelect
-							value={selectedModelId}
-							onChange={(val) => {
+						<Select
+							value={selectedModelId ?? ''}
+							onChange={(e) => {
+								const val = e.target.value || null
 								setSelectedModelId(val)
 								const found = deploys.find(
 									(d) => d.model_id === val
@@ -382,13 +388,16 @@ export default function ProjectGenApp() {
 							}}
 							className="bg-gray-50 dark:bg-slate-900 border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white"
 						>
+							<option value="" disabled>
+								Select a model...
+							</option>
 							{deploys.map((d) => (
-								<Option key={d.model_id} value={d.model_id}>
+								<option key={d.model_id} value={d.model_id}>
 									{d.name ?? `Model #${d.model_id}`} (ID:{' '}
 									{d.model_id})
-								</Option>
+								</option>
 							))}
-						</CustomSelect>
+						</Select>
 					</div>
 
 					<div>
