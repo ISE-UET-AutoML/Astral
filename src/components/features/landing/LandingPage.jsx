@@ -1,6 +1,7 @@
 import React from 'react'
 import LandingNavbar from './LandingNavbar'
 import HeroSection from './HeroSection'
+import CollabMarquee from './CollabMarquee'
 import ServicesSection from './ServicesSection'
 import ShowcaseSection from './ShowcaseSection'
 import FooterSection from './FooterSection'
@@ -50,6 +51,7 @@ const LandingPage = () => {
 			{/* Content Sections */}
 			<main>
 				<HeroSection />
+				<CollabMarquee />
 				<ServicesSection />
 				<ShowcaseSection />
 				<FooterSection />

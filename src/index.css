@@ -239,6 +239,7 @@ body {
   background-clip: text;
 }
 
+
 /* Button gradient for dark theme */
 @layer utilities {
   .btn-gradient-dark {
