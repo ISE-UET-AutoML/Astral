@@ -5,13 +5,7 @@ import { initDraft } from 'src/api/workspace'
 import { getProjectById } from 'src/api/project'
 import { getLatestModelVersionByModelId } from 'src/api/model_version'
 import { useGenApps } from 'src/hooks/useGenApps'
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from 'src/components/ui/card'
+import { Card, CardContent } from 'src/components/ui/card'
 import { Button } from 'src/components/ui/button'
 import { Select } from 'src/components/ui/select'
 import Modal from 'src/components/Modal'
@@ -235,19 +229,9 @@ export default function ProjectGenApp() {
 					</div>
 				</div>
 
-				{/* Gen App: chọn deploy_id rồi bấm Gen App */}
+				{/* Gen App: bên trái tiêu đề + mô tả, bên phải nút Gen App trên / Model selection dưới */}
 				<Card className="rounded-2xl shadow-2xl mb-6" style={{ background: 'var(--card-gradient)', border: '1px solid var(--border)' }}>
-					<CardHeader>
-						<CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
-							<span className="w-2 h-2 rounded-full bg-gray-400 dark:bg-gray-500" />
-							Gen App
-						</CardTitle>
-						<CardDescription className="text-gray-500 dark:text-gray-400">
-							Select a model and click Gen App to create an app
-							from the model.
-						</CardDescription>
-					</CardHeader>
-					<CardContent>
+					<CardContent className="pt-6 pb-6">
 						{deploys.length === 0 ? (
 							<div className="flex flex-col gap-4">
 								<p className="text-gray-600 dark:text-gray-300">
@@ -265,9 +249,20 @@ export default function ProjectGenApp() {
 								</Button>
 							</div>
 						) : (
-							<div className="flex flex-col gap-4">
-								<div>
-									<label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+							<div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
+								{/* Trái: Gen App + mô tả */}
+								<div className="flex-1 min-w-0">
+									<h3 className="flex items-center gap-2 text-xl font-semibold text-gray-900 dark:text-white mb-1">
+										<span className="w-2 h-2 rounded-full bg-gray-400 dark:bg-gray-500" />
+										Gen App
+									</h3>
+									<p className="text-gray-500 dark:text-gray-400 text-sm">
+										Select a model and click Gen App to create an app from the model.
+									</p>
+								</div>
+								{/* Phải (cùng hàng thẳng): Model select + nút Gen App */}
+								<div className="flex flex-row items-center gap-3 shrink-0 flex-wrap sm:flex-nowrap">
+									<label className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
 										Model
 									</label>
 									<Select
@@ -282,7 +277,7 @@ export default function ProjectGenApp() {
 												setAppName(found.name ?? '')
 											}
 										}}
-										className="bg-gray-50 dark:bg-[#1e1e1e] border-gray-200 dark:border-[#333] text-gray-900 dark:text-white"
+										className="h-10 min-w-[200px] sm:min-w-[220px] bg-gray-50 dark:bg-[#1e1e1e] border-gray-200 dark:border-[#333] text-gray-900 dark:text-white"
 									>
 										<option value="" disabled>
 											Select a model...
@@ -298,12 +293,10 @@ export default function ProjectGenApp() {
 											</option>
 										))}
 									</Select>
-								</div>
-								<div>
 									<Button
 										onClick={() => setIsFormOpen(true)}
 										disabled={!selectedModelId}
-										className="w-full bg-gray-600 hover:bg-gray-500 text-white disabled:opacity-50"
+										className="h-10 px-6 shrink-0 bg-gray-600 hover:bg-gray-500 text-white disabled:opacity-50"
 									>
 										Gen App
 									</Button>
