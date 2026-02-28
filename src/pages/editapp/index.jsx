@@ -89,6 +89,22 @@ const EditAppPage = () => {
 		}
 	}, [appId, currentFile, code])
 
+	// Deploy a specific version (revert + deploy) – used from History tab
+	const [isDeployingVersion, setIsDeployingVersion] = useState(false)
+	const handleDeployVersion = useCallback(async (versionNumber) => {
+		if (!appId || isDeployingVersion) return
+		setIsDeployingVersion(true)
+		try {
+			await workspaceApi.deployVersion(appId, versionNumber)
+			message.success(`Deploying version ${versionNumber}...`)
+		} catch (error) {
+			console.error('Deploy version failed:', error)
+			message.error(error?.response?.data?.detail || 'Deploy failed!')
+		} finally {
+			setIsDeployingVersion(false)
+		}
+	}, [appId, isDeployingVersion])
+
 	// Deploy: create NEW version (latest + 1) from draft and deploy via draft/deploy
 	const [isDeploying, setIsDeploying] = useState(false)
 	const handleDeploy = useCallback(async () => {
@@ -187,6 +203,7 @@ const EditAppPage = () => {
 					isStreaming={isStreaming}
 					streamingContent={streamingContent}
 					liveMessages={liveMessages}
+					onDeployVersion={handleDeployVersion}
 				/>
 			}
 			treeSlot={<TreePanel tree={tree} onOpen={loadFile} />}

@@ -146,6 +146,14 @@ export const workspaceApi = {
 		return res.data
 	},
 
+	/** List versions + current_version (deployed). Use when displaying version selector. */
+	async getVersionsSummary(appId) {
+		const res = await axiosClient.get(
+			`/api/service/adaptive_model_to_app/apps/${appId}/versions/summary`
+		)
+		return res.data
+	},
+
 	/** Deploy a specific version via versions/{version_number}/deploy */
 	async deployVersion(appId, versionNumber) {
 		const res = await axiosClient.post(
