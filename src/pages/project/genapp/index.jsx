@@ -7,7 +7,7 @@ import { getLatestModelVersionByModelId } from 'src/api/model_version'
 import { useGenApps } from 'src/hooks/useGenApps'
 import { Card, CardContent } from 'src/components/ui/card'
 import { Button } from 'src/components/ui/button'
-import { Select } from 'src/components/ui/select'
+import { CustomSelect, Option } from 'src/components/ui/custom-select'
 import Modal from 'src/components/Modal'
 import { message } from 'antd'
 import { PATHS } from 'src/constants/paths'
@@ -265,34 +265,27 @@ export default function ProjectGenApp() {
 									<label className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
 										Model
 									</label>
-									<Select
-										value={selectedModelId ?? ''}
-										onChange={(e) => {
-											const val = e.target.value || null
-											setSelectedModelId(val)
+									<CustomSelect
+										value={selectedModelId}
+										onChange={(val) => {
+											const id = val ?? null
+											setSelectedModelId(id)
 											const found = deploys.find(
-												(d) => d.model_id === val
+												(d) => d.model_id === id
 											)
 											if (found) {
 												setAppName(found.name ?? '')
 											}
 										}}
-										className="h-10 min-w-[200px] sm:min-w-[220px] bg-gray-50 dark:bg-[#1e1e1e] border-gray-200 dark:border-[#333] text-gray-900 dark:text-white"
+										placeholder="Select a model..."
+										className="theme-dropdown h-10 min-w-[200px] sm:min-w-[220px]"
 									>
-										<option value="" disabled>
-											Select a model...
-										</option>
 										{deploys.map((d) => (
-											<option
-												key={d.model_id}
-												value={d.model_id}
-											>
-												{d.name ??
-													`Model #${d.model_id}`}{' '}
-												(ID: {d.model_id})
-											</option>
+											<Option key={d.model_id} value={d.model_id}>
+												{d.name ?? `Model #${d.model_id}`} (ID: {d.model_id})
+											</Option>
 										))}
-									</Select>
+									</CustomSelect>
 									<Button
 										onClick={() => setIsFormOpen(true)}
 										disabled={!selectedModelId}
@@ -370,30 +363,27 @@ export default function ProjectGenApp() {
 						<label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
 							Model
 						</label>
-						<Select
-							value={selectedModelId ?? ''}
-							onChange={(e) => {
-								const val = e.target.value || null
-								setSelectedModelId(val)
+						<CustomSelect
+							value={selectedModelId}
+							onChange={(val) => {
+								const id = val ?? null
+								setSelectedModelId(id)
 								const found = deploys.find(
-									(d) => d.model_id === val
+									(d) => d.model_id === id
 								)
 								if (found) {
 									setAppName(found.name ?? '')
 								}
 							}}
-							className="bg-gray-50 dark:bg-[#1e1e1e] border-gray-200 dark:border-[#333] text-gray-900 dark:text-white"
+							placeholder="Select a model..."
+							className="theme-dropdown w-full"
 						>
-							<option value="" disabled>
-								Select a model...
-							</option>
 							{deploys.map((d) => (
-								<option key={d.model_id} value={d.model_id}>
-									{d.name ?? `Model #${d.model_id}`} (ID:{' '}
-									{d.model_id})
-								</option>
+								<Option key={d.model_id} value={d.model_id}>
+									{d.name ?? `Model #${d.model_id}`} (ID: {d.model_id})
+								</Option>
 							))}
-						</Select>
+						</CustomSelect>
 					</div>
 
 					<div>
