@@ -30,15 +30,16 @@ const Modal = ({
 			className="fixed inset-0 z-50 flex items-center justify-center p-4"
 			onClick={handleBackdropClick}
 		>
-			{/* Backdrop with blur */}
-			<div className="fixed inset-0 bg-black/50 backdrop-blur-sm" />
+			{/* Backdrop nhẹ - chỉ tạo độ tách biệt nhẹ nhàng */}
+			<div className="fixed inset-0 bg-black/15" />
 
 			{/* Modal content */}
 			<div
-				className={`relative z-50 w-full ${maxWidth} rounded-2xl shadow-2xl ${className}`}
+				className={`relative z-50 w-full ${maxWidth} rounded-2xl ${className}`}
 				style={{
 					background: 'var(--modal-bg)',
 					border: '1px solid var(--modal-border)',
+					boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
 				}}
 				{...props}
 			>
