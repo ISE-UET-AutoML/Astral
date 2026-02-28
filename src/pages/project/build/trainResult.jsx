@@ -280,6 +280,12 @@ const TrainResult = () => {
                     color: var(--secondary-text) !important;
                     font-family: 'Poppins', sans-serif !important;
                 }
+                .theme-table .ant-table-placeholder,
+                .theme-table .ant-table-tbody > tr.ant-table-placeholder > td,
+                .theme-table .ant-empty {
+                    background: transparent !important;
+                    color: var(--secondary-text) !important;
+                }
             `}</style>
 			<div
 				className="min-h-screen relative"
@@ -496,7 +502,7 @@ const TrainResult = () => {
 								}
 								className="text-xl"
 								style={{
-									color: '#e2e8f0',
+									color: 'var(--text)',
 									fontFamily: 'Poppins, sans-serif',
 								}}
 							>
@@ -516,7 +522,7 @@ const TrainResult = () => {
 										title={
 											<span
 												style={{
-													color: '#e2e8f0',
+													color: 'var(--text)',
 													fontFamily:
 														'Poppins, sans-serif',
 												}}
@@ -526,8 +532,7 @@ const TrainResult = () => {
 										}
 										className="border-0 backdrop-blur-sm"
 										style={{
-											background:
-												'linear-gradient(135deg, rgba(51, 65, 85, 0.3) 0%, rgba(15, 23, 42, 0.3) 100%)',
+											background: 'rgba(38, 38, 40, 0.5)',
 											backdropFilter: 'blur(10px)',
 											border: '1px solid var(--border)',
 											borderRadius: '12px',
@@ -572,7 +577,7 @@ const TrainResult = () => {
 										title={
 											<span
 												style={{
-													color: '#e2e8f0',
+													color: 'var(--text)',
 													fontFamily:
 														'Poppins, sans-serif',
 												}}
@@ -582,8 +587,7 @@ const TrainResult = () => {
 										}
 										className="border-0 backdrop-blur-sm"
 										style={{
-											background:
-												'linear-gradient(135deg, rgba(51, 65, 85, 0.3) 0%, rgba(15, 23, 42, 0.3) 100%)',
+											background: 'rgba(38, 38, 40, 0.5)',
 											backdropFilter: 'blur(10px)',
 											border: '1px solid var(--border)',
 											borderRadius: '12px',
