@@ -360,7 +360,10 @@ export default function ProjectGenApp() {
 			>
 				<div className="space-y-4">
 					<div>
-						<label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+						<label
+							className="block text-sm font-medium mb-1"
+							style={{ color: 'var(--form-label-color)' }}
+						>
 							Model
 						</label>
 						<CustomSelect
@@ -387,7 +390,10 @@ export default function ProjectGenApp() {
 					</div>
 
 					<div>
-						<label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+						<label
+							className="block text-sm font-medium mb-1"
+							style={{ color: 'var(--form-label-color)' }}
+						>
 							App name
 						</label>
 						<input
@@ -395,12 +401,20 @@ export default function ProjectGenApp() {
 							value={appName}
 							onChange={(e) => setAppName(e.target.value)}
 							placeholder="Please enter the app name"
-							className="w-full rounded-xl border border-gray-300 dark:border-[#333] bg-white dark:bg-[#1e1e1e] px-4 py-3 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-500"
+							className="modal-form-input w-full rounded-xl border px-4 py-3 text-sm focus:outline-none"
+							style={{
+								backgroundColor: 'var(--input-bg)',
+								borderColor: 'var(--input-border)',
+								color: 'var(--input-color)',
+							}}
 						/>
 					</div>
 
 					<div>
-						<label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+						<label
+							className="block text-sm font-medium mb-1"
+							style={{ color: 'var(--form-label-color)' }}
+						>
 							Task type
 						</label>
 						<input
@@ -414,9 +428,17 @@ export default function ProjectGenApp() {
 										: 'Image Classification'
 							}
 							readOnly
-							className="w-full rounded-2xl border border-gray-300 dark:border-[#333] bg-gray-100 dark:bg-[#222] px-3 py-3 text-sm text-gray-500 dark:text-gray-400 cursor-not-allowed"
+							className="w-full rounded-xl border px-3 py-3 text-sm cursor-not-allowed"
+							style={{
+								backgroundColor: 'var(--input-disabled-bg)',
+								borderColor: 'var(--input-border)',
+								color: 'var(--input-disabled-color)',
+							}}
 						/>
-						<p className="mt-1 text-xs text-gray-400">
+						<p
+							className="mt-1 text-xs"
+							style={{ color: 'var(--secondary-text)' }}
+						>
 							Task type is automatically determined from the
 							project.
 						</p>
@@ -426,14 +448,16 @@ export default function ProjectGenApp() {
 						<Button
 							variant="outline"
 							onClick={() => setIsFormOpen(false)}
-							className="border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-200"
+							size="sm"
+							className="theme-modal-btn-outline"
 						>
 							Cancel
 						</Button>
 						<Button
 							onClick={handleConfirmGenApp}
 							disabled={genLoading}
-							className="bg-gray-600 hover:bg-gray-500 text-white disabled:opacity-50"
+							size="sm"
+							className="theme-modal-btn-primary"
 						>
 							{genLoading ? 'Processing...' : 'Confirm'}
 						</Button>
