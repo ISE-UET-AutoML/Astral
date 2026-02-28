@@ -251,66 +251,7 @@ export default function DeploySettingUpView() {
                 style={{ background: 'var(--surface)' }}
             >
                 {theme === 'dark' && (
-                    <BackgroundShapes
-                        width="1280px"
-                        height="1200px"
-                        shapes={[
-                            {
-                                id: 'trainingBlue',
-                                shape: 'circle',
-                                size: '600px',
-                                gradient: {
-                                    type: 'radial',
-                                    shape: 'ellipse',
-                                    colors: [
-                                        '#5C8DFF 0%',
-                                        '#5C8DFF 35%',
-                                        'transparent 75%',
-                                    ],
-                                },
-                                opacity: 0.35,
-                                blur: '240px',
-                                position: { top: '120px', right: '-200px' },
-                                transform: 'none',
-                            },
-                            {
-                                id: 'trainingCyan',
-                                shape: 'rounded',
-                                size: '500px',
-                                gradient: {
-                                    type: 'radial',
-                                    shape: 'circle',
-                                    colors: [
-                                        '#40FFFF 0%',
-                                        '#40FFFF 45%',
-                                        'transparent 80%',
-                                    ],
-                                },
-                                opacity: 0.25,
-                                blur: '200px',
-                                position: { top: '300px', left: '-180px' },
-                                transform: 'none',
-                            },
-                            {
-                                id: 'trainingWarm',
-                                shape: 'rounded',
-                                size: '450px',
-                                gradient: {
-                                    type: 'radial',
-                                    shape: 'circle',
-                                    colors: [
-                                        '#FFAF40 0%',
-                                        '#FFAF40 55%',
-                                        'transparent 90%',
-                                    ],
-                                },
-                                opacity: 0.2,
-                                blur: '180px',
-                                position: { bottom: '100px', right: '20%' },
-                                transform: 'none',
-                            },
-                        ]}
-                    />
+                    <BackgroundShapes width="1280px" height="1200px" grayVariant />
                 )}
                 <div className="relative z-10 p-6">
                     <animated.div

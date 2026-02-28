@@ -417,7 +417,7 @@ export default function RecentPredictionsPage() {
             </style>
             <div className="p-6 bg-gray-50 min-h-screen" style={{ background: 'var(--surface)' }}>
                  {theme === 'dark' && (
-                    <BackgroundShapes />
+                    <BackgroundShapes grayVariant />
                 )}
                 <Space direction="vertical" size="large" className="w-full relative z-10">
                     <div className="flex items-center gap-4">

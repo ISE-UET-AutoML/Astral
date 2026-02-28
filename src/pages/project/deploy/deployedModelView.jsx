@@ -464,66 +464,7 @@ export default function DeployedModelView() {
                 style={{ background: 'var(--surface)' }}
             >
                 {theme === 'dark' && (
-                    <BackgroundShapes
-                        width="1280px"
-                        height="1200px"
-                        shapes={[
-                            {
-                                id: 'resultBlue',
-                                shape: 'circle',
-                                size: '580px',
-                                gradient: {
-                                    type: 'radial',
-                                    shape: 'ellipse',
-                                    colors: [
-                                        '#5C8DFF 0%',
-                                        '#5C8DFF 38%',
-                                        'transparent 78%',
-                                    ],
-                                },
-                                opacity: 0.32,
-                                blur: '230px',
-                                position: { top: '160px', right: '-170px' },
-                                transform: 'none',
-                            },
-                            {
-                                id: 'resultCyan',
-                                shape: 'rounded',
-                                size: '500px',
-                                gradient: {
-                                    type: 'radial',
-                                    shape: 'circle',
-                                    colors: [
-                                        '#40FFFF 0%',
-                                        '#40FFFF 48%',
-                                        'transparent 82%',
-                                    ],
-                                },
-                                opacity: 0.28,
-                                blur: '200px',
-                                position: { top: '380px', left: '-180px' },
-                                transform: 'none',
-                            },
-                            {
-                                id: 'resultWarm',
-                                shape: 'rounded',
-                                size: '460px',
-                                gradient: {
-                                    type: 'radial',
-                                    shape: 'circle',
-                                    colors: [
-                                        '#FFAF40 0%',
-                                        '#FFAF40 58%',
-                                        'transparent 88%',
-                                    ],
-                                },
-                                opacity: 0.22,
-                                blur: '180px',
-                                position: { bottom: '120px', right: '22%' },
-                                transform: 'none',
-                            },
-                        ]}
-                    />
+                    <BackgroundShapes width="1280px" height="1200px" grayVariant />
                 )}
                 <Space direction="vertical" size="large" className="w-full">
                     <Row gutter={[16, 16]}>

@@ -204,66 +204,7 @@ export default function Datasets() {
 			>
 				<Content className="relative pt-20 px-6 pb-20">
 					{theme === 'dark' && (
-						<BackgroundShapes
-							width="1280px"
-							height="1100px"
-							shapes={[
-								{
-									id: 'datasetsBlue',
-									shape: 'circle',
-									size: '520px',
-									gradient: {
-										type: 'radial',
-										shape: 'ellipse',
-										colors: [
-											'#5C8DFF 0%',
-											'#5C8DFF 35%',
-											'transparent 75%',
-										],
-									},
-									opacity: 0.45,
-									blur: '220px',
-									position: { top: '240px', right: '-140px' },
-									transform: 'none',
-								},
-								{
-									id: 'datasetsCyan',
-									shape: 'rounded',
-									size: '420px',
-									gradient: {
-										type: 'radial',
-										shape: 'circle',
-										colors: [
-											'#40FFFF 0%',
-											'#40FFFF 55%',
-											'transparent 40%',
-										],
-									},
-									opacity: 0.3,
-									blur: '180px',
-									position: { top: '60px', left: '-120px' },
-									transform: 'none',
-								},
-								{
-									id: 'datasetsWarm',
-									shape: 'rounded',
-									size: '520px',
-									gradient: {
-										type: 'radial',
-										shape: 'circle',
-										colors: [
-											'#FFAF40 0%',
-											'#FFAF40 50%',
-											'transparent 85%',
-										],
-									},
-									opacity: 0.25,
-									blur: '220px',
-									position: { top: '820px', left: '50%' },
-									transform: 'translate(-50%, -50%)',
-								},
-							]}
-						/>
+						<BackgroundShapes width="1280px" height="1100px" grayVariant />
 					)}
 
 					<ContentContainer className="relative z-10">

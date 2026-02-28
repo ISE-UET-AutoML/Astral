@@ -110,7 +110,7 @@ const ProjectDeploy = () => {
 
     return (
         <div className="relative min-h-screen" style={{ background: 'var(--surface)' }}>
-                {theme === 'dark' && <BackgroundShapes />}
+                {theme === 'dark' && <BackgroundShapes grayVariant />}
                 <div className="relative z-10 p-6">
                 {/* Header Section */}
                 <div className="mb-8">

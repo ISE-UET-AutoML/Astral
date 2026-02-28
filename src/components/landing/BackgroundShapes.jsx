@@ -53,9 +53,17 @@ const GlowingShape = ({
 	return <div style={shapeStyles} />
 }
 
+// Gray shapes for dark mode — cân bằng giữa đậm và nhạt
+const GRAY_SHAPES = [
+	{ id: 'gray1', shape: 'circle', size: '520px', gradient: { type: 'radial', shape: 'ellipse', colors: ['#353537 0%', '#28282a 35%', 'transparent 75%'] }, opacity: 0.3, blur: '220px', position: { top: '240px', right: '-140px' }, transform: 'none' },
+	{ id: 'gray2', shape: 'rounded', size: '420px', gradient: { type: 'radial', shape: 'circle', colors: ['#3a3a3c 0%', '#2d2d2f 55%', 'transparent 40%'] }, opacity: 0.22, blur: '180px', position: { top: '60px', left: '-120px' }, transform: 'none' },
+	{ id: 'gray3', shape: 'rounded', size: '520px', gradient: { type: 'radial', shape: 'circle', colors: ['#323234 0%', '#252527 50%', 'transparent 85%'] }, opacity: 0.18, blur: '220px', position: { top: '820px', left: '50%' }, transform: 'translate(-50%, -50%)' },
+]
+
 // Main reusable component with configurable shapes and canvas
 const BackgroundShapes = ({
 	shapes: shapesProp,
+	grayVariant = false,
 	width = '1280px',
 	height = '800px',
 	center = true,
@@ -129,7 +137,7 @@ const BackgroundShapes = ({
 		}
 	]
 
-	const shapes = Array.isArray(shapesProp) ? shapesProp : defaultShapes
+	const shapes = Array.isArray(shapesProp) ? shapesProp : (grayVariant ? GRAY_SHAPES : defaultShapes)
 
 	return (
 		<div 

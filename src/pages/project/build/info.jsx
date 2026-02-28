@@ -137,66 +137,7 @@ const ProjectInfo = () => {
 			>
 				<div className="relative pt-16 px-4 sm:px-6 lg:px-8 pb-20">
 					{theme === 'dark' && (
-						<BackgroundShapes
-							width="1280px"
-							height="1200px"
-							shapes={[
-								{
-									id: 'uploadBlue',
-									shape: 'circle',
-									size: '480px',
-									gradient: {
-										type: 'radial',
-										shape: 'ellipse',
-										colors: [
-											'#5C8DFF 0%',
-											'#5C8DFF 35%',
-											'transparent 75%',
-										],
-									},
-									opacity: 0.4,
-									blur: '200px',
-									position: { top: '200px', right: '-120px' },
-									transform: 'none',
-								},
-								{
-									id: 'uploadCyan',
-									shape: 'rounded',
-									size: '380px',
-									gradient: {
-										type: 'radial',
-										shape: 'circle',
-										colors: [
-											'#40FFFF 0%',
-											'#40FFFF 55%',
-											'transparent 85%',
-										],
-									},
-									opacity: 0.25,
-									blur: '160px',
-									position: { top: '50px', left: '-100px' },
-									transform: 'none',
-								},
-								{
-									id: 'uploadWarm',
-									shape: 'rounded',
-									size: '450px',
-									gradient: {
-										type: 'radial',
-										shape: 'circle',
-										colors: [
-											'#FFAF40 0%',
-											'#FFAF40 50%',
-											'transparent 85%',
-										],
-									},
-									opacity: 0.2,
-									blur: '180px',
-									position: { top: '700px', left: '50%' },
-									transform: 'translate(-50%, -50%)',
-								},
-							]}
-						/>
+						<BackgroundShapes width="1280px" height="1200px" grayVariant />
 					)}
 
 					<div className="relative z-10 max-w-7xl mx-auto">

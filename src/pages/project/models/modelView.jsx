@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { useTheme } from 'src/theme/ThemeProvider'
 import {
     Card,
     Tag,
@@ -83,6 +84,7 @@ const columns = [
 
 const ModelView = () => {
     const navigate = useNavigate()
+    const { theme } = useTheme()
     const { modelId, id } = useParams()
     const [model, setModel] = useState({})
     const [metrics, setMetrics] = useState([])
@@ -136,7 +138,7 @@ const ModelView = () => {
         <>
             <style>{`
                 body, html {
-                    background-color: #01000A !important;
+                    background-color: var(--surface) !important;
                     font-family: 'Poppins', sans-serif !important;
                 }
                 .dark-table .ant-table {
@@ -183,43 +185,10 @@ const ModelView = () => {
                     padding: 12px 16px !important;
                 }
             `}</style>
-            <div className="min-h-screen bg-[#01000A] relative">
-                <BackgroundShapes
-                    width="1280px"
-                    height="1200px"
-                    shapes={[
-                        {
-                            id: 'modelBlue',
-                            shape: 'circle',
-                            size: '550px',
-                            gradient: { type: 'radial', shape: 'ellipse', colors: ['#5C8DFF 0%', '#5C8DFF 40%', 'transparent 80%'] },
-                            opacity: 0.3,
-                            blur: '220px',
-                            position: { top: '180px', right: '-150px' },
-                            transform: 'none'
-                        },
-                        {
-                            id: 'modelCyan',
-                            shape: 'rounded',
-                            size: '480px',
-                            gradient: { type: 'radial', shape: 'circle', colors: ['#40FFFF 0%', '#40FFFF 50%', 'transparent 85%'] },
-                            opacity: 0.25,
-                            blur: '190px',
-                            position: { top: '350px', left: '-160px' },
-                            transform: 'none'
-                        },
-                        {
-                            id: 'modelWarm',
-                            shape: 'rounded',
-                            size: '420px',
-                            gradient: { type: 'radial', shape: 'circle', colors: ['#FFAF40 0%', '#FFAF40 60%', 'transparent 90%'] },
-                            opacity: 0.2,
-                            blur: '170px',
-                            position: { bottom: '150px', right: '25%' },
-                            transform: 'none'
-                        }
-                    ]}
-                />
+            <div className="min-h-screen relative" style={{ background: 'var(--surface)' }}>
+                {theme === 'dark' && (
+                    <BackgroundShapes width="1280px" height="1200px" grayVariant />
+                )}
                 <div className="relative z-10 p-6">
                     <Space direction="vertical" size="large" className="w-full">
                         {/* Key Metrics Cards */}
