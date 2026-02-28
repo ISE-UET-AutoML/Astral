@@ -214,12 +214,12 @@ export default function ProjectGenApp() {
 	console.log("Gen app:", apps);
 
 	return (
-		<div className="relative min-h-screen bg-gray-50 dark:bg-[#111111]">
+		<div className="relative min-h-screen bg-gray-50" style={{ background: 'var(--surface)' }}>
 			<div className="relative z-10 p-6">
 				{/* Header */}
 				<div className="mb-8">
 					<div className="flex items-center gap-3 mb-4">
-						<div className="p-2 rounded-xl bg-gray-200 dark:bg-[#2a2a2a]">
+						<div className="p-2 rounded-xl bg-gray-200 dark:bg-[#2a2a2c]">
 							<AppIcon className="h-6 w-6 text-gray-600 dark:text-gray-300" />
 						</div>
 						<div>
@@ -236,7 +236,7 @@ export default function ProjectGenApp() {
 				</div>
 
 				{/* Gen App: chọn deploy_id rồi bấm Gen App */}
-				<Card className="rounded-2xl shadow-2xl mb-6 bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#2a2a2a]">
+				<Card className="rounded-2xl shadow-2xl mb-6" style={{ background: 'var(--card-gradient)', border: '1px solid var(--border)' }}>
 					<CardHeader>
 						<CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
 							<span className="w-2 h-2 rounded-full bg-gray-400 dark:bg-gray-500" />
@@ -323,7 +323,7 @@ export default function ProjectGenApp() {
 					</Card>
 				)}
 				{loading ? (
-					<Card className="rounded-2xl shadow-2xl bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#2a2a2a]">
+					<Card className="rounded-2xl shadow-2xl" style={{ background: 'var(--card-gradient)', border: '1px solid var(--border)' }}>
 						<CardContent className="flex flex-col items-center justify-center py-16 text-gray-500 dark:text-gray-400">
 							Loading...
 						</CardContent>
@@ -349,9 +349,9 @@ export default function ProjectGenApp() {
 						))}
 					</div>
 				) : (
-					<Card className="rounded-2xl shadow-2xl bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#2a2a2a]">
+					<Card className="rounded-2xl shadow-2xl" style={{ background: 'var(--card-gradient)', border: '1px solid var(--border)' }}>
 						<CardContent className="flex flex-col items-center justify-center py-16">
-							<div className="p-4 rounded-full mb-4 bg-gray-100 dark:bg-[#2a2a2a]">
+							<div className="p-4 rounded-full mb-4 bg-gray-100 dark:bg-[#2a2a2c]">
 								<EmptyIcon className="h-12 w-12 text-gray-400 dark:text-gray-500" />
 							</div>
 							<h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">

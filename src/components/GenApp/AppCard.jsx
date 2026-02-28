@@ -142,11 +142,11 @@ function AppCard({ app, onViewDetails }) {
 	}
 
 	return (
-		<Card className="rounded-2xl shadow-lg bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:shadow-xl transition-all duration-200 hover:-translate-y-1">
+		<Card className="rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 hover:-translate-y-1" style={{ background: 'var(--card-gradient)', border: '1px solid var(--border)' }}>
 			<CardHeader className="pb-3">
 				<div className="flex items-start justify-between gap-2">
 					<div className="flex items-center gap-2 flex-1 min-w-0">
-						<div className="p-2 rounded-lg bg-gradient-to-br from-blue-100 to-blue-200 dark:from-slate-700 dark:to-slate-600 text-blue-600 dark:text-blue-300 flex-shrink-0">
+						<div className="p-2 rounded-lg bg-gradient-to-br from-blue-100 to-blue-200 dark:from-[#2a2a2c] dark:to-[#252527] text-blue-600 dark:text-gray-300 flex-shrink-0">
 							<AppIcon taskType={app?.task_type} />
 						</div>
 						<CardTitle
@@ -197,7 +197,7 @@ function AppCard({ app, onViewDetails }) {
 
 				{/* Instance Info */}
 				{hasInstance && (
-					<div className="pt-2 mt-2 border-t border-gray-200 dark:border-slate-700">
+					<div className="pt-2 mt-2 border-t" style={{ borderColor: 'var(--border)' }}>
 						<div className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
 							<div className="flex justify-between">
 								<span>Instance:</span>
@@ -262,7 +262,8 @@ function AppCard({ app, onViewDetails }) {
 							size="sm"
 							variant="outline"
 							onClick={() => onViewDetails(app)}
-							className="flex-1 border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-200 text-xs"
+							className="flex-1 text-gray-700 dark:text-gray-200 text-xs"
+							style={{ borderColor: 'var(--border)' }}
 						>
 							Details
 						</Button>
