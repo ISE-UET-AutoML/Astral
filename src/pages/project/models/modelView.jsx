@@ -60,7 +60,7 @@ const columns = [
         key: 'metric',
         render: (text, record) => (
             <Tooltip title={record.description}>
-                <span style={{ color: '#e2e8f0', fontFamily: 'Poppins, sans-serif' }}>{text}</span>{' '}
+                <span style={{ color: 'var(--text)', fontFamily: 'Poppins, sans-serif' }}>{text}</span>{' '}
                 <InfoCircleOutlined
                     style={{ color: '#60a5fa', marginLeft: 5 }}
                 />
@@ -72,7 +72,7 @@ const columns = [
         dataIndex: 'value',
         key: 'value',
         render: (text) => (
-            <span style={{ color: '#e2e8f0', fontFamily: 'Poppins, sans-serif' }}>{text}</span>
+            <span style={{ color: 'var(--text)', fontFamily: 'Poppins, sans-serif' }}>{text}</span>
         ),
     },
     {
@@ -143,41 +143,47 @@ const ModelView = () => {
                 }
                 .dark-table .ant-table {
                     background: transparent !important;
-                    color: #e2e8f0 !important;
+                    color: var(--text) !important;
                     font-family: 'Poppins', sans-serif !important;
                 }
                 .dark-table .ant-table-thead > tr > th {
-                    background: rgba(51, 65, 85, 0.4) !important;
-                    color: #e2e8f0 !important;
-                    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+                    background: var(--table-header-bg) !important;
+                    color: var(--table-header-color) !important;
+                    border-bottom: 1px solid var(--table-header-border) !important;
                     font-family: 'Poppins', sans-serif !important;
                     font-weight: 600 !important;
                 }
                 .dark-table .ant-table-tbody > tr > td {
-                    background: rgba(15, 23, 42, 0.3) !important;
-                    color: #e2e8f0 !important;
-                    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+                    background: var(--table-cell-bg) !important;
+                    color: var(--table-cell-color) !important;
+                    border-bottom: 1px solid var(--table-cell-border) !important;
                     font-family: 'Poppins', sans-serif !important;
                 }
                 .dark-table .ant-table-tbody > tr:hover > td {
-                    background: rgba(51, 65, 85, 0.5) !important;
+                    background: var(--table-row-hover) !important;
                 }
                 .dark-table .ant-empty-description {
-                    color: #94a3b8 !important;
+                    color: var(--secondary-text) !important;
                     font-family: 'Poppins', sans-serif !important;
+                }
+                .dark-table .ant-table-placeholder,
+                .dark-table .ant-table-tbody > tr.ant-table-placeholder > td,
+                .dark-table .ant-empty {
+                    background: transparent !important;
+                    color: var(--secondary-text) !important;
                 }
                 .ant-collapse-ghost > .ant-collapse-item {
                     border: none !important;
                 }
                 .ant-collapse-ghost > .ant-collapse-item > .ant-collapse-header {
-                    background: rgba(51, 65, 85, 0.3) !important;
-                    color: #e2e8f0 !important;
+                    background: rgba(38, 38, 40, 0.5) !important;
+                    color: var(--text) !important;
                     border-radius: 8px !important;
-                    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                    border: 1px solid var(--border) !important;
                 }
                 .ant-collapse-ghost > .ant-collapse-item > .ant-collapse-content {
-                    background: rgba(15, 23, 42, 0.4) !important;
-                    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                    background: rgba(38, 38, 40, 0.5) !important;
+                    border: 1px solid var(--border) !important;
                     border-top: none !important;
                     border-radius: 0 0 8px 8px !important;
                 }
@@ -197,15 +203,15 @@ const ModelView = () => {
                                 <Card
                                     className="border-0 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300"
                                     style={{
-                                        background: 'linear-gradient(135deg, rgba(51, 65, 85, 0.4) 0%, rgba(15, 23, 42, 0.4) 100%)',
+                                        background: 'var(--card-gradient)',
                                         backdropFilter: 'blur(10px)',
-                                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                                        border: '1px solid var(--border)',
                                         borderRadius: '12px',
                                         fontFamily: 'Poppins, sans-serif'
                                     }}
                                 >
                                     <Statistic
-                                        title={<span style={{ color: '#94a3b8', fontFamily: 'Poppins, sans-serif' }}>{`Model ${metrics[0] ? toNormalCase(metrics[0]?.metric) : "Null"} Score`}</span>}
+                                        title={<span style={{ color: 'var(--secondary-text)', fontFamily: 'Poppins, sans-serif' }}>{`Model ${metrics[0] ? toNormalCase(metrics[0]?.metric) : "Null"} Score`}</span>}
                                         value={metrics[0]?.value * 100 || 0}
                                         precision={2}
                                         prefix={<TrophyOutlined style={{ color: '#10b981' }} />}
@@ -224,15 +230,15 @@ const ModelView = () => {
                                 <Card
                                     className="border-0 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300"
                                     style={{
-                                        background: 'linear-gradient(135deg, rgba(51, 65, 85, 0.4) 0%, rgba(15, 23, 42, 0.4) 100%)',
+                                        background: 'var(--card-gradient)',
                                         backdropFilter: 'blur(10px)',
-                                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                                        border: '1px solid var(--border)',
                                         borderRadius: '12px',
                                         fontFamily: 'Poppins, sans-serif'
                                     }}
                                 >
                                     <Statistic
-                                        title={<span style={{ color: '#94a3b8', fontFamily: 'Poppins, sans-serif' }}>Model Size</span>}
+                                        title={<span style={{ color: 'var(--secondary-text)', fontFamily: 'Poppins, sans-serif' }}>Model Size</span>}
                                         value={model.metadata?.model_size || 0}
                                         valueStyle={{
                                             background: 'linear-gradient(135deg, #f59e0b, #fbbf24)',
@@ -251,15 +257,15 @@ const ModelView = () => {
                                 <Card
                                     className="border-0 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300"
                                     style={{
-                                        background: 'linear-gradient(135deg, rgba(51, 65, 85, 0.4) 0%, rgba(15, 23, 42, 0.4) 100%)',
+                                        background: 'var(--card-gradient)',
                                         backdropFilter: 'blur(10px)',
-                                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                                        border: '1px solid var(--border)',
                                         borderRadius: '12px',
                                         fontFamily: 'Poppins, sans-serif'
                                     }}
                                 >
                                     <Statistic
-                                        title={<span style={{ color: '#94a3b8', fontFamily: 'Poppins, sans-serif' }}>Model Name</span>}
+                                        title={<span style={{ color: 'var(--secondary-text)', fontFamily: 'Poppins, sans-serif' }}>Model Name</span>}
                                         value={model.name}
                                         prefix={<ExperimentOutlined style={{ color: '#3b82f6' }} />}
                                         valueStyle={{
@@ -275,7 +281,7 @@ const ModelView = () => {
                         </Row>
 
                         <Card
-                            title={<span style={{ color: '#e2e8f0', fontFamily: 'Poppins, sans-serif' }}>Next Steps</span>}
+                            title={<span style={{ color: 'var(--text)', fontFamily: 'Poppins, sans-serif' }}>Next Steps</span>}
                             className="border-0 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300"
                             style={{
                                 background: 'linear-gradient(135deg, rgba(51, 65, 85, 0.4) 0%, rgba(15, 23, 42, 0.4) 100%)',
@@ -288,8 +294,8 @@ const ModelView = () => {
                             <Row gutter={[16, 16]}>
                                 <Col xs={24} sm={8}>
                                     <Alert
-                                        message={<span style={{ color: '#ffffff', fontFamily: 'Poppins, sans-serif', fontWeight: '600' }}>Deploy Model</span>}
-                                        description={<span style={{ color: '#e2e8f0', fontFamily: 'Poppins, sans-serif' }}>Instantly transform your trained model into a production-ready solution for real-world predictions.</span>}
+                                        message={<span style={{ color: 'var(--text)', fontFamily: 'Poppins, sans-serif', fontWeight: '600' }}>Deploy Model</span>}
+                                        description={<span style={{ color: 'var(--text)', fontFamily: 'Poppins, sans-serif' }}>Instantly transform your trained model into a production-ready solution for real-world predictions.</span>}
                                         type="success"
                                         showIcon
                                         style={{
@@ -324,8 +330,8 @@ const ModelView = () => {
                                 </Col>
                                 <Col xs={24} sm={8}>
                                     <Alert
-                                        message={<span style={{ color: '#ffffff', fontFamily: 'Poppins, sans-serif', fontWeight: '600' }}>Download Weights</span>}
-                                        description={<span style={{ color: '#e2e8f0', fontFamily: 'Poppins, sans-serif' }}>Securely export and preserve your model's learned parameters for future iterations or transfer learning.</span>}
+                                        message={<span style={{ color: 'var(--text)', fontFamily: 'Poppins, sans-serif', fontWeight: '600' }}>Download Weights</span>}
+                                        description={<span style={{ color: 'var(--text)', fontFamily: 'Poppins, sans-serif' }}>Securely export and preserve your model's learned parameters for future iterations or transfer learning.</span>}
                                         type="warning"
                                         showIcon
                                         style={{
@@ -365,8 +371,8 @@ const ModelView = () => {
                                 </Col>
                                 <Col xs={24} sm={8}>
                                     <Alert
-                                        message={<span style={{ color: '#ffffff', fontFamily: 'Poppins, sans-serif', fontWeight: '600' }}>Refine Model</span>}
-                                        description={<span style={{ color: '#e2e8f0', fontFamily: 'Poppins, sans-serif' }}>Continuously improve your model's performance by initiating a new training cycle with enhanced data or parameters.</span>}
+                                        message={<span style={{ color: 'var(--text)', fontFamily: 'Poppins, sans-serif', fontWeight: '600' }}>Refine Model</span>}
+                                        description={<span style={{ color: 'var(--text)', fontFamily: 'Poppins, sans-serif' }}>Continuously improve your model's performance by initiating a new training cycle with enhanced data or parameters.</span>}
                                         type="info"
                                         showIcon
                                         style={{
@@ -403,9 +409,9 @@ const ModelView = () => {
                         <Card
                             className="border-0 backdrop-blur-sm shadow-lg"
                             style={{
-                                background: 'linear-gradient(135deg, rgba(51, 65, 85, 0.4) 0%, rgba(15, 23, 42, 0.4) 100%)',
+                                background: 'var(--card-gradient)',
                                 backdropFilter: 'blur(10px)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                border: '1px solid var(--border)',
                                 borderRadius: '12px',
                                 fontFamily: 'Poppins, sans-serif'
                             }}
@@ -416,7 +422,7 @@ const ModelView = () => {
                                 onClick={() => setIsDetailsExpanded(!isDetailsExpanded)}
                                 className="text-xl"
                                 style={{
-                                    color: '#e2e8f0',
+                                    color: 'var(--text)',
                                     fontFamily: 'Poppins, sans-serif'
                                 }}
                             >
@@ -435,11 +441,11 @@ const ModelView = () => {
                                     <Card
                                         title={
                                             <>
-                                                <span style={{ color: '#e2e8f0', fontFamily: 'Poppins, sans-serif' }}>Metadata</span>{" "}
+                                                <span style={{ color: 'var(--text)', fontFamily: 'Poppins, sans-serif' }}>Metadata</span>{" "}
                                                 <span
                                                     style={{
                                                         fontSize: "12px",
-                                                        color: "#94a3b8",
+                                                        color: 'var(--secondary-text)',
                                                         fontStyle: "italic",
                                                         fontFamily: 'Poppins, sans-serif'
                                                     }}
@@ -450,9 +456,9 @@ const ModelView = () => {
                                         }
                                         className="border-0 backdrop-blur-sm"
                                         style={{
-                                            background: 'linear-gradient(135deg, rgba(51, 65, 85, 0.3) 0%, rgba(15, 23, 42, 0.3) 100%)',
+                                            background: 'rgba(38, 38, 40, 0.5)',
                                             backdropFilter: 'blur(10px)',
-                                            border: '1px solid rgba(255, 255, 255, 0.1)',
+                                            border: '1px solid var(--border)',
                                             borderRadius: '12px',
                                             fontFamily: 'Poppins, sans-serif'
                                         }}
@@ -491,15 +497,15 @@ const ModelView = () => {
                                                                     rowClassName={() => ''} // removes Ant Design hover class
                                                                     columns={Object.keys(value[0]).map((colKey) => ({
                                                                         title: (
-                                                                            <span style={{ color: '#fff', fontFamily: 'Poppins, sans-serif' }}>
+                                                                            <span style={{ color: 'var(--text)', fontFamily: 'Poppins, sans-serif' }}>
                                                                                 {colKey.charAt(0).toUpperCase() + colKey.slice(1)}
                                                                             </span>
                                                                         ),
                                                                         dataIndex: colKey,
                                                                         key: colKey,
                                                                         render: (text) => (
-                                                                            <span style={{ color: '#fff', fontFamily: 'Poppins, sans-serif' }}>
-                                                                                {text?.toString() || <em style={{ color: '#ccc' }}>(empty)</em>}
+                                                                            <span style={{ color: 'var(--text)', fontFamily: 'Poppins, sans-serif' }}>
+                                                                                {text?.toString() || <em style={{ color: 'var(--secondary-text)' }}>(empty)</em>}
                                                                             </span>
                                                                         ),
                                                                     }))}
@@ -509,8 +515,8 @@ const ModelView = () => {
                                                                                 <th
                                                                                     {...props}
                                                                                     style={{
-                                                                                        backgroundColor: '#111827', // dark background
-                                                                                        color: '#fff',               // white text
+                                                                                        backgroundColor: 'var(--table-header-bg)',
+                                                                                        color: 'var(--table-header-color)',
                                                                                         fontFamily: 'Poppins, sans-serif',
                                                                                     }}
                                                                                 >
@@ -522,19 +528,19 @@ const ModelView = () => {
                                                                             row: ({ children, ...restProps }) => (
                                                                                 <tr
                                                                                     {...restProps}
-                                                                                    style={{ backgroundColor: '#1f2937' }}
+                                                                                    style={{ backgroundColor: 'var(--table-cell-bg)' }}
                                                                                     onMouseEnter={(e) => {
                                                                                         const tds = e.currentTarget.children;
-                                                                                        for (let i = 0; i < tds.length; i++) tds[i].style.backgroundColor = '#374151';
+                                                                                        for (let i = 0; i < tds.length; i++) tds[i].style.backgroundColor = 'var(--table-row-hover)';
                                                                                     }}
                                                                                     onMouseLeave={(e) => {
                                                                                         const tds = e.currentTarget.children;
-                                                                                        for (let i = 0; i < tds.length; i++) tds[i].style.backgroundColor = '#1f2937';
+                                                                                        for (let i = 0; i < tds.length; i++) tds[i].style.backgroundColor = 'transparent';
                                                                                     }}
                                                                                 >
                                                                                     {React.Children.map(children, (child) =>
                                                                                         React.cloneElement(child, {
-                                                                                            style: { backgroundColor: '#1f2937', color: '#fff' },
+                                                                                            style: { backgroundColor: 'transparent', color: 'var(--table-cell-color)' },
                                                                                         })
                                                                                     )}
                                                                                 </tr>
@@ -588,7 +594,7 @@ const ModelView = () => {
                                                             }}
                                                         >
                                                             <Panel
-                                                                header={<span style={{ color: '#e2e8f0', fontFamily: 'Poppins, sans-serif' }}>View Details</span>}
+                                                                header={<span style={{ color: 'var(--text)', fontFamily: 'Poppins, sans-serif' }}>View Details</span>}
                                                                 key="1"
                                                                 style={{
                                                                     background: 'transparent',
@@ -663,8 +669,8 @@ const ModelView = () => {
                                                                                 </Space>
                                                                             ) : (
                                                                                 // Primitive values
-                                                                                <span style={{ color: '#e2e8f0', fontFamily: 'Poppins, sans-serif' }}>
-                                                                                    {subValue?.toString() || <em style={{ color: '#94a3b8' }}>(empty)</em>}
+                                                                                <span style={{ color: 'var(--text)', fontFamily: 'Poppins, sans-serif' }}>
+                                                                                    {subValue?.toString() || <em style={{ color: 'var(--secondary-text)' }}>(empty)</em>}
                                                                                 </span>
                                                                             )}
                                                                         </div>
@@ -674,8 +680,8 @@ const ModelView = () => {
                                                         </Collapse>
                                                     ) : (
                                                         // Handle primitives
-                                                        <span style={{ marginLeft: 10, color: '#e2e8f0', fontFamily: 'Poppins, sans-serif' }}>
-                                                            {value?.toString() || <em style={{ color: '#94a3b8' }}>(empty)</em>}
+                                                        <span style={{ marginLeft: 10, color: 'var(--text)', fontFamily: 'Poppins, sans-serif' }}>
+                                                            {value?.toString() || <em style={{ color: 'var(--secondary-text)' }}>(empty)</em>}
                                                         </span>
                                                     )}
                                                 </div>
@@ -687,17 +693,17 @@ const ModelView = () => {
                                     <Card
                                         title={
                                             <>
-                                                <span style={{ color: '#e2e8f0', fontFamily: 'Poppins, sans-serif' }}>Model Metrics</span>{" "}
-                                                <span style={{ fontSize: "12px", color: "#94a3b8", fontStyle: "italic", fontFamily: 'Poppins, sans-serif' }}>
+                                                <span style={{ color: 'var(--text)', fontFamily: 'Poppins, sans-serif' }}>Model Metrics</span>{" "}
+                                                <span style={{ fontSize: "12px", color: 'var(--secondary-text)', fontStyle: "italic", fontFamily: 'Poppins, sans-serif' }}>
                                                     (Detail about how well the model make predictions)
                                                 </span>
                                             </>
                                         }
                                         className="border-0 backdrop-blur-sm"
                                         style={{
-                                            background: 'linear-gradient(135deg, rgba(51, 65, 85, 0.3) 0%, rgba(15, 23, 42, 0.3) 100%)',
+                                            background: 'rgba(38, 38, 40, 0.5)',
                                             backdropFilter: 'blur(10px)',
-                                            border: '1px solid rgba(255, 255, 255, 0.1)',
+                                            border: '1px solid var(--border)',
                                             borderRadius: '12px',
                                             fontFamily: 'Poppins, sans-serif'
                                         }}
