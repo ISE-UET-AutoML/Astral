@@ -91,6 +91,10 @@
     --button-dashed-border: rgba(31, 41, 55, 0.3);
     --button-dashed-color: #6b7280;
     
+    /* Nested card (Model view, etc.) */
+    --nested-card-bg: rgba(248, 250, 252, 0.95);
+    --next-step-card-bg: rgba(243, 244, 246, 0.9);
+
     /* Table styling */
     --table-header-bg: rgba(243, 244, 246, 0.8);
     --table-header-border: rgba(31, 41, 55, 0.1);
@@ -248,6 +252,10 @@
     --button-dashed-bg: transparent;
     --button-dashed-border: rgba(255, 255, 255, 0.2);
     --button-dashed-color: #a1a1aa;
+    
+    /* Nested card (Model view, etc.) */
+    --nested-card-bg: rgba(38, 38, 40, 0.5);
+    --next-step-card-bg: rgba(38, 38, 40, 0.6);
     
     /* Table styling */
     --table-header-bg: rgba(255, 255, 255, 0.04);

@@ -176,13 +176,13 @@ const ModelView = () => {
                     border: none !important;
                 }
                 .ant-collapse-ghost > .ant-collapse-item > .ant-collapse-header {
-                    background: rgba(38, 38, 40, 0.5) !important;
+                    background: var(--nested-card-bg) !important;
                     color: var(--text) !important;
                     border-radius: 8px !important;
                     border: 1px solid var(--border) !important;
                 }
                 .ant-collapse-ghost > .ant-collapse-item > .ant-collapse-content {
-                    background: rgba(38, 38, 40, 0.5) !important;
+                    background: var(--nested-card-bg) !important;
                     border: 1px solid var(--border) !important;
                     border-top: none !important;
                     border-radius: 0 0 8px 8px !important;
@@ -284,9 +284,9 @@ const ModelView = () => {
                             title={<span style={{ color: 'var(--text)', fontFamily: 'Poppins, sans-serif' }}>Next Steps</span>}
                             className="border-0 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300"
                             style={{
-                                background: 'linear-gradient(135deg, rgba(51, 65, 85, 0.4) 0%, rgba(15, 23, 42, 0.4) 100%)',
+                                background: 'var(--card-gradient)',
                                 backdropFilter: 'blur(10px)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                border: '1px solid var(--border)',
                                 borderRadius: '12px',
                                 fontFamily: 'Poppins, sans-serif'
                             }}
@@ -295,13 +295,13 @@ const ModelView = () => {
                                 <Col xs={24} sm={8}>
                                     <Alert
                                         message={<span style={{ color: 'var(--text)', fontFamily: 'Poppins, sans-serif', fontWeight: '600' }}>Deploy Model</span>}
-                                        description={<span style={{ color: 'var(--text)', fontFamily: 'Poppins, sans-serif' }}>Instantly transform your trained model into a production-ready solution for real-world predictions.</span>}
+                                        description={<span style={{ color: 'var(--secondary-text)', fontFamily: 'Poppins, sans-serif' }}>Instantly transform your trained model into a production-ready solution for real-world predictions.</span>}
                                         type="success"
                                         showIcon
                                         style={{
                                             height: 130,
-                                            background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(52, 211, 153, 0.1))',
-                                            border: '1px solid rgba(16, 185, 129, 0.3)',
+                                            background: 'var(--next-step-card-bg)',
+                                            border: theme === 'dark' ? '1px solid rgba(16, 185, 129, 0.25)' : '1px solid rgba(16, 185, 129, 0.35)',
                                             borderRadius: '8px',
                                             fontFamily: 'Poppins, sans-serif'
                                         }}
@@ -319,7 +319,7 @@ const ModelView = () => {
                                             width: '100%',
                                             fontWeight: 'bold',
                                             marginTop: 15,
-                                            background: 'linear-gradient(135deg, #10b981, #34d399)',
+                                            background: 'linear-gradient(135deg, #059669, #10b981)',
                                             border: 'none',
                                             fontFamily: 'Poppins, sans-serif'
                                         }}
@@ -331,13 +331,13 @@ const ModelView = () => {
                                 <Col xs={24} sm={8}>
                                     <Alert
                                         message={<span style={{ color: 'var(--text)', fontFamily: 'Poppins, sans-serif', fontWeight: '600' }}>Download Weights</span>}
-                                        description={<span style={{ color: 'var(--text)', fontFamily: 'Poppins, sans-serif' }}>Securely export and preserve your model's learned parameters for future iterations or transfer learning.</span>}
+                                        description={<span style={{ color: 'var(--secondary-text)', fontFamily: 'Poppins, sans-serif' }}>Securely export and preserve your model's learned parameters for future iterations or transfer learning.</span>}
                                         type="warning"
                                         showIcon
                                         style={{
                                             height: 130,
-                                            background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(251, 191, 36, 0.1))',
-                                            border: '1px solid rgba(245, 158, 11, 0.3)',
+                                            background: theme === 'dark' ? 'rgba(38, 38, 40, 0.6)' : 'rgba(243, 244, 246, 0.9)',
+                                            border: theme === 'dark' ? '1px solid rgba(245, 158, 11, 0.25)' : '1px solid rgba(245, 158, 11, 0.35)',
                                             borderRadius: '8px',
                                             fontFamily: 'Poppins, sans-serif'
                                         }}
@@ -350,7 +350,7 @@ const ModelView = () => {
                                             width: '100%',
                                             fontWeight: 'bold',
                                             marginTop: 15,
-                                            background: 'linear-gradient(135deg, #f59e0b, #fbbf24)',
+                                            background: 'linear-gradient(135deg, #d97706, #f59e0b)',
                                             color: 'white',
                                             border: 'none',
                                             fontFamily: 'Poppins, sans-serif'
@@ -372,13 +372,13 @@ const ModelView = () => {
                                 <Col xs={24} sm={8}>
                                     <Alert
                                         message={<span style={{ color: 'var(--text)', fontFamily: 'Poppins, sans-serif', fontWeight: '600' }}>Refine Model</span>}
-                                        description={<span style={{ color: 'var(--text)', fontFamily: 'Poppins, sans-serif' }}>Continuously improve your model's performance by initiating a new training cycle with enhanced data or parameters.</span>}
+                                        description={<span style={{ color: 'var(--secondary-text)', fontFamily: 'Poppins, sans-serif' }}>Continuously improve your model's performance by initiating a new training cycle with enhanced data or parameters.</span>}
                                         type="info"
                                         showIcon
                                         style={{
                                             height: 130,
-                                            background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(96, 165, 250, 0.1))',
-                                            border: '1px solid rgba(59, 130, 246, 0.3)',
+                                            background: 'var(--next-step-card-bg)',
+                                            border: theme === 'dark' ? '1px solid rgba(59, 130, 246, 0.25)' : '1px solid rgba(59, 130, 246, 0.35)',
                                             borderRadius: '8px',
                                             fontFamily: 'Poppins, sans-serif'
                                         }}
@@ -391,7 +391,7 @@ const ModelView = () => {
                                             width: '100%',
                                             fontWeight: 'bold',
                                             marginTop: 15,
-                                            background: 'linear-gradient(135deg, #3b82f6, #60a5fa)',
+                                            background: 'linear-gradient(135deg, #2563eb, #3b82f6)',
                                             color: 'white',
                                             border: 'none',
                                             fontFamily: 'Poppins, sans-serif'
@@ -456,7 +456,7 @@ const ModelView = () => {
                                         }
                                         className="border-0 backdrop-blur-sm"
                                         style={{
-                                            background: 'rgba(38, 38, 40, 0.5)',
+                                            background: 'var(--nested-card-bg)',
                                             backdropFilter: 'blur(10px)',
                                             border: '1px solid var(--border)',
                                             borderRadius: '12px',
@@ -701,7 +701,7 @@ const ModelView = () => {
                                         }
                                         className="border-0 backdrop-blur-sm"
                                         style={{
-                                            background: 'rgba(38, 38, 40, 0.5)',
+                                            background: 'var(--nested-card-bg)',
                                             backdropFilter: 'blur(10px)',
                                             border: '1px solid var(--border)',
                                             borderRadius: '12px',
