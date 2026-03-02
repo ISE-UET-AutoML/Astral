@@ -262,8 +262,7 @@ function AppCard({ app, onViewDetails }) {
 							size="sm"
 							variant="outline"
 							onClick={() => onViewDetails(app)}
-							className="flex-1 text-gray-700 dark:text-gray-200 text-xs"
-							style={{ borderColor: 'var(--border)' }}
+							className="flex-1 app-card-details-btn text-xs"
 						>
 							Details
 						</Button>

@@ -437,6 +437,19 @@
     color: var(--placeholder-text);
 }
 
+/* AppCard Details button - rõ ràng cả default và hover */
+.app-card-details-btn {
+    background: var(--button-default-bg) !important;
+    border: 1px solid var(--button-default-border) !important;
+    color: var(--button-default-color) !important;
+}
+
+.app-card-details-btn:hover:not(:disabled) {
+    background: var(--hover-bg) !important;
+    border-color: var(--border-hover) !important;
+    color: var(--text) !important;
+}
+
 @keyframes ping {
 	30%,
 	100% {
