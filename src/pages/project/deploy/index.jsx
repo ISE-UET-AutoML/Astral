@@ -5,7 +5,6 @@ import { useParams } from 'react-router-dom'
 import { Button } from 'src/components/shared/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'src/components/shared/ui/card'
 import { CustomSelect, Option } from 'src/components/shared/ui/custom-select'
-import BackgroundShapes from 'src/components/features/landing/BackgroundShapes'
 import { useTheme } from 'src/theme/ThemeProvider'
 
 // Simple SVG icons
@@ -110,20 +109,19 @@ const ProjectDeploy = () => {
     }, [filterListDeployedModels])
 
     return (
-        <div className="relative min-h-screen" style={{ background: 'var(--surface)' }}>
-            {theme === 'dark' && <BackgroundShapes />}
+        <div className="relative min-h-screen bg-[var(--surface)]">
             <div className="relative z-10 p-6">
                 {/* Header Section */}
                 <div className="mb-8">
-                    <div className="flex items-center gap-3 mb-4">
-                        <div className="p-2 rounded-xl" style={{ background: 'var(--accent-gradient)' }}>
+                    <div className="mb-4 flex items-center gap-3">
+                        <div className="rounded-xl bg-[var(--accent-gradient)] p-2">
                             <DeploymentIcon className="h-6 w-6 text-white" />
                         </div>
                         <div>
-                            <h1 className="text-3xl font-bold" style={{ color: 'var(--text)' }}>
+                            <h1 className="text-3xl font-bold text-[var(--text)]">
                                 Deployments
                             </h1>
-                            <p className="mt-1" style={{ color: 'var(--secondary-text)' }}>
+                            <p className="mt-1 text-[var(--secondary-text)]">
                                 {deployedModels.length} Deployed Models
                             </p>
                         </div>
@@ -132,13 +130,13 @@ const ProjectDeploy = () => {
 
                 <div className="space-y-6">
                     {/* Filter Section */}
-                    <Card className="rounded-2xl shadow-2xl relative z-50" style={{ background: 'var(--card-gradient)', border: '1px solid var(--border)' }}>
+                    <Card className="relative z-50 rounded-2xl border border-[var(--border)] bg-[var(--card-gradient)] shadow-2xl">
                         <CardHeader>
-                            <CardTitle className="flex items-center gap-2" style={{ color: 'var(--text)' }}>
-                                <div className="w-2 h-2 rounded-full" style={{ background: 'var(--accent-text)' }}></div>
+                            <CardTitle className="flex items-center gap-2 text-[var(--text)]">
+                                <div className="h-2 w-2 rounded-full bg-[var(--accent-text)]"></div>
                                 Filter Deployments
                             </CardTitle>
-                            <CardDescription style={{ color: 'var(--secondary-text)' }}>
+                            <CardDescription className="text-[var(--secondary-text)]">
                                 Filter your deployed models by model ID
                             </CardDescription>
                         </CardHeader>
@@ -163,8 +161,7 @@ const ProjectDeploy = () => {
                                     <Button
                                         variant="outline"
                                         onClick={handleReset}
-                                        className="hover:opacity-90"
-                                        style={{ border: '1px solid var(--border)', color: 'var(--text)', background: 'var(--hover-bg)' }}
+                                        className="border border-[var(--border)] bg-[var(--hover-bg)] text-[var(--text)] hover:opacity-90"
                                     >
                                         Reset Filter
                                     </Button>
@@ -181,13 +178,13 @@ const ProjectDeploy = () => {
                             ))}
                         </div>
                     ) : (
-                        <Card className="rounded-2xl shadow-2xl" style={{ background: 'var(--card-gradient)', border: '1px solid var(--border)' }}>
+                        <Card className="rounded-2xl border border-[var(--border)] bg-[var(--card-gradient)] shadow-2xl">
                             <CardContent className="flex flex-col items-center justify-center py-16">
-                                <div className="p-4 rounded-full mb-4" style={{ background: 'var(--hover-bg)' }}>
-                                    <EmptyIcon className="h-12 w-12" style={{ color: 'var(--secondary-text)' }} />
+                                <div className="mb-4 rounded-full bg-[var(--hover-bg)] p-4">
+                                    <EmptyIcon className="h-12 w-12 text-[var(--secondary-text)]" />
                                 </div>
-                                <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--text)' }}>No Deployed Models</h3>
-                                <p className="text-center max-w-md" style={{ color: 'var(--secondary-text)' }}>
+                                <h3 className="mb-2 text-xl font-semibold text-[var(--text)]">No Deployed Models</h3>
+                                <p className="max-w-md text-center text-[var(--secondary-text)]">
                                     You haven't deployed any models yet. Start by training a model and then deploy it to production.
                                 </p>
                             </CardContent>

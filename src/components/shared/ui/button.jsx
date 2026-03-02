@@ -19,6 +19,9 @@ const buttonVariants = {
     gradientHover: "text-white",
     outline: "border-2 border-current text-gray-300 hover:text-white hover:border-white bg-transparent",
     ghost: "text-gray-300 hover:text-white hover:bg-white/10",
+    primary: "bg-brand-primary text-white hover:bg-brand-primary/90",
+    secondary: "bg-secondary text-secondary-foreground border border-border",
+    danger: "bg-red-600 text-white hover:bg-red-700",
   },
   size: {
     sm: "px-6 py-2 text-sm h-10",

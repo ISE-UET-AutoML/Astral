@@ -1,6 +1,5 @@
 import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from 'src/components/shared/ui/card'
-import { useTheme } from 'src/theme/ThemeProvider'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { PATHS } from 'src/constants/paths'
@@ -212,52 +211,50 @@ export default function DeployedModelCard({ deployedModel }) {
 
     return (
         <Card
-            className={`group cursor-pointer rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105`}
-            style={{ background: 'var(--card-gradient)', border: '1px solid var(--border)' }}
+            className="group cursor-pointer rounded-2xl border border-[var(--border)] bg-[var(--card-gradient)] shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-xl"
             onClick={handleCardClick}
         >
             <CardHeader className="pb-4">
                 <div className="flex justify-between items-start">
-                    <div className={`p-3 rounded-xl`} style={{ background: 'var(--hover-bg)' }}>
+                    <div className="rounded-xl bg-[var(--hover-bg)] p-3">
                         <div className={statusConfig.color}>
                             {statusConfig.icon}
                         </div>
                     </div>
-                    <div className={`px-3 py-1 rounded-full text-xs font-medium border ${statusConfig.borderColor}`} style={{ background: 'var(--hover-bg)', color: 'var(--text)' }}>
+                    <div className={`rounded-full border px-3 py-1 text-xs font-medium ${statusConfig.borderColor} bg-[var(--hover-bg)] text-[var(--text)]`}>
                         {statusConfig.badge}
                     </div>
                 </div>
             </CardHeader>
 
             <CardContent className="pt-0">
-                <CardTitle className="text-lg font-semibold mb-3 transition-colors" style={{ color: 'var(--text)' }}>
+                <CardTitle className="mb-3 text-lg font-semibold text-[var(--text)] transition-colors">
                     {name}
                 </CardTitle>
 
-                <div className="space-y-2 text-sm" style={{ color: 'var(--secondary-text)' }}>
+                <div className="space-y-2 text-sm text-[var(--secondary-text)]">
                     {create_time && (
                         <p className="flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--secondary-text)' }}></span>
+                            <span className="h-1.5 w-1.5 rounded-full bg-[var(--secondary-text)]"></span>
                             Created {dayjs(create_time).fromNow()}
                         </p>
                     )}
                     {api_base_url && (
                         <div className="flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--secondary-text)' }}></span>
+                            <span className="h-1.5 w-1.5 rounded-full bg-[var(--secondary-text)]"></span>
                             <a
                                 href={api_base_url}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 onClick={(e) => e.stopPropagation()}
-                                className="underline truncate"
-                                style={{ color: 'var(--accent-text)' }}
+                                className="truncate underline text-[var(--accent-text)]"
                             >
                                 {api_base_url}
                             </a>
                         </div>
                     )}
                     <p className="flex items-center gap-2">
-                        <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--secondary-text)' }}></span>
+                        <span className="h-1.5 w-1.5 rounded-full bg-[var(--secondary-text)]"></span>
                         Model ID: {model_id}
                     </p>
                 </div>

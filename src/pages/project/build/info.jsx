@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import BackgroundShapes from 'src/components/features/landing/BackgroundShapes'
+// BackgroundShapes removed
 import { useOutletContext } from 'react-router-dom'
 import { useTheme } from 'src/theme/ThemeProvider'
 import { getAllExperiments } from 'src/api/experiment'
@@ -82,7 +82,7 @@ const ProjectInfo = () => {
 			}}
 		>
 			<div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-			<div className="relative p-6 flex items-center space-x-4">
+			<div className="relative flex items-center space-x-4 p-6">
 				<div className="flex-shrink-0 p-3 rounded-xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm">
 					<Icon
 						className="text-2xl transition-transform duration-300 group-hover:scale-110"
@@ -90,16 +90,10 @@ const ProjectInfo = () => {
 					/>
 				</div>
 				<div className="flex-1 min-w-0">
-					<p
-						className="text-sm font-medium opacity-70 mb-1"
-						style={{ color: 'var(--secondary-text)' }}
-					>
+					<p className="mb-1 text-sm font-medium opacity-70 text-[var(--secondary-text)]">
 						{label}
 					</p>
-					<p
-						className="text-2xl font-bold tracking-tight"
-						style={{ color: 'var(--text)' }}
-					>
+					<p className="text-2xl font-bold tracking-tight text-[var(--text)]">
 						{value}
 					</p>
 				</div>
@@ -131,86 +125,16 @@ const ProjectInfo = () => {
           background-color: var(--surface) !important;
         }
       `}</style>
-			<div
-				className="min-h-screen"
-				style={{ background: 'var(--surface)' }}
-			>
+			<div className="min-h-screen bg-[var(--surface)]">
 				<div className="relative pt-16 px-4 sm:px-6 lg:px-8 pb-20">
-					{theme === 'dark' && (
-						<BackgroundShapes
-							width="1280px"
-							height="1200px"
-							shapes={[
-								{
-									id: 'uploadBlue',
-									shape: 'circle',
-									size: '480px',
-									gradient: {
-										type: 'radial',
-										shape: 'ellipse',
-										colors: [
-											'#5C8DFF 0%',
-											'#5C8DFF 35%',
-											'transparent 75%',
-										],
-									},
-									opacity: 0.4,
-									blur: '200px',
-									position: { top: '200px', right: '-120px' },
-									transform: 'none',
-								},
-								{
-									id: 'uploadCyan',
-									shape: 'rounded',
-									size: '380px',
-									gradient: {
-										type: 'radial',
-										shape: 'circle',
-										colors: [
-											'#40FFFF 0%',
-											'#40FFFF 55%',
-											'transparent 85%',
-										],
-									},
-									opacity: 0.25,
-									blur: '160px',
-									position: { top: '50px', left: '-100px' },
-									transform: 'none',
-								},
-								{
-									id: 'uploadWarm',
-									shape: 'rounded',
-									size: '450px',
-									gradient: {
-										type: 'radial',
-										shape: 'circle',
-										colors: [
-											'#FFAF40 0%',
-											'#FFAF40 50%',
-											'transparent 85%',
-										],
-									},
-									opacity: 0.2,
-									blur: '180px',
-									position: { top: '700px', left: '50%' },
-									transform: 'translate(-50%, -50%)',
-								},
-							]}
-						/>
-					)}
-
 					<div className="relative z-10 max-w-7xl mx-auto">
-						<div className="text-center mb-16">
+						<div className="mb-16 text-center">
 							<h1
-								className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-white via-white to-white/70 bg-clip-text text-transparent leading-tight"
-								style={{ color: 'var(--title-project)' }}
+								className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-[var(--title-project)]"
 							>
 								{projectInfo?.name || 'Project Info'}
 							</h1>
-							<p
-								className="text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed"
-								style={{ color: 'var(--secondary-text)' }}
-							>
+							<p className="mx-auto max-w-3xl text-lg sm:text-xl leading-relaxed text-[var(--secondary-text)]">
 								{projectInfo?.description ||
 									'Comprehensive overview of your project metrics and deployment status'}
 							</p>

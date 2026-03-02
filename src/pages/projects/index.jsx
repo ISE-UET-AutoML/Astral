@@ -11,7 +11,6 @@ import {
 } from 'src/components/features/projects'
 import AIAssistantModal from './AIAssistantModal'
 import ContentContainer from 'src/layouts/ContentContainer'
-import BackgroundShapes from 'src/components/features/landing/BackgroundShapes'
 import Pager from 'src/components/shared/data-display/Pager'
 import create_project from 'src/assets/images/create_project.png'
 
@@ -91,44 +90,6 @@ export default function Projects() {
 		<div className="min-h-screen bg-white dark:bg-[#01000A] text-gray-900 dark:text-white">
 			<div className="min-h-screen pt-12 bg-white dark:bg-[#01000A]">
 				<main className="relative pt-20 px-6 pb-20">
-					{theme === 'dark' && (
-						<BackgroundShapes
-							width="1280px"
-							height="1100px"
-							shapes={[
-								{
-									id: 'projectsBlue',
-									shape: 'circle',
-									size: '520px',
-									gradient: { type: 'radial', shape: 'ellipse', colors: ['#5C8DFF 0%', '#5C8DFF 35%', 'transparent 75%'] },
-									opacity: 0.45,
-									blur: '220px',
-									position: { top: '240px', right: '-140px' },
-									transform: 'none',
-								},
-								{
-									id: 'projectsCyan',
-									shape: 'rounded',
-									size: '420px',
-									gradient: { type: 'radial', shape: 'circle', colors: ['#40FFFF 0%', '#40FFFF 55%', 'transparent 40%'] },
-									opacity: 0.3,
-									blur: '180px',
-									position: { top: '60px', left: '-120px' },
-									transform: 'none',
-								},
-								{
-									id: 'projectsWarm',
-									shape: 'rounded',
-									size: '520px',
-									gradient: { type: 'radial', shape: 'circle', colors: ['#FFAF40 0%', '#FFAF40 50%', 'transparent 85%'] },
-									opacity: 0.25,
-									blur: '220px',
-									position: { top: '820px', left: '50%' },
-									transform: 'translate(-50%, -50%)',
-								},
-							]}
-						/>
-					)}
 					<ContentContainer className="relative z-10">
 						{/* Header */}
 						<ProjectHeader onNewProject={() => updateProjState({ showUploader: true })} />

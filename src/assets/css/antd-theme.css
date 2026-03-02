@@ -1,0 +1,75 @@
+/* AntD theme overrides – uses CSS variables for light/dark mode.
+   Import from index.css or main entry. */
+
+/* AntD Table overrides */
+.ant-table {
+	background: var(--surface) !important;
+	color: var(--text) !important;
+}
+
+.ant-table-thead > tr > th {
+	background: var(--table-header-bg) !important;
+	color: var(--table-header-color) !important;
+	border-color: var(--table-header-border) !important;
+}
+
+.ant-table-tbody > tr > td {
+	background: var(--table-cell-bg) !important;
+	color: var(--table-cell-color) !important;
+	border-color: var(--table-cell-border) !important;
+}
+
+.ant-table-tbody > tr:hover > td {
+	background: var(--table-row-hover) !important;
+}
+
+/* AntD Modal overrides */
+.ant-modal-content {
+	background: var(--modal-bg) !important;
+	border: 1px solid var(--modal-border) !important;
+}
+
+.ant-modal-header {
+	background: var(--modal-header-bg) !important;
+	border-color: var(--modal-header-border) !important;
+}
+
+.ant-modal-title {
+	color: var(--modal-title-color) !important;
+}
+
+.ant-modal-close-x {
+	color: var(--modal-close-color) !important;
+}
+
+.ant-modal-close:hover .ant-modal-close-x {
+	color: var(--modal-close-hover) !important;
+}
+
+/* AntD Button primary overrides */
+.ant-btn-primary {
+	background: var(--button-primary-bg) !important;
+	border-color: var(--button-primary-border) !important;
+	color: var(--button-primary-color) !important;
+}
+
+.ant-btn-default {
+	background: var(--button-default-bg) !important;
+	border-color: var(--button-default-border) !important;
+	color: var(--button-default-color) !important;
+}
+
+/* AntD Select overrides */
+.ant-select-selector {
+	background: var(--select-selector-bg) !important;
+	border-color: var(--select-selector-border) !important;
+	color: var(--select-selector-color) !important;
+}
+
+.ant-select-item {
+	color: var(--select-item-color) !important;
+}
+
+.ant-select-selection-placeholder {
+	color: var(--select-placeholder-color) !important;
+}

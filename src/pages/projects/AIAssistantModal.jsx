@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import clsx from 'clsx'
 import {
 	Modal,
 	Button,
@@ -36,13 +37,10 @@ const ChatMessage = ({ message, role }) => {
 				</div>
 			)}
 			<div
-				className={`max-w-[70%] pl-2 pr-2 rounded-xl relative ${isUser ? 'rounded-tr-none' : 'rounded-tl-none'
-					}`}
-				style={{
-					background: isUser ? 'var(--button-gradient)' : 'var(--card-gradient)',
-					color: isUser ? '#ffffff' : 'var(--text)',
-					border: `1px solid var(--border)`
-				}}
+				className={clsx(
+					'relative max-w-[70%] rounded-xl border border-[var(--border)] px-2 py-0 pl-2 pr-2',
+					isUser ? 'rounded-tr-none bg-[var(--button-gradient)] text-white' : 'rounded-tl-none bg-[var(--card-gradient)] text-[var(--text)]'
+				)}
 			>
 				{message.content === 'loading...' ? (
 					<div className="flex items-center justify-center p-4">
@@ -157,7 +155,7 @@ const AIAssistantModal = ({
 				</div>
 
 				{/* Input Section */}
-				<div className="mb-2" style={{ background: 'var(--surface)' }}>
+				<div className="mb-2 bg-[var(--surface)]">
 					{selectedDataset && (
 						<Tag
 							color="blue"

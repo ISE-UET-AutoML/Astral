@@ -29,7 +29,7 @@ import {
 } from 'src/components/shared/ui/table'
 import { Alert, AlertDescription, AlertTitle } from 'src/components/shared/ui/alert'
 import { Tooltip } from 'src/components/shared/ui/tooltip'
-import BackgroundShapes from 'src/components/features/landing/BackgroundShapes'
+// BackgroundShapes removed
 import { message } from 'antd'
 import { useTheme } from 'src/theme/ThemeProvider'
 import BuildPager from './BuildPager'
@@ -446,90 +446,16 @@ const UploadData = () => {
 					background-color: var(--surface) !important;
 				}
 			`}</style>
-			<div
-				className="min-h-screen"
-				style={{ background: 'var(--surface)' }}
-			>
+			<div className="min-h-screen bg-[var(--surface)]">
 				<div className="relative pt-20 px-6 pb-20">
-					{theme === 'dark' && (
-						<BackgroundShapes
-							width="1280px"
-							height="1200px"
-							shapes={[
-								{
-									id: 'uploadBlue',
-									shape: 'circle',
-									size: '480px',
-									gradient: {
-										type: 'radial',
-										shape: 'ellipse',
-										colors: [
-											'#5C8DFF 0%',
-											'#5C8DFF 35%',
-											'transparent 75%',
-										],
-									},
-									opacity: 0.4,
-									blur: '200px',
-									position: { top: '200px', right: '-120px' },
-									transform: 'none',
-								},
-								{
-									id: 'uploadCyan',
-									shape: 'rounded',
-									size: '380px',
-									gradient: {
-										type: 'radial',
-										shape: 'circle',
-										colors: [
-											'#40FFFF 0%',
-											'#40FFFF 55%',
-											'transparent 85%',
-										],
-									},
-									opacity: 0.25,
-									blur: '160px',
-									position: { top: '50px', left: '-100px' },
-									transform: 'none',
-								},
-								{
-									id: 'uploadWarm',
-									shape: 'rounded',
-									size: '450px',
-									gradient: {
-										type: 'radial',
-										shape: 'circle',
-										colors: [
-											'#FFAF40 0%',
-											'#FFAF40 50%',
-											'transparent 85%',
-										],
-									},
-									opacity: 0.2,
-									blur: '180px',
-									position: { top: '700px', left: '50%' },
-									transform: 'translate(-50%, -50%)',
-								},
-							]}
-						/>
-					)}
-
 					<div className="relative z-10">
 						{/* Header Section */}
-						<div className="flex justify-center mb-12">
+						<div className="mb-12 flex justify-center">
 							<div className="w-full max-w-4xl text-center">
-								<h1
-									className="text-5xl md:text-6xl font-bold mb-6"
-									style={{
-										color: 'var(--title-project)',
-									}}
-								>
+								<h1 className="mb-6 text-5xl font-bold md:text-6xl text-[var(--title-project)]">
 									Choose Your Label Project
 								</h1>
-								<p
-									className="text-xl max-w-2xl mx-auto"
-									style={{ color: 'var(--secondary-text)' }}
-								>
+								<p className="mx-auto max-w-2xl text-xl text-[var(--secondary-text)]">
 									Select an existing label project or create a
 									new one <br /> for your labeling task
 								</p>

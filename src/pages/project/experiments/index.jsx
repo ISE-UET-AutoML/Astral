@@ -3,7 +3,6 @@ import { useEffect, useState, useCallback } from 'react'
 import { getAllExperiments } from 'src/api/experiment'
 import { useParams } from 'react-router-dom'
 import { Card, CardContent } from 'src/components/shared/ui/card'
-import BackgroundShapes from 'src/components/features/landing/BackgroundShapes'
 import { useTheme } from 'src/theme/ThemeProvider'
 
 // Simple SVG icons
@@ -64,20 +63,19 @@ export default function ProjectExperiments() {
     }, [getListExperiments])
 
     return (
-        <div className="relative min-h-screen" style={{ background: 'var(--surface)' }}>
-            {theme === 'dark' && <BackgroundShapes />}
+        <div className="relative min-h-screen bg-[var(--surface)]">
             <div className="relative z-10 p-6">
                 {/* Header Section */}
                 <div className="mb-8">
-                    <div className="flex items-center gap-3 mb-4">
-                        <div className="p-2 rounded-xl" style={{ background: 'var(--accent-gradient)' }}>
+                    <div className="mb-4 flex items-center gap-3">
+                        <div className="rounded-xl bg-[var(--accent-gradient)] p-2">
                             <ExperimentIcon className="h-6 w-6 text-white" />
                         </div>
                         <div>
-                            <h1 className="text-3xl font-bold" style={{ color: 'var(--text)' }}>
+                            <h1 className="text-3xl font-bold text-[var(--text)]">
                                 Experiments
                             </h1>
-                            <p className="mt-1" style={{ color: 'var(--secondary-text)' }}>
+                            <p className="mt-1 text-[var(--secondary-text)]">
                                 {experiments.length} Experiments
                             </p>
                         </div>
@@ -92,13 +90,13 @@ export default function ProjectExperiments() {
                         ))}
                     </div>
                 ) : (
-                    <Card className="rounded-2xl shadow-2xl" style={{ background: 'var(--card-gradient)', border: '1px solid var(--border)' }}>
+                    <Card className="rounded-2xl border border-[var(--border)] bg-[var(--card-gradient)] shadow-2xl">
                         <CardContent className="flex flex-col items-center justify-center py-16">
-                            <div className="p-4 rounded-full mb-4" style={{ background: 'var(--hover-bg)' }}>
-                                <EmptyIcon className="h-12 w-12" style={{ color: 'var(--secondary-text)' }} />
+                            <div className="mb-4 rounded-full bg-[var(--hover-bg)] p-4">
+                                <EmptyIcon className="h-12 w-12 text-[var(--secondary-text)]" />
                             </div>
-                            <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--text)' }}>No Experiments</h3>
-                            <p className="text-center max-w-md" style={{ color: 'var(--secondary-text)' }}>
+                            <h3 className="mb-2 text-xl font-semibold text-[var(--text)]">No Experiments</h3>
+                            <p className="max-w-md text-center text-[var(--secondary-text)]">
                                 You haven't run any experiments yet. Start by training a model to create your first experiment.
                             </p>
                         </CardContent>

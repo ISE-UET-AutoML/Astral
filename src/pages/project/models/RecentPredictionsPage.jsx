@@ -3,14 +3,12 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useTheme } from 'src/theme/ThemeProvider'
 import {
     Card,
-    Space,
     Button,
     Table,
     Tooltip,
     Modal,
     Spin,
     message,
-    Typography,
 } from 'antd'
 import {
     DownloadOutlined,
@@ -28,9 +26,7 @@ import Papa from 'papaparse'
 import ImageHistoryViewer from 'src/components/features/predictions/ImageHistoryViewer'
 import TextHistoryViewer from 'src/components/features/predictions/TextHistoryViewer'
 import MultilabelHistoryViewer from 'src/components/features/predictions/MultilabelHistoryViewer'
-import BackgroundShapes from 'src/components/features/landing/BackgroundShapes'
-
-const { Title } = Typography
+// BackgroundShapes removed
 
 export default function RecentPredictionsPage() {
     const { theme } = useTheme()
@@ -347,7 +343,7 @@ export default function RecentPredictionsPage() {
                 const exactTime = format(dateObject, 'HH:mm:ss, dd/MM/yyyy');
                 return (
                     <Tooltip title={`Exact time: ${exactTime}`}>
-                        <span style={{ color: 'var(--secondary-text)', cursor: 'help' }}>
+                        <span className="cursor-help text-[var(--secondary-text)]">
                             {timeAgo}
                         </span>
                     </Tooltip>
@@ -413,11 +409,8 @@ export default function RecentPredictionsPage() {
                 }
             `}
             </style>
-            <div className="p-6 bg-gray-50 min-h-screen" style={{ background: 'var(--surface)' }}>
-                {theme === 'dark' && (
-                    <BackgroundShapes />
-                )}
-                <Space direction="vertical" size="large" className="w-full relative z-10">
+            <div className="p-6 min-h-screen bg-[var(--surface)]">
+                <div className="relative z-10 flex w-full flex-col gap-6">
                     <div className="flex items-center gap-4">
                         <Button
                             icon={<ArrowLeftOutlined />}
@@ -426,9 +419,9 @@ export default function RecentPredictionsPage() {
                         >
                             Back
                         </Button>
-                        <Title level={3} style={{ margin: 0, color: 'var(--text)' }}>
+                        <h3 className="m-0 text-lg font-semibold text-[var(--text)]">
                             Retrain Model - Recent Predictions
-                        </Title>
+                        </h3>
                     </div>
 
                     <Card
@@ -462,7 +455,7 @@ export default function RecentPredictionsPage() {
                             loading={isLoadingPredictions}
                         />
                     </Card>
-                </Space>
+                </div>
 
                 {projectInfo?.id && (
                     <Modal

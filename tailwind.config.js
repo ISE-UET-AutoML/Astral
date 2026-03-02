@@ -50,6 +50,13 @@ module.exports = {
 				ring: "hsl(var(--ring))",
 				background: "hsl(var(--background))",
 				foreground: "hsl(var(--foreground))",
+				// Brand colors - accent gradient used throughout the app
+				brand: {
+					blue: '#5C8DFF',
+					green: '#65FFA0',
+					primary: '#5C8DFF',
+					secondary: '#65FFA0',
+				},
 				primary: {
 					DEFAULT: "hsl(var(--primary))",
 					foreground: "hsl(var(--primary-foreground))",

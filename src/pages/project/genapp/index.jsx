@@ -13,7 +13,6 @@ import {
 import { Button } from 'src/components/shared/ui/button'
 import { CustomSelect, Option } from 'src/components/shared/ui/custom-select'
 import Modal from 'src/components/shared/utilities/Modal'
-import BackgroundShapes from 'src/components/features/landing/BackgroundShapes'
 import { useTheme } from 'src/theme/ThemeProvider'
 import { message } from 'antd'
 import { PATHS } from 'src/constants/paths'
@@ -148,7 +147,6 @@ export default function ProjectGenApp() {
 
 	return (
 		<div className="relative min-h-screen bg-gray-50 dark:bg-slate-900">
-			{theme === 'dark' && <BackgroundShapes />}
 			<div className="relative z-10 p-6">
 				{/* Header */}
 				<div className="mb-8">

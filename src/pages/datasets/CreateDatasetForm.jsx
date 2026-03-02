@@ -1,12 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { 
+import {
     FolderOutlined, 
     FileOutlined, 
     DeleteOutlined, 
     QuestionCircleOutlined 
 } from '@ant-design/icons';
 // Đảm bảo đường dẫn import này khớp với cấu trúc thư mục của bạn
-import { Select } from 'src/components/shared/ui/Select'; 
+import { Select } from 'src/components/shared/ui/Select';
+import clsx from 'clsx';
 import { DATASET_TYPES } from 'src/constants/types';
 import { organizeFiles, createChunks, extractCSVMetaData } from 'src/utils/file';
 import { DATASET_TASK_MAPPING, TASK_TYPE_INFO } from 'src/constants/dataset_task_mapping';
@@ -408,23 +409,16 @@ export default function CreateDatasetForm({
                     <div>
                         <label
                             htmlFor="file"
-                            className="flex flex-col justify-center items-center h-[120px] rounded-xl cursor-pointer transition-all duration-300 mb-4"
-                            style={{
-                                border: isDragging ? '2px dashed var(--modal-close-hover)' : '2px dashed var(--upload-border)',
-                                background: isDragging ? 'var(--hover-bg)' : 'var(--upload-bg)',
-                            }}
+                            className={clsx(
+                                'mb-4 flex h-[120px] cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed transition-all duration-300',
+                                isDragging
+                                    ? 'border-[var(--modal-close-hover)] bg-[var(--hover-bg)]'
+                                    : 'border-[var(--upload-border)] bg-[var(--upload-bg)]',
+                            )}
                             onDragEnter={handleDragEnter}
                             onDragLeave={handleDragLeave}
                             onDragOver={handleDragOver}
                             onDrop={handleDrop}
-                            onMouseEnter={(e) => {
-                                e.currentTarget.style.borderColor = 'var(--modal-close-hover)';
-                                e.currentTarget.style.background = 'var(--hover-bg)';
-                            }}
-                            onMouseLeave={(e) => {
-                                e.currentTarget.style.borderColor = 'var(--upload-border)';
-                                e.currentTarget.style.background = 'var(--upload-bg)';
-                            }}
                         >
                             <div className="text-center">
                                 {isFolderUpload ? (
@@ -433,7 +427,9 @@ export default function CreateDatasetForm({
                                     <FileOutlined className="text-[64px] text-[var(--upload-icon)]" />
                                 )}
                                 <p className="mt-2 text-[var(--upload-text)] text-sm">
-                                    {isFolderUpload ? 'Drag and drop a folder or click to upload' : 'Drag and drop files or click to upload'}
+                                    {isFolderUpload
+                                        ? 'Drag and drop a folder or click to upload'
+                                        : 'Drag and drop files or click to upload'}
                                 </p>
                             </div>
                             <input {...fileInputProps} />

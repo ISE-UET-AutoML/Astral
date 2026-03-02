@@ -14,7 +14,6 @@ import {
 
 import * as mlServiceAPI from 'src/api/mlService'
 import * as modelServiceAPI from 'src/api/model'
-import BackgroundShapes from 'src/components/features/landing/BackgroundShapes'
 import { useTheme } from 'src/theme/ThemeProvider'
 
 // Hàm render Tag trạng thái
@@ -78,17 +77,6 @@ const ModelView = () => {
 
     return (
         <div className="min-h-screen relative w-full bg-[var(--surface)] font-poppins text-[var(--text)]">
-            {theme === 'dark' && (
-                <BackgroundShapes
-                    width="100%"
-                    height="100%"
-                    shapes={[
-                        { id: 'modelBlue', shape: 'circle', size: '550px', gradient: { type: 'radial', shape: 'ellipse', colors: ['#5C8DFF 0%', '#5C8DFF 40%', 'transparent 80%'] }, opacity: 0.15, blur: '220px', position: { top: '10%', right: '-5%' } },
-                        { id: 'modelCyan', shape: 'rounded', size: '480px', gradient: { type: 'radial', shape: 'circle', colors: ['#40FFFF 0%', '#40FFFF 50%', 'transparent 85%'] }, opacity: 0.1, blur: '190px', position: { top: '40%', left: '-5%' } }
-                    ]}
-                />
-            )}
-            
             {/* Chỉnh lại padding và giới hạn chiều rộng để cân đối với Sidebar */}
             <div className="relative z-10 w-full p-6 lg:p-8 flex flex-col gap-6">
                 

@@ -3,11 +3,8 @@ import { useLocation, useOutletContext, useNavigate } from 'react-router-dom'
 import { useTheme } from 'src/theme/ThemeProvider'
 import {
     Card,
-    Row,
-    Col,
     Alert,
     Typography,
-    Space,
     Statistic,
     Table,
     Tag,
@@ -33,8 +30,8 @@ import * as mlServiceAPI from 'src/api/mlService'
 import * as modelServiceAPI from 'src/api/model'
 import * as experimentConfigAPI from 'src/api/experiment_config'
 import { PATHS } from 'src/constants/paths'
-import BackgroundShapes from 'src/components/features/landing/BackgroundShapes'
-const { Title, Text } = Typography
+// BackgroundShapes removed
+const { Text } = Typography
 
 // Performance Metrics Configuration
 const getAccuracyStatus = (score) => {
@@ -258,92 +255,22 @@ const TrainResult = () => {
                     font-family: 'Poppins', sans-serif !important;
                 }
             `}</style>
-			<div
-				className="min-h-screen relative"
-				style={{ background: 'var(--surface)' }}
-			>
-				{theme === 'dark' && (
-					<BackgroundShapes
-						width="1280px"
-						height="1200px"
-						shapes={[
-							{
-								id: 'resultBlue',
-								shape: 'circle',
-								size: '580px',
-								gradient: {
-									type: 'radial',
-									shape: 'ellipse',
-									colors: [
-										'#5C8DFF 0%',
-										'#5C8DFF 38%',
-										'transparent 78%',
-									],
-								},
-								opacity: 0.32,
-								blur: '230px',
-								position: { top: '160px', right: '-170px' },
-								transform: 'none',
-							},
-							{
-								id: 'resultCyan',
-								shape: 'rounded',
-								size: '500px',
-								gradient: {
-									type: 'radial',
-									shape: 'circle',
-									colors: [
-										'#40FFFF 0%',
-										'#40FFFF 48%',
-										'transparent 82%',
-									],
-								},
-								opacity: 0.28,
-								blur: '200px',
-								position: { top: '380px', left: '-180px' },
-								transform: 'none',
-							},
-							{
-								id: 'resultWarm',
-								shape: 'rounded',
-								size: '460px',
-								gradient: {
-									type: 'radial',
-									shape: 'circle',
-									colors: [
-										'#FFAF40 0%',
-										'#FFAF40 58%',
-										'transparent 88%',
-									],
-								},
-								opacity: 0.22,
-								blur: '180px',
-								position: { bottom: '120px', right: '22%' },
-								transform: 'none',
-							},
-						]}
-					/>
-				)}
+			<div className="relative min-h-screen bg-[var(--surface)]">
 				<div className="relative z-10 p-6">
-					<Space direction="vertical" size="large" className="w-full">
+					<div className="flex w-full flex-col gap-6">
 						{/* Key Metrics Cards */}
-						<Row gutter={[16, 16]}>
-							<Col xs={24} sm={12} md={8}>
+						<div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+							<div>
 								<Card
-									className="border-0 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300"
+									className="border border-[var(--border)] backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl bg-[var(--card-gradient)]"
 									style={{
-										background: 'var(--card-gradient)',
 										backdropFilter: 'blur(10px)',
-										border: '1px solid var(--border)',
-										borderRadius: '12px',
 										fontFamily: 'Poppins, sans-serif',
 									}}
 								>
 									<Statistic
 										title={
-											<span
-												className="font-poppins" style={{ color: 'var(--secondary-text)' }}
-											>{`Final ${metrics[0]?.metric} score`}</span>
+											<span className="font-poppins text-[var(--secondary-text)]">{`Final ${metrics[0]?.metric} score`}</span>
 										}
 										value={metrics[0]?.value * 100 || 0}
 										precision={2}
@@ -362,15 +289,12 @@ const TrainResult = () => {
 										}}
 									/>
 								</Card>
-							</Col>
-							<Col xs={24} sm={12} md={8}>
+							</div>
+							<div>
 								<Card
-									className="border-0 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300"
+									className="border border-[var(--border)] backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl bg-[var(--card-gradient)]"
 									style={{
-										background: 'var(--card-gradient)',
 										backdropFilter: 'blur(10px)',
-										border: '1px solid var(--border)',
-										borderRadius: '12px',
 										fontFamily: 'Poppins, sans-serif',
 									}}
 								>
@@ -417,15 +341,12 @@ const TrainResult = () => {
 										}
 									/>
 								</Card>
-							</Col>
-							<Col xs={24} sm={12} md={8}>
+							</div>
+							<div>
 								<Card
-									className="border-0 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300"
+									className="border border-[var(--border)] backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl bg-[var(--card-gradient)]"
 									style={{
-										background: 'var(--card-gradient)',
 										backdropFilter: 'blur(10px)',
-										border: '1px solid var(--border)',
-										borderRadius: '12px',
 										fontFamily: 'Poppins, sans-serif',
 									}}
 								>
@@ -453,8 +374,8 @@ const TrainResult = () => {
 										}}
 									/>
 								</Card>
-							</Col>
-						</Row>
+							</div>
+						</div>
 
 						<div
 							className="w-full flex justify-center items-center"
@@ -483,12 +404,9 @@ const TrainResult = () => {
 
 						{/* Expandable Details Section */}
 						<Card
-							className="border-0 backdrop-blur-sm shadow-lg"
+							className="border border-[var(--border)] backdrop-blur-sm shadow-lg rounded-xl bg-[var(--card-gradient)]"
 							style={{
-								background: 'var(--card-gradient)',
 								backdropFilter: 'blur(10px)',
-								border: '1px solid var(--border)',
-								borderRadius: '12px',
 								fontFamily: 'Poppins, sans-serif',
 							}}
 						>
@@ -510,11 +428,7 @@ const TrainResult = () => {
 							</Button>
 
 							{isDetailsExpanded && (
-								<Space
-									direction="vertical"
-									size="large"
-									className="w-full mt-4"
-								>
+								<div className="mt-4 flex w-full flex-col gap-6">
 									{/* Performance Charts */}
 									<Card
 										title={
@@ -524,24 +438,19 @@ const TrainResult = () => {
 												Training Performance
 											</span>
 										}
-										className="border-0 backdrop-blur-sm"
+										className="border border-[var(--border)] backdrop-blur-sm"
 										style={{
 											background:
 												'linear-gradient(135deg, rgba(51, 65, 85, 0.3) 0%, rgba(15, 23, 42, 0.3) 100%)',
 											backdropFilter: 'blur(10px)',
-											border: '1px solid var(--border)',
 											borderRadius: '12px',
 											fontFamily: 'Poppins, sans-serif',
 										}}
 									>
-										<Row gutter={[16, 16]}>
+										<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
 											{Object.entries(valGraphs).map(
 												([metricName, metricData]) => (
-													<Col
-														xs={24}
-														md={12}
-														key={metricName}
-													>
+													<div key={metricName}>
 														<ResponsiveContainer
 															width="100%"
 															height={300}
@@ -561,10 +470,10 @@ const TrainResult = () => {
 																}
 															/>
 														</ResponsiveContainer>
-													</Col>
+													</div>
 												)
 											)}
-										</Row>
+										</div>
 									</Card>
 
 									{/* Detailed Metrics Table */}
@@ -576,12 +485,11 @@ const TrainResult = () => {
 												Comprehensive Metrics
 											</span>
 										}
-										className="border-0 backdrop-blur-sm"
+										className="border border-[var(--border)] backdrop-blur-sm"
 										style={{
 											background:
 												'linear-gradient(135deg, rgba(51, 65, 85, 0.3) 0%, rgba(15, 23, 42, 0.3) 100%)',
 											backdropFilter: 'blur(10px)',
-											border: '1px solid var(--border)',
 											borderRadius: '12px',
 											fontFamily: 'Poppins, sans-serif',
 										}}
@@ -593,10 +501,10 @@ const TrainResult = () => {
 										className="bg-transparent font-poppins theme-table"
 									/>
 									</Card>
-								</Space>
+								</div>
 							)}
 						</Card>
-					</Space>
+					</div>
 				</div>
 			</div>
 		</>

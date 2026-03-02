@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import 'src/assets/css/index.css';
+import 'src/assets/css/antd-theme.css';
 import { AuthProvider } from 'src/hooks/useAuth';
 import { Router } from 'src/routes';
 import { LibraryProvider } from './utils/LibProvider';

@@ -216,22 +216,21 @@ export default function ExperimentCard({ experiment }) {
 
     return (
         <Card
-            className={`group cursor-pointer rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105`}
-            style={{ background: 'var(--card-gradient)', border: '1px solid var(--border)' }}
+            className="group cursor-pointer rounded-2xl border border-[var(--border)] bg-[var(--card-gradient)] shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-xl"
             onClick={handleCardClick}
         >
             <CardHeader className="pb-4">
                 <div className="flex justify-between items-start">
-                    <div className={`p-3 rounded-xl`} style={{ background: 'var(--hover-bg)' }}>
+                    <div className="rounded-xl bg-[var(--hover-bg)] p-3">
                         <div className={statusConfig.color}>
                             {statusConfig.icon}
                         </div>
                     </div>
                     <div className="flex flex-col gap-2">
-                        <div className={`px-3 py-1 rounded-full text-xs font-medium border ${statusConfig.borderColor}`} style={{ background: 'var(--hover-bg)', color: 'var(--text)' }}>
+                        <div className={`rounded-full border px-3 py-1 text-xs font-medium ${statusConfig.borderColor} bg-[var(--hover-bg)] text-[var(--text)]`}>
                             {statusConfig.badge}
                         </div>
-                        <div className="px-2 py-1 rounded text-xs font-medium" style={{ background: 'var(--hover-bg)', color: 'var(--secondary-text)' }}>
+                        <div className="rounded bg-[var(--hover-bg)] px-2 py-1 text-xs font-medium text-[var(--secondary-text)]">
                             ID: {id}
                         </div>
                     </div>
@@ -239,20 +238,20 @@ export default function ExperimentCard({ experiment }) {
             </CardHeader>
 
             <CardContent className="pt-0">
-                <CardTitle className="text-lg font-semibold mb-3 transition-colors" style={{ color: 'var(--text)' }}>
+                <CardTitle className="mb-3 text-lg font-semibold text-[var(--text)] transition-colors">
                     {name}
                 </CardTitle>
 
-                <div className="space-y-2 text-sm" style={{ color: 'var(--secondary-text)' }}>
+                <div className="space-y-2 text-sm text-[var(--secondary-text)]">
                     {start_time && (
                         <p className="flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--secondary-text)' }}></span>
+                            <span className="h-1.5 w-1.5 rounded-full bg-[var(--secondary-text)]"></span>
                             Created {dayjs(start_time).fromNow()}
                         </p>
                     )}
                     {framework && (
                         <p className="flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--secondary-text)' }}></span>
+                            <span className="h-1.5 w-1.5 rounded-full bg-[var(--secondary-text)]"></span>
                             Framework: {framework.toLowerCase()}
                         </p>
                     )}

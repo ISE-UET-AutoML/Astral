@@ -4,9 +4,6 @@ import { useTheme } from 'src/theme/ThemeProvider'
 import dayjs from 'dayjs'
 import {
     Card,
-    Row,
-    Col,
-    Space,
     Statistic,
     Button,
     message,
@@ -49,7 +46,7 @@ import Papa from 'papaparse'
 import ImageHistoryViewer from 'src/components/features/predictions/ImageHistoryViewer'
 import TextHistoryViewer from 'src/components/features/predictions/TextHistoryViewer'
 import MultilabelHistoryViewer from 'src/components/features/predictions/MultilabelHistoryViewer'
-import BackgroundShapes from 'src/components/features/landing/BackgroundShapes'
+// BackgroundShapes removed
 import { PATHS } from 'src/constants/paths'
 
 export default function DeployedModelView() {
@@ -457,90 +454,21 @@ export default function DeployedModelView() {
                 }
             `}
             </style>
-            <div
-                className="p-6 bg-gray-50 min-h-screen"
-                style={{ background: 'var(--surface)' }}
-            >
-                {theme === 'dark' && (
-                    <BackgroundShapes
-                        width="1280px"
-                        height="1200px"
-                        shapes={[
-                            {
-                                id: 'resultBlue',
-                                shape: 'circle',
-                                size: '580px',
-                                gradient: {
-                                    type: 'radial',
-                                    shape: 'ellipse',
-                                    colors: [
-                                        '#5C8DFF 0%',
-                                        '#5C8DFF 38%',
-                                        'transparent 78%',
-                                    ],
-                                },
-                                opacity: 0.32,
-                                blur: '230px',
-                                position: { top: '160px', right: '-170px' },
-                                transform: 'none',
-                            },
-                            {
-                                id: 'resultCyan',
-                                shape: 'rounded',
-                                size: '500px',
-                                gradient: {
-                                    type: 'radial',
-                                    shape: 'circle',
-                                    colors: [
-                                        '#40FFFF 0%',
-                                        '#40FFFF 48%',
-                                        'transparent 82%',
-                                    ],
-                                },
-                                opacity: 0.28,
-                                blur: '200px',
-                                position: { top: '380px', left: '-180px' },
-                                transform: 'none',
-                            },
-                            {
-                                id: 'resultWarm',
-                                shape: 'rounded',
-                                size: '460px',
-                                gradient: {
-                                    type: 'radial',
-                                    shape: 'circle',
-                                    colors: [
-                                        '#FFAF40 0%',
-                                        '#FFAF40 58%',
-                                        'transparent 88%',
-                                    ],
-                                },
-                                opacity: 0.22,
-                                blur: '180px',
-                                position: { bottom: '120px', right: '22%' },
-                                transform: 'none',
-                            },
-                        ]}
-                    />
-                )}
-                <Space direction="vertical" size="large" className="w-full">
-                    <Row gutter={[16, 16]}>
-                        <Col xs={24} sm={24} md={12}>
+            <div className="p-6 min-h-screen bg-[var(--surface)]">
+                {/* BackgroundShapes removed */}
+                <div className="flex flex-col w-full gap-6">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        <div>
                             <Card
-                                className="shadow-md"
+                                className="shadow-md border border-[var(--border)] rounded-xl bg-[var(--card-gradient)]"
                                 style={{
-                                    background: 'var(--card-gradient)',
                                     backdropFilter: 'blur(10px)',
-                                    border: '1px solid var(--border)',
-                                    borderRadius: '12px',
                                     fontFamily: 'Poppins, sans-serif',
                                 }}
                             >
                                 <Statistic
                                     title={
-                                        <span
-                                            className="font-poppins" style={{ color: 'var(--secondary-text)' }}
-                                        >
+                                        <span className="font-poppins text-[var(--secondary-text)]">
                                             Uptime
                                         </span>
                                     }
@@ -551,23 +479,18 @@ export default function DeployedModelView() {
                                     prefix={<ClockCircleOutlined />}
                                 />
                             </Card>
-                        </Col>
-                        <Col xs={24} sm={24} md={12}>
+                        </div>
+                        <div>
                             <Card
-                                className="shadow-md"
+                                className="shadow-md border border-[var(--border)] rounded-xl bg-[var(--card-gradient)]"
                                 style={{
-                                    background: 'var(--card-gradient)',
                                     backdropFilter: 'blur(10px)',
-                                    border: '1px solid var(--border)',
-                                    borderRadius: '12px',
                                     fontFamily: 'Poppins, sans-serif',
                                 }}
                             >
                                 <Statistic
                                     title={
-                                        <span
-                                            className="font-poppins" style={{ color: 'var(--secondary-text)' }}
-                                        >
+                                        <span className="font-poppins text-[var(--secondary-text)]">
                                             Total Predictions
                                         </span>
                                     }
@@ -578,301 +501,247 @@ export default function DeployedModelView() {
                                     }}
                                 />
                             </Card>
-                        </Col>
-                    </Row>
+                        </div>
+                    </div>
 
                     {deployData?.status === 'ONLINE' && projectInfo && (
-                        <Row
-                            gutter={[24, 24]}
-                            className="mt-6"
-                        >
-                            <Col span={24}>
+                        <div className="mt-6">
                                 <Card
                                     title={
-                                        <Space>
-                                            <LinkOutlined
-                                                className="text-[#1890ff]"
-                                            />
-                                            <span
-                                                className="font-poppins" style={{ color: 'var(--secondary-text)' }}
-                                            >
+                                    <div className="flex items-center gap-2">
+                                        <LinkOutlined className="text-[#1890ff]" />
+                                        <span className="font-poppins text-[var(--secondary-text)]">
                                                 Endpoint Information
                                             </span>
-                                        </Space>
+                                    </div>
                                     }
-                                    style={{
-                                        background: 'var(--card-gradient)',
-                                        backdropFilter: 'blur(10px)',
-                                        border: '1px solid var(--border)',
-                                        borderRadius: '12px',
-                                        fontFamily: 'Poppins, sans-serif',
-                                    }}
+                                className="border border-[var(--border)] rounded-xl bg-[var(--card-gradient)]"
+                                style={{
+                                    backdropFilter: 'blur(10px)',
+                                    fontFamily: 'Poppins, sans-serif',
+                                }}
                                 >
-                                    <Row gutter={[24, 24]}>
-                                        <Col span={24}>
-                                            <Divider
-                                                orientation="left"
-                                                orientationMargin={0}
-                                                className="font-poppins" style={{ color: 'var(--secondary-text)' }}
-                                            >
-                                                API Endpoint URL
-                                            </Divider>
-                                            <div className="flex">
-                                                <Input.Group compact>
-                                                    <Input
-                                                        className="w-[30%]"
-                                                        value={
-                                                            deployData?.api_base_url ||
-                                                            'https://api.example.com/predict/model-123'
-                                                        }
-                                                        readOnly
-                                                    />
-                                                    <Button
-                                                        type="primary"
-                                                        onClick={() => {
-                                                            const textToCopy =
-                                                                deployData?.api_base_url ||
-                                                                'https://api.example.com/predict/model-123'
-                                                            try {
-                                                                const textarea =
-                                                                    document.createElement(
-                                                                        'textarea'
-                                                                    )
-                                                                textarea.value =
-                                                                    textToCopy
-                                                                document.body.appendChild(
-                                                                    textarea
-                                                                )
-                                                                textarea.select()
-                                                                document.execCommand(
-                                                                    'copy'
-                                                                )
-                                                                document.body.removeChild(
-                                                                    textarea
-                                                                )
-                                                                message.success(
-                                                                    'Copied to clipboard',
-                                                                    1
-                                                                )
-                                                            } catch (err) {
-                                                                message.error(
-                                                                    'Failed to copy',
-                                                                    1
-                                                                )
-                                                            }
-                                                        }}
-                                                    >
-                                                        Copy URL
-                                                    </Button>
-                                                </Input.Group>
+                                <Divider
+                                    orientation="left"
+                                    orientationMargin={0}
+                                    className="font-poppins text-[var(--secondary-text)]"
+                                >
+                                    API Endpoint URL
+                                </Divider>
+                                <div className="flex flex-wrap items-center gap-3">
+                                    <Input.Group compact>
+                                        <Input
+                                            className="w-full md:w-[30%]"
+                                            value={
+                                                deployData?.api_base_url ||
+                                                'https://api.example.com/predict/model-123'
+                                            }
+                                            readOnly
+                                        />
+                                        <Button
+                                            type="primary"
+                                            onClick={() => {
+                                                const textToCopy =
+                                                    deployData?.api_base_url ||
+                                                    'https://api.example.com/predict/model-123'
+                                                try {
+                                                    const textarea =
+                                                        document.createElement(
+                                                            'textarea'
+                                                        )
+                                                    textarea.value = textToCopy
+                                                    document.body.appendChild(
+                                                        textarea
+                                                    )
+                                                    textarea.select()
+                                                    document.execCommand('copy')
+                                                    document.body.removeChild(
+                                                        textarea
+                                                    )
+                                                    message.success(
+                                                        'Copied to clipboard',
+                                                        1
+                                                    )
+                                                } catch (err) {
+                                                    message.error(
+                                                        'Failed to copy',
+                                                        1
+                                                    )
+                                                }
+                                            }}
+                                        >
+                                            Copy URL
+                                        </Button>
+                                    </Input.Group>
 
-                                                <Space>
-                                                    <Button
-                                                        type="primary"
-                                                        onClick={handleClick}
-                                                        loading={uploading}
-                                                        icon={
-                                                            <CloudUploadOutlined />
-                                                        }
-                                                        size="large"
-                                                    >
-                                                        {uploading
-                                                            ? 'Predicting...'
-                                                            : 'Upload Files to Predict'}
-                                                    </Button>
-                                                    <UpDataDeploy
-                                                        isOpen={isShowUpload}
-                                                        onClose={hideUpload}
-                                                        projectId={model?.id}
-                                                        taskType={
-                                                            projectInfo?.task_type
-                                                        }
-                                                        featureColumns={Object.keys(
-                                                            model?.metadata?.csv || {}
-                                                        )}
-                                                        onUploadStart={null}
-                                                        onUploadComplete={
-                                                            handleUploadFiles
-                                                        }
-                                                    />
-                                                </Space>
+                                    <div className="flex flex-wrap items-center gap-3">
+                                        <Button
+                                            type="primary"
+                                            onClick={handleClick}
+                                            loading={uploading}
+                                            icon={<CloudUploadOutlined />}
+                                            size="large"
+                                        >
+                                            {uploading
+                                                ? 'Predicting...'
+                                                : 'Upload Files to Predict'}
+                                        </Button>
+                                        <UpDataDeploy
+                                            isOpen={isShowUpload}
+                                            onClose={hideUpload}
+                                            projectId={model?.id}
+                                            taskType={projectInfo?.task_type}
+                                            featureColumns={Object.keys(
+                                                model?.metadata?.csv || {}
+                                            )}
+                                            onUploadStart={null}
+                                            onUploadComplete={handleUploadFiles}
+                                        />
 
-                                                <Space className="ml-2">
-                                                    <Button
-                                                        type="primary"
-                                                        onClick={
-                                                            isGeneratingUI ||
-                                                                isCheckingUIStatus
-                                                                ? undefined
-                                                                : handleGenUI
-                                                        }
-                                                        disabled={
-                                                            isGeneratingUI ||
-                                                            isCheckingUIStatus
-                                                        }
-                                                        loading={isGeneratingUI}
-                                                        size="large"
-                                                        icon={
-                                                            isUIGenerated ? (
-                                                                <ExportOutlined />
-                                                            ) : (
-                                                                <StarOutlined />
-                                                            )
-                                                        }
-                                                    >
-                                                        {isCheckingUIStatus ? (
-                                                            <span>
-                                                                Checking
-                                                            </span>
-                                                        ) : isGeneratingUI ? (
-                                                            <span>
-                                                                Generating
-                                                            </span>
-                                                        ) : isUIGenerated ? (
-                                                            <span>
-                                                                Your App is
-                                                                Ready
-                                                            </span>
-                                                        ) : (
-                                                            <span>
-                                                                Generate UI
-                                                            </span>
-                                                        )}
-                                                    </Button>
-                                                </Space>
-                                            </div>
-                                        </Col>
-                                    </Row>
+                                        <Button
+                                            type="primary"
+                                            onClick={
+                                                isGeneratingUI ||
+                                                isCheckingUIStatus
+                                                    ? undefined
+                                                    : handleGenUI
+                                            }
+                                            disabled={
+                                                isGeneratingUI ||
+                                                isCheckingUIStatus
+                                            }
+                                            loading={isGeneratingUI}
+                                            size="large"
+                                            icon={
+                                                isUIGenerated ? (
+                                                    <ExportOutlined />
+                                                ) : (
+                                                    <StarOutlined />
+                                                )
+                                            }
+                                        >
+                                            {isCheckingUIStatus ? (
+                                                <span>Checking</span>
+                                            ) : isGeneratingUI ? (
+                                                <span>Generating</span>
+                                            ) : isUIGenerated ? (
+                                                <span>Your App is Ready</span>
+                                            ) : (
+                                                <span>Generate UI</span>
+                                            )}
+                                        </Button>
+                                    </div>
+                                </div>
                                 </Card>
-                            </Col>
-                        </Row>
+                        </div>
                     )}
 
                     {deployData?.status === 'ONLINE' && projectInfo && (
-                        <Row
-                            gutter={[24, 24]}
-                            className="mt-6"
-                        >
-                            <Col span={24}>
+                        <div className="mt-6">
                                 <Card
                                     title={
-                                        <Space>
-                                            <MonitorOutlined
-                                                className="text-[#1890ff]"
-                                            />
-                                            <span
-                                                className="font-poppins" style={{ color: 'var(--secondary-text)' }}
-                                            >
+                                    <div className="flex items-center gap-2">
+                                        <MonitorOutlined className="text-[#1890ff]" />
+                                        <span className="font-poppins text-[var(--secondary-text)]">
                                                 Monitoring
                                             </span>
-                                        </Space>
+                                    </div>
                                     }
-                                    style={{
-                                        background: 'var(--card-gradient)',
-                                        backdropFilter: 'blur(10px)',
-                                        border: '1px solid var(--border)',
-                                        borderRadius: '12px',
-                                        fontFamily: 'Poppins, sans-serif',
-                                    }}
+                                className="border border-[var(--border)] rounded-xl bg-[var(--card-gradient)]"
+                                style={{
+                                    backdropFilter: 'blur(10px)',
+                                    fontFamily: 'Poppins, sans-serif',
+                                }}
                                 >
-                                    <Row gutter={[24, 24]}>
-                                        <Col span={24}>
-                                            <Divider
-                                                orientation="left"
-                                                orientationMargin={0}
-                                                className="font-poppins" style={{ color: 'var(--secondary-text)' }}
-                                            >
-                                                Monitor Endpoint URL
-                                            </Divider>
-                                            <div className="flex">
-                                                <Input.Group compact>
-                                                    <Input
-                                                        className="w-[30%]"
-                                                        value={
-                                                            deployData?.monitor_url ||
-                                                            'https://api.example.com'
-                                                        }
-                                                        readOnly
-                                                    />
-                                                    <Button
-                                                        type="primary"
-                                                        onClick={() => {
-                                                            const textToCopy =
-                                                                deployData?.monitor_url ||
-                                                                'https://api.example.com'
-                                                            try {
-                                                                const textarea =
-                                                                    document.createElement(
-                                                                        'textarea'
-                                                                    )
-                                                                textarea.value =
-                                                                    textToCopy
-                                                                document.body.appendChild(
-                                                                    textarea
-                                                                )
-                                                                textarea.select()
-                                                                document.execCommand(
-                                                                    'copy'
-                                                                )
-                                                                document.body.removeChild(
-                                                                    textarea
-                                                                )
-                                                                message.success(
-                                                                    'Copied to clipboard',
-                                                                    1
-                                                                )
-                                                            } catch (err) {
-                                                                message.error(
-                                                                    'Failed to copy',
-                                                                    1
-                                                                )
-                                                            }
-                                                        }}
-                                                    >
-                                                        Copy URL
-                                                    </Button>
-                                                </Input.Group>
-                                                <Space className="ml-2">
-                                                    <Button
-                                                        type="primary"
-                                                        size="large"
-                                                        icon={<LineChartOutlined />}
-                                                        disabled={!deployData?.monitor_url}
-                                                        onClick={() => {
-                                                            if (deployData?.monitor_url) {
-                                                                window.open(
-                                                                    `${deployData.monitor_url}/d/rYdddlPWk/node-exporter-full`,
-                                                                    '_blank',
-                                                                    'noopener,noreferrer'
-                                                                )
-                                                            }
-                                                        }}
-                                                    >
-                                                        System Monitoring
-                                                    </Button>
-                                                </Space>
-                                                <Space className="ml-2">
-                                                    <Button
-                                                        type="primary"
-                                                        size="large"
-                                                        icon={<CalculatorOutlined />}
-                                                        disabled={!deployData?.monitor_url}
-                                                        onClick={() => {
-                                                            if (deployData?.monitor_url) {
-                                                                window.open(
-                                                                    `${deployData.monitor_url}/d/vlvPlrgnk/gpu-metrics`,
-                                                                    '_blank',
-                                                                    'noopener,noreferrer'
-                                                                )
-                                                            }
-                                                        }}
-                                                    >
-                                                        GPU Monitoring
-                                                    </Button>
-                                                </Space>
-                                            </div>
-                                        </Col>
-                                    </Row>
+                                <Divider
+                                    orientation="left"
+                                    orientationMargin={0}
+                                    className="font-poppins text-[var(--secondary-text)]"
+                                >
+                                    Monitor Endpoint URL
+                                </Divider>
+                                <div className="flex flex-wrap items-center gap-3">
+                                    <Input.Group compact>
+                                        <Input
+                                            className="w-full md:w-[30%]"
+                                            value={
+                                                deployData?.monitor_url ||
+                                                'https://api.example.com'
+                                            }
+                                            readOnly
+                                        />
+                                        <Button
+                                            type="primary"
+                                            onClick={() => {
+                                                const textToCopy =
+                                                    deployData?.monitor_url ||
+                                                    'https://api.example.com'
+                                                try {
+                                                    const textarea =
+                                                        document.createElement(
+                                                            'textarea'
+                                                        )
+                                                    textarea.value = textToCopy
+                                                    document.body.appendChild(
+                                                        textarea
+                                                    )
+                                                    textarea.select()
+                                                    document.execCommand('copy')
+                                                    document.body.removeChild(
+                                                        textarea
+                                                    )
+                                                    message.success(
+                                                        'Copied to clipboard',
+                                                        1
+                                                    )
+                                                } catch (err) {
+                                                    message.error(
+                                                        'Failed to copy',
+                                                        1
+                                                    )
+                                                }
+                                            }}
+                                        >
+                                            Copy URL
+                                        </Button>
+                                    </Input.Group>
+                                    <div className="flex flex-wrap items-center gap-3">
+                                        <Button
+                                            type="primary"
+                                            size="large"
+                                            icon={<LineChartOutlined />}
+                                            disabled={!deployData?.monitor_url}
+                                            onClick={() => {
+                                                if (deployData?.monitor_url) {
+                                                    window.open(
+                                                        `${deployData.monitor_url}/d/rYdddlPWk/node-exporter-full`,
+                                                        '_blank',
+                                                        'noopener,noreferrer'
+                                                    )
+                                                }
+                                            }}
+                                        >
+                                            System Monitoring
+                                        </Button>
+                                        <Button
+                                            type="primary"
+                                            size="large"
+                                            icon={<CalculatorOutlined />}
+                                            disabled={!deployData?.monitor_url}
+                                            onClick={() => {
+                                                if (deployData?.monitor_url) {
+                                                    window.open(
+                                                        `${deployData.monitor_url}/d/vlvPlrgnk/gpu-metrics`,
+                                                        '_blank',
+                                                        'noopener,noreferrer'
+                                                    )
+                                                }
+                                            }}
+                                        >
+                                            GPU Monitoring
+                                        </Button>
+                                    </div>
+                                </div>
                                 </Card>
                                 <>
                                     {(() => {
@@ -891,8 +760,7 @@ export default function DeployedModelView() {
                                         return null
                                     })()}
                                 </>
-                            </Col>
-                        </Row>
+                        </div>
                     )}
 
 
@@ -927,14 +795,14 @@ export default function DeployedModelView() {
                     <div className="mt-8">
                         <Card
                             title={
-                                <Space>
+                                <div className="flex items-center gap-2">
                                     <ClockCircleOutlined />
-                                    <span style={{ color: 'var(--text)' }}>
+                                    <span className="text-[var(--text)]">
                                         Recent Predictions
                                     </span>
-                                </Space>
+                                </div>
                             }
-                            className="border-[var(--border)] border-white/10 bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-xl shadow-2xl"
+                            className="border border-[var(--border)] bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-xl shadow-2xl"
                             style={{
                                 background: livePredictGradient,
                                 borderRadius: '12px',
@@ -964,10 +832,7 @@ export default function DeployedModelView() {
 
                                         return (
                                             <List.Item
-                                                style={{
-                                                    borderBottom:
-                                                        '1px solid var(--border)',
-                                                }}
+                                                className="border-b border-[var(--border)]"
                                                 actions={[
                                                     <Button
                                                         type="primary"
@@ -986,11 +851,7 @@ export default function DeployedModelView() {
                                                         <CheckCircleOutlined className="text-green-500" />
                                                     }
                                                     title={
-                                                        <span
-                                                            style={{
-                                                                color: 'var(--text)',
-                                                            }}
-                                                        >
+                                                        <span className="text-[var(--text)]">
                                                             {`File: ${filename}`}
                                                         </span>
                                                     }
@@ -998,12 +859,7 @@ export default function DeployedModelView() {
                                                         <Tooltip
                                                             title={`Exact time: ${exactTime}`}
                                                         >
-                                                            <span
-                                                                style={{
-                                                                    color: 'var(--secondary-text)',
-                                                                    cursor: 'help',
-                                                                }}
-                                                            >
+                                                            <span className="cursor-help text-[var(--secondary-text)]">
                                                                 {`Predicted ${timeAgo}`}
                                                             </span>
                                                         </Tooltip>
@@ -1099,35 +955,27 @@ export default function DeployedModelView() {
 
                     <Card
                         title={
-                            <span
-                                className="font-poppins" style={{ color: 'var(--secondary-text)' }}
-                            >
+                            <span className="font-poppins text-[var(--secondary-text)]">
                                 🚀 Cloud Server
                             </span>
                         }
-                        className="rounded-xl shadow-sm"
+                        className="rounded-xl shadow-sm border border-[var(--border)] bg-[var(--card-gradient)]"
                         style={{
-                            background: 'var(--card-gradient)',
                             backdropFilter: 'blur(10px)',
-                            border: '1px solid var(--border)',
                             borderRadius: '12px',
                             fontFamily: 'Poppins, sans-serif',
                         }}
                     >
-                        <Row gutter={[16, 16]}>
-                            <Col xs={24} sm={12}>
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                            <div>
                                 <Alert
                                     message={
                                         deployData?.status === 'ONLINE' ? (
-                                            <span
-                                                className="font-poppins" style={{ color: 'var(--secondary-text)' }}
-                                            >
+                                            <span className="font-poppins text-[var(--secondary-text)]">
                                                 Shut down server instance
                                             </span>
                                         ) : (
-                                            <span
-                                                className="font-poppins" style={{ color: 'var(--secondary-text)' }}
-                                            >
+                                            <span className="font-poppins text-[var(--secondary-text)]">
                                                 Start server instance
                                             </span>
                                         )
@@ -1158,10 +1006,10 @@ export default function DeployedModelView() {
                                             : 'info'
                                     }
                                     showIcon
+                                    className="border border-[var(--border)] rounded-xl"
                                     style={{
                                         height: 130,
                                         background: livePredictGradient,
-                                        border: '1px solid var(--border)',
                                         borderRadius: '12px',
                                         fontFamily: 'Poppins, sans-serif',
                                     }}
@@ -1182,20 +1030,16 @@ export default function DeployedModelView() {
                                         ? 'Shut down'
                                         : 'Start'}
                                 </Button>
-                            </Col>
-                            <Col xs={24} sm={12}>
+                            </div>
+                            <div>
                                 <Alert
                                     message={
-                                        <span
-                                            className="font-poppins" style={{ color: 'var(--secondary-text)' }}
-                                        >
+                                        <span className="font-poppins text-[var(--secondary-text)]">
                                             Delete server instance
                                         </span>
                                     }
                                     description={
-                                        <span
-                                            className="font-poppins" style={{ color: 'var(--secondary-text)' }}
-                                        >
+                                        <span className="font-poppins text-[var(--secondary-text)]">
                                             Permanently removes the server and
                                             all associated data from the system.
                                             This action is irreversible.
@@ -1203,10 +1047,10 @@ export default function DeployedModelView() {
                                     }
                                     type="error"
                                     showIcon
+                                    className="border border-[var(--border)] rounded-xl"
                                     style={{
                                         height: 130,
                                         background: livePredictGradient,
-                                        border: '1px solid var(--border)',
                                         borderRadius: '12px',
                                         fontFamily: 'Poppins, sans-serif',
                                     }}
@@ -1219,10 +1063,10 @@ export default function DeployedModelView() {
                                 >
                                     Delete Server
                                 </Button>
-                            </Col>
-                        </Row>
+                            </div>
+                        </div>
                     </Card>
-                </Space>
+                </div>
             </div>
         </>
     )

@@ -15,7 +15,6 @@ export { default as LandingPage } from './LandingPage'
 export { default as LandingNavbar } from './LandingNavbar'
 export { default as HeroSection } from './HeroSection'
 export { default as ServicesSection } from './ServicesSection'
-export { default as BackgroundShapes } from './BackgroundShapes'
 
 // Default export is the main page
 export { default } from './LandingPage'

@@ -5,7 +5,6 @@ import * as auth from 'src/api/auth'
 import useAuth from 'src/hooks/useAuth'
 import { validateEmail, validatePassword } from 'src/utils/validate'
 import { PATHS } from 'src/constants/paths'
-import BackgroundShapes from 'src/components/features/landing/BackgroundShapes'
 import TextCubeCanvas from 'src/components/features/auth/login/TextCubeCanvas'
 import LoginCard from 'src/components/features/auth/login/LoginCard'
 
@@ -114,67 +113,6 @@ const Login = () => {
 	return (
 		<main className="w-full h-screen font-poppins bg-[#01000A] overflow-hidden">
 			<div className="relative w-full h-full">
-				<BackgroundShapes
-					width="100%"
-					height="100%"
-					shapes={[
-						{
-							id: 'loginBlue',
-							shape: 'circle',
-							size: '520px',
-							gradient: {
-								type: 'radial',
-								shape: 'ellipse',
-								colors: [
-									'#5C8DFF 0%',
-									'#5C8DFF 35%',
-									'transparent 75%',
-								],
-							},
-							opacity: 0.45,
-							blur: '220px',
-							position: { top: '10%', right: '-140px' },
-							transform: 'none',
-						},
-						{
-							id: 'loginCyan',
-							shape: 'rounded',
-							size: '420px',
-							gradient: {
-								type: 'radial',
-								shape: 'circle',
-								colors: [
-									'#40FFFF 0%',
-									'#40FFFF 55%',
-									'transparent 40%',
-								],
-							},
-							opacity: 0.3,
-							blur: '180px',
-							position: { top: '5%', left: '-120px' },
-							transform: 'none',
-						},
-						{
-							id: 'loginWarm',
-							shape: 'rounded',
-							size: '520px',
-							gradient: {
-								type: 'radial',
-								shape: 'circle',
-								colors: [
-									'#FFAF40 0%',
-									'#FFAF40 50%',
-									'transparent 85%',
-								],
-							},
-							opacity: 0.2,
-							blur: '220px',
-							position: { bottom: '-10%', left: '50%' },
-							transform: 'translate(-50%, 0%)',
-						},
-					]}
-				/>
-
 				{/* Background 3D shape */}
 				<div className="absolute inset-0 z-0 pointer-events-none">
 					<TextCubeCanvas

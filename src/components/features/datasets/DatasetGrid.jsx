@@ -1,97 +1,90 @@
 import React from 'react'
-import { Row, Col, Empty, Space, Typography, Button, Pagination } from 'antd'
+import { Empty, Pagination } from 'antd'
 import DatasetCard from './DatasetCard'
+import { Button } from 'src/components/shared/ui/button'
 
-const { Text } = Typography
-
-const DatasetGrid = ({ 
-    datasets, 
-    getDatasets, 
-    onCreateDataset, 
-    onDelete, 
-    deletingIds, 
-    currentPage, 
-    totalItems, 
-    pageSize, 
-    onPageChange,
-    isLoading 
+const DatasetGrid = ({
+	datasets,
+	getDatasets,
+	onCreateDataset,
+	onDelete,
+	deletingIds,
+	currentPage,
+	totalItems,
+	pageSize,
+	onPageChange,
+	isLoading,
 }) => {
-    if (isLoading) {
-        return (
-            <div className="flex justify-center items-center py-20">
-                <div className="text-center">
-                    <div 
-                        className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-4"
-                        style={{ borderColor: 'var(--accent-text)' }}
-                    ></div>
-                    <Text className="font-poppins" style={{ color: 'var(--text)' }}>Loading datasets...</Text>
-                </div>
-            </div>
-        )
-    }
+	if (isLoading) {
+		return (
+			<div className="flex items-center justify-center py-20">
+				<div className="text-center">
+					<div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-b-[var(--accent-text)]" />
+					<p className="font-poppins text-[var(--text)]">Loading datasets...</p>
+				</div>
+			</div>
+		)
+	}
 
-    if (datasets.length === 0) {
-        return (
-            <Empty
-                image={Empty.PRESENTED_IMAGE_SIMPLE}
-                imageStyle={{ 
-                    filter: 'invert(1)',
-                    opacity: 1,
-                    color: 'white'
-                }}
-                description={
-                    <Space direction="vertical" align="center">
-                        <Text strong className="font-poppins text-h2" style={{ color: 'var(--text)' }}>No Datasets Yet</Text>
-                        <Text className="font-poppins text-body" style={{ color: 'var(--secondary-text)' }}>
-                            Start by creating your first dataset
-                        </Text>
-                        <Button
-                            type="primary"
-                            onClick={onCreateDataset}
-                            className="font-poppins"
-                            style={{
-                                background: 'var(--button-gradient)',
-                                border: '1px solid var(--border)',
-                                color: '#ffffff'
-                            }}
-                        >
-                            Create Dataset
-                        </Button>
-                    </Space>
-                }
-            />
-        )
-    }
-   
+	if (datasets.length === 0) {
+		return (
+			<Empty
+				image={Empty.PRESENTED_IMAGE_SIMPLE}
+				imageStyle={{
+					filter: 'invert(1)',
+					opacity: 1,
+					color: 'white',
+				}}
+				description={
+					<div className="flex flex-col items-center gap-2">
+						<p className="font-poppins text-2xl font-semibold text-[var(--text)]">
+							No Datasets Yet
+						</p>
+						<p className="font-poppins text-sm text-[var(--secondary-text)]">
+							Start by creating your first dataset
+						</p>
+						<Button
+							variant="primary"
+							size="sm"
+							onClick={onCreateDataset}
+							className="font-poppins border border-[var(--border)] bg-[var(--button-gradient)] text-white"
+						>
+							Create Dataset
+						</Button>
+					</div>
+				}
+			/>
+		)
+	}
 
-    return (
-        <>
-            <Row gutter={[16, 16]} className="mb-8">
-                {datasets.map((dataset) => (
-                    <Col xs={24} sm={12} xl={8} key={dataset.id}>
-                        <DatasetCard
-                            dataset={dataset}
-                            onDelete={onDelete}
-                            isDeleting={deletingIds.has(dataset.id)}
-                        />
-                    </Col>
-                ))}
-            </Row>
-            
-            {totalItems && totalItems > 0 && totalItems > pageSize && (
-                <div className="flex justify-center">
-                    <Pagination
-                        current={currentPage}
-                        total={totalItems}
-                        pageSize={pageSize}
-                        onChange={onPageChange}
-                        showSizeChanger={false}
-                        className="custom-pagination"
-                    />
-                </div>
-            )}
-        </>
-    )
+	return (
+		<>
+			<div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+				{datasets.map((dataset) => (
+					<div key={dataset.id} className="flex">
+						<DatasetCard
+							dataset={dataset}
+							onDelete={onDelete}
+							isDeleting={deletingIds.has(dataset.id)}
+						/>
+					</div>
+				))}
+			</div>
+
+			{totalItems && totalItems > 0 && totalItems > pageSize && (
+				<div className="flex justify-center">
+					<Pagination
+						current={currentPage}
+						total={totalItems}
+						pageSize={pageSize}
+						onChange={onPageChange}
+						showSizeChanger={false}
+						className="custom-pagination"
+					/>
+				</div>
+			)}
+		</>
+	)
 }
 
 export default DatasetGrid

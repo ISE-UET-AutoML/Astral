@@ -5,7 +5,6 @@ import CollabMarquee from './CollabMarquee'
 import ServicesSection from './ServicesSection'
 import ShowcaseSection from './ShowcaseSection'
 import FooterSection from './FooterSection'
-import BackgroundShapes from './BackgroundShapes'
 
 /**
  * LandingPage - Main wrapper component for the landing page
@@ -36,8 +35,6 @@ const LandingPage = () => {
         >
             {/* Full-viewport background fill following app theme */}
             <div className="fixed inset-0 bg-[#01000A] -z-50" />
-			{/* Background Effects Layer */}
-			<BackgroundShapes />
 			
 			{/* Navigation / orbital logo layer (positioned below fixed global NavBar) */}
 			<div className="pt-24">

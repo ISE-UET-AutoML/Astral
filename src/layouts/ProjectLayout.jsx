@@ -14,10 +14,12 @@ export default function ProjectLayout() {
 			{/* Dark mode decorative background shapes */}
 			{theme === 'dark' && (
 				<>
-					<div className="fixed top-[20%] left-[10%] w-[300px] h-[300px] rounded-full -z-10 pointer-events-none"
-						style={{ background: 'radial-gradient(circle, rgba(92,141,255,0.10) 0%, transparent 70%)', animation: 'float 6s ease-in-out infinite' }} />
-					<div className="fixed bottom-[20%] right-[10%] w-[200px] h-[200px] rounded-full -z-10 pointer-events-none"
-						style={{ background: 'radial-gradient(circle, rgba(64,255,255,0.10) 0%, transparent 70%)', animation: 'float 8s ease-in-out infinite reverse' }} />
+					<div
+						className="pointer-events-none fixed top-[20%] left-[10%] h-[300px] w-[300px] rounded-full -z-10 bg-[radial-gradient(circle,_rgba(92,141,255,0.10)_0%,_transparent_70%)] animate-[float_6s_ease-in-out_infinite]"
+					/>
+					<div
+						className="pointer-events-none fixed bottom-[20%] right-[10%] h-[200px] w-[200px] rounded-full -z-10 bg-[radial-gradient(circle,_rgba(64,255,255,0.10)_0%,_transparent_70%)] animate-[float_8s_ease-in-out_infinite_reverse]"
+					/>
 				</>
 			)}
 

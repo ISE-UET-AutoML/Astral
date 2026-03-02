@@ -3,11 +3,8 @@ import { useLocation, useOutletContext, useNavigate } from 'react-router-dom'
 import { useTheme } from 'src/theme/ThemeProvider'
 import {
 	Card,
-	Row,
-	Col,
 	Alert,
 	Typography,
-	Space,
 	Progress,
 	Divider,
 	Tag,
@@ -47,13 +44,13 @@ import {
 	AreaChart,
 } from 'recharts'
 import { PATHS } from 'src/constants/paths'
-import BackgroundShapes from 'src/components/features/landing/BackgroundShapes'
+// BackgroundShapes removed
 import { getExperimentById } from 'src/api/experiment'
 import { getExperimentConfig } from 'src/api/experiment_config'
 
 // import { calcGeneratorDuration } from 'framer-motion'
 
-const { Title, Text, Paragraph } = Typography
+const { Text, Paragraph } = Typography
 
 const calculateElapsedTime = (startTimeValue) => {
 	if (!startTimeValue) return 0
@@ -73,12 +70,10 @@ const TrainingMetricCard = ({
 }) => {
 	return (
 		<Card
-			className="h-max border-0 bg-gradient-to-br from-slate-800/40 to-slate-900/40 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300"
+			className="h-max bg-gradient-to-br from-slate-800/40 to-slate-900/40 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 border border-[var(--border)] rounded-xl"
 			style={{
 				background: 'var(--card-gradient)',
 				backdropFilter: 'blur(10px)',
-				border: '1px solid var(--border)',
-				borderRadius: '12px',
 				fontFamily: 'Poppins, sans-serif',
 			}}
 		>
@@ -120,7 +115,7 @@ const EnhancedLineGraph = ({ valMetric, data, loading, maxTrainingTime }) => {
 	if (!data || data.length === 0) {
 		return (
 			<div className="flex justify-center items-center h-64 w-full border border-dashed border-slate-600/50 rounded-lg bg-slate-800/20">
-				<Space direction="vertical" align="center">
+				<div className="flex flex-col items-center gap-2">
 					<LineChartOutlined
 						className="text-5xl text-[#64748b]"
 					/>
@@ -130,7 +125,7 @@ const EnhancedLineGraph = ({ valMetric, data, loading, maxTrainingTime }) => {
 					>
 						Waiting for training data...
 					</Text>
-				</Space>
+				</div>
 			</div>
 		)
 	}
@@ -265,37 +260,29 @@ const TrainingInfoCard = ({
 	return (
 		<Card
 			title={
-				<Title
-					level={5}
-					style={{
-						margin: 0,
-						color: 'var(--text)',
-						fontFamily: 'Poppins, sans-serif',
-					}}
-				>
-					<DashboardOutlined className="text-[#60a5fa]" />{' '}
-					Experiment Information:{' '}
+				<h2 className="m-0 flex items-center text-xl font-semibold font-poppins text-[var(--text)]">
+					<DashboardOutlined className="mr-2 text-[#60a5fa]" />
+					<span>Experiment Information:</span>
 					<Tag
 						color="blue"
 						icon={<ExperimentOutlined />}
-						className="bg-gradient-to-br from-[#3b82f6] to-[#22d3ee] border-none text-white font-poppins ml-[10px]"
+						className="ml-[10px] bg-gradient-to-br from-[#3b82f6] to-[#22d3ee] border-none text-white font-poppins"
 					>
 						{experimentName}
 					</Tag>
-				</Title>
+				</h2>
 			}
-			className="border-0 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300"
+			className="border border-[var(--border)] backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300"
 			style={{
 				background: 'var(--card-gradient)',
 				backdropFilter: 'blur(10px)',
-				border: '1px solid var(--border)',
 				borderRadius: '12px',
 				fontFamily: 'Poppins, sans-serif',
 			}}
 		>
-			<Space direction="vertical" size="middle" className="w-full">
-				<Row>
-					<div className="w-[28%]">
+			<div className="flex w-full flex-col gap-4">
+				<div className="flex flex-wrap gap-4">
+					<div className="w-full md:w-[28%]">
 						<TrainingMetricCard
 							title="Current Epoch"
 							value={trainingInfo.latestEpoch}
@@ -306,7 +293,7 @@ const TrainingInfoCard = ({
 							}
 						/>
 					</div>
-					<div className="w-[28%] ml-10">
+					<div className="ml-0 w-full md:ml-10 md:w-[28%]">
 						<TrainingMetricCard
 							title={`Validation ${valMetric}`}
 							value={(trainingInfo.accuracy * 1).toFixed(2)}
@@ -316,7 +303,7 @@ const TrainingInfoCard = ({
 							}
 						/>
 					</div>
-					<div className="w-[28%] ml-10">
+					<div className="ml-0 w-full md:ml-10 md:w-[28%]">
 						<TrainingMetricCard
 							title="Time Elapsed"
 							value={elapsedTime}
@@ -325,8 +312,8 @@ const TrainingInfoCard = ({
 							loading={status === 'PENDING'}
 						/>
 					</div>
-				</Row>
-			</Space>
+				</div>
+			</div>
 		</Card>
 	)
 }
@@ -386,7 +373,7 @@ const Training = () => {
 	const settingUpProgress = [
 		{
 			title: (
-				<span style={{ color: 'var(--text)' }}>
+				<span className="text-[var(--text)]">
 					Initialize Virtual Environment
 				</span>
 			),
@@ -399,7 +386,7 @@ const Training = () => {
 		},
 		{
 			title: (
-				<span style={{ color: 'var(--text)' }}>
+				<span className="text-[var(--text)]">
 					Updating Operating System
 				</span>
 			),
@@ -412,7 +399,7 @@ const Training = () => {
 		},
 		{
 			title: (
-				<span style={{ color: 'var(--text)' }}>Installing Tools</span>
+				<span className="text-[var(--text)]">Installing Tools</span>
 			),
 			description: (
 				<span className="text-slate-400">
@@ -423,7 +410,7 @@ const Training = () => {
 		},
 		{
 			title: (
-				<span style={{ color: 'var(--text)' }}>
+				<span className="text-[var(--text)]">
 					Installing Dependencies
 				</span>
 			),
@@ -436,7 +423,7 @@ const Training = () => {
 		},
 		{
 			title: (
-				<span style={{ color: 'var(--text)' }}>
+				<span className="text-[var(--text)]">
 					Cleaning up conflicting packages
 				</span>
 			),
@@ -560,72 +547,8 @@ const Training = () => {
                     font-family: 'Poppins', sans-serif !important;
                 }
             `}</style>
-			<div
-				className="min-h-screen relative"
-				style={{ background: 'var(--surface)' }}
-			>
-				{theme === 'dark' && (
-					<BackgroundShapes
-						width="1280px"
-						height="1200px"
-						shapes={[
-							{
-								id: 'trainingBlue',
-								shape: 'circle',
-								size: '600px',
-								gradient: {
-									type: 'radial',
-									shape: 'ellipse',
-									colors: [
-										'#5C8DFF 0%',
-										'#5C8DFF 35%',
-										'transparent 75%',
-									],
-								},
-								opacity: 0.35,
-								blur: '240px',
-								position: { top: '120px', right: '-200px' },
-								transform: 'none',
-							},
-							{
-								id: 'trainingCyan',
-								shape: 'rounded',
-								size: '500px',
-								gradient: {
-									type: 'radial',
-									shape: 'circle',
-									colors: [
-										'#40FFFF 0%',
-										'#40FFFF 45%',
-										'transparent 80%',
-									],
-								},
-								opacity: 0.25,
-								blur: '200px',
-								position: { top: '300px', left: '-180px' },
-								transform: 'none',
-							},
-							{
-								id: 'trainingWarm',
-								shape: 'rounded',
-								size: '450px',
-								gradient: {
-									type: 'radial',
-									shape: 'circle',
-									colors: [
-										'#FFAF40 0%',
-										'#FFAF40 55%',
-										'transparent 90%',
-									],
-								},
-								opacity: 0.2,
-								blur: '180px',
-								position: { bottom: '100px', right: '20%' },
-								transform: 'none',
-							},
-						]}
-					/>
-				)}
+			<div className="relative min-h-screen bg-[var(--surface)]">
+				{/* BackgroundShapes removed */}
 				<div className="relative z-10 p-6">
 					<animated.div
 						style={useSpring({
@@ -634,19 +557,13 @@ const Training = () => {
 							config: { tension: 280, friction: 20 },
 						})}
 					>
-						<Space
-							direction="vertical"
-							size="large"
-							className="w-full"
-						>
+						<div className="flex w-full flex-col gap-6">
 							<Steps
 								current={currentStep}
 								items={[
 									{
 										title: (
-											<span
-												style={{ color: 'var(--text)' }}
-											>
+											<span className="text-[var(--text)]">
 												Selecting Instance
 											</span>
 										),
@@ -665,9 +582,7 @@ const Training = () => {
 									},
 									{
 										title: (
-											<span
-												style={{ color: 'var(--text)' }}
-											>
+											<span className="text-[var(--text)]">
 												Downloading Dependencies
 											</span>
 										),
@@ -685,9 +600,7 @@ const Training = () => {
 									},
 									{
 										title: (
-											<span
-												style={{ color: 'var(--text)' }}
-											>
+											<span className="text-[var(--text)]">
 												Downloading Data
 											</span>
 										),
@@ -705,9 +618,7 @@ const Training = () => {
 									},
 									{
 										title: (
-											<span
-												style={{ color: 'var(--text)' }}
-											>
+											<span className="text-[var(--text)]">
 												Training
 											</span>
 										),
@@ -730,9 +641,7 @@ const Training = () => {
 									},
 									{
 										title: (
-											<span
-												style={{ color: 'var(--text)' }}
-											>
+											<span className="text-[var(--text)]">
 												Done
 											</span>
 										),
@@ -753,16 +662,9 @@ const Training = () => {
 											className="text-[64px] text-[#10b981] mb-4"
 										/>
 									</div>
-									<Title
-										level={3}
-										style={{
-											color: 'var(--text)',
-											fontFamily: 'Poppins, sans-serif',
-											marginBottom: '8px',
-										}}
-									>
+									<h2 className="mb-2 text-2xl font-semibold font-poppins text-[var(--text)]">
 										Training Completed Successfully!
-									</Title>
+									</h2>
 									<Paragraph
 										className="text-[#94a3b8] font-poppins mb-6 text-base"
 									>
@@ -784,11 +686,7 @@ const Training = () => {
 								<Alert
 									showIcon
 									message={
-										<span
-											style={{
-												color: 'var(--text)',
-											}}
-										>
+										<span className="text-[var(--text)]">
 											{experimentName === 'loading'
 												? 'Finding the best instance for your project. This may take a few moments...'
 												: maxTrainingTime &&
@@ -801,11 +699,7 @@ const Training = () => {
 									description={
 										maxTrainingTime &&
 										elapsedTime >= maxTrainingTime ? (
-											<span
-												style={{
-													color: 'var(--text)',
-												}}
-											>
+											<span className="text-[var(--text)]">
 												The training has reached its
 												maximum allocated time. It may
 												automatically stop soon.
@@ -838,28 +732,20 @@ const Training = () => {
 							{currentStep === 1 && (
 								<Card
 									title={
-										<Title
-											level={5}
-											style={{
-												margin: 0,
-												color: 'var(--text)',
-												fontFamily:
-													'Poppins, sans-serif',
-											}}
-										>
+										<h2 className="m-0 flex items-center text-xl font-semibold font-poppins text-[var(--text)]">
 											<SettingOutlined
+												className="mr-2"
 												style={{
 													color: 'var(--accent-text)',
 												}}
-											/>{' '}
-											{'Setting Up Progress'}
-										</Title>
+											/>
+											Setting Up Progress
+										</h2>
 									}
-									className="border-0 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300"
+									className="border border-[var(--border)] backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300"
 									style={{
 										background: 'var(--card-gradient)',
 										backdropFilter: 'blur(10px)',
-										border: '1px solid var(--border)',
 										borderRadius: '12px',
 										fontFamily: 'Poppins, sans-serif',
 									}}
@@ -885,28 +771,20 @@ const Training = () => {
 							{currentStep >= 3 && (
 								<Card
 									title={
-										<Title
-											level={5}
-											style={{
-												margin: 0,
-												color: 'var(--text)',
-												fontFamily:
-													'Poppins, sans-serif',
-											}}
-										>
+										<h2 className="m-0 flex items-center text-xl font-semibold font-poppins text-[var(--text)]">
 											<LineChartOutlined
+												className="mr-2"
 												style={{
 													color: 'var(--accent-text)',
 												}}
-											/>{' '}
+											/>
 											{`${valMetric ? valMetric : 'Accuracy'} Trend`}
-										</Title>
+										</h2>
 									}
-									className="border-0 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300"
+									className="border border-[var(--border)] backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300"
 									style={{
 										background: 'var(--card-gradient)',
 										backdropFilter: 'blur(10px)',
-										border: '1px solid var(--border)',
 										borderRadius: '12px',
 										fontFamily: 'Poppins, sans-serif',
 									}}
@@ -956,25 +834,17 @@ const Training = () => {
 												<Paragraph
 													className="!m-0 font-poppins"
 												>
-												<RadarChartOutlined
-													className="mr-2 text-[#60a5fa]"
-												/>
+													<RadarChartOutlined
+														className="mr-2 text-[#60a5fa]"
+													/>
 													<Text
 														strong
-														style={{
-															color: 'var(--text)',
-															fontFamily:
-																'Poppins, sans-serif',
-														}}
+														className="font-poppins text-[var(--text)]"
 													>
 														Understand Metrics:
 													</Text>{' '}
 													<Text
-														style={{
-															color: 'var(--text)',
-															fontFamily:
-																'Poppins, sans-serif',
-														}}
+														className="font-poppins text-[var(--text)]"
 													>
 														{metricExplain}
 													</Text>
@@ -985,26 +855,18 @@ const Training = () => {
 														className="mt-3 font-poppins"
 													>
 														<Tooltip title="Time constraints can affect model performance">
-														<HourglassOutlined
-															className="mr-2 text-[#f59e0b]"
-														/>
+															<HourglassOutlined
+																className="mr-2 text-[#f59e0b]"
+															/>
 															<Text
 																strong
-																style={{
-																	color: 'var(--text)',
-																	fontFamily:
-																		'Poppins, sans-serif',
-																}}
+																className="font-poppins text-[var(--text)]"
 															>
 																Training Time
 																Limit:
 															</Text>{' '}
 															<Text
-																style={{
-																	color: 'var(--text)',
-																	fontFamily:
-																		'Poppins, sans-serif',
-																}}
+																className="font-poppins text-[var(--text)]"
 															>
 																This experiment
 																has a maximum
@@ -1032,7 +894,7 @@ const Training = () => {
 									/>
 								</Card>
 							)}
-						</Space>
+						</div>
 					</animated.div>
 				</div>
 			</div>

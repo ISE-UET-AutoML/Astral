@@ -1,6 +1,7 @@
 // UI Primitive components barrel export
 // Replaces all antd UI imports
 export { Alert } from './alert'
+export { Badge, badgeVariants } from './badge'
 export { Button, buttonVariants } from './button'
 export { Card } from './card'
 export { Dropdown, DropdownButton } from './dropdown'

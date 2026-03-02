@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useTheme } from 'src/theme/ThemeProvider'
 import {
-    Space,
-    Typography,
     Card,
     Steps,
     Spin,
@@ -18,14 +16,12 @@ import {
 } from '@ant-design/icons'
 import * as deployAPI from 'src/api/deploy'
 import { PATHS } from 'src/constants/paths'
-import BackgroundShapes from 'src/components/features/landing/BackgroundShapes'
+// BackgroundShapes removed
 import { useSpring, animated } from '@react-spring/web'
-
-const { Title } = Typography
 const settingUpProgress = [
     {
         title: (
-            <span style={{ color: 'var(--text)' }}>
+            <span className="text-[var(--text)]">
                 Initialize Virtual Environment
             </span>
         ),
@@ -38,7 +34,7 @@ const settingUpProgress = [
     },
     {
         title: (
-            <span style={{ color: 'var(--text)' }}>
+            <span className="text-[var(--text)]">
                 Updating Operating System
             </span>
         ),
@@ -51,7 +47,7 @@ const settingUpProgress = [
     },
     {
         title: (
-            <span style={{ color: 'var(--text)' }}>Installing Tools</span>
+            <span className="text-[var(--text)]">Installing Tools</span>
         ),
         description: (
             <span className="text-slate-400">
@@ -62,7 +58,7 @@ const settingUpProgress = [
     },
     {
         title: (
-            <span style={{ color: 'var(--text)' }}>
+            <span className="text-[var(--text)]">
                 Installing Dependencies
             </span>
         ),
@@ -75,7 +71,7 @@ const settingUpProgress = [
     },
     {
         title: (
-            <span style={{ color: 'var(--text)' }}>
+            <span className="text-[var(--text)]">
                 Cleaning up conflicting packages
             </span>
         ),
@@ -91,7 +87,7 @@ const settingUpProgress = [
 const selectingInstanceProgress = [
     {
         title: (
-            <span style={{ color: 'var(--text)' }}>
+            <span className="text-[var(--text)]">
                 Querying Machine
             </span>
         ),
@@ -103,7 +99,7 @@ const selectingInstanceProgress = [
     },
     {
         title: (
-            <span style={{ color: 'var(--text)' }}>
+            <span className="text-[var(--text)]">
                 Initialize SSH Protocol
             </span>
         ),
@@ -115,7 +111,7 @@ const selectingInstanceProgress = [
     },
     {
         title: (
-            <span style={{ color: 'var(--text)' }}>Installing Tools</span>
+            <span className="text-[var(--text)]">Installing Tools</span>
         ),
         description: (
             <span className="text-slate-400">
@@ -129,7 +125,7 @@ const selectingInstanceProgress = [
 const downloadModelProgress = [
     {
         title: (
-            <span style={{ color: 'var(--text)' }}>
+            <span className="text-[var(--text)]">
                 Downloading Model from Cloud Storage
             </span>
         ),
@@ -144,7 +140,7 @@ const downloadModelProgress = [
 const initServerProgress = [
     {
         title: (
-            <span style={{ color: 'var(--text)' }}>
+            <span className="text-[var(--text)]">
                 Setting up your server
             </span>
         ),
@@ -236,71 +232,9 @@ export default function DeploySettingUpView() {
                 }
             `}</style>
             <div
-                className="min-h-screen relative"
-                style={{ background: 'var(--surface)' }}
+                className="relative min-h-screen bg-[var(--surface)]"
             >
-                {theme === 'dark' && (
-                    <BackgroundShapes
-                        width="1280px"
-                        height="1200px"
-                        shapes={[
-                            {
-                                id: 'trainingBlue',
-                                shape: 'circle',
-                                size: '600px',
-                                gradient: {
-                                    type: 'radial',
-                                    shape: 'ellipse',
-                                    colors: [
-                                        '#5C8DFF 0%',
-                                        '#5C8DFF 35%',
-                                        'transparent 75%',
-                                    ],
-                                },
-                                opacity: 0.35,
-                                blur: '240px',
-                                position: { top: '120px', right: '-200px' },
-                                transform: 'none',
-                            },
-                            {
-                                id: 'trainingCyan',
-                                shape: 'rounded',
-                                size: '500px',
-                                gradient: {
-                                    type: 'radial',
-                                    shape: 'circle',
-                                    colors: [
-                                        '#40FFFF 0%',
-                                        '#40FFFF 45%',
-                                        'transparent 80%',
-                                    ],
-                                },
-                                opacity: 0.25,
-                                blur: '200px',
-                                position: { top: '300px', left: '-180px' },
-                                transform: 'none',
-                            },
-                            {
-                                id: 'trainingWarm',
-                                shape: 'rounded',
-                                size: '450px',
-                                gradient: {
-                                    type: 'radial',
-                                    shape: 'circle',
-                                    colors: [
-                                        '#FFAF40 0%',
-                                        '#FFAF40 55%',
-                                        'transparent 90%',
-                                    ],
-                                },
-                                opacity: 0.2,
-                                blur: '180px',
-                                position: { bottom: '100px', right: '20%' },
-                                transform: 'none',
-                            },
-                        ]}
-                    />
-                )}
+                {/* BackgroundShapes removed */}
                 <div className="relative z-10 p-6">
                     <animated.div
                         style={useSpring({
@@ -309,37 +243,22 @@ export default function DeploySettingUpView() {
                             config: { tension: 280, friction: 20 },
                         })}
                     >
-                        <Space
-                            direction="vertical"
-                            size="large"
-                            className="w-full"
-                        >
-                            <Title
-                                level={5}
-                                style={{
-                                    margin: 0,
-                                    color: 'var(--text)',
-                                    fontFamily:
-                                        'Poppins, sans-serif',
-                                }}
-                            >
+                        <div className="flex flex-col w-full gap-6">
+                            <h2 className="m-0 flex items-center text-xl font-semibold font-poppins text-[var(--text)]">
                                 <RocketOutlined
+                                    className="mr-2 text-[20px]"
                                     style={{
                                         color: 'var(--accent-text)',
-                                        fontSize: '20px',
-                                        marginRight: '10px'
                                     }}
-                                />{' '}
-                                {'Deployment Preparation'}
-                            </Title>
+                                />
+                                Deployment Preparation
+                            </h2>
                             <Steps
                                 current={currentStep}
                                 items={[
                                     {
                                         title: (
-                                            <span
-                                                style={{ color: 'var(--text)' }}
-                                            >
+                                            <span className="text-[var(--text)]">
                                                 Creating Instance
                                             </span>
                                         ),
@@ -358,9 +277,7 @@ export default function DeploySettingUpView() {
                                     },
                                     {
                                         title: (
-                                            <span
-                                                style={{ color: 'var(--text)' }}
-                                            >
+                                            <span className="text-[var(--text)]">
                                                 Downloading Dependencies
                                             </span>
                                         ),
@@ -378,9 +295,7 @@ export default function DeploySettingUpView() {
                                     },
                                     {
                                         title: (
-                                            <span
-                                                style={{ color: 'var(--text)' }}
-                                            >
+                                            <span className="text-[var(--text)]">
                                                 Downloading Model
                                             </span>
                                         ),
@@ -398,9 +313,7 @@ export default function DeploySettingUpView() {
                                     },
                                     {
                                         title: (
-                                            <span
-                                                style={{ color: 'var(--text)' }}
-                                            >
+                                            <span className="text-[var(--text)]">
                                                 Initializing Server
                                             </span>
                                         ),
@@ -420,23 +333,15 @@ export default function DeploySettingUpView() {
                             />
                             <Card
                                 title={
-                                    <Title
-                                        level={5}
-                                        style={{
-                                            margin: 0,
-                                            color: 'var(--text)',
-                                            fontFamily:
-                                                'Poppins, sans-serif',
-                                        }}
-                                    >
+                                    <h2 className="m-0 flex items-center text-xl font-semibold font-poppins text-[var(--text)]">
                                         <SettingOutlined
+                                            className="mr-2"
                                             style={{
                                                 color: 'var(--accent-text)',
-                                                marginRight: '10px'
                                             }}
-                                        />{' '}
-                                        {'Current Step Progress'}
-                                    </Title>
+                                        />
+                                        Current Step Progress
+                                    </h2>
                                 }
                                 className="border-0 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300"
                                 style={{
@@ -464,7 +369,7 @@ export default function DeploySettingUpView() {
                                     items={getProgressSteps(deployStatus)}
                                 />
                             </Card>
-                        </Space>
+                        </div>
                     </animated.div>
                 </div>
             </div>
