@@ -474,7 +474,7 @@ const ManualCreationModal = ({
 											className={`task-list-item cursor-pointer p-[14px] rounded-2xl border-2 border-[var(--border)] transition-all duration-300 ease-in-out relative min-h-[120px] overflow-hidden flex items-center ${
 												isTaskSelected
 													? 'selected bg-[var(--selection-bg)]'
-													: 'bg-[var(--card-gradient)]'
+													: '[background:var(--card-gradient)]'
 											}`}
 											onClick={(e) => handleSelectType(e, projTypeIndex)}
 											onKeyDown={(e) => {
@@ -502,7 +502,7 @@ const ManualCreationModal = ({
 												</div>
 
 												{isTaskSelected && (
-													<div className="absolute top-4 right-4 w-6 h-6 rounded-full bg-[var(--button-gradient)] flex items-center justify-center text-white text-sm font-bold">
+													<div className="absolute top-4 right-4 w-6 h-6 rounded-full [background:var(--button-gradient)] flex items-center justify-center text-white text-sm font-bold">
 														✓
 													</div>
 												)}
@@ -541,7 +541,7 @@ const ManualCreationModal = ({
 
 							{/* Long explanation block */}
 							{displayTask.explain && (
-								<div className="bg-[var(--card-gradient)] border-2 border-[var(--border)] rounded-2xl p-5 mb-6">
+								<div className="[background:var(--card-gradient)] border-2 border-[var(--border)] rounded-2xl p-5 mb-6">
 									<Title
 										level={5}
 										className="mb-3 text-[var(--text,#ffffff)] text-center"
@@ -554,7 +554,7 @@ const ManualCreationModal = ({
 
 							{/* Example block */}
 							{displayTask.example && (
-								<div className="bg-[var(--card-gradient)] border-2 border-[var(--border)] rounded-2xl p-5 mb-6">
+								<div className="[background:var(--card-gradient)] border-2 border-[var(--border)] rounded-2xl p-5 mb-6">
 									<Title
 										level={5}
 										className="mb-4 text-[var(--text)] text-center"
@@ -587,7 +587,7 @@ const ManualCreationModal = ({
 								</div>
 							)}
 
-							<div className="bg-[var(--tag-gradient)] border border-[var(--tag-border)] rounded-xl p-4 text-center mb-6">
+							<div className="[background:var(--tag-gradient)] border border-[var(--tag-border)] rounded-xl p-4 text-center mb-6">
 								<Text className="text-[var(--secondary-text)] text-[11px] font-semibold uppercase tracking-[0.5px] block mb-1.5">
 									Expected Training Time
 								</Text>

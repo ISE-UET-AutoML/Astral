@@ -13,17 +13,8 @@ const ProjectBaseModal = ({
 		<BaseModal
 			open={open}
 			onClose={onCancel}
-			className={`w-full max-w-[90vw] max-h-[90vh] flex flex-col ${className}`}
-			style={{
-				background: 'var(--modal-bg)',
-				borderRadius: '24px',
-				boxShadow: '0 25px 50px rgba(0, 0, 0, 0.3)',
-				border: '1px solid var(--modal-border)',
-				overflow: 'hidden',
-				backdropFilter: 'blur(20px)',
-				maxHeight: '90vh',
-				...style,
-			}}
+			className={`w-full max-w-[90vw] max-h-[90vh] flex flex-col [background:var(--modal-bg)] rounded-[24px] border border-[var(--modal-border)] shadow-[0_25px_50px_rgba(0,0,0,0.3)] overflow-hidden backdrop-blur-[20px] ${className}`}
+			style={style}
 			{...props}
 		>
 			{children}

@@ -47,7 +47,7 @@ const DatasetGrid = ({
 							variant="primary"
 							size="sm"
 							onClick={onCreateDataset}
-							className="font-poppins border border-[var(--border)] bg-[var(--button-gradient)] text-white"
+							className="font-poppins border border-[var(--border)] [background:var(--button-gradient)] text-white"
 						>
 							Create Dataset
 						</Button>

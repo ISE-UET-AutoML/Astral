@@ -216,7 +216,7 @@ export default function ExperimentCard({ experiment }) {
 
     return (
         <Card
-            className="group cursor-pointer rounded-2xl border border-[var(--border)] bg-[var(--card-gradient)] shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-xl"
+            className="group cursor-pointer rounded-2xl border border-[var(--border)] [background:var(--card-gradient)] shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-xl"
             onClick={handleCardClick}
         >
             <CardHeader className="pb-4">

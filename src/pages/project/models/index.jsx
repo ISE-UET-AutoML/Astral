@@ -82,7 +82,7 @@ export default function ProjectModels() {
                 {/* Header Section */}
                 <div className="mb-8">
                     <div className="mb-4 flex items-center gap-3">
-                        <div className="rounded-xl bg-[var(--accent-gradient)] p-2">
+                        <div className="rounded-xl [background:var(--accent-gradient)] p-2">
                             <ModelIcon className="h-6 w-6 text-white" />
                         </div>
                         <div>
@@ -104,7 +104,7 @@ export default function ProjectModels() {
                         ))}
                     </div>
                 ) : (
-                    <Card className="rounded-2xl border border-[var(--border)] bg-[var(--card-gradient)] shadow-2xl">
+                    <Card className="rounded-2xl border border-[var(--border)] [background:var(--card-gradient)] shadow-2xl">
                         <CardContent className="flex flex-col items-center justify-center py-16">
                             <div className="mb-4 rounded-full bg-[var(--hover-bg)] p-4">
                                 <EmptyIcon className="h-12 w-12 text-[var(--secondary-text)]" />

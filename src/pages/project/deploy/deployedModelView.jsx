@@ -460,7 +460,7 @@ export default function DeployedModelView() {
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <div>
                             <Card
-                                className="shadow-md border border-[var(--border)] rounded-xl bg-[var(--card-gradient)]"
+                                className="shadow-md border border-[var(--border)] rounded-xl [background:var(--card-gradient)]"
                                 style={{
                                     backdropFilter: 'blur(10px)',
                                     fontFamily: 'Poppins, sans-serif',
@@ -482,7 +482,7 @@ export default function DeployedModelView() {
                         </div>
                         <div>
                             <Card
-                                className="shadow-md border border-[var(--border)] rounded-xl bg-[var(--card-gradient)]"
+                                className="shadow-md border border-[var(--border)] rounded-xl [background:var(--card-gradient)]"
                                 style={{
                                     backdropFilter: 'blur(10px)',
                                     fontFamily: 'Poppins, sans-serif',
@@ -515,7 +515,7 @@ export default function DeployedModelView() {
                                             </span>
                                     </div>
                                     }
-                                className="border border-[var(--border)] rounded-xl bg-[var(--card-gradient)]"
+                                className="border border-[var(--border)] rounded-xl [background:var(--card-gradient)]"
                                 style={{
                                     backdropFilter: 'blur(10px)',
                                     fontFamily: 'Poppins, sans-serif',
@@ -647,7 +647,7 @@ export default function DeployedModelView() {
                                             </span>
                                     </div>
                                     }
-                                className="border border-[var(--border)] rounded-xl bg-[var(--card-gradient)]"
+                                className="border border-[var(--border)] rounded-xl [background:var(--card-gradient)]"
                                 style={{
                                     backdropFilter: 'blur(10px)',
                                     fontFamily: 'Poppins, sans-serif',
@@ -959,7 +959,7 @@ export default function DeployedModelView() {
                                 🚀 Cloud Server
                             </span>
                         }
-                        className="rounded-xl shadow-sm border border-[var(--border)] bg-[var(--card-gradient)]"
+                        className="rounded-xl shadow-sm border border-[var(--border)] [background:var(--card-gradient)]"
                         style={{
                             backdropFilter: 'blur(10px)',
                             borderRadius: '12px',

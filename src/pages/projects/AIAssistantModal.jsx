@@ -39,7 +39,7 @@ const ChatMessage = ({ message, role }) => {
 			<div
 				className={clsx(
 					'relative max-w-[70%] rounded-xl border border-[var(--border)] px-2 py-0 pl-2 pr-2',
-					isUser ? 'rounded-tr-none bg-[var(--button-gradient)] text-white' : 'rounded-tl-none bg-[var(--card-gradient)] text-[var(--text)]'
+					isUser ? 'rounded-tr-none [background:var(--button-gradient)] text-white' : 'rounded-tl-none [background:var(--card-gradient)] text-[var(--text)]'
 				)}
 			>
 				{message.content === 'loading...' ? (

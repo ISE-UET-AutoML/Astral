@@ -367,10 +367,7 @@ const UpDataDeploy = ({
 					{item.type === 'folder' ? (
 						<div>
 							<div className="flex items-center py-1">
-								<FolderOutlined
-									className="mr-2"
-									className="text-amber-400"
-								/>
+								<FolderOutlined className="mr-2 text-amber-400" />
 								<span className="font-medium">{name}/</span>
 								<button
 									onClick={() =>
@@ -386,10 +383,7 @@ const UpDataDeploy = ({
 						</div>
 					) : (
 						<div className="flex items-center py-1">
-							<FileOutlined
-								className="mr-2"
-								className="text-blue-500"
-							/>
+							<FileOutlined className="mr-2 text-blue-500" />
 							<span
 								className="text-sm truncate max-w-xs"
 								title={name}
@@ -456,7 +450,7 @@ const UpDataDeploy = ({
 			footer={null}
 			width={600}
 			centered
-			closeIcon={<CloseOutlined style={{ color: 'var(--text)' }} />}
+			closeIcon={<CloseOutlined className="text-[var(--text)]" />}
 			styles={{
 				content: {
 					background: 'var(--card-gradient)',
@@ -472,24 +466,18 @@ const UpDataDeploy = ({
 		>
 			<div className="p-4">
 				<h3
-					className="text-xl font-bold mb-4"
-					style={{ color: 'var(--text)' }}
+					className="text-xl font-bold mb-4 text-[var(--text)]"
 				>
 					Upload Data
 				</h3>
 
 				<Dragger
 					{...uploadProps}
-					className="updeploy-dragger"
-					style={{
-						border: '1px dashed var(--border)',
-						borderRadius: 12,
-						background: 'transparent',
-					}}
+					className="updeploy-dragger border border-dashed border-[var(--border)] rounded-[12px] bg-transparent"
 				>
 					<p className="ant-upload-drag-icon">
 						<InboxOutlined
-							style={{ color: 'var(--accent-text)' }}
+							className="text-[var(--accent-text)]"
 						/>
 					</p>
 					<p
@@ -533,15 +521,10 @@ const UpDataDeploy = ({
 
 				{folderStructure && Object.keys(folderStructure).length > 0 && (
 					<div
-						className="mt-4 p-3 rounded-lg"
-						style={{
-							backgroundColor: 'var(--card-gradient)',
-							border: '1px solid var(--border)',
-						}}
+						className="mt-4 p-3 rounded-lg [background:var(--card-gradient)] border border-[var(--border)]"
 					>
 						<p
-							className="text-sm mb-2"
-							style={{ color: 'var(--text)' }}
+							className="text-sm mb-2 text-[var(--text)]"
 						>
 							Selected structure:
 						</p>

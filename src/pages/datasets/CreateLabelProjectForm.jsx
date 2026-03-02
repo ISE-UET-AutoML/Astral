@@ -7,67 +7,25 @@ import { Tag } from 'src/components/shared/ui/tag'
 import { TASK_TYPES } from 'src/constants/types'
 import { Info } from 'lucide-react'
 
-/* ── Shared style helpers ─────────────────────────────────────────────── */
-const inputStyle = {
-	width: '100%',
-	background: 'var(--input-bg)',
-	border: '1px solid var(--input-border)',
-	color: 'var(--input-color)',
-	fontFamily: 'Poppins, sans-serif',
-	borderRadius: '10px',
-	padding: '8px 12px',
-	fontSize: '14px',
-	outline: 'none',
-	boxSizing: 'border-box',
-	transition: 'border-color 0.2s',
-}
+/* ── Shared Tailwind helpers ───────────────────────────────────────────── */
+const inputClass =
+	"w-full px-3 py-2 rounded-[10px] border border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--input-color)] placeholder-[var(--placeholder-color)] font-poppins text-sm outline-none box-border transition-[border-color,box-shadow] duration-200 focus:border-[var(--input-focus-border)] focus:shadow-[var(--input-shadow)]"
 
-const primaryBtnStyle = {
-	background: 'var(--button-primary-bg)',
-	border: '1px solid var(--button-primary-border)',
-	color: 'var(--button-primary-color)',
-	fontFamily: 'Poppins, sans-serif',
-	fontWeight: 500,
-	padding: '8px 20px',
-	borderRadius: '8px',
-	cursor: 'pointer',
-	fontSize: '14px',
-}
+const primaryButtonClass =
+	"inline-flex items-center justify-center px-5 py-2 rounded-lg border border-[var(--button-primary-border)] bg-[var(--button-primary-bg)] text-[var(--button-primary-color)] font-poppins font-medium text-sm cursor-pointer"
 
-const defaultBtnStyle = {
-	background: 'var(--button-default-bg)',
-	border: '1px solid var(--button-default-border)',
-	color: 'var(--button-default-color)',
-	fontFamily: 'Poppins, sans-serif',
-	padding: '8px 20px',
-	borderRadius: '8px',
-	cursor: 'pointer',
-	fontSize: '14px',
-}
+const defaultButtonClass =
+	"inline-flex items-center justify-center px-5 py-2 rounded-lg border border-[var(--button-default-border)] bg-[var(--button-default-bg)] text-[var(--button-default-color)] font-poppins text-sm cursor-pointer"
 
-const dashedBtnStyle = {
-	background: 'var(--button-dashed-bg, transparent)',
-	border: '1px dashed var(--button-dashed-border, var(--input-border))',
-	color: 'var(--button-dashed-color, var(--text))',
-	fontFamily: 'Poppins, sans-serif',
-	padding: '6px 14px',
-	borderRadius: '8px',
-	cursor: 'pointer',
-	fontSize: '14px',
-	display: 'inline-flex',
-	alignItems: 'center',
-	gap: '4px',
-}
+const dashedButtonClass =
+	"inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-dashed border-[var(--button-dashed-border)] bg-[var(--button-dashed-bg)] text-[var(--button-dashed-color)] font-poppins text-sm"
 
 /* ── FormField helper ─────────────────────────────────────────────────── */
 const FormField = ({ label, required, children }) => (
 	<div className="mb-4">
-		<label
-			className="block text-sm font-medium mb-1"
-			style={{ color: 'var(--form-label-color)', fontFamily: 'Poppins, sans-serif' }}
-		>
+		<label className="block text-sm font-medium mb-1 text-[var(--form-label-color)] font-poppins">
 			{label}
-			{required && <span style={{ color: '#ef4444', marginLeft: '4px' }}>*</span>}
+			{required && <span className="ml-1 text-red-500">*</span>}
 		</label>
 		{children}
 	</div>
@@ -110,12 +68,7 @@ const MultiSelect = ({
 	return (
 		<div ref={containerRef} className="relative w-full">
 			<div
-				className="flex items-center justify-between rounded-xl border cursor-pointer transition-all duration-200 min-h-[40px] px-3 py-2"
-				style={{
-					background: 'var(--input-bg)',
-					borderColor: isOpen ? 'var(--input-focus-border)' : 'var(--input-border)',
-					color: 'var(--input-color)',
-				}}
+				className={`flex items-center justify-between rounded-xl cursor-pointer transition-all duration-200 min-h-[40px] px-3 py-2 bg-[var(--input-bg)] text-[var(--input-color)] border ${isOpen ? 'border-[var(--input-focus-border)]' : 'border-[var(--input-border)]'}`}
 				onClick={() => setIsOpen(o => !o)}
 			>
 				<div className="flex flex-wrap gap-1 flex-1">
@@ -125,14 +78,13 @@ const MultiSelect = ({
 							return (
 								<span
 									key={v}
-									className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs border"
-									style={{ background: 'var(--tag-bg)', borderColor: 'var(--tag-border)', color: 'var(--tag-color)' }}
+									className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs border bg-[var(--tag-bg)] border-[var(--tag-border)] text-[var(--tag-color)]"
 								>
 									{opt ? opt.label : v}
 									<button
 										type="button"
 										onClick={(e) => { e.stopPropagation(); toggle(v) }}
-										style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', lineHeight: 1, padding: 0 }}
+										className="p-0 m-0 border-none bg-transparent cursor-pointer text-inherit leading-none"
 									>
 										<XMarkIcon className="h-3 w-3" />
 									</button>
@@ -140,7 +92,7 @@ const MultiSelect = ({
 							)
 						})
 					) : (
-						<span style={{ color: 'var(--placeholder-color)', fontSize: '14px' }}>{placeholder}</span>
+						<span className="text-[var(--placeholder-color)] text-[14px]">{placeholder}</span>
 					)}
 				</div>
 				<div className="flex items-center gap-1 ml-2 shrink-0">
@@ -148,22 +100,20 @@ const MultiSelect = ({
 						<button
 							type="button"
 							onClick={(e) => { e.stopPropagation(); onChange([]) }}
-							style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--secondary-text)' }}
+							className="p-0 m-0 border-none bg-transparent cursor-pointer text-[var(--secondary-text)]"
 						>
 							<XMarkIcon className="h-3.5 w-3.5" />
 						</button>
 					)}
 					<ChevronDownIcon
-						className={`h-4 w-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
-						style={{ color: 'var(--secondary-text)' }}
+						className={`h-4 w-4 transition-transform duration-200 text-[var(--secondary-text)] ${isOpen ? 'rotate-180' : ''}`}
 					/>
 				</div>
 			</div>
 
 			{isOpen && (
 				<div
-					className="absolute z-[9999] w-full mt-1 rounded-xl border shadow-lg max-h-60 overflow-y-auto"
-					style={{ background: 'var(--modal-bg, #fff)', borderColor: 'var(--input-border)' }}
+					className="absolute z-[9999] w-full mt-1 rounded-xl border shadow-lg max-h-60 overflow-y-auto [background:var(--modal-bg)] border-[var(--input-border)]"
 				>
 					{showSearch && (
 						<div className="p-2">
@@ -172,24 +122,20 @@ const MultiSelect = ({
 								value={search}
 								onChange={e => setSearch(e.target.value)}
 								placeholder="Search..."
-								style={{ width: '100%', padding: '4px 8px', borderRadius: '6px', border: '1px solid var(--input-border)', background: 'var(--input-bg)', color: 'var(--input-color)', outline: 'none', fontSize: '13px', boxSizing: 'border-box' }}
+								className="w-full px-2 py-1 rounded-[6px] border border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--input-color)] outline-none text-[13px] box-border"
 								onClick={e => e.stopPropagation()}
 							/>
 						</div>
 					)}
 					{filteredOptions.length === 0 ? (
-						<div className="px-4 py-3 text-sm text-center" style={{ color: 'var(--secondary-text)' }}>
+						<div className="px-4 py-3 text-sm text-center text-[var(--secondary-text)]">
 							No options available
 						</div>
 					) : (
 						filteredOptions.map(opt => (
 							<div
 								key={opt.value}
-								className="px-4 py-2.5 text-sm cursor-pointer transition-colors"
-								style={{
-									color: 'var(--input-color)',
-									background: value.includes(opt.value) ? 'var(--hover-bg)' : 'transparent',
-								}}
+								className={`px-4 py-2.5 text-sm cursor-pointer transition-colors text-[var(--input-color)] ${value.includes(opt.value) ? 'bg-[var(--hover-bg)]' : ''}`}
 								onClick={() => toggle(opt.value)}
 							>
 								<div className="flex items-center gap-2">
@@ -320,12 +266,7 @@ export default function CreateLabelProjectForm({
 			{/* Project Name (disabled) */}
 			<FormField label="Project Name" required>
 				<input
-					style={{
-						...inputStyle,
-						background: 'var(--input-disabled-bg)',
-						color: 'var(--input-disabled-color)',
-						cursor: 'not-allowed',
-					}}
+					className={`${inputClass} bg-[var(--input-disabled-bg)] text-[var(--input-disabled-color)] cursor-not-allowed`}
 					value={projectName}
 					readOnly
 					placeholder="Project name"
@@ -451,24 +392,17 @@ export default function CreateLabelProjectForm({
 						<>
 							<div className="flex gap-2">
 								<input
-									style={inputStyle}
+									className={inputClass}
 									placeholder="Enter label name"
 									value={newLabel}
 									onChange={e => setNewLabel(e.target.value)}
 									onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleAddLabel() } }}
-									onFocus={e => { e.target.style.borderColor = 'var(--input-focus-border)' }}
-									onBlur={e => { e.target.style.borderColor = 'var(--input-border)' }}
 								/>
 								<button
 									type="button"
 									onClick={handleAddLabel}
 									disabled={!newLabel.trim()}
-									style={{
-										...dashedBtnStyle,
-										opacity: !newLabel.trim() ? 0.5 : 1,
-										cursor: !newLabel.trim() ? 'not-allowed' : 'pointer',
-										whiteSpace: 'nowrap',
-									}}
+									className={`${dashedButtonClass} ${!newLabel.trim() ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} whitespace-nowrap`}
 								>
 									<PlusIcon className="h-4 w-4" />
 									Add
@@ -484,7 +418,7 @@ export default function CreateLabelProjectForm({
 												<button
 													type="button"
 													onClick={() => handleRemoveLabel(label)}
-													style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', lineHeight: 1, padding: 0 }}
+													className="p-0 m-0 border-none bg-transparent cursor-pointer text-inherit leading-none"
 												>
 													<XMarkIcon className="h-3 w-3" />
 												</button>
@@ -495,15 +429,7 @@ export default function CreateLabelProjectForm({
 													value={labelColors[label] || '#ffffff'}
 													onChange={e => handleColorChange(label, e.target.value)}
 													title={`Color for ${label}`}
-													style={{
-														width: '28px',
-														height: '28px',
-														border: '1px solid var(--input-border)',
-														borderRadius: '6px',
-														cursor: 'pointer',
-														padding: '2px',
-														background: 'var(--input-bg)',
-													}}
+													className="w-7 h-7 border border-[var(--input-border)] rounded-[6px] cursor-pointer p-0.5 bg-[var(--input-bg)]"
 												/>
 											)}
 										</div>
@@ -521,22 +447,21 @@ export default function CreateLabelProjectForm({
 			)}
 
 			{/* Divider */}
-			<hr style={{ borderColor: 'var(--divider-color)', margin: '16px 0' }} />
+			<hr className="my-4 border-t border-[var(--divider-color)]" />
 
 			{/* Actions */}
 			<div className="flex justify-end gap-2">
-				<button type="button" onClick={onBack} style={defaultBtnStyle}>
+				<button
+					type="button"
+					onClick={onBack}
+					className={defaultButtonClass}
+				>
 					Back
 				</button>
 				<button
 					type="submit"
 					disabled={loading || expectedLabels.length === 0}
-					style={{
-						...primaryBtnStyle,
-						opacity: loading || expectedLabels.length === 0 ? 0.6 : 1,
-						cursor: loading || expectedLabels.length === 0 ? 'not-allowed' : 'pointer',
-					}}
-					className="px-8 py-2 rounded-xl border border-blue-500 text-white text-sm !bg-gradient-to-r !from-blue-600 !to-blue-500 !hover:from-blue-700 !hover:to-blue-600 transition-colors shadow-lg"
+					className={`px-8 py-2 rounded-xl border border-blue-500 text-white text-sm bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 transition-colors shadow-lg font-poppins ${loading || expectedLabels.length === 0 ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}`}
 				>
 					{loading ? 'Creating...' : 'Create'}
 				</button>

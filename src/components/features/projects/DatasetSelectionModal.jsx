@@ -143,7 +143,7 @@ const DatasetSelectionModal = ({
             width={800}
             className="theme-dataset-modal z-[1000]"
             classNames={{
-                content: 'bg-[var(--modal-bg)] border border-[var(--modal-border)] rounded-2xl',
+                content: '[background:var(--modal-bg)] border border-[var(--modal-border)] rounded-2xl',
                 header: 'bg-[var(--modal-header-bg)] border-b border-[var(--modal-header-border)]',
             }}
         >

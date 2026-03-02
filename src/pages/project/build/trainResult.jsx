@@ -262,7 +262,7 @@ const TrainResult = () => {
 						<div className="grid grid-cols-1 gap-4 md:grid-cols-3">
 							<div>
 								<Card
-									className="border border-[var(--border)] backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl bg-[var(--card-gradient)]"
+									className="border border-[var(--border)] backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl [background:var(--card-gradient)]"
 									style={{
 										backdropFilter: 'blur(10px)',
 										fontFamily: 'Poppins, sans-serif',
@@ -292,7 +292,7 @@ const TrainResult = () => {
 							</div>
 							<div>
 								<Card
-									className="border border-[var(--border)] backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl bg-[var(--card-gradient)]"
+									className="border border-[var(--border)] backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl [background:var(--card-gradient)]"
 									style={{
 										backdropFilter: 'blur(10px)',
 										fontFamily: 'Poppins, sans-serif',
@@ -344,7 +344,7 @@ const TrainResult = () => {
 							</div>
 							<div>
 								<Card
-									className="border border-[var(--border)] backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl bg-[var(--card-gradient)]"
+									className="border border-[var(--border)] backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl [background:var(--card-gradient)]"
 									style={{
 										backdropFilter: 'blur(10px)',
 										fontFamily: 'Poppins, sans-serif',
@@ -404,7 +404,7 @@ const TrainResult = () => {
 
 						{/* Expandable Details Section */}
 						<Card
-							className="border border-[var(--border)] backdrop-blur-sm shadow-lg rounded-xl bg-[var(--card-gradient)]"
+							className="border border-[var(--border)] backdrop-blur-sm shadow-lg rounded-xl [background:var(--card-gradient)]"
 							style={{
 								backdropFilter: 'blur(10px)',
 								fontFamily: 'Poppins, sans-serif',

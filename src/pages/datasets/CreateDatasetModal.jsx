@@ -206,37 +206,18 @@ const CreateDatasetModal = ({ visible, onCancel, onCreate }) => {
             <div className="fixed inset-0 z-50 flex items-center justify-center">
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={handleCancel} />
                 <div
-                    className="relative z-50 w-full mx-4 flex flex-col"
-                    style={{
-                        maxWidth: '800px',
-                        maxHeight: '90vh',
-                        background: 'var(--modal-bg)',
-                        border: '1px solid var(--modal-border)',
-                        borderRadius: '16px',
-                        boxShadow: '0 25px 50px rgba(0,0,0,0.4)',
-                    }}
+                    className="relative z-50 w-full mx-4 flex flex-col max-w-[800px] max-h-[90vh] [background:var(--modal-bg)] border border-[var(--modal-border)] rounded-2xl shadow-[0_25px_50px_rgba(0,0,0,0.4)]"
                     onClick={e => e.stopPropagation()}
                 >
                     {/* Header */}
-                    <div
-                        className="flex items-center justify-between px-6 py-4 shrink-0"
-                        style={{
-                            background: 'var(--modal-header-bg)',
-                            borderBottom: '1px solid var(--modal-header-border)',
-                            borderRadius: '16px 16px 0 0',
-                        }}
-                    >
-                        <h2
-                            className="m-0 text-lg font-semibold"
-                            style={{ color: 'var(--modal-title-color)', fontFamily: 'Poppins, sans-serif' }}
-                        >
+                    <div className="flex items-center justify-between px-6 py-4 shrink-0 bg-[var(--modal-header-bg)] border-b border-[var(--modal-header-border)] rounded-t-2xl">
+                        <h2 className="m-0 text-lg font-semibold text-[var(--modal-title-color)] font-poppins">
                             Create New Dataset
                         </h2>
                         <button
                             type="button"
                             onClick={handleCancel}
-                            className="flex items-center justify-center w-8 h-8 rounded-full transition-colors hover:bg-white/10"
-                            style={{ color: 'var(--modal-close-color)', background: 'none', border: 'none', cursor: 'pointer', fontSize: '18px' }}
+                            className="flex items-center justify-center w-8 h-8 rounded-full transition-colors hover:bg-white/10 text-[var(--modal-close-color)] bg-transparent border-none cursor-pointer text-[18px]"
                         >
                             ✕
                         </button>

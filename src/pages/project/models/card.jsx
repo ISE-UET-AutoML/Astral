@@ -268,7 +268,7 @@ export default function ModelCard({ model }) {
 
     return (
         <Card
-            className="group cursor-pointer rounded-2xl border border-[var(--border)] bg-[var(--card-gradient)] shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-xl"
+            className="group cursor-pointer rounded-2xl border border-[var(--border)] [background:var(--card-gradient)] shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-xl"
             onClick={handleCardClick}
         >
             <CardHeader className="pb-4">
@@ -315,7 +315,7 @@ export default function ModelCard({ model }) {
                         <Tooltip title="Deploy this model to production">
                             <Button
                                 size="sm"
-                                className="border border-[var(--border)] bg-[var(--button-gradient)] text-white"
+                                className="border border-[var(--border)] [background:var(--button-gradient)] text-white"
                                 onClick={handleDeploy}
                             >
                                 <RocketIcon className="h-4 w-4 mr-1" />
@@ -339,7 +339,7 @@ export default function ModelCard({ model }) {
                             <Tooltip title="Redeploy this model">
                                 <Button
                                     size="sm"
-                                    className="border border-[var(--border)] bg-[var(--button-gradient)] text-white"
+                                    className="border border-[var(--border)] [background:var(--button-gradient)] text-white"
                                     onClick={handleRedeploy}
                                 >
                                     <DeploymentUnitIcon className="h-4 w-4 mr-1" />
