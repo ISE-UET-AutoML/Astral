@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
-// BackgroundShapes removed
 import { useOutletContext } from 'react-router-dom'
-import { useTheme } from 'src/theme/ThemeProvider'
 import { getAllExperiments } from 'src/api/experiment'
 import { getAllDeployedModel } from 'src/api/deploy'
 import { getModels } from 'src/api/model'
+import StatusCard from 'src/components/features/projects/StatusCard'
+import MetaDataItem from 'src/components/features/projects/MetaDataItem'
 
 // Ant Design icons
 import {
@@ -19,7 +19,6 @@ import {
 } from '@ant-design/icons'
 
 const ProjectInfo = () => {
-	const { theme } = useTheme()
 	const { projectInfo } = useOutletContext()
 	const [experiments, setExperiments] = useState([])
 	const [models, setModels] = useState([])
@@ -72,44 +71,6 @@ const ProjectInfo = () => {
 		}
 	)
 
-	const StatusCard = ({ label, value, color, Icon }) => (
-		<div
-			className="group relative overflow-hidden rounded-2xl border border-opacity-20 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-opacity-40 [border-color:var(--border)] bg-[linear-gradient(135deg,var(--hover-bg)_0%,rgba(255,255,255,0.02)_100%)]"
-		>
-			<div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-			<div className="relative flex items-center space-x-4 p-6">
-				<div className="flex-shrink-0 p-3 rounded-xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm">
-					<Icon
-						className="text-2xl text-[var(--accent-text)] transition-transform duration-300 group-hover:scale-110"
-					/>
-				</div>
-				<div className="flex-1 min-w-0">
-					<p className="mb-1 text-sm font-medium opacity-70 text-[var(--secondary-text)]">
-						{label}
-					</p>
-					<p className="text-2xl font-bold tracking-tight text-[var(--text)]">
-						{value}
-					</p>
-				</div>
-			</div>
-		</div>
-	)
-
-	const MetadataItem = ({ label, value }) => (
-		<div className="flex flex-col space-y-1 p-4 rounded-xl bg-gradient-to-r from-white/5 to-transparent border border-white/10 transition-all duration-200 hover:bg-white/10">
-			<span
-				className="text-xs font-medium uppercase tracking-wider opacity-60 text-[var(--secondary-text)]"
-			>
-				{label}
-			</span>
-			<span
-				className="text-sm font-semibold text-[var(--text)]"
-			>
-				{value}
-			</span>
-		</div>
-	)
-
 	return (
 		<>
 			<div className="min-h-screen bg-[var(--surface)]">
@@ -147,25 +108,25 @@ const ProjectInfo = () => {
 										</div>
 
 										<div className="space-y-4">
-											<MetadataItem
+											<MetaDataItem
 												label="Project ID"
 												value={projectInfo?.id}
 											/>
-											<MetadataItem
+											<MetaDataItem
 												label="Task Type"
 												value={projectInfo?.task_type}
 											/>
-											<MetadataItem
+											<MetaDataItem
 												label="Expected Accuracy"
 												value={
 													projectInfo?.expected_accuracy
 												}
 											/>
-											<MetadataItem
+											<MetaDataItem
 												label="Visibility"
 												value={projectInfo?.visibility}
 											/>
-											<MetadataItem
+											<MetaDataItem
 												label="Created"
 												value={formattedDate}
 											/>

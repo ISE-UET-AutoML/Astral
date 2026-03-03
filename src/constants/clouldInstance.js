@@ -1,16 +1,5 @@
 import React from 'react'
-import {
-	Card,
-	Space,
-	Typography,
-	Steps,
-	Badge,
-	Row,
-	Col,
-	Divider,
-	Collapse,
-	Select,
-} from 'antd'
+import { Card, Space, Typography, Badge, Row, Col, Divider, Collapse } from 'antd'
 import {
 	ClockCircleOutlined,
 	CloudServerOutlined,
@@ -21,9 +10,7 @@ import {
 } from '@ant-design/icons'
 
 const { Title, Text } = Typography
-const { Step } = Steps
 const { Panel } = Collapse
-const { Option } = Select
 export const SERVICES = [
 	{
 		name: 'VastAI',
@@ -151,43 +138,37 @@ export const generateRandomKey = () => {
 export const InstanceSizeCard = ({ size, details, selected, onClick }) => (
 	<Card
 		hoverable
-		className={`instance-size-card ${selected ? 'selected' : ''}`}
-		style={{
-			borderColor: selected ? 'var(--accent-text)' : 'var(--border)',
-			background: selected ? 'var(--active-bg)' : 'var(--card-gradient)',
-			color: 'var(--text)',
-		}}
+		className={`instance-size-card border rounded-2xl bg-[var(--card-gradient)] text-[var(--text)] transition-all duration-300 backdrop-blur-xl ${
+			selected
+				? 'border-[var(--accent-text)] bg-[var(--active-bg)] shadow-[0_8px_24px_var(--input-shadow)]'
+				: 'border-[var(--border)] hover:border-[var(--accent-text)] hover:bg-[var(--hover-bg)] hover:shadow-[0_8px_24px_var(--input-shadow)]'
+		}`}
 		onClick={onClick}
 	>
 		<div className="flex items-center">
-			<Title level={5} className="mr-10" style={{ color: 'var(--text)' }}>
+			<Title
+				level={5}
+				className="mr-10 !text-[var(--text)] !font-semibold"
+			>
 				{details.title}
 			</Title>
 			{selected && (
 				<Collapse ghost>
-					<Panel
-						header="Detail"
-						key="1"
-						style={{ color: 'var(--text)' }}
-					>
+					<Panel header="Detail" key="1">
 						<Space direction="vertical" size="small">
-							<Text style={{ color: 'var(--secondary-text)' }}>
+							<Text className="text-[var(--secondary-text)]">
 								Suitable for: {details.suitable}
 							</Text>
-							<Text style={{ color: 'var(--secondary-text)' }}>
+							<Text className="text-[var(--secondary-text)]">
 								GPU Range: {details.gpuRange}
 							</Text>
-							<Text style={{ color: 'var(--secondary-text)' }}>
+							<Text className="text-[var(--secondary-text)]">
 								Memory: {details.memory}
 							</Text>
 							<Badge
 								color="var(--accent-text)"
 								text={
-									<span
-										style={{
-											color: 'var(--secondary-text)',
-										}}
-									>
+									<span className="text-[var(--secondary-text)]">
 										Recommended for: {details.recommended}
 									</span>
 								}
@@ -206,68 +187,48 @@ export const CostEstimator = ({ hours, gpuLevel }) => {
 
 	return (
 		<Card
-			title={
-				<span
-					style={{
-						color: 'var(--text)',
-						fontFamily: 'Poppins',
-						fontWeight: 600,
-					}}
-				>
-					Cost Estimation
-				</span>
-			}
-			className="dark-build-cost-estimator"
-			style={{
-				background: 'var(--hover-bg)',
-				border: '1px solid var(--border)',
-				borderRadius: '16px',
-			}}
+			title={<span className="font-semibold text-[var(--text)]">Cost Estimation</span>}
+			className="rounded-2xl border border-[var(--border)] bg-[var(--hover-bg)]"
 		>
-			<Space direction="vertical" size="large" style={{ width: '100%' }}>
+			<Space
+				direction="vertical"
+				size="large"
+				className="w-full"
+			>
 				<Row justify="space-between">
 					<Col>
-						<Text style={{ color: 'var(--secondary-text)' }}>
+						<Text className="text-[var(--secondary-text)]">
 							Hourly Rate:
 						</Text>
 					</Col>
 					<Col>
-						<Text strong style={{ color: 'var(--text)' }}>
+						<Text strong className="text-[var(--text)]">
 							${hourlyRate}/hour
 						</Text>
 					</Col>
 				</Row>
 				<Row justify="space-between">
 					<Col>
-						<Text style={{ color: 'var(--secondary-text)' }}>
+						<Text className="text-[var(--secondary-text)]">
 							Training Hours:
 						</Text>
 					</Col>
 					<Col>
-						<Text strong style={{ color: 'var(--text)' }}>
+						<Text strong className="text-[var(--text)]">
 							{hours} hours
 						</Text>
 					</Col>
 				</Row>
-				<Divider
-					style={{
-						margin: '12px 0',
-						borderColor: 'var(--divider-color)',
-					}}
-				/>
+				<Divider className="my-3 border-[var(--divider-color)]" />
 				<Row justify="space-between">
 					<Col>
-						<Text style={{ color: 'var(--secondary-text)' }}>
+						<Text className="text-[var(--secondary-text)]">
 							Estimated Total:
 						</Text>
 					</Col>
 					<Col>
 						<Text
-							style={{
-								color: 'var(--accent-text)',
-								fontWeight: 600,
-								fontSize: '18px',
-							}}
+							className="text-lg font-semibold text-[var(--accent-text)]"
 						>
 							${totalCost.toFixed(2)}
 						</Text>
@@ -284,81 +245,58 @@ export const InstanceInfo = ({ formData }) => {
 	return (
 		<Card
 			title={
-				<Title
-					level={4}
-					style={{
-						color: 'var(--text)',
-						fontFamily: 'Poppins',
-						fontWeight: 600,
-					}}
-				>
+				<Title level={4} className="!text-[var(--text)] !font-semibold">
 					Instance Configuration
 				</Title>
 			}
 			extra={
 				<SafetyCertificateOutlined
-					style={{ fontSize: '24px', color: 'var(--accent-text)' }}
+					className="text-2xl text-[var(--accent-text)]"
 				/>
 			}
-			className="dark-build-card"
-			style={{
-				background: 'var(--card-gradient)',
-				backdropFilter: 'blur(20px)',
-				border: '1px solid var(--border)',
-				borderRadius: '20px',
-			}}
+			className="rounded-2xl border border-[var(--border)] bg-[var(--card-gradient)] backdrop-blur-2xl"
 		>
-			<Space direction="vertical" size="large" style={{ width: '100%' }}>
+			<Space
+				direction="vertical"
+				size="large"
+				className="w-full"
+			>
 				<Row gutter={[16, 16]}>
 					<Col span={12}>
 						<Card
 							size="small"
 							title={
 								<span
-									style={{
-										color: 'var(--text)',
-										fontFamily: 'Poppins',
-										fontWeight: 600,
-									}}
+									className="font-semibold text-[var(--text)]"
 								>
 									Hardware Specs
 								</span>
 							}
-							style={{
-								background: 'var(--hover-bg)',
-								border: '1px solid var(--border)',
-								borderRadius: '12px',
-							}}
+							className="rounded-xl border border-[var(--border)] bg-[var(--hover-bg)]"
 						>
 							<Space direction="vertical">
 								<Text
-									style={{
-										color: 'var(--secondary-text)',
-									}}
+									className="text-[var(--secondary-text)]"
 								>
 									<ThunderboltOutlined
-										style={{ color: 'var(--accent-text)' }}
+										className="text-[var(--accent-text)]"
 									/>{' '}
 									GPUs: {formData.gpuNumber}x{' '}
 									{formData.gpuName}
 								</Text>
 								<Text
-									style={{
-										color: 'var(--secondary-text)',
-									}}
+									className="text-[var(--secondary-text)]"
 								>
 									<HddOutlined
-										style={{ color: 'var(--accent-text)' }}
+										className="text-[var(--accent-text)]"
 									/>{' '}
 									Storage: {formData.disk} GB
 								</Text>
 								<Text
-									style={{
-										color: 'var(--secondary-text)',
-									}}
+									className="text-[var(--secondary-text)]"
 								>
 									<CloudServerOutlined
-										style={{ color: 'var(--accent-text)' }}
+										className="text-[var(--accent-text)]"
 									/>{' '}
 									Provider: {formData.service}
 								</Text>
@@ -370,39 +308,27 @@ export const InstanceInfo = ({ formData }) => {
 							size="small"
 							title={
 								<span
-									style={{
-										color: 'var(--text)',
-										fontFamily: 'Poppins',
-										fontWeight: 600,
-									}}
+									className="font-semibold text-[var(--text)]"
 								>
 									Training Details
 								</span>
 							}
-							style={{
-								background: 'var(--hover-bg)',
-								border: '1px solid var(--border)',
-								borderRadius: '12px',
-							}}
+							className="rounded-xl border border-[var(--border)] bg-[var(--hover-bg)]"
 						>
 							<Space direction="vertical">
 								<Text
-									style={{
-										color: 'var(--secondary-text)',
-									}}
+									className="text-[var(--secondary-text)]"
 								>
 									<ClockCircleOutlined
-										style={{ color: 'var(--accent-text)' }}
+										className="text-[var(--accent-text)]"
 									/>{' '}
 									Duration: {formData.trainingTime} hours
 								</Text>
 								<Text
-									style={{
-										color: 'var(--secondary-text)',
-									}}
+									className="text-[var(--secondary-text)]"
 								>
 									<DollarOutlined
-										style={{ color: 'var(--accent-text)' }}
+										className="text-[var(--accent-text)]"
 									/>{' '}
 									Cost: ${formData.cost}
 									/hour

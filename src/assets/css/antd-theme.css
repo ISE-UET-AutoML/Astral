@@ -179,6 +179,11 @@
 	box-shadow: none !important;
 }
 
+/* AntD Divider */
+.ant-divider-horizontal {
+	border-block-start-color: var(--divider-color) !important;
+}
+
 /* AntD Collapse */
 .ant-collapse,
 .ant-collapse-item {
