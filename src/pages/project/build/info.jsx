@@ -74,19 +74,13 @@ const ProjectInfo = () => {
 
 	const StatusCard = ({ label, value, color, Icon }) => (
 		<div
-			className="group relative overflow-hidden rounded-2xl border border-opacity-20 bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-opacity-40"
-			style={{
-				borderColor: 'var(--border)',
-				background:
-					'linear-gradient(135deg, var(--hover-bg) 0%, rgba(255,255,255,0.02) 100%)',
-			}}
+			className="group relative overflow-hidden rounded-2xl border border-opacity-20 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-opacity-40 [border-color:var(--border)] bg-[linear-gradient(135deg,var(--hover-bg)_0%,rgba(255,255,255,0.02)_100%)]"
 		>
 			<div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 			<div className="relative flex items-center space-x-4 p-6">
 				<div className="flex-shrink-0 p-3 rounded-xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm">
 					<Icon
-						className="text-2xl transition-transform duration-300 group-hover:scale-110"
-						style={{ color: 'var(--accent-text)' }}
+						className="text-2xl text-[var(--accent-text)] transition-transform duration-300 group-hover:scale-110"
 					/>
 				</div>
 				<div className="flex-1 min-w-0">
@@ -104,14 +98,12 @@ const ProjectInfo = () => {
 	const MetadataItem = ({ label, value }) => (
 		<div className="flex flex-col space-y-1 p-4 rounded-xl bg-gradient-to-r from-white/5 to-transparent border border-white/10 transition-all duration-200 hover:bg-white/10">
 			<span
-				className="text-xs font-medium uppercase tracking-wider opacity-60"
-				style={{ color: 'var(--secondary-text)' }}
+				className="text-xs font-medium uppercase tracking-wider opacity-60 text-[var(--secondary-text)]"
 			>
 				{label}
 			</span>
 			<span
-				className="text-sm font-semibold"
-				style={{ color: 'var(--text)' }}
+				className="text-sm font-semibold text-[var(--text)]"
 			>
 				{value}
 			</span>
@@ -120,11 +112,6 @@ const ProjectInfo = () => {
 
 	return (
 		<>
-			<style>{`
-        body, html {
-          background-color: var(--surface) !important;
-        }
-      `}</style>
 			<div className="min-h-screen bg-[var(--surface)]">
 				<div className="relative pt-16 px-4 sm:px-6 lg:px-8 pb-20">
 					<div className="relative z-10 max-w-7xl mx-auto">
@@ -144,25 +131,16 @@ const ProjectInfo = () => {
 							<div className="xl:col-span-4">
 								<div className="sticky top-8">
 									<div
-										className="p-8 rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-xl shadow-2xl"
-										style={{
-											borderColor: 'var(--border)',
-											background:
-												'linear-gradient(135deg, var(--card-gradient) 0%, rgba(255,255,255,0.02) 100%)',
-										}}
+										className="p-8 rounded-3xl border backdrop-blur-xl shadow-2xl [border-color:var(--border)] [background:var(--card-gradient)]"
 									>
 										<div className="flex items-center space-x-3 mb-8">
 											<div className="p-2 rounded-xl bg-gradient-to-br from-white/20 to-white/10">
 												<SettingOutlined
-													className="text-xl"
-													style={{
-														color: 'var(--accent-text)',
-													}}
+													className="text-xl text-[var(--accent-text)]"
 												/>
 											</div>
 											<h2
-												className="text-xl font-bold"
-												style={{ color: 'var(--text)' }}
+												className="text-xl font-bold text-[var(--text)]"
 											>
 												Project Details
 											</h2>
@@ -198,34 +176,22 @@ const ProjectInfo = () => {
 
 							<div className="xl:col-span-8 space-y-8">
 								<div
-									className="p-8 rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-xl shadow-2xl"
-									style={{
-										borderColor: 'var(--border)',
-										background:
-											'linear-gradient(135deg, var(--card-gradient) 0%, rgba(255,255,255,0.02) 100%)',
-									}}
+									className="p-8 rounded-3xl border backdrop-blur-xl shadow-2xl [border-color:var(--border)] [background:var(--card-gradient)]"
 								>
 									<div className="flex items-center space-x-3 mb-8">
 										<div className="p-3 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-600/10">
 											<ExperimentOutlined
-												className="text-2xl"
-												style={{
-													color: 'var(--accent-text)',
-												}}
+												className="text-2xl text-[var(--accent-text)]"
 											/>
 										</div>
 										<div>
 											<h3
-												className="text-2xl font-bold"
-												style={{ color: 'var(--text)' }}
+												className="text-2xl font-bold text-[var(--text)]"
 											>
 												Experiments
 											</h3>
 											<p
-												className="text-sm opacity-70"
-												style={{
-													color: 'var(--secondary-text)',
-												}}
+												className="text-sm opacity-70 text-[var(--secondary-text)]"
 											>
 												Training and validation status
 											</p>
@@ -283,34 +249,22 @@ const ProjectInfo = () => {
 								</div>
 
 								<div
-									className="p-8 rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-xl shadow-2xl"
-									style={{
-										borderColor: 'var(--border)',
-										background:
-											'linear-gradient(135deg, var(--card-gradient) 0%, rgba(255,255,255,0.02) 100%)',
-									}}
+									className="p-8 rounded-3xl border backdrop-blur-xl shadow-2xl [border-color:var(--border)] [background:var(--card-gradient)]"
 								>
 									<div className="flex items-center space-x-3 mb-8">
 										<div className="p-3 rounded-xl bg-gradient-to-br from-purple-500/20 to-purple-600/10">
 											<DatabaseOutlined
-												className="text-2xl"
-												style={{
-													color: 'var(--accent-text)',
-												}}
+												className="text-2xl text-[var(--accent-text)]"
 											/>
 										</div>
 										<div>
 											<h3
-												className="text-2xl font-bold"
-												style={{ color: 'var(--text)' }}
+												className="text-2xl font-bold text-[var(--text)]"
 											>
 												Models
 											</h3>
 											<p
-												className="text-sm opacity-70"
-												style={{
-													color: 'var(--secondary-text)',
-												}}
+												className="text-sm opacity-70 text-[var(--secondary-text)]"
 											>
 												Available trained models
 											</p>
@@ -331,34 +285,22 @@ const ProjectInfo = () => {
 								</div>
 
 								<div
-									className="p-8 rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-xl shadow-2xl"
-									style={{
-										borderColor: 'var(--border)',
-										background:
-											'linear-gradient(135deg, var(--card-gradient) 0%, rgba(255,255,255,0.02) 100%)',
-									}}
+									className="p-8 rounded-3xl border backdrop-blur-xl shadow-2xl [border-color:var(--border)] [background:var(--card-gradient)]"
 								>
 									<div className="flex items-center space-x-3 mb-8">
 										<div className="p-3 rounded-xl bg-gradient-to-br from-cyan-500/20 to-cyan-600/10">
 											<CloudOutlined
-												className="text-2xl"
-												style={{
-													color: 'var(--accent-text)',
-												}}
+												className="text-2xl text-[var(--accent-text)]"
 											/>
 										</div>
 										<div>
 											<h3
-												className="text-2xl font-bold"
-												style={{ color: 'var(--text)' }}
+												className="text-2xl font-bold text-[var(--text)]"
 											>
 												Deployed Models
 											</h3>
 											<p
-												className="text-sm opacity-70"
-												style={{
-													color: 'var(--secondary-text)',
-												}}
+												className="text-sm opacity-70 text-[var(--secondary-text)]"
 											>
 												Production deployment status
 											</p>
