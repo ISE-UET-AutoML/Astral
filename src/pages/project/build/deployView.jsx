@@ -1,22 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState } from 'react'
 import {
     useLocation,
     useOutletContext,
     useNavigate,
     useParams,
 } from 'react-router-dom'
-import { useTheme } from 'src/theme/ThemeProvider'
 import {
-    Card,
-    Row,
-    Col,
-    Typography,
-    Space,
-    Statistic,
     Button,
     Badge,
     Tag,
-    message,
 } from 'antd'
 import {
     RocketOutlined,
@@ -26,15 +18,8 @@ import {
     CloudDownloadOutlined,
 } from '@ant-design/icons'
 import { useSpring, animated } from '@react-spring/web'
-import { validateFiles } from 'src/utils/file'
-import * as experimentAPI from 'src/api/experiment'
 import * as modelAPI from 'src/api/model'
-import * as mlServiceAPI from 'src/api/mlService'
-import * as resourceAPI from 'src/api/resource'
-import config from './config'
 import { PATHS } from 'src/constants/paths'
-
-const { Title, Text, Paragraph } = Typography
 
 const AnimatedCard = ({ children, onClick, isSelected }) => {
     const [isHovered, setIsHovered] = useState(false)
@@ -65,7 +50,6 @@ const AnimatedCard = ({ children, onClick, isSelected }) => {
 }
 
 const DeployView = () => {
-    const { theme } = useTheme()
     const navigate = useNavigate()
     const location = useLocation()
     const searchParams = new URLSearchParams(location.search)
@@ -74,74 +58,75 @@ const DeployView = () => {
     const [isDeploying, setIsDeploying] = useState(false)
     const [selectedOption, setSelectedOption] = useState('')
 
-    // Tính toán Progress tổng
     const deployOptions = [
         {
             id: 'realtime',
             title: 'Realtime Inference',
             description: 'Deploy for immediate, real-time predictions',
-            icon: (
-                <ThunderboltOutlined
-                    style={{ fontSize: '32px', color: '#faad14' }}
-                />
-            ),
+            icon: ThunderboltOutlined,
             tags: ['Low Latency', 'High Availability', 'Auto Scaling'],
             stats: {
                 latency: '< 100ms',
                 uptime: '99.99%',
                 scalability: 'Automatic',
             },
-            color: '#faad14',
+            iconClass: 'text-3xl text-amber-400',
+            chipBgClass: 'bg-amber-500/10',
+            statColorClass: 'text-amber-400',
+            tagColor: 'gold',
+            badgeColor: 'gold',
             badge: 'RECOMMENDED',
         },
         {
             id: 'async',
             title: 'Asynchronous Processing',
             description: 'Optimal for handling large batch requests',
-            icon: (
-                <ApiOutlined style={{ fontSize: '32px', color: '#52c41a' }} />
-            ),
+            icon: ApiOutlined,
             tags: ['High Throughput', 'Cost Effective', 'Durable'],
             stats: {
                 throughput: '10K req/s',
                 durability: '99.999%',
                 cost: 'Medium',
             },
-            color: '#52c41a',
+            iconClass: 'text-3xl text-emerald-400',
+            chipBgClass: 'bg-emerald-500/10',
+            statColorClass: 'text-emerald-400',
+            tagColor: 'green',
+            badgeColor: 'green',
         },
         {
             id: 'batch',
             title: 'Batch Transform',
             description: 'Process large datasets efficiently',
-            icon: (
-                <DatabaseOutlined
-                    style={{ fontSize: '32px', color: '#1890ff' }}
-                />
-            ),
+            icon: DatabaseOutlined,
             tags: ['Large Scale', 'Cost Optimized', 'Scheduled'],
             stats: {
                 capacity: 'Unlimited',
                 efficiency: '95%',
                 schedule: 'Flexible',
             },
-            color: '#1890ff',
+            iconClass: 'text-3xl text-sky-400',
+            chipBgClass: 'bg-sky-500/10',
+            statColorClass: 'text-sky-400',
+            tagColor: 'blue',
+            badgeColor: 'blue',
         },
         {
             id: 'serverless',
             title: 'Serverless Deployment',
             description: 'Pay-per-use with zero infrastructure management',
-            icon: (
-                <CloudDownloadOutlined
-                    style={{ fontSize: '32px', color: '#722ed1' }}
-                />
-            ),
+            icon: CloudDownloadOutlined,
             tags: ['Zero Maintenance', 'Auto Scaling', 'Cost Efficient'],
             stats: {
                 scaling: 'Automatic',
                 maintenance: 'Zero',
                 billing: 'Per Request',
             },
-            color: '#722ed1',
+            iconClass: 'text-3xl text-purple-400',
+            chipBgClass: 'bg-purple-500/10',
+            statColorClass: 'text-purple-400',
+            tagColor: 'purple',
+            badgeColor: 'purple',
         },
     ]
 
@@ -174,341 +159,135 @@ const DeployView = () => {
     }
 
     return (
-        <>
-            <style>{`
-                .theme-build-page {
-                    background: var(--surface);
-                    min-height: 100vh;
-                    padding: 24px;
-                }
-                
-                .theme-build-card {
-                    background: var(--card-gradient);
-                    backdrop-filter: blur(10px);
-                    border: 1px solid var(--border);
-                    border-radius: 16px;
-                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-                }
-                
-                .theme-build-title {
-                    background: var(--title-gradient);
-                    -webkit-background-clip: text;
-                    -webkit-text-fill-color: transparent;
-                    background-clip: text;
-                    color: var(--title-color);
-                    font-family: 'Poppins', sans-serif;
-                    font-weight: 700;
-                }
-                
-                .theme-build-text {
-                    color: var(--text) !important;
-                    font-family: 'Poppins', sans-serif !important;
-                }
-                
-                .theme-build-text-strong {
-                    color: var(--text) !important;
-                    font-family: 'Poppins', sans-serif !important;
-                    font-weight: 600 !important;
-                }
-                
-                .theme-build-button {
-                    background: var(--button-primary-bg) !important;
-                    border: 1px solid var(--button-primary-border) !important;
-                    border-radius: 12px !important;
-                    color: var(--button-primary-color) !important;
-                    font-family: 'Poppins', sans-serif !important;
-                    font-weight: 600 !important;
-                    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
-                }
-                
-                .theme-build-button:hover {
-                    background: var(--button-primary-bg) !important;
-                    border-color: var(--modal-close-hover) !important;
-                    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4) !important;
-                }
-                
-                .theme-build-button:disabled {
-                    background: var(--input-disabled-bg) !important;
-                    color: var(--input-disabled-color) !important;
-                    box-shadow: none !important;
-                    transform: none !important;
-                }
-                
-                .theme-build-deploy-card {
-                    background: var(--card-gradient);
-                    border: 1px solid var(--border);
-                    border-radius: 12px;
-                    transition: all 0.3s ease;
-                }
-                
-                .theme-build-deploy-card:hover {
-                    background: var(--hover-bg);
-                    border-color: var(--border-hover);
-                    box-shadow: 0 8px 24px var(--selection-bg);
-                }
-                
-                .theme-build-deploy-card.selected {
-                    background: var(--selection-bg);
-                    border-color: var(--accent-text);
-                    box-shadow: 0 8px 24px var(--selection-bg);
-                }
-                
-                .theme-build-modal .ant-modal-content {
-                    background: var(--modal-bg);
-                    backdrop-filter: blur(10px);
-                    border: 1px solid var(--modal-border);
-                    border-radius: 16px;
-                }
-                
-                .theme-build-modal .ant-modal-header {
-                    background: var(--modal-header-bg);
-                    border-bottom: 1px solid var(--modal-header-border);
-                }
-                
-                .theme-build-modal .ant-modal-title {
-                    color: var(--modal-title-color);
-                    font-family: 'Poppins', sans-serif;
-                    font-weight: 600;
-                }
-                
-                .theme-build-modal .ant-modal-body {
-                    color: var(--text);
-                }
-                
-                .theme-build-steps .ant-steps-item-title {
-                    color: var(--text) !important;
-                    font-family: 'Poppins', sans-serif !important;
-                }
-                
-                .theme-build-steps .ant-steps-item-description {
-                    color: var(--secondary-text) !important;
-                    font-family: 'Poppins', sans-serif !important;
-                }
-                
-                .theme-build-steps .ant-steps-item-icon {
-                    background: var(--button-gradient) !important;
-                    border-color: var(--accent-text) !important;
-                }
-                
-                .theme-build-steps .ant-steps-item-process .ant-steps-item-icon {
-                    background: var(--accent-gradient) !important;
-                    border-color: var(--accent-text) !important;
-                }
+        <div className="min-h-screen bg-[var(--surface)] px-6 py-6">
+            <div className="mx-auto max-w-5xl space-y-6">
+                <div className="rounded-2xl border border-[var(--border)] bg-[var(--card-gradient)] p-6 shadow-[0_8px_32px_rgba(0,0,0,0.3)] backdrop-blur-xl">
+                    <div className="flex flex-col gap-4">
+                        <div className="flex items-center gap-3">
+                            <RocketOutlined className="text-[28px] text-[var(--accent-text)]" />
+                            <h1 className="bg-[var(--title-gradient)] bg-clip-text text-2xl font-bold tracking-tight text-transparent">
+                                Deploy Model {modelId}
+                            </h1>
+                        </div>
+                        <p className="text-[16px] text-[var(--text)]">
+                            Choose your deployment option and launch your
+                            application with our optimized infrastructure
+                        </p>
+                    </div>
 
-                .theme-build-deploy-card .ant-statistic-title {
-                    color: var(--text) !important;
-                    font-family: 'Poppins', sans-serif !important;
-                }
-                .theme-build-deploy-card .ant-statistic-content {
-                    color: var(--text) !important;
-                    font-family: 'Poppins', sans-serif !important;
-                }
-            `}</style>
-            <div className="theme-build-page">
-                <div style={{ margin: '0 auto' }}>
-                    <>
-                        <Card
-                            className="theme-build-card"
-                            style={{ marginBottom: '24px' }}
-                        >
-                            <Row
-                                align="middle"
-                                style={{ marginBottom: '24px' }}
-                            >
-                                <Col span={24}>
-                                    <Space align="center">
-                                        <RocketOutlined
-                                            style={{
-                                                fontSize: '28px',
-                                                color: 'var(--accent-text)',
-                                            }}
-                                        />
-                                        <Title
-                                            level={3}
-                                            className="theme-build-title"
-                                            style={{ margin: 0 }}
-                                        >
-                                            Deploy Model {modelId}
-                                        </Title>
-                                    </Space>
-                                    <Paragraph
-                                        className="theme-build-text"
-                                        style={{
-                                            margin: '16px 0 0',
-                                            fontSize: '16px',
-                                        }}
+                    <div className="mt-6 grid gap-4 md:grid-cols-2">
+                        {deployOptions.map((option) => {
+                            const Icon = option.icon
+                            const isSelected = selectedOption === option.id
+
+                            return (
+                                <div key={option.id}>
+                                    <AnimatedCard
+                                        isSelected={isSelected}
+                                        onClick={() =>
+                                            setSelectedOption(option.id)
+                                        }
                                     >
-                                        Choose your deployment option and launch
-                                        your application with our optimized
-                                        infrastructure
-                                    </Paragraph>
-                                </Col>
-                            </Row>
-                            <Row gutter={[16, 16]}>
-                                {deployOptions.map((option) => (
-                                    <Col xs={24} md={12} key={option.id}>
-                                        <AnimatedCard
-                                            isSelected={
-                                                selectedOption === option.id
-                                            }
-                                            onClick={() =>
-                                                setSelectedOption(option.id)
-                                            }
+                                        <div
+                                            className={`h-full rounded-xl border border-[var(--border)] bg-[var(--card-gradient)] p-6 transition-all duration-300 ${
+                                                isSelected
+                                                    ? 'border-[var(--accent-text)] bg-[var(--selection-bg)] shadow-[0_8px_24px_var(--selection-bg)]'
+                                                    : 'hover:bg-[var(--hover-bg)] hover:border-[var(--border-hover)] hover:shadow-[0_8px_24px_var(--selection-bg)]'
+                                            }`}
                                         >
-                                            <Card
-                                                className={`theme-build-deploy-card ${selectedOption === option.id ? 'selected' : ''}`}
-                                                bordered={false}
-                                                styles={{ padding: '24px' }}
-                                            >
-                                                <Space
-                                                    direction="vertical"
-                                                    size="middle"
-                                                    style={{ width: '100%' }}
-                                                >
-                                                    <Row
-                                                        justify="space-between"
-                                                        align="middle"
-                                                    >
-                                                        <Space>
-                                                            <div
-                                                                style={{
-                                                                    background: `${option.color}10`,
-                                                                    padding:
-                                                                        '12px',
-                                                                    borderRadius:
-                                                                        '8px',
-                                                                }}
-                                                            >
-                                                                {option.icon}
-                                                            </div>
-                                                            <Title
-                                                                level={4}
-                                                                className="theme-build-text-strong"
-                                                                style={{
-                                                                    margin: 0,
-                                                                }}
-                                                            >
-                                                                {option.title}
-                                                            </Title>
-                                                        </Space>
-                                                        {option.badge && (
-                                                            <Badge
-                                                                count={
-                                                                    option.badge
+                                            <div className="flex flex-col gap-4">
+                                                <div className="flex items-center justify-between gap-3">
+                                                    <div className="flex items-center gap-3">
+                                                        <div
+                                                            className={`rounded-lg p-3 ${option.chipBgClass}`}
+                                                        >
+                                                            <Icon
+                                                                className={
+                                                                    option.iconClass
                                                                 }
-                                                                style={{
-                                                                    backgroundColor:
-                                                                        option.color,
-                                                                    fontSize:
-                                                                        '12px',
-                                                                }}
                                                             />
-                                                        )}
-                                                    </Row>
+                                                        </div>
+                                                        <h2 className="text-base font-semibold text-[var(--text)]">
+                                                            {option.title}
+                                                        </h2>
+                                                    </div>
+                                                    {option.badge && (
+                                                        <Badge
+                                                            count={option.badge}
+                                                            color={
+                                                                option.badgeColor
+                                                            }
+                                                            className="text-xs font-medium"
+                                                        />
+                                                    )}
+                                                </div>
 
-                                                    <Text
-                                                        className="theme-build-text"
-                                                        style={{
-                                                            fontSize: '14px',
-                                                        }}
-                                                    >
-                                                        {option.description}
-                                                    </Text>
+                                                <p className="text-sm text-[var(--text)]">
+                                                    {option.description}
+                                                </p>
 
-                                                    <Space wrap>
-                                                        {option.tags.map(
-                                                            (tag) => (
-                                                                <Tag
-                                                                    color={
-                                                                        option.color
-                                                                    }
-                                                                    key={tag}
-                                                                >
-                                                                    {tag}
-                                                                </Tag>
-                                                            )
-                                                        )}
-                                                    </Space>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {option.tags.map((tag) => (
+                                                        <Tag
+                                                            key={tag}
+                                                            color={
+                                                                option.tagColor
+                                                            }
+                                                        >
+                                                            {tag}
+                                                        </Tag>
+                                                    ))}
+                                                </div>
 
-                                                    <Row gutter={16}>
-                                                        {Object.entries(
-                                                            option.stats
-                                                        ).map(
-                                                            ([key, value]) => (
-                                                                <Col
-                                                                    span={8}
-                                                                    key={key}
-                                                                >
-                                                                    <Statistic
-                                                                        title={
-                                                                            <span
-                                                                                style={{
-                                                                                    fontWeight:
-                                                                                        'bold',
-                                                                                }}
-                                                                            >
-                                                                                {key
-                                                                                    .charAt(
-                                                                                        0
-                                                                                    )
-                                                                                    .toUpperCase() +
-                                                                                    key.slice(
-                                                                                        1
-                                                                                    )}
-                                                                            </span>
-                                                                        }
-                                                                        value={
-                                                                            value
-                                                                        }
-                                                                        valueStyle={{
-                                                                            fontSize:
-                                                                                '14px',
-                                                                            color: option.color,
-                                                                        }}
-                                                                    />
-                                                                </Col>
-                                                            )
-                                                        )}
-                                                    </Row>
-                                                </Space>
-                                            </Card>
-                                        </AnimatedCard>
-                                    </Col>
-                                ))}
-                            </Row>
-                        </Card>
+                                                <div className="mt-2 grid grid-cols-3 gap-4 text-sm">
+                                                    {Object.entries(
+                                                        option.stats
+                                                    ).map(([key, value]) => (
+                                                        <div
+                                                            key={key}
+                                                            className="space-y-1"
+                                                        >
+                                                            <div className="font-semibold capitalize text-[var(--text)]">
+                                                                {key}
+                                                            </div>
+                                                            <div
+                                                                className={`font-medium ${option.statColorClass}`}
+                                                            >
+                                                                {value}
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </AnimatedCard>
+                                </div>
+                            )
+                        })}
+                    </div>
+                </div>
 
-                        <Row justify="center">
-                            <Space>
-                                <Button
-                                    type="default"
-                                    size="large"
-                                    onClick={handleCancel}
-                                    className="theme-build-button"
-                                    style={{
-                                        background: 'var(--input-bg)',
-                                        border: '1px solid var(--border)',
-                                        color: 'var(--text)',
-                                    }}
-                                >
-                                    Cancel
-                                </Button>
-                                <Button
-                                    type="primary"
-                                    size="large"
-                                    style={{ fontWeight: 'bold' }}
-                                    onClick={startDeployment}
-                                    disabled={!selectedOption}
-                                    className="theme-build-button"
-                                >
-                                    Deploy Now
-                                </Button>
-                            </Space>
-                        </Row>
-                    </>
+                <div className="flex justify-center gap-3">
+                    <Button
+                        type="default"
+                        size="large"
+                        onClick={handleCancel}
+                        className="rounded-xl border border-[var(--border)] bg-[var(--input-bg)] px-6 py-2 font-semibold text-[var(--text)] shadow-sm hover:border-[var(--modal-close-hover)]"
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        type="primary"
+                        size="large"
+                        onClick={startDeployment}
+                        disabled={!selectedOption}
+                        className="rounded-xl bg-[var(--button-primary-bg)] px-6 py-2 font-semibold text-[var(--button-primary-color)] shadow-md disabled:bg-[var(--input-disabled-bg)] disabled:text-[var(--input-disabled-color)]"
+                    >
+                        Deploy Now
+                    </Button>
                 </div>
             </div>
-        </>
+        </div>
     )
 }
 
