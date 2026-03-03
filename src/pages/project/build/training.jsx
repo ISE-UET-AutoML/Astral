@@ -1,25 +1,20 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useLocation, useOutletContext, useNavigate } from 'react-router-dom'
-import { useTheme } from 'src/theme/ThemeProvider'
 import {
 	Card,
 	Alert,
 	Typography,
-	Progress,
-	Divider,
 	Tag,
 	Spin,
 	Skeleton,
 	Steps,
 	Button,
 	Tooltip,
-	Modal,
 } from 'antd'
 import {
 	ExperimentOutlined,
 	LineChartOutlined,
 	CheckCircleOutlined,
-	InfoCircleOutlined,
 	DatabaseOutlined,
 	BarChartOutlined,
 	DashboardOutlined,
@@ -45,20 +40,11 @@ import {
 } from 'recharts'
 import { PATHS } from 'src/constants/paths'
 // BackgroundShapes removed
-import { getExperimentById } from 'src/api/experiment'
-import { getExperimentConfig } from 'src/api/experiment_config'
+import { useTrainingPage } from 'src/hooks/useTrainingPage'
 
 // import { calcGeneratorDuration } from 'framer-motion'
 
 const { Text, Paragraph } = Typography
-
-const calculateElapsedTime = (startTimeValue) => {
-	if (!startTimeValue) return 0
-
-	const start = new Date(startTimeValue) // ✅ ensure it's a Date
-	const currentTime = new Date()
-	return ((currentTime - start) / (1000 * 60)).toFixed(2)
-}
 // Training Metric Card Component - replacement for AnimatedStatistic
 const TrainingMetricCard = ({
 	title,
@@ -70,12 +56,7 @@ const TrainingMetricCard = ({
 }) => {
 	return (
 		<Card
-			className="h-max bg-gradient-to-br from-slate-800/40 to-slate-900/40 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 border border-[var(--border)] rounded-xl"
-			style={{
-				background: 'var(--card-gradient)',
-				backdropFilter: 'blur(10px)',
-				fontFamily: 'Poppins, sans-serif',
-			}}
+			className="h-max border border-[var(--border)] rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 bg-[var(--card-gradient)] backdrop-blur-md font-poppins"
 		>
 			{loading ? (
 				<Skeleton active paragraph={{ rows: 1 }} />
@@ -272,13 +253,7 @@ const TrainingInfoCard = ({
 					</Tag>
 				</h2>
 			}
-			className="border border-[var(--border)] backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300"
-			style={{
-				background: 'var(--card-gradient)',
-				backdropFilter: 'blur(10px)',
-				borderRadius: '12px',
-				fontFamily: 'Poppins, sans-serif',
-			}}
+			className="border border-[var(--border)] rounded-xl backdrop-blur-md shadow-lg hover:shadow-xl transition-all duration-300 bg-[var(--card-gradient)] font-poppins"
 		>
 			<div className="flex w-full flex-col gap-4">
 				<div className="flex flex-wrap gap-4">
@@ -320,27 +295,42 @@ const TrainingInfoCard = ({
 
 // Main Component
 const Training = () => {
-	const { theme } = useTheme()
-	const { projectInfo, updateFields } = useOutletContext()
+	const { projectInfo } = useOutletContext()
 	const navigate = useNavigate()
 	const location = useLocation()
 	const searchParams = new URLSearchParams(location.search)
 	const experimentId = searchParams.get('experimentId')
-	const [trainingInfo, setTrainingInfo] = useState({
-		latestEpoch: 0,
-		accuracy: 0,
-	})
-	const [valMetric, setValMetric] = useState('Accuracy')
-	const [chartData, setChartData] = useState([])
-	const [elapsedTime, setElapsedTime] = useState(0)
-	const [status, setStatus] = useState('PENDING')
-	const [loading, setLoading] = useState(true)
-	const [maxTrainingTime, setMaxTrainingTime] = useState(null)
+	const initialExperimentName =
+		searchParams.get('experimentName') || 'loading'
+
+	const {
+		trainingInfo,
+		valMetric,
+		chartData,
+		enhancedChartData,
+		elapsedTime,
+		status,
+		loading,
+		maxTrainingTime,
+		trainProgress,
+		currentStep,
+		currentSettingUpStep,
+		experimentName,
+		setExperimentName,
+		setStatus,
+		setCurrentStep,
+		setLoading,
+		setMaxTrainingTime,
+		setChartData,
+		setTrainingInfo,
+		setValMetric,
+		setElapsedTime,
+		setTrainProgress,
+		setCurrentSettingUpStep,
+		settingUpProgress,
+	} = useTrainingPage({ experimentId, initialExperimentName })
+
 	const metricExplain = projectInfo.metrics_explain
-	const [trainProgress, setTrainProgress] = useState(0)
-	const [currentStep, setCurrentStep] = useState(0)
-	const [currentSettingUpStep, setCurrentSettingUpStep] = useState(0)
-	const [experimentName, setExperimentName] = useState(searchParams.get('experimentName') || 'loading')
 
 	// Handle view results button click
 	const handleViewResults = () => {
@@ -353,201 +343,10 @@ const Training = () => {
 		)
 	}
 
-	const getCurrentStep = (status) => {
-		switch (status) {
-			case 'SELECTING_INSTANCE':
-				return 0
-			case 'SETTING_UP':
-				return 1
-			case 'DOWNLOADING_DATA':
-				return 2
-			case 'TRAINING':
-				return 3
-			case 'DONE':
-				return 4
-			default:
-				return 0
-		}
-	}
-
-	const settingUpProgress = [
-		{
-			title: (
-				<span className="text-[var(--text)]">
-					Initialize Virtual Environment
-				</span>
-			),
-			description: (
-				<span className="text-slate-400">
-					Set up a clean Python virtual environment to isolate project
-					dependencies and prevent conflicts.
-				</span>
-			),
-		},
-		{
-			title: (
-				<span className="text-[var(--text)]">
-					Updating Operating System
-				</span>
-			),
-			description: (
-				<span className="text-slate-400">
-					Update system packages and apply the latest patches to
-					ensure compatibility and security.
-				</span>
-			),
-		},
-		{
-			title: (
-				<span className="text-[var(--text)]">Installing Tools</span>
-			),
-			description: (
-				<span className="text-slate-400">
-					Install essential development tools such as compilers,
-					package managers, and utilities.
-				</span>
-			),
-		},
-		{
-			title: (
-				<span className="text-[var(--text)]">
-					Installing Dependencies
-				</span>
-			),
-			description: (
-				<span className="text-slate-400">
-					Download and configure required libraries and frameworks
-					from the requirements list.
-				</span>
-			),
-		},
-		{
-			title: (
-				<span className="text-[var(--text)]">
-					Cleaning up conflicting packages
-				</span>
-			),
-			description: (
-				<span className="text-slate-400">
-					Uninstall or adjust conflicting packages to ensure smooth
-					execution of the environment.
-				</span>
-			),
-		},
-	]
-
-	useEffect(() => {
-		if (currentStep !== 1) return
-		const stepCount = settingUpProgress.length
-
-		const interval = setInterval(() => {
-			setCurrentSettingUpStep((prev) => {
-				if (prev < stepCount - 1) {
-					return prev + 1
-				}
-				clearInterval(interval)
-				return prev
-			})
-		}, 60000)
-
-		return () => clearInterval(interval)
-	}, [currentStep])
-
-	useEffect(() => {
-		let timeoutId
-
-		const fetchExperiment = async () => {
-			if (!experimentId || experimentId === 'loading') {
-				setStatus('SELECTING_INSTANCE')
-				setCurrentStep(0)
-				setLoading(false)
-				return
-			}
-
-			try {
-				const response = await getExperimentById(experimentId)
-				if (
-					response.data.name &&
-					response.data.name !== experimentName
-				) {
-					setExperimentName(response.data.name)
-				}
-				const configResponse = await getExperimentConfig(experimentId)
-				const config = configResponse.data[0]
-				setStatus(response.data.status)
-				setCurrentStep(getCurrentStep(response.data.status))
-				setMaxTrainingTime(
-					(prev) => response.data.expected_training_time / 60
-				)
-				setChartData(
-					config.metrics?.training_history
-						? config.metrics?.training_history
-						: []
-				)
-				const latestTrainingInfo =
-					config.metrics?.training_history?.[
-						config.metrics.training_history.length - 1
-					]
-				setTrainingInfo((prev) => ({
-					latestEpoch: latestTrainingInfo?.step || 0,
-					accuracy: latestTrainingInfo?.score || 0,
-				}))
-				setValMetric(
-					config.metrics?.val_metric
-						? config.metrics?.val_metric
-						: 'Accuracy'
-				)
-				const elapsed = calculateElapsedTime(response.data.start_time)
-				const progress = response.data.expected_training_time
-					? Math.min(
-							(elapsed /
-								(response.data.expected_training_time / 60)) *
-								100,
-							100
-						)
-					: 0
-				setElapsedTime(calculateElapsedTime(response.data.start_time))
-				setTrainProgress(status === 'DONE' ? 100 : progress)
-				console.log('Status: ', response.data.status)
-
-				// Schedule next poll in 10 seconds
-				if (response.data.status !== 'DONE') {
-					timeoutId = setTimeout(fetchExperiment, 30000)
-				}
-			} catch (err) {
-				console.error('Failed to fetch experiment:', err)
-				// Retry after 10 seconds even if it failed
-				timeoutId = setTimeout(fetchExperiment, 30000)
-			}
-		}
-
-		fetchExperiment()
-
-		return () => {
-			if (timeoutId) clearTimeout(timeoutId)
-		}
-	}, [experimentId])
-
-	// Create chart data with time limit reference line
-	const enhancedChartData = React.useMemo(() => {
-		if (!maxTrainingTime || chartData?.length === 0) return chartData
-
-		// Add a threshold reference that can be used for visual cues
-		return chartData.map((point) => ({
-			...point,
-			threshold: point.time <= maxTrainingTime ? null : 0,
-		}))
-	}, [chartData, maxTrainingTime])
 
 	return (
 		<>
-			<style>{`
-                body, html {
-                    background-color: var(--surface) !important;
-                    font-family: 'Poppins', sans-serif !important;
-                }
-            `}</style>
-			<div className="relative min-h-screen bg-[var(--surface)]">
+			<div className="relative min-h-screen bg-[var(--surface)] font-poppins">
 				{/* BackgroundShapes removed */}
 				<div className="relative z-10 p-6">
 					<animated.div
@@ -712,20 +511,7 @@ const Training = () => {
 											? 'warning'
 											: 'info'
 									}
-									style={{
-										background:
-											maxTrainingTime &&
-											elapsedTime >= maxTrainingTime
-												? 'linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.1))'
-												: 'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(34, 211, 238, 0.1))',
-										border:
-											maxTrainingTime &&
-											elapsedTime >= maxTrainingTime
-												? '1px solid rgba(251, 191, 36, 0.3)'
-												: '1px solid rgba(59, 130, 246, 0.3)',
-										borderRadius: '12px',
-										fontFamily: 'Poppins, sans-serif',
-									}}
+									className="rounded-xl font-poppins border"
 								/>
 							)}
 
@@ -742,13 +528,7 @@ const Training = () => {
 											Setting Up Progress
 										</h2>
 									}
-									className="border border-[var(--border)] backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300"
-									style={{
-										background: 'var(--card-gradient)',
-										backdropFilter: 'blur(10px)',
-										borderRadius: '12px',
-										fontFamily: 'Poppins, sans-serif',
-									}}
+									className="border border-[var(--border)] rounded-xl backdrop-blur-md shadow-lg hover:shadow-xl transition-all duration-300 bg-[var(--card-gradient)] font-poppins"
 								>
 									<Steps
 										progressDot={(
@@ -781,13 +561,7 @@ const Training = () => {
 											{`${valMetric ? valMetric : 'Accuracy'} Trend`}
 										</h2>
 									}
-									className="border border-[var(--border)] backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300"
-									style={{
-										background: 'var(--card-gradient)',
-										backdropFilter: 'blur(10px)',
-										borderRadius: '12px',
-										fontFamily: 'Poppins, sans-serif',
-									}}
+									className="border border-[var(--border)] rounded-xl backdrop-blur-md shadow-lg hover:shadow-xl transition-all duration-300 bg-[var(--card-gradient)] font-poppins"
 									extra={
 										maxTrainingTime ? (
 											<Tag
