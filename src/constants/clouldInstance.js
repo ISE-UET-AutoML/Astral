@@ -154,9 +154,7 @@ export const InstanceSizeCard = ({ size, details, selected, onClick }) => (
 		className={`instance-size-card ${selected ? 'selected' : ''}`}
 		style={{
 			borderColor: selected ? 'var(--accent-text)' : 'var(--border)',
-			backgroundColor: selected
-				? 'var(--active-bg)'
-				: 'var(--card-gradient)',
+			background: selected ? 'var(--active-bg)' : 'var(--card-gradient)',
 			color: 'var(--text)',
 		}}
 		onClick={onClick}

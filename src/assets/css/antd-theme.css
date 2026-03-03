@@ -73,3 +73,130 @@
 .ant-select-selection-placeholder {
 	color: var(--select-placeholder-color) !important;
 }
+
+/* AntD Typography */
+.ant-typography {
+	color: var(--text) !important;
+}
+
+/* AntD Card */
+.ant-card {
+	background: var(--card-gradient) !important;
+	border-color: var(--border) !important;
+	color: var(--text) !important;
+}
+
+.ant-card-head {
+	background: transparent !important;
+	border-color: var(--divider-color) !important;
+}
+
+.ant-card-head-title,
+.ant-card-extra {
+	color: var(--text) !important;
+}
+
+/* AntD Tabs */
+.ant-tabs-nav,
+.ant-tabs-content-holder {
+	background: transparent !important;
+}
+
+.ant-tabs-tab-btn {
+	color: var(--tabs-text) !important;
+}
+
+.ant-tabs-tab:hover .ant-tabs-tab-btn {
+	color: var(--accent-text) !important;
+}
+
+.ant-tabs-tab-active .ant-tabs-tab-btn {
+	color: var(--tabs-active-text) !important;
+	font-weight: 600 !important;
+}
+
+.ant-tabs-ink-bar {
+	background: var(--tabs-ink-bar) !important;
+	height: 3px !important;
+}
+
+/* AntD Input / InputNumber */
+.ant-input,
+.ant-input-affix-wrapper,
+.ant-input-textarea-affix-wrapper,
+.ant-input-number,
+.ant-input-number-affix-wrapper,
+.ant-input-group-addon {
+	background: var(--input-bg) !important;
+	border-color: var(--input-border) !important;
+	color: var(--input-color) !important;
+	border-radius: 12px !important;
+}
+
+.ant-input::placeholder,
+.ant-input-affix-wrapper .ant-input::placeholder,
+.ant-input-textarea::placeholder {
+	color: var(--placeholder-color) !important;
+}
+
+.ant-input-affix-wrapper .ant-input {
+	background: transparent !important;
+	border: none !important;
+	box-shadow: none !important;
+}
+
+.ant-input:hover,
+.ant-input-affix-wrapper:hover,
+.ant-input-number:hover {
+	border-color: var(--input-hover-border) !important;
+}
+
+.ant-input:focus,
+.ant-input-affix-wrapper-focused,
+.ant-input-number-focused {
+	border-color: var(--input-focus-border) !important;
+	box-shadow: var(--input-shadow) !important;
+}
+
+.ant-input-number-input {
+	color: var(--input-color) !important;
+	background: transparent !important;
+}
+
+/* AntD Slider */
+.ant-slider-rail {
+	background: var(--border) !important;
+	height: 6px !important;
+}
+
+.ant-slider-track {
+	background: var(--tabs-ink-bar) !important;
+	height: 6px !important;
+}
+
+.ant-slider-handle::after {
+	border-color: var(--accent-text) !important;
+	box-shadow: none !important;
+}
+
+/* AntD Collapse */
+.ant-collapse,
+.ant-collapse-item {
+	background: transparent !important;
+	border-color: var(--border) !important;
+}
+
+.ant-collapse-header {
+	background: transparent !important;
+	color: var(--text) !important;
+}
+
+.ant-collapse-header-text {
+	color: var(--text) !important;
+}
+
+.ant-collapse-content {
+	background: transparent !important;
+	border-color: var(--border) !important;
+	color: var(--secondary-text) !important;
+}
