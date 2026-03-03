@@ -1,513 +1,103 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useLocation, useOutletContext, useNavigate } from 'react-router-dom'
-import { useTheme } from 'src/theme/ThemeProvider'
-import {
-    Card,
-    Alert,
-    Typography,
-    Statistic,
-    Table,
-    Tag,
-    Button,
-    Tooltip,
-    message,
-} from 'antd'
-import {
-    HistoryOutlined,
-    CloudDownloadOutlined,
-    TrophyOutlined,
-    ClockCircleOutlined,
-    RocketOutlined,
-    BarChartOutlined,
-    InfoCircleOutlined,
-    ExperimentOutlined,
-} from '@ant-design/icons'
-import { ResponsiveContainer, Tooltip as RechartsTooltip } from 'recharts'
-import LineGraph from 'src/components/shared/charts/LineGraph'
+import { Alert, Button } from 'antd'
+import { HistoryOutlined, CloudDownloadOutlined, RocketOutlined } from '@ant-design/icons'
 
-import * as experimentAPI from 'src/api/experiment'
-import * as mlServiceAPI from 'src/api/mlService'
 import * as modelServiceAPI from 'src/api/model'
-import * as experimentConfigAPI from 'src/api/experiment_config'
 import { PATHS } from 'src/constants/paths'
-// BackgroundShapes removed
-const { Text } = Typography
-
-// Performance Metrics Configuration
-const getAccuracyStatus = (score) => {
-    if (score >= 0.9) {
-        return (
-            <Tag
-                className="bg-gradient-to-br from-[#10b981] to-[#34d399] border-none text-white font-poppins"
-            >
-                Excellent
-            </Tag>
-        )
-    } else if (score >= 0.7) {
-        return (
-            <Tag
-                className="bg-gradient-to-br from-[#3b82f6] to-[#60a5fa] border-none text-white font-poppins"
-            >
-                Good
-            </Tag>
-        )
-    } else if (score >= 0.6) {
-        return (
-            <Tag
-                className="bg-gradient-to-br from-[#f59e0b] to-[#fbbf24] border-none text-white font-poppins"
-            >
-                Medium
-            </Tag>
-        )
-    } else {
-        return (
-            <Tag
-                className="bg-gradient-to-br from-[#ef4444] to-[#f87171] border-none text-white font-poppins"
-            >
-                Bad
-            </Tag>
-        )
-    }
-}
-
-// Enhanced Table Columns with Tooltips
-const columns = [
-    {
-        title: 'Metric',
-        dataIndex: 'metric',
-        key: 'metric',
-        render: (text, record) => (
-            <Tooltip title={record.description}>
-                <span
-                    className="text-[#e2e8f0] font-poppins"
-                >
-                    {text}
-                </span>{' '}
-                <InfoCircleOutlined
-                    className="text-[#60a5fa] ml-[5px]"
-                />
-            </Tooltip>
-        ),
-    },
-    {
-        title: 'Value',
-        dataIndex: 'value',
-        key: 'value',
-        render: (text) => (
-            <span
-                className="text-slate-200 font-poppins"
-            >
-                {typeof text === 'number'
-                    ? text.toFixed(2)
-                    : isFinite(Number(text))
-                        ? Number(text).toFixed(2)
-                        : text}
-            </span>
-        ),
-    },
-    {
-        title: 'Status',
-        dataIndex: 'status',
-        key: 'status',
-    },
-]
+import { useTrainResultPage } from 'src/hooks/useTrainResultPage'
+import { TrainResultSummaryCards } from 'src/components/features/training/TrainResultSummaryCards'
+import { TrainResultPerformanceCharts } from 'src/components/features/training/TrainResultPerformanceCharts'
+import { TrainResultMetricsTable } from 'src/components/features/training/TrainResultMetricsTable'
+import 'src/components/features/training/trainResultTheme.css'
 
 const TrainResult = () => {
-    const { theme } = useTheme()
-    const { projectInfo, trainingInfo, elapsedTime } = useOutletContext()
-    console.log(projectInfo)
+    const { projectInfo } = useOutletContext()
     const navigate = useNavigate()
     const location = useLocation()
     const searchParams = new URLSearchParams(location.search)
     const experimentName = searchParams.get('experimentName')
     const experimentId = searchParams.get('experimentId')
-    const [experiment, setExperiment] = useState({})
-    const [metrics, setMetrics] = useState([])
-    const [valGraphs, setValGraphs] = useState({})
-    const [isDetailsExpanded, setIsDetailsExpanded] = useState(true)
-    const [epoch, setEpoch] = useState(0)
 
-    console.log('Experiment', experiment)
+	const {
+		experiment,
+		metrics,
+		valGraphs,
+		isDetailsExpanded,
+		setIsDetailsExpanded,
+		epoch,
+	} = useTrainResultPage({
+		experimentId,
+		experimentName,
+		projectId: projectInfo.id,
+	})
 
-    useEffect(() => {
-        const fetchExperiment = async () => {
-            try {
-                const experimentRes =
-                    await experimentAPI.getExperimentById(experimentId)
-                if (experimentRes.status !== 200) {
-                    throw new Error('Cannot get experiment')
-                }
-                setExperiment((prev) => experimentRes.data)
-            } catch (error) {
-                console.log('Error while getting experiment', error)
-            }
-        }
+	return (
+		<div className="relative min-h-screen bg-[var(--surface)]">
+			<div className="relative z-10 p-6">
+				<div className="flex w-full flex-col gap-6">
+					<TrainResultSummaryCards
+						metrics={metrics}
+						experiment={experiment}
+						epoch={epoch}
+					/>
 
-        const fetchExperimentConfig = async () => {
-            try {
-                const experimentConfigRes = await experimentConfigAPI.getExperimentConfig(experimentId)
-                if (experimentConfigRes.status !== 200) {
-                    throw new Error('Cannot get experiment config')
-                }
-                setEpoch(experimentConfigRes.data[0].metrics.training_history ? experimentConfigRes.data[0].metrics.training_history.length : 0)
-            }
-            catch (error) {
-                console.log('Error while getting experiment', error)
-            }
-        }
-
-        const fetchExperimentMetrics = async () => {
-            setMetrics((prev) => [])
-            try {
-                const metricsRes =
-                    await mlServiceAPI.getFinalMetrics(experimentId)
-                if (metricsRes.status !== 200) {
-                    throw new Error('Cannot get metrics')
-                }
-                console.log(metricsRes)
-                for (const key in metricsRes.data) {
-                    const metricData = {
-                        key: key,
-                        metric: metricsRes.data[key].name,
-                        value: metricsRes.data[key].score,
-                        description: metricsRes.data[key].description,
-                        status: getAccuracyStatus(metricsRes.data[key].score),
-                    }
-                    setMetrics((prev) => [...prev, metricData])
-                }
-            } catch (error) {
-                console.log('Error while getting metrics', error)
-            }
-        }
-
-        const fetchTrainingHistory = async () => {
-            try {
-                const res =
-                    // await experimentAPI.getTrainingHistory(experimentName)
-                    await mlServiceAPI.getFitHistory(
-                        projectInfo.id,
-                        experimentName
-                    )
-                console.log(res)
-                const data = res.data
-
-                console.log('history', data)
-                if (data.error) {
-                    message.error(
-                        'An error occurred while fetching the training history.'
-                    )
-                    return
-                }
-
-                for (const key of Object.keys(data)) {
-                    if (key === 'epoch') {
-                        continue
-                    }
-                    setValGraphs((prev) => ({
-                        ...prev,
-                        [key]: data[key],
-                    }))
-                }
-            } catch (error) {
-                console.error('Error fetching training history:', error)
-                message.error(
-                    'Failed to load training history. Please try again later.'
-                )
-            }
-        }
-
-        fetchExperiment()
-        fetchExperimentMetrics()
-        fetchTrainingHistory()
-        fetchExperimentConfig()
-    }, [])
-
-    return (
-		<>
-			<style>{`
-                body, html {
-                    background-color: var(--surface) !important;
-                    font-family: 'Poppins', sans-serif !important;
-                }
-                .theme-table .ant-table {
-                    background: transparent !important;
-                    color: var(--text) !important;
-                    font-family: 'Poppins', sans-serif !important;
-                }
-                .theme-table .ant-table-thead > tr > th {
-                    background: var(--table-header-bg) !important;
-                    color: var(--table-header-color) !important;
-                    border-bottom: 1px solid var(--table-header-border) !important;
-                    font-family: 'Poppins', sans-serif !important;
-                    font-weight: 600 !important;
-                }
-                .theme-table .ant-table-tbody > tr > td {
-                    background: var(--table-cell-bg) !important;
-                    color: var(--table-cell-color) !important;
-                    border-bottom: 1px solid var(--table-cell-border) !important;
-                    font-family: 'Poppins', sans-serif !important;
-                }
-                .theme-table .ant-table-tbody > tr:hover > td {
-                    background: var(--table-row-hover) !important;
-                }
-                .theme-table .ant-empty-description {
-                    color: var(--secondary-text) !important;
-                    font-family: 'Poppins', sans-serif !important;
-                }
-            `}</style>
-			<div className="relative min-h-screen bg-[var(--surface)]">
-				<div className="relative z-10 p-6">
-					<div className="flex w-full flex-col gap-6">
-						{/* Key Metrics Cards */}
-						<div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-							<div>
-								<Card
-									className="border border-[var(--border)] backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl [background:var(--card-gradient)]"
-									style={{
-										backdropFilter: 'blur(10px)',
-										fontFamily: 'Poppins, sans-serif',
-									}}
-								>
-									<Statistic
-										title={
-											<span className="font-poppins text-[var(--secondary-text)]">{`Final ${metrics[0]?.metric} score`}</span>
-										}
-										value={metrics[0]?.value * 100 || 0}
-										precision={2}
-										prefix={
-											<TrophyOutlined
-												style={{
-													color: 'var(--accent-text)',
-												}}
-											/>
-										}
-										suffix="%"
-										valueStyle={{
-											color: 'var(--accent-text)',
-											fontFamily: 'Poppins, sans-serif',
-											fontWeight: 'bold',
-										}}
-									/>
-								</Card>
-							</div>
-							<div>
-								<Card
-									className="border border-[var(--border)] backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl [background:var(--card-gradient)]"
-									style={{
-										backdropFilter: 'blur(10px)',
-										fontFamily: 'Poppins, sans-serif',
-									}}
-								>
-									<Statistic
-										title={
-											<span
-												className="text-[#94a3b8] font-poppins"
-											>
-												Training Duration
-											</span>
-										}
-										valueRender={() => {
-											const totalMinutes =
-												experiment.actual_training_time ||
-												0
-											const mins =
-												Math.floor(totalMinutes)
-											const secs = Math.round(
-												(totalMinutes - mins) * 60
-											)
-
-											return (
-												<span
-													style={{
-														background:
-															'linear-gradient(135deg, #f59e0b, #fbbf24)',
-														WebkitBackgroundClip:
-															'text',
-														WebkitTextFillColor:
-															'transparent',
-														fontFamily:
-															'Poppins, sans-serif',
-														fontWeight: 'bold',
-													}}
-												>
-													{mins}m {secs}s
-												</span>
-											)
-										}}
-										prefix={
-											<ClockCircleOutlined
-												className="text-[#f59e0b]"
-											/>
-										}
-									/>
-								</Card>
-							</div>
-							<div>
-								<Card
-									className="border border-[var(--border)] backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl [background:var(--card-gradient)]"
-									style={{
-										backdropFilter: 'blur(10px)',
-										fontFamily: 'Poppins, sans-serif',
-									}}
-								>
-									<Statistic
-										title={
-											<span
-												className="text-[#94a3b8] font-poppins"
-											>
-												Total Epochs
-											</span>
-										}
-										value={epoch || 0}
-										prefix={
-											<ExperimentOutlined
-												className="text-[#3b82f6]"
-											/>
-										}
-										valueStyle={{
-											background:
-												'linear-gradient(135deg, #3b82f6, #60a5fa)',
-											WebkitBackgroundClip: 'text',
-											WebkitTextFillColor: 'transparent',
-											fontFamily: 'Poppins, sans-serif',
-											fontWeight: 'bold',
-										}}
-									/>
-								</Card>
-							</div>
-						</div>
-
-						<div
-							className="w-full flex justify-center items-center"
-						>
-							<Button
-								type="primary"
-								icon={<RocketOutlined />}
-								onClick={async () => {
-									const modelRes =
-										await modelServiceAPI.getModelByExperimentId(
-											experimentId
-										)
-									navigate(
-										PATHS.MODEL_VIEW(
-											projectInfo.id,
-											modelRes.data.id
-										)
+					<div className="flex w-full items-center justify-center">
+						<Button
+							type="primary"
+							icon={<RocketOutlined />}
+							onClick={async () => {
+								const modelRes =
+									await modelServiceAPI.getModelByExperimentId(
+										experimentId
 									)
-								}}
-							size="large"
-							className="h-[50px] w-[25%] font-bold mt-[15px] text-lg bg-gradient-to-br from-[#10b981] to-[#34d399] border-none font-poppins hover:shadow-lg transition-all duration-300"
-						>
-								View Model
-							</Button>
-						</div>
-
-						{/* Expandable Details Section */}
-						<Card
-							className="border border-[var(--border)] backdrop-blur-sm shadow-lg rounded-xl [background:var(--card-gradient)]"
-							style={{
-								backdropFilter: 'blur(10px)',
-								fontFamily: 'Poppins, sans-serif',
+								navigate(
+									PATHS.MODEL_VIEW(
+										projectInfo.id,
+										modelRes.data.id
+									)
+								)
 							}}
+							size="large"
+							className="mt-4 h-[50px] w-[25%] font-poppins text-lg font-bold border-none bg-gradient-to-br from-[#10b981] to-[#34d399] transition-all duration-300 hover:shadow-lg"
 						>
-							<Button
-								type="link"
-								icon={
-									<BarChartOutlined
-										className="text-[#60a5fa]"
-									/>
-								}
+							View Model
+						</Button>
+					</div>
+
+					<div className="rounded-xl border border-[var(--border)] [background:var(--card-gradient)] p-4 shadow-lg backdrop-blur-md">
+						<Button
+							type="link"
+							icon={<HistoryOutlined className="text-[#60a5fa]" />}
 							onClick={() =>
 								setIsDetailsExpanded(!isDetailsExpanded)
 							}
-							className="text-xl text-[#e2e8f0] font-poppins"
+							className="font-poppins text-xl text-[#e2e8f0]"
 						>
-								{isDetailsExpanded
-									? 'Hide Details'
-									: 'Show Detailed Results'}
-							</Button>
+							{isDetailsExpanded
+								? 'Hide Details'
+								: 'Show Detailed Results'}
+						</Button>
 
-							{isDetailsExpanded && (
-								<div className="mt-4 flex w-full flex-col gap-6">
-									{/* Performance Charts */}
-									<Card
-										title={
-											<span
-												className="text-[#e2e8f0] font-poppins"
-											>
-												Training Performance
-											</span>
-										}
-										className="border border-[var(--border)] backdrop-blur-sm"
-										style={{
-											background:
-												'linear-gradient(135deg, rgba(51, 65, 85, 0.3) 0%, rgba(15, 23, 42, 0.3) 100%)',
-											backdropFilter: 'blur(10px)',
-											borderRadius: '12px',
-											fontFamily: 'Poppins, sans-serif',
-										}}
-									>
-										<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-											{Object.entries(valGraphs).map(
-												([metricName, metricData]) => (
-													<div key={metricName}>
-														<ResponsiveContainer
-															width="100%"
-															height={300}
-														>
-															<LineGraph
-																data={
-																	metricData
-																}
-																label={
-																	<span className="text-white">
-																		{metricName.replace(
-																			'_',
-																			' '
-																		)}{' '}
-																		graph
-																	</span>
-																}
-															/>
-														</ResponsiveContainer>
-													</div>
-												)
-											)}
-										</div>
-									</Card>
-
-									{/* Detailed Metrics Table */}
-									<Card
-										title={
-											<span
-												className="text-[#e2e8f0] font-poppins"
-											>
-												Comprehensive Metrics
-											</span>
-										}
-										className="border border-[var(--border)] backdrop-blur-sm"
-										style={{
-											background:
-												'linear-gradient(135deg, rgba(51, 65, 85, 0.3) 0%, rgba(15, 23, 42, 0.3) 100%)',
-											backdropFilter: 'blur(10px)',
-											borderRadius: '12px',
-											fontFamily: 'Poppins, sans-serif',
-										}}
-									>
-										<Table
-										columns={columns}
-										dataSource={metrics}
-										pagination={false}
-										className="bg-transparent font-poppins theme-table"
-									/>
-									</Card>
-								</div>
-							)}
-						</Card>
+						{isDetailsExpanded && (
+							<div className="mt-4 flex w-full flex-col gap-6">
+								<TrainResultPerformanceCharts
+									valGraphs={valGraphs}
+								/>
+								<TrainResultMetricsTable metrics={metrics} />
+								<Alert
+									type="info"
+									showIcon
+									icon={<CloudDownloadOutlined />}
+									className="border border-[var(--border)] bg-[var(--hover-bg)] font-poppins text-[var(--secondary-text)]"
+									message="Tip: You can export these metrics and training history data for offline analysis or reporting."
+								/>
+							</div>
+						)}
 					</div>
 				</div>
 			</div>
-		</>
+		</div>
 	)
 }
 

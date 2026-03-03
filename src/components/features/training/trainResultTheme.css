@@ -1,0 +1,36 @@
+body,
+html {
+	background-color: var(--surface) !important;
+	font-family: 'Poppins', sans-serif !important;
+}
+
+.theme-table .ant-table {
+	background: transparent !important;
+	color: var(--text) !important;
+	font-family: 'Poppins', sans-serif !important;
+}
+
+.theme-table .ant-table-thead > tr > th {
+	background: var(--table-header-bg) !important;
+	color: var(--table-header-color) !important;
+	border-bottom: 1px solid var(--table-header-border) !important;
+	font-family: 'Poppins', sans-serif !important;
+	font-weight: 600 !important;
+}
+
+.theme-table .ant-table-tbody > tr > td {
+	background: var(--table-cell-bg) !important;
+	color: var(--table-cell-color) !important;
+	border-bottom: 1px solid var(--table-cell-border) !important;
+	font-family: 'Poppins', sans-serif !important;
+}
+
+.theme-table .ant-table-tbody > tr:hover > td {
+	background: var(--table-row-hover) !important;
+}
+
+.theme-table .ant-empty-description {
+	color: var(--secondary-text) !important;
+	font-family: 'Poppins', sans-serif !important;
+}
+

@@ -1,0 +1,84 @@
+import React from 'react'
+import { Card, Table, Tooltip, Tag } from 'antd'
+import { InfoCircleOutlined } from '@ant-design/icons'
+
+const getAccuracyStatus = (score) => {
+	if (score >= 0.9) {
+		return (
+			<Tag className="border-none bg-gradient-to-br from-[#10b981] to-[#34d399] font-poppins text-white">
+				Excellent
+			</Tag>
+		)
+	}
+	if (score >= 0.7) {
+		return (
+			<Tag className="border-none bg-gradient-to-br from-[#3b82f6] to-[#60a5fa] font-poppins text-white">
+				Good
+			</Tag>
+		)
+	}
+	if (score >= 0.6) {
+		return (
+			<Tag className="border-none bg-gradient-to-br from-[#f59e0b] to-[#fbbf24] font-poppins text-white">
+				Medium
+			</Tag>
+		)
+	}
+	return (
+		<Tag className="border-none bg-gradient-to-br from-[#ef4444] to-[#f87171] font-poppins text-white">
+			Bad
+		</Tag>
+	)
+}
+
+const columns = [
+	{
+		title: 'Metric',
+		dataIndex: 'metric',
+		key: 'metric',
+		render: (text, record) => (
+			<Tooltip title={record.description}>
+				<span className="font-poppins text-[#e2e8f0]">{text}</span>{' '}
+				<InfoCircleOutlined className="ml-1 text-[#60a5fa]" />
+			</Tooltip>
+		),
+	},
+	{
+		title: 'Value',
+		dataIndex: 'value',
+		key: 'value',
+		render: (text) => {
+			const isNumeric = typeof text === 'number' || isFinite(Number(text))
+			const value = isNumeric ? Number(text).toFixed(2) : text
+			return <span className="font-poppins text-slate-200">{value}</span>
+		},
+	},
+	{
+		title: 'Status',
+		dataIndex: 'value',
+		key: 'status',
+		render: (score) => getAccuracyStatus(Number(score)),
+	},
+]
+
+export function TrainResultMetricsTable({ metrics }) {
+	return (
+		<Card
+			title={
+				<span className="font-poppins text-[#e2e8f0]">
+					Comprehensive Metrics
+				</span>
+			}
+			className="theme-table rounded-xl border border-[var(--border)] bg-[radial-gradient(circle_at_top,_rgba(148,163,184,0.15),_transparent_55%),linear-gradient(135deg,_rgba(15,23,42,0.9),_rgba(15,23,42,0.95))] shadow-lg backdrop-blur-md"
+		>
+			<Table
+				columns={columns}
+				dataSource={metrics}
+				pagination={false}
+				className="bg-transparent font-poppins"
+				rowKey={(record) => record.key || record.metric}
+			/>
+		</Card>
+	)
+}
+
