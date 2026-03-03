@@ -205,3 +205,25 @@
 	border-color: var(--border) !important;
 	color: var(--secondary-text) !important;
 }
+
+/* AntD Alert */
+.ant-alert {
+	background: var(--alert-bg) !important;
+	border-color: var(--alert-border) !important;
+	color: var(--alert-color) !important;
+}
+
+.ant-alert.ant-alert-info {
+	background: var(--alert-info-bg) !important;
+	border-color: var(--alert-info-border) !important;
+}
+
+.ant-alert.ant-alert-warning {
+	background: var(--alert-warning-bg) !important;
+	border-color: var(--alert-warning-border) !important;
+}
+
+.ant-alert-message,
+.ant-alert-description {
+	color: var(--alert-color) !important;
+}
