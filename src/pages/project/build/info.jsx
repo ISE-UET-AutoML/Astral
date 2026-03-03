@@ -80,7 +80,7 @@ const ProjectInfo = () => {
 							<h1
 								className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-[var(--title-project)]"
 							>
-								{projectInfo?.name || 'Project Info'}
+								Project Overview
 							</h1>
 							<p className="mx-auto max-w-3xl text-lg sm:text-xl leading-relaxed text-[var(--secondary-text)]">
 								{projectInfo?.description ||
@@ -109,8 +109,8 @@ const ProjectInfo = () => {
 
 										<div className="space-y-4">
 											<MetaDataItem
-												label="Project ID"
-												value={projectInfo?.id}
+												label="Project name"
+												value={projectInfo?.name}
 											/>
 											<MetaDataItem
 												label="Task Type"
