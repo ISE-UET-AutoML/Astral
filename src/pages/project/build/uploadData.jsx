@@ -36,178 +36,17 @@ import BuildPager from './BuildPager'
 import create_project from 'src/assets/images/create_project.png'
 import CreateDatasetModal from 'src/pages/datasets/CreateDatasetModal'
 import { usePollingStore } from 'src/store/pollingStore'
-
-// Simple SVG icons
-const CloudUploadIcon = ({ className, ...props }) => (
-	<svg
-		className={className}
-		width="24"
-		height="24"
-		viewBox="0 0 24 24"
-		fill="none"
-		xmlns="http://www.w3.org/2000/svg"
-		{...props}
-	>
-		<path
-			d="M7 18C4.79086 18 3 16.2091 3 14C3 12.9857 3.37764 12.0596 4 11.3542V11C4 7.68629 6.68629 5 10 5C10.3416 5 10.6734 5.03015 10.9925 5.08738C11.7212 3.73139 13.1772 3 14.5 3C16.433 3 18 4.567 18 6.5C18.0001 6.5 18 6.5 18 6.5V7C19.6569 7 21 8.34315 21 10C21 11.6569 19.6569 13 18 13H17V14C17 16.2091 15.2091 18 13 18H7Z"
-			stroke="currentColor"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		/>
-		<path
-			d="M12 15L12 9M12 15L9 12M12 15L15 12"
-			stroke="currentColor"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		/>
-	</svg>
-)
-
-const ArrowRightIcon = ({ className, ...props }) => (
-	<svg
-		className={className}
-		width="24"
-		height="24"
-		viewBox="0 0 24 24"
-		fill="none"
-		xmlns="http://www.w3.org/2000/svg"
-		{...props}
-	>
-		<path
-			d="M5 12H19M19 12L12 5M19 12L12 19"
-			stroke="currentColor"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		/>
-	</svg>
-)
-
-const InfoCircledIcon = ({ className, ...props }) => (
-	<svg
-		className={className}
-		width="24"
-		height="24"
-		viewBox="0 0 24 24"
-		fill="none"
-		xmlns="http://www.w3.org/2000/svg"
-		{...props}
-	>
-		<circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
-		<path
-			d="M12 16V12M12 8H12.01"
-			stroke="currentColor"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		/>
-	</svg>
-)
-
-const MixerHorizontalIcon = ({ className, ...props }) => (
-	<svg
-		className={className}
-		width="24"
-		height="24"
-		viewBox="0 0 24 24"
-		fill="none"
-		xmlns="http://www.w3.org/2000/svg"
-		{...props}
-	>
-		<path
-			d="M3 12H21M3 6H21M3 18H21"
-			stroke="currentColor"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		/>
-		<circle cx="6" cy="6" r="2" fill="currentColor" />
-		<circle cx="18" cy="12" r="2" fill="currentColor" />
-		<circle cx="6" cy="18" r="2" fill="currentColor" />
-	</svg>
-)
-
-const SearchIcon = ({ className, ...props }) => (
-	<svg
-		className={className}
-		width="24"
-		height="24"
-		viewBox="0 0 24 24"
-		fill="none"
-		xmlns="http://www.w3.org/2000/svg"
-		{...props}
-	>
-		<path
-			d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z"
-			stroke="currentColor"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		/>
-	</svg>
-)
-
-const SortIcon = ({ className, ...props }) => (
-	<svg
-		className={className}
-		width="24"
-		height="24"
-		viewBox="0 0 24 24"
-		fill="none"
-		xmlns="http://www.w3.org/2000/svg"
-		{...props}
-	>
-		<path
-			d="M3 6H21M6 12H18M9 18H15"
-			stroke="currentColor"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		/>
-	</svg>
-)
-
-const SortAscIcon = ({ className, ...props }) => (
-	<svg
-		className={className}
-		width="24"
-		height="24"
-		viewBox="0 0 24 24"
-		fill="none"
-		xmlns="http://www.w3.org/2000/svg"
-		{...props}
-	>
-		<path
-			d="M3 6H21M6 12H18M9 18H15M12 6L8 2L4 6"
-			stroke="currentColor"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		/>
-	</svg>
-)
-
-const SortDescIcon = ({ className, ...props }) => (
-	<svg
-		className={className}
-		width="24"
-		height="24"
-		viewBox="0 0 24 24"
-		fill="none"
-		xmlns="http://www.w3.org/2000/svg"
-		{...props}
-	>
-		<path
-			d="M3 6H21M6 12H18M9 18H15M12 18L8 22L4 18"
-			stroke="currentColor"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		/>
-	</svg>
-)
+import {
+	CloudUploadIcon,
+	ArrowRightIcon,
+	InfoCircledIcon,
+	MixerHorizontalIcon,
+	SearchIcon,
+	SortIcon,
+	SortAscIcon,
+	SortDescIcon,
+	DataPreparingIcon,
+} from 'src/assets/svgicon'
 
 const UploadData = () => {
 	const { updateFields, projectInfo } = useOutletContext()
@@ -467,22 +306,14 @@ const UploadData = () => {
 							{/* Filter Sidebar */}
 							<div className="lg:col-span-1">
 								<Card
-									className="rounded-2xl shadow-2xl sticky top-4"
-									style={{
-										background: 'var(--card-gradient)',
-										border: '1px solid var(--border)',
-									}}
+									className="rounded-2xl shadow-2xl sticky top-4 border [border-color:var(--border)] [background:var(--card-gradient)]"
 								>
 									<CardHeader>
 										<CardTitle
-											className="flex items-center gap-3 text-lg"
-											style={{ color: 'var(--text)' }}
+											className="flex items-center gap-3 text-lg text-[var(--text)]"
 										>
 											<MixerHorizontalIcon
-												className="h-5 w-5"
-												style={{
-													color: 'var(--accent-text)',
-												}}
+												className="h-5 w-5 text-[var(--accent-text)]"
 											/>
 											Filter Options
 										</CardTitle>
@@ -491,25 +322,18 @@ const UploadData = () => {
 										{/* Search Input */}
 										<div>
 											<label
-												className="flex items-center gap-2 font-medium mb-3"
-												style={{ color: 'var(--text)' }}
+												className="flex items-center gap-2 font-medium mb-3 text-[var(--text)]"
 											>
 												Search by Name
 												<Tooltip title="Search for projects by name">
 													<InfoCircledIcon
-														className="h-4 w-4 cursor-help"
-														style={{
-															color: 'var(--secondary-text)',
-														}}
+														className="h-4 w-4 cursor-help text-[var(--secondary-text)]"
 													/>
 												</Tooltip>
 											</label>
 											<div className="relative">
 												<SearchIcon
-													className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4"
-													style={{
-														color: 'var(--secondary-text)',
-													}}
+													className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--secondary-text)]"
 												/>
 												<input
 													type="text"
@@ -520,13 +344,7 @@ const UploadData = () => {
 															e.target.value
 														)
 													}
-													className="w-full pl-10 pr-4 py-2 !rounded-md border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-													style={{
-														background:
-															'var(--input-bg)',
-														border: '1px solid var(--border)',
-														color: 'var(--text)',
-													}}
+													className="w-full pl-10 pr-4 py-2 !rounded-md border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-[var(--input-bg)] border-[var(--border)] text-[var(--text)]"
 												/>
 											</div>
 										</div>
@@ -534,16 +352,12 @@ const UploadData = () => {
 										{/* Sort Options */}
 										<div>
 											<label
-												className="flex items-center gap-2 font-medium mb-3"
-												style={{ color: 'var(--text)' }}
+												className="flex items-center gap-2 font-medium mb-3 text-[var(--text)]"
 											>
 												Sort by
 												<Tooltip title="Choose how to sort the projects">
 													<InfoCircledIcon
-														className="h-4 w-4 cursor-help"
-														style={{
-															color: 'var(--secondary-text)',
-														}}
+														className="h-4 w-4 cursor-help text-[var(--secondary-text)]"
 													/>
 												</Tooltip>
 											</label>
@@ -578,13 +392,7 @@ const UploadData = () => {
 																	: 'asc'
 															)
 														}
-														className="p-2 h-8 w-8 flex-shrink-0"
-														style={{
-															background:
-																'var(--input-bg)',
-															border: '1px solid var(--border)',
-															color: 'var(--text)',
-														}}
+														className="p-2 h-8 w-8 flex-shrink-0 border bg-[var(--input-bg)] border-[var(--border)] text-[var(--text)]"
 													>
 														{sortDirection ===
 														'asc' ? (
@@ -600,16 +408,12 @@ const UploadData = () => {
 										{/* Cloud Service Filter */}
 										<div>
 											<label
-												className="flex items-center gap-2 font-medium mb-3"
-												style={{ color: 'var(--text)' }}
+												className="flex items-center gap-2 font-medium mb-3 text-[var(--text)]"
 											>
 												Cloud Service
 												<Tooltip title="Choose the cloud storage service where your label project is stored">
 													<InfoCircledIcon
-														className="h-4 w-4 cursor-help"
-														style={{
-															color: 'var(--secondary-text)',
-														}}
+														className="h-4 w-4 cursor-help text-[var(--secondary-text)]"
 													/>
 												</Tooltip>
 											</label>
@@ -634,16 +438,12 @@ const UploadData = () => {
 										{/* Storage Bucket Filter */}
 										<div>
 											<label
-												className="flex items-center gap-2 font-medium mb-3"
-												style={{ color: 'var(--text)' }}
+												className="flex items-center gap-2 font-medium mb-3 text-[var(--text)]"
 											>
 												Storage Bucket
 												<Tooltip title="Select the specific storage bucket containing your label project">
 													<InfoCircledIcon
-														className="h-4 w-4 cursor-help"
-														style={{
-															color: 'var(--secondary-text)',
-														}}
+														className="h-4 w-4 cursor-help text-[var(--secondary-text)]"
 													/>
 												</Tooltip>
 											</label>
@@ -668,16 +468,12 @@ const UploadData = () => {
 										{/* Project Status Filter */}
 										<div>
 											<label
-												className="flex items-center gap-2 font-medium mb-3"
-												style={{ color: 'var(--text)' }}
+												className="flex items-center gap-2 font-medium mb-3 text-[var(--text)]"
 											>
 												Project Status
 												<Tooltip title="Filter projects based on whether they're already labeled">
 													<InfoCircledIcon
-														className="h-4 w-4 cursor-help"
-														style={{
-															color: 'var(--secondary-text)',
-														}}
+														className="h-4 w-4 cursor-help text-[var(--secondary-text)]"
 													/>
 												</Tooltip>
 											</label>
@@ -698,10 +494,7 @@ const UploadData = () => {
 													/>
 													<label
 														htmlFor="all"
-														className="cursor-pointer"
-														style={{
-															color: 'var(--secondary-text)',
-														}}
+														className="cursor-pointer text-[var(--secondary-text)]"
 													>
 														All Projects
 													</label>
@@ -718,10 +511,7 @@ const UploadData = () => {
 													/>
 													<label
 														htmlFor="labeled"
-														className="cursor-pointer"
-														style={{
-															color: 'var(--secondary-text)',
-														}}
+														className="cursor-pointer text-[var(--secondary-text)]"
 													>
 														Labeled Projects
 													</label>
@@ -738,10 +528,7 @@ const UploadData = () => {
 													/>
 													<label
 														htmlFor="unlabeled"
-														className="cursor-pointer"
-														style={{
-															color: 'var(--secondary-text)',
-														}}
+														className="cursor-pointer text-[var(--secondary-text)]"
 													>
 														Unlabeled Projects
 													</label>
@@ -753,13 +540,7 @@ const UploadData = () => {
 										{selectedRowKeys && (
 											<Button
 												onClick={handleContinue}
-												className="w-full font-semibold py-3 rounded-xl transition-all duration-200"
-												style={{
-													background:
-														'var(--button-gradient)',
-													border: '1px solid var(--border)',
-													color: '#ffffff',
-												}}
+												className="w-full font-semibold py-3 rounded-xl transition-all duration-200 text-white border [border-color:var(--border)] [background:var(--button-gradient)]"
 											>
 												<span className="flex items-center justify-center gap-2">
 													Go to Training
@@ -775,40 +556,23 @@ const UploadData = () => {
 							<div className="lg:col-span-3 space-y-6">
 								{/* Projects Table */}
 								<Card
-									className="rounded-2xl shadow-2xl"
-									style={{
-										background: 'var(--card-gradient)',
-										border: '1px solid var(--border)',
-									}}
+									className="rounded-2xl shadow-2xl border [border-color:var(--border)] [background:var(--card-gradient)]"
 								>
 									<CardContent className="p-8">
 										<Alert
-											className="mb-8"
-											style={{
-												background:
-													'var(--alert-info-bg)',
-												border: '1px solid var(--alert-info-border)',
-												color: 'var(--text)',
-											}}
+											className="mb-8 border text-[var(--text)] [border-color:var(--alert-info-border)] [background:var(--alert-info-bg)]"
 										>
 											<InfoCircledIcon
-												className="h-4 w-4"
-												style={{
-													color: 'var(--accent-text)',
-												}}
+												className="h-4 w-4 text-[var(--accent-text)]"
 											/>
 											<AlertTitle
-												className="font-medium"
-												style={{ color: 'var(--text)' }}
+												className="font-medium text-[var(--text)]"
 											>
 												Need help choosing a label
 												project?
 											</AlertTitle>
 											<AlertDescription
-												className="mt-1"
-												style={{
-													color: 'var(--secondary-text)',
-												}}
+												className="mt-1 text-[var(--secondary-text)]"
 											>
 												If you're unsure about which
 												project to select, look for one
@@ -833,50 +597,22 @@ const UploadData = () => {
 														<TableHeader>
 															<TableRow>
 																<TableHead
-																	className="font-semibold text-left py-4"
-																	style={{
-																		background:
-																			'var(--table-header-bg)',
-																		color: 'var(--table-header-color)',
-																		borderBottom:
-																			'1px solid var(--table-header-border)',
-																	}}
+																	className="font-semibold text-left py-4 border-b [background:var(--table-header-bg)] text-[var(--table-header-color)] [border-color:var(--table-header-border)]"
 																>
 																	Title
 																</TableHead>
 																<TableHead
-																	className="font-semibold text-center py-4"
-																	style={{
-																		background:
-																			'var(--table-header-bg)',
-																		color: 'var(--table-header-color)',
-																		borderBottom:
-																			'1px solid var(--table-header-border)',
-																	}}
+																	className="font-semibold text-center py-4 border-b [background:var(--table-header-bg)] text-[var(--table-header-color)] [border-color:var(--table-header-border)]"
 																>
 																	Service
 																</TableHead>
 																<TableHead
-																	className="font-semibold text-center py-4"
-																	style={{
-																		background:
-																			'var(--table-header-bg)',
-																		color: 'var(--table-header-color)',
-																		borderBottom:
-																			'1px solid var(--table-header-border)',
-																	}}
+																	className="font-semibold text-center py-4 border-b [background:var(--table-header-bg)] text-[var(--table-header-color)] [border-color:var(--table-header-border)]"
 																>
 																	Bucket
 																</TableHead>
 																<TableHead
-																	className="font-semibold text-center py-4"
-																	style={{
-																		background:
-																			'var(--table-header-bg)',
-																		color: 'var(--table-header-color)',
-																		borderBottom:
-																			'1px solid var(--table-header-border)',
-																	}}
+																	className="font-semibold text-center py-4 border-b [background:var(--table-header-bg)] text-[var(--table-header-color)] [border-color:var(--table-header-border)]"
 																>
 																	Labeled
 																</TableHead>
@@ -890,11 +626,7 @@ const UploadData = () => {
 																		colSpan={4}
 																		className="text-center py-16"
 																	>
-																		<div
-																			style={{
-																				color: 'var(--secondary-text)',
-																			}}
-																		>
+																		<div className="text-[var(--secondary-text)]">
 																			<CloudUploadIcon className="h-16 w-16 mx-auto mb-4 opacity-30" />
 																			<p className="text-lg">
 																				No label projects match your current filters
@@ -909,14 +641,16 @@ const UploadData = () => {
 																			key={
 																				project.project_id
 																			}
-																			className={`transition-all duration-200 ${project.isLabeled ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}
-																			style={{
-																				background:
-																					selectedRowKeys ===
-																					project.project_id
-																						? 'var(--selection-bg)'
-																						: 'transparent',
-																			}}
+																			className={`transition-all duration-200 ${
+																				project.isLabeled
+																					? 'cursor-pointer'
+																					: 'opacity-50 cursor-not-allowed'
+																			} ${
+																				selectedRowKeys ===
+																				project.project_id
+																					? '[background:var(--selection-bg)]'
+																					: ''
+																			}`}
 																			onClick={() => {
 																				if (
 																					project.isLabeled
@@ -928,10 +662,7 @@ const UploadData = () => {
 																			}}
 																		>
 																			<TableCell
-																				className="font-medium py-4"
-																				style={{
-																					color: 'var(--text)',
-																				}}
+																				className="font-medium py-4 text-[var(--text)]"
 																			>
 																				{
 																					project.title
@@ -943,10 +674,7 @@ const UploadData = () => {
 																				)}
 																			</TableCell>
 																			<TableCell
-																				className="text-center py-4"
-																				style={{
-																					color: 'var(--secondary-text)',
-																				}}
+																				className="text-center py-4 text-[var(--secondary-text)]"
 																			>
 																				{
 																					project.bucketName
@@ -982,26 +710,11 @@ const UploadData = () => {
 														className="w-[300px] max-w-[90%] cursor-pointer drop-shadow-[0_10px_30px_rgba(0,0,0,0.25)]"
 														onClick={() => setShowCreateDatasetModal(true)}
 													/>
-													<div
-														className="mt-6 text-center"
-													>
-														<div
-															className="font-poppins"
-															style={{
-																color: 'var(--text)',
-																fontSize: 24,
-																fontWeight: 600,
-															}}
-														>
+													<div className="mt-6 text-center">
+														<div className="font-poppins text-[var(--text)] text-[24px] font-semibold">
 															No Label Projects Yet
 														</div>
-														<div
-															className="font-poppins"
-															style={{
-																color: 'var(--secondary-text)',
-																marginTop: 6,
-															}}
-														>
+														<div className="font-poppins text-[var(--secondary-text)] mt-[6px]">
 															Start by creating your Label Projects
 														</div>
 													</div>
@@ -1010,42 +723,13 @@ const UploadData = () => {
 									</CardContent>
 								</Card>
 								<div className="mt-6">
-									<BuildPager currentPage={currentPage} totalItems={totalItems} pageSize={pageSize} onPageChange={setCurrentPage} />
+									<BuildPager
+										currentPage={currentPage}
+										totalItems={totalItems}
+										pageSize={pageSize}
+										onPageChange={setCurrentPage}
+									/>
 								</div>
-
-								{/* Create New Project Card
-								<Card
-									className="rounded-2xl shadow-2xl transition-all duration-300 cursor-pointer group"
-									style={{
-										background: 'var(--card-gradient)',
-										border: '1px solid var(--border)',
-									}}
-									onClick={showModal}
-								>
-									<CardContent className="p-12 text-center">
-										<CloudUploadIcon
-											className="h-20 w-20 mx-auto mb-6 transition-colors"
-											style={{
-												color: 'var(--accent-text)',
-											}}
-										/>
-										<h3
-											className="text-2xl font-semibold mb-3 transition-colors"
-											style={{ color: 'var(--text)' }}
-										>
-											Create a New Label Project
-										</h3>
-										<p
-											className="text-lg transition-colors"
-											style={{
-												color: 'var(--secondary-text)',
-											}}
-										>
-											Don't see what you need? Click here
-											to create a new label project
-										</p>
-									</CardContent>
-								</Card> */}
 							</div>
 						</div>
 
@@ -1065,48 +749,20 @@ const UploadData = () => {
 						{/* Modal */}
 						<div className="relative z-10 w-full max-w-md">
 							<div
-								className="rounded-2xl shadow-2xl overflow-hidden"
-								style={{
-									background: 'var(--modal-bg)',
-									border: '1px solid var(--modal-border)',
-								}}
+								className="rounded-2xl shadow-2xl overflow-hidden border [background:var(--modal-bg)] [border-color:var(--modal-border)]"
 							>
 								{/* Header */}
 								<div
-									className="px-8 py-6"
-									style={{
-										borderBottom:
-											'1px solid var(--modal-header-border)',
-										background: 'var(--modal-header-bg)',
-									}}
+									className="px-8 py-6 border-b [background:var(--modal-header-bg)] [border-color:var(--modal-header-border)]"
 								>
 									<div className="flex items-center justify-center">
 										<div className="relative">
 											{/* Animated gradient ring */}
 											<div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 animate-spin">
 												<div
-													className="w-14 h-14 rounded-full m-1 flex items-center justify-center"
-													style={{
-														background:
-															'var(--modal-bg)',
-													}}
+													className="w-14 h-14 rounded-full m-1 flex items-center justify-center [background:var(--modal-bg)]"
 												>
-													<svg
-														className="w-6 h-6 animate-pulse"
-														style={{
-															color: 'var(--accent-text)',
-														}}
-														fill="none"
-														stroke="currentColor"
-														viewBox="0 0 24 24"
-													>
-														<path
-															strokeLinecap="round"
-															strokeLinejoin="round"
-															strokeWidth={2}
-															d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-														/>
-													</svg>
+													<DataPreparingIcon className="w-6 h-6 animate-pulse text-[var(--accent-text)]" />
 												</div>
 											</div>
 										</div>
@@ -1116,25 +772,18 @@ const UploadData = () => {
 								{/* Content */}
 								<div className="px-8 py-6 text-center">
 									<h3
-										className="text-xl font-semibold mb-3"
-										style={{
-											color: 'var(--modal-title-color)',
-										}}
+										className="text-xl font-semibold mb-3 text-[var(--modal-title-color)]"
 									>
 										Preparing Your Data
 									</h3>
 									<p
-										className="leading-relaxed"
-										style={{ color: 'var(--text)' }}
+										className="leading-relaxed text-[var(--text)]"
 									>
 										The system is exporting labels and
 										preparing your data for training.
 										<br />
 										<span
-											className="text-sm mt-2 block"
-											style={{
-												color: 'var(--secondary-text)',
-											}}
+											className="text-sm mt-2 block text-[var(--secondary-text)]"
 										>
 											This process may take a few minutes.
 											Please do not close this window.
@@ -1145,22 +794,13 @@ const UploadData = () => {
 									<div className="mt-6">
 										<div className="flex justify-center space-x-1">
 											<div
-												className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"
-												style={{
-													animationDelay: '0ms',
-												}}
+												className="w-2 h-2 bg-blue-500 rounded-full animate-bounce [animation-delay:0ms]"
 											></div>
 											<div
-												className="w-2 h-2 bg-purple-500 rounded-full animate-bounce"
-												style={{
-													animationDelay: '150ms',
-												}}
+												className="w-2 h-2 bg-purple-500 rounded-full animate-bounce [animation-delay:150ms]"
 											></div>
 											<div
-												className="w-2 h-2 bg-pink-500 rounded-full animate-bounce"
-												style={{
-													animationDelay: '300ms',
-												}}
+												className="w-2 h-2 bg-pink-500 rounded-full animate-bounce [animation-delay:300ms]"
 											></div>
 										</div>
 									</div>
