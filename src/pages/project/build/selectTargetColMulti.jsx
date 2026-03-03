@@ -1,22 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import * as datasetAPI from 'src/api/dataset'
 import * as projectAPI from 'src/api/project'
-import {
-	Select,
-	Card,
-	Row,
-	Col,
-	Button,
-	Typography,
-	Spin,
-	Tooltip,
-	message,
-} from 'antd'
+import { Button, Spin, Tooltip, message } from 'antd'
 import { useNavigate, useOutletContext } from 'react-router-dom'
 import { InfoCircleOutlined } from '@ant-design/icons'
-
-const { Option } = Select
-const { Title, Text } = Typography
 
 const detectImageColumns = (row) => {
 	if (!row || typeof row !== 'object') return []
@@ -146,238 +133,154 @@ const SelectTargetColMulti = () => {
 	}
 
 	return (
-		<>
-			<style>{`
-				.dark-build-page {
-					background: #01000A;
-					min-height: 100vh;
-					padding: 24px;
-				}
-				
-				.dark-build-card {
-					background: linear-gradient(135deg, rgba(15, 32, 39, 0.8) 0%, rgba(32, 58, 67, 0.6) 50%, rgba(44, 83, 100, 0.8) 100%);
-					backdrop-filter: blur(10px);
-					border: 1px solid rgba(255, 255, 255, 0.1);
-					border-radius: 16px;
-					box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-				}
-				
-				.dark-build-title {
-					background: linear-gradient(90deg, #5C8DFF 0%, #65FFA0 100%);
-					-webkit-background-clip: text;
-					-webkit-text-fill-color: transparent;
-					background-clip: text;
-					font-family: 'Poppins', sans-serif;
-					font-weight: 700;
-				}
-				
-				.dark-build-text {
-					color: rgba(255, 255, 255, 0.8);
-					font-family: 'Poppins', sans-serif;
-				}
-				
-				.dark-build-label {
-					color: #5C8DFF;
-					font-family: 'Poppins', sans-serif;
-					font-weight: 600;
-				}
-				
-				.dark-build-select .ant-select-selector {
-					background: rgba(255, 255, 255, 0.1) !important;
-					border: 1px solid rgba(255, 255, 255, 0.2) !important;
-					color: white !important;
-					border-radius: 12px !important;
-				}
-				
-				.dark-build-select .ant-select-selector:hover {
-					border-color: #5C8DFF !important;
-					box-shadow: 0 0 0 2px rgba(92, 141, 255, 0.2) !important;
-				}
-				
-				.dark-build-select .ant-select-selection-item {
-					color: white !important;
-				}
-				
-				.dark-build-select .ant-select-arrow {
-					color: #5C8DFF !important;
-				}
-				
-				.dark-build-button {
-					background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) !important;
-					border: 1px solid rgba(255, 255, 255, 0.2) !important;
-					border-radius: 12px !important;
-					font-family: 'Poppins', sans-serif !important;
-					font-weight: 600 !important;
-					box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
-				}
-				
-				.dark-build-button:hover {
-					background: linear-gradient(135deg, #16213e 0%, #0f3460 100%) !important;
-					box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4) !important;
-					transform: translateY(-2px) !important;
-				}
-				
-				.dark-build-table {
-					background: rgba(255, 255, 255, 0.05) !important;
-					border: 1px solid rgba(255, 255, 255, 0.1) !important;
-					border-radius: 12px !important;
-				}
-				
-				.dark-build-table thead th {
-					background: linear-gradient(135deg, rgba(92, 141, 255, 0.2) 0%, rgba(101, 255, 160, 0.2) 100%) !important;
-					color: white !important;
-					font-family: 'Poppins', sans-serif !important;
-					font-weight: 600 !important;
-					border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-				}
-				
-				.dark-build-table tbody td {
-					color: rgba(255, 255, 255, 0.9) !important;
-					font-family: 'Poppins', sans-serif !important;
-					border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
-				}
-				
-				.dark-build-table tbody tr:hover {
-					background: rgba(92, 141, 255, 0.1) !important;
-				}
-				
-				.dark-build-table tbody tr:hover td {
-					background: transparent !important;
-				}
-			`}</style>
-			<div className="dark-build-page">
-				<Card className="dark-build-card mx-auto w-full border-none">
-					<Title level={2} className="dark-build-title text-center mb-6">
+		<div className="min-h-screen bg-[var(--surface)] px-6 py-6 font-poppins">
+			<div className="mx-auto max-w-6xl rounded-2xl border border-[var(--border)] bg-[var(--card-gradient)] p-8 shadow-[0_8px_32px_rgba(0,0,0,0.4)] backdrop-blur-2xl">
+				<div className="mb-8 text-center">
+					<h2 className="bg-[var(--title-gradient)] bg-clip-text text-3xl font-bold tracking-tight text-transparent md:text-4xl">
 						Select Target & Image Column
-					</Title>
-					<Text className="dark-build-text block text-center mb-8">
-						Choose the target column for analysis and the image column
-						containing visual data.
-					</Text>
-
-			<Spin spinning={loading}>
-				<Row gutter={[24, 24]} className="mb-8">
-					<Col xs={24} md={12}>
-						<div className="flex items-center mb-2">
-							<label className="dark-build-label font-medium mr-3">
-								Target Column{' '}
-								<Tooltip title="Select the column that contains the target data for analysis.">
-									<InfoCircleOutlined className="text-gray-400" />
-								</Tooltip>
-							</label>
-							<Select
-								className="dark-build-select w-36"
-								placeholder="Data Type"
-								value={filterType}
-								onChange={setFilterType}
-								size="small"
-								allowClear
-								bordered={true}
-							>
-								<Option value="#str">#str</Option>
-								<Option value="#int">#int</Option>
-								<Option value="#bool">#bool</Option>
-							</Select>
-						</div>
-						<Select
-							className="dark-build-select w-full"
-							placeholder="Select Target Column"
-							value={selectedTargetCol}
-							onChange={setSelectedTargetCol}
-							optionFilterProp="children"
-							showSearch
-						>
-							{getFilteredColumns().map((col) => (
-								<Option key={col} value={col}>
-									{col}
-								</Option>
-							))}
-						</Select>
-					</Col>
-					<Col xs={24} md={12}>
-						<label className="block dark-build-label font-medium mb-2">
-							Image Column{' '}
-							<Tooltip title="Select the column that contains image URLs or paths.">
-								<InfoCircleOutlined className="text-gray-400" />
-							</Tooltip>
-						</label>
-						<Select
-							className="dark-build-select w-full"
-							placeholder="Select Image Column"
-							value={selectedImgCol}
-							onChange={setSelectedImgCol}
-							optionFilterProp="children"
-							showSearch
-						>
-							{imgCols.map((col) => (
-								<Option key={col} value={col}>
-									{col}
-								</Option>
-							))}
-						</Select>
-					</Col>
-				</Row>
-
-				<div className="text-center">
-					<Button
-						className="dark-build-button"
-						type="primary"
-						size="large"
-						onClick={sendColumn}
-						disabled={!selectedTargetCol || !selectedImgCol}
-						className="w-48"
-					>
-						Confirm Selection
-					</Button>
+					</h2>
+					<p className="mt-3 text-sm text-[var(--secondary-text)] md:text-base">
+						Choose the target column for analysis and the image
+						column containing visual data.
+					</p>
 				</div>
 
-				{dataset && (
-					<div className="mt-8 overflow-auto dark-build-table">
-						<table className="w-full border-collapse text-sm">
-							<thead className="sticky top-0 text-center">
-								<tr>
-									{colsName.map((col) => (
-										<th key={col} className="pt-2 px-4">
-											{col}
-										</th>
-									))}
-								</tr>
-								<tr>
-									{colsName.map((col) => (
-										<th
-											key={col}
-											className="pb-2 px-4 border-b text-xs text-gray-400"
-										>
-											{getColumnType(dataset[0][col])}
-										</th>
-									))}
-								</tr>
-							</thead>
-							<tbody>
-								{dataset.map((row, rowIndex) => (
-									<tr
-										key={rowIndex}
-										className="border-b hover:bg-cyan-500/10 text-center transition-colors duration-200"
-									>
+				<Spin spinning={loading}>
+					<div className="grid gap-6 md:grid-cols-2">
+						<div>
+							<div className="mb-2 flex items-center gap-3">
+								label
+								<span className="text-sm font-semibold text-[var(--accent-text)]">
+									Target Column
+								</span>
+								<Tooltip title="Select the column that contains the target data for analysis.">
+									<InfoCircleOutlined className="text-xs text-[var(--secondary-text)]" />
+								</Tooltip>
+								<select
+									className="ml-auto h-8 rounded-lg border border-[var(--border)] bg-[var(--input-bg)] px-2 text-xs text-[var(--text)] focus:border-[var(--input-focus-border)] focus:outline-none"
+									value={filterType || ''}
+									onChange={(e) =>
+										setFilterType(
+											e.target.value || null
+										)
+									}
+								>
+									<option value="">All types</option>
+									<option value="#str">#str</option>
+									<option value="#int">#int</option>
+									<option value="#bool">#bool</option>
+								</select>
+							</div>
+							<select
+								className="mt-1 w-full rounded-xl border border-[var(--border)] bg-[var(--input-bg)] px-3 py-2 text-sm text-[var(--text)] focus:border-[var(--input-focus-border)] focus:outline-none"
+								value={selectedTargetCol || ''}
+								onChange={(e) =>
+									setSelectedTargetCol(
+										e.target.value || null
+									)
+								}
+							>
+								<option value="">Select Target Column</option>
+								{getFilteredColumns().map((col) => (
+									<option key={col} value={col}>
+										{col}
+									</option>
+								))}
+							</select>
+						</div>
+
+						<div>
+							<div className="mb-2 flex items-center gap-3">
+								span
+								<span className="text-sm font-semibold text-[var(--accent-text)]">
+									Image Column
+								</span>
+								<Tooltip title="Select the column that contains image URLs or paths.">
+									<InfoCircleOutlined className="text-xs text-[var(--secondary-text)]" />
+								</Tooltip>
+							</div>
+							<select
+								className="mt-1 w-full rounded-xl border border-[var(--border)] bg-[var(--input-bg)] px-3 py-2 text-sm text-[var(--text)] focus:border-[var(--input-focus-border)] focus:outline-none"
+								value={selectedImgCol || ''}
+								onChange={(e) =>
+									setSelectedImgCol(
+										e.target.value || null
+									)
+								}
+							>
+								<option value="">Select Image Column</option>
+								{imgCols.map((col) => (
+									<option key={col} value={col}>
+										{col}
+									</option>
+								))}
+							</select>
+						</div>
+					</div>
+
+					<div className="mt-8 flex justify-center">
+						<Button
+							type="primary"
+							size="large"
+							onClick={sendColumn}
+							disabled={!selectedTargetCol || !selectedImgCol}
+							className="w-48 rounded-xl bg-[var(--button-primary-bg)] font-semibold text-[var(--button-primary-color)] shadow-md disabled:bg-[var(--input-disabled-bg)] disabled:text-[var(--input-disabled-color)]"
+						>
+							Confirm Selection
+						</Button>
+					</div>
+
+					{dataset && (
+						<div className="mt-8 max-h-[420px] overflow-auto rounded-xl border border-[var(--border)] bg-[var(--hover-bg)]">
+							<table className="w-full border-collapse text-sm">
+								<thead className="sticky top-0 text-center">
+									<tr className="bg-gradient-to-r from-blue-500/20 to-emerald-400/20">
 										{colsName.map((col) => (
-											<td
+											<th
 												key={col}
-												className="px-4 py-2 truncate max-w-[150px]"
-												title={row[col]}
+												className="px-4 pt-2 text-xs font-semibold text-[var(--text)]"
 											>
-												{row[col]}
-											</td>
+												{col}
+											</th>
 										))}
 									</tr>
-								))}
-							</tbody>
-						</table>
-					</div>
-				)}
-			</Spin>
-		</Card>
+									<tr className="bg-black/20">
+										{colsName.map((col) => (
+											<th
+												key={col}
+												className="border-b border-[var(--border)] px-4 pb-2 text-[10px] font-normal text-[var(--secondary-text)]"
+											>
+												{getColumnType(
+													dataset[0][col]
+												)}
+											</th>
+										))}
+									</tr>
+								</thead>
+								<tbody>
+									{dataset.map((row, rowIndex) => (
+										<tr
+											key={rowIndex}
+											className="border-b border-[var(--border)] text-center transition-colors duration-200 hover:bg-cyan-500/10"
+										>
+											{colsName.map((col) => (
+												<td
+													key={col}
+													className="max-w-[150px] truncate px-4 py-2 text-[var(--text)]"
+													title={row[col]}
+												>
+													{row[col]}
+												</td>
+											))}
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</div>
+					)}
+				</Spin>
+			</div>
 		</div>
-		</>
 	)
 }
 
