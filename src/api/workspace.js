@@ -1,10 +1,19 @@
 import axiosClient from './axios'
 
-// Workspace API for interacting with generated apps.
-// NOTE: tree / files / adapt are now backed by the versioning
-// draft APIs behind the gateway.
-const AMTA_PREFIX = '/api/service/adaptive_model_to_app'
+/**
+ * Init draft workspace – call when entering edit page or clicking Details
+ */
+export async function initDraft(appId) {
+	const res = await axiosClient.post(
+		`/api/service/adaptive_model_to_app/apps/${appId}/draft/init`
+	)
+	return res.data
+}
 
+/**
+ * Workspace API for interacting with generated apps.
+ * Maps to backend gateway endpoint: /api/service/adaptive_model_to_app/workspace/
+ */
 export const workspaceApi = {
 	// Initialize draft for an app (idempotent)
 	async initDraft(appId) {
@@ -21,7 +30,7 @@ export const workspaceApi = {
 	 */
 	async getTree(appId) {
 		const response = await axiosClient.get(
-			`${AMTA_PREFIX}/apps/${appId}/draft/tree`
+			`/api/service/adaptive_model_to_app/apps/${appId}/draft/tree`
 		)
 		return response.data
 	},
@@ -34,9 +43,10 @@ export const workspaceApi = {
 	 */
 	async getFile(appId, path) {
 		const response = await axiosClient.get(
-			`${AMTA_PREFIX}/apps/${appId}/draft/files/${path}`
+			`/api/service/adaptive_model_to_app/apps/${appId}/draft/files/${path}`,
 		)
-		return response.data
+		console.log(response.data)
+		return response.data;
 	},
 
 	/**
@@ -48,34 +58,18 @@ export const workspaceApi = {
 	 */
 	async saveFile(appId, path, content) {
 		await axiosClient.put(
-			`${AMTA_PREFIX}/apps/${appId}/draft/files/${path}`,
-			{
-				content,
-				user_id: 'default',
-			}
+			`/api/service/adaptive_model_to_app/apps/${appId}/draft/files/${path.split('/').map(encodeURIComponent).join('/')}`,
+			{ content, user_id: 'default' }
 		)
 	},
 
-	// Save a full draft snapshot (tarball) to S3
-	async saveSnapshot(appId, description) {
-		const response = await axiosClient.post(
-			`${AMTA_PREFIX}/apps/${appId}/draft/save`,
-			{
-				description,
-			}
+	/** Save draft snapshot (commit to Git) */
+	async saveDraftSnapshot(appId, description) {
+		const res = await axiosClient.post(
+			`/api/service/adaptive_model_to_app/apps/${appId}/draft/save`,
+			{ description: description || 'Draft snapshot' }
 		)
-		return response.data
-	},
-
-	// Deploy current draft as a new version (and trigger Vast deploy)
-	async deployDraft(appId, versionDescription) {
-		const response = await axiosClient.post(
-			`${AMTA_PREFIX}/apps/${appId}/draft/deploy`,
-			{
-				version_description: versionDescription,
-			}
-		)
-		return response.data
+		return res.data
 	},
 
 	/**
@@ -87,7 +81,7 @@ export const workspaceApi = {
 	 */
 	async startAdapt(appId, prompt) {
 		const response = await axiosClient.post(
-			`${AMTA_PREFIX}/apps/${appId}/draft/adapt`,
+			`/api/service/adaptive_model_to_app/apps/${appId}/adapt`,
 			{
 				prompt,
 			}
@@ -148,5 +142,44 @@ export const workspaceApi = {
 		}
 
 		throw new Error('Adapt operation timed out')
+		},
+
+	initDraft,
+
+	/** List versions for app */
+	async getVersions(appId) {
+		const res = await axiosClient.get(
+			`/api/service/adaptive_model_to_app/apps/${appId}/versions`
+		)
+		return res.data
+	},
+
+	/** List versions + current_version (deployed). Use when displaying version selector. */
+	async getVersionsSummary(appId) {
+		const res = await axiosClient.get(
+			`/api/service/adaptive_model_to_app/apps/${appId}/versions/summary`
+		)
+		return res.data
+	},
+
+	/** Deploy a specific version via versions/{version_number}/deploy */
+	async deployVersion(appId, versionNumber) {
+		const res = await axiosClient.post(
+			`/api/service/adaptive_model_to_app/apps/${appId}/versions/${versionNumber}/deploy`
+		)
+		return res.data
+	},
+
+	/**
+	 * Deploy draft as NEW version (latest + 1). Creates version from current draft, then deploys.
+	 * @param {string} appId
+	 * @param {Object} [files] - Optional: { [path]: content } to merge unsaved editor content
+	 */
+	async deployDraft(appId, files = {}) {
+		const res = await axiosClient.post(
+			`/api/service/adaptive_model_to_app/apps/${appId}/draft/deploy`,
+			{ files: Object.keys(files).length ? files : undefined }
+		)
+		return res.data
 	},
 }

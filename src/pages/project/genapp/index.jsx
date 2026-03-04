@@ -1,7 +1,9 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { getAllDeployedModel, genApp } from 'src/api/deploy'
+import { getAllDeployedModel, genApp, getDeployData } from 'src/api/deploy'
+import { initDraft } from 'src/api/workspace'
 import { getProjectById } from 'src/api/project'
+import { getLatestModelVersionByModelId } from 'src/api/model_version'
 import { useGenApps } from 'src/hooks/useGenApps'
 import {
 	Card,
@@ -61,7 +63,6 @@ const EmptyIcon = ({ className, ...props }) => (
 export default function ProjectGenApp() {
 	const { id: projectId } = useParams()
 	const navigate = useNavigate()
-	const { theme } = useTheme()
 	const { apps, loading, error, refetch } = useGenApps(projectId)
 	const [projectInfo, setProjectInfo] = useState(null)
 	const [deploys, setDeploys] = useState([])
@@ -69,16 +70,20 @@ export default function ProjectGenApp() {
 	const [genLoading, setGenLoading] = useState(false)
 	const [appName, setAppName] = useState('')
 	const [isFormOpen, setIsFormOpen] = useState(false)
+	const [modelMetadata, setModelMetadata] = useState(null)
+	const [selectedDeploy, setSelectedDeploy] = useState(null)
 
 	const fetchDeploys = useCallback(async () => {
 		try {
 			const { data } = await getAllDeployedModel(projectId)
-			const sorted = (data || []).sort(
+			const onlineDeploys = (data || []).filter(
+				(d) => d.status === 'ONLINE'
+			)
+			const sorted = onlineDeploys.sort(
 				(a, b) => (b.id ?? 0) - (a.id ?? 0)
 			)
 			setDeploys(sorted)
 
-			// Auto-select first deploy and prefill app name
 			if (sorted.length > 0 && !selectedModelId) {
 				setSelectedModelId(sorted[0].model_id)
 				setAppName(sorted[0].name ?? '')
@@ -105,6 +110,55 @@ export default function ProjectGenApp() {
 		fetchProject()
 	}, [projectId])
 
+	// Fetch model metadata when selectedModelId changes
+	useEffect(() => {
+		const fetchMetadata = async () => {
+			if (!selectedModelId) {
+				setModelMetadata(null)
+				setSelectedDeploy(null)
+				return
+			}
+
+			try {
+				const deploy = deploys.find(
+					(d) => d.model_id === selectedModelId
+				)
+				setSelectedDeploy(deploy)
+
+				const modelRes =
+					await getLatestModelVersionByModelId(selectedModelId)
+				setModelMetadata(modelRes.data)
+
+				if (deploy?.id) {
+					const deployRes = await getDeployData(deploy.id)
+					setSelectedDeploy(deployRes.data)
+				}
+			} catch (e) {
+				console.error('Failed to fetch model metadata', e)
+			}
+		}
+		fetchMetadata()
+	}, [selectedModelId, deploys])
+
+	// Log metadata when model changes
+	useEffect(() => {
+		if (
+			selectedModelId &&
+			(modelMetadata || selectedDeploy || projectInfo)
+		) {
+			console.log('Metadata to be passed to API:', {
+				projectName: projectInfo?.name,
+				projectDescription: projectInfo?.description,
+				taskType: projectInfo?.task_type,
+				labelsName: modelMetadata?.metadata?.label_column,
+				labelValues: modelMetadata?.metadata?.labels,
+				apiUrl: selectedDeploy?.api_base_url,
+				sampleData: modelMetadata?.metadata?.sample_data,
+				modelInfo: modelMetadata,
+			})
+		}
+	}, [selectedModelId, modelMetadata, selectedDeploy, projectInfo])
+
 	const resolveTaskType = () => {
 		const raw = projectInfo?.task_type
 		if (!raw) return 'image_classification'
@@ -120,6 +174,19 @@ export default function ProjectGenApp() {
 		return 'image_classification'
 	}
 
+	const buildMetadata = () => ({
+		projectName: projectInfo?.name,
+		projectDescription: projectInfo?.description,
+		taskType: projectInfo?.task_type,
+		description:
+			projectInfo?.description || `A model for ${projectInfo?.task_type}`,
+		labelsName: modelMetadata?.metadata?.label_column,
+		labelValues: modelMetadata?.metadata?.labels,
+		apiUrl: selectedDeploy?.api_base_url,
+		sampleData: modelMetadata?.metadata?.sample_data,
+		modelInfo: modelMetadata,
+	})
+
 	const handleConfirmGenApp = async () => {
 		if (!selectedModelId) {
 			message.error('Please select a model')
@@ -133,6 +200,7 @@ export default function ProjectGenApp() {
 				projectId,
 				name: appName,
 				taskType: resolveTaskType(),
+				metadata: buildMetadata(),
 			})
 			message.success('Gen app successfully')
 			refetch()
@@ -144,6 +212,7 @@ export default function ProjectGenApp() {
 			setGenLoading(false)
 		}
 	}
+	console.log("Gen app:", apps);
 
 	return (
 		<div className="relative min-h-screen bg-gray-50 dark:bg-slate-900">
@@ -151,8 +220,8 @@ export default function ProjectGenApp() {
 				{/* Header */}
 				<div className="mb-8">
 					<div className="flex items-center gap-3 mb-4">
-						<div className="p-2 rounded-xl bg-gradient-to-br from-blue-100 to-blue-200 dark:from-slate-700 dark:to-slate-600">
-							<AppIcon className="h-6 w-6 text-blue-600 dark:text-blue-300" />
+						<div className="p-2 rounded-xl bg-gray-200 dark:bg-[#2a2a2c]">
+							<AppIcon className="h-6 w-6 text-gray-600 dark:text-gray-300" />
 						</div>
 						<div>
 							<h1 className="text-3xl font-bold text-gray-900 dark:text-white">
@@ -167,19 +236,9 @@ export default function ProjectGenApp() {
 					</div>
 				</div>
 
-				{/* Gen App: chọn deploy_id rồi bấm Gen App */}
-				<Card className="rounded-2xl shadow-2xl mb-6 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700">
-					<CardHeader>
-						<CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
-							<span className="w-2 h-2 rounded-full bg-blue-500" />
-							Gen App
-						</CardTitle>
-						<CardDescription className="text-gray-500 dark:text-gray-400">
-							Select a model and click Gen App to create an app
-							from the model.
-						</CardDescription>
-					</CardHeader>
-					<CardContent>
+				{/* Gen App: bên trái tiêu đề + mô tả, bên phải nút Gen App trên / Model selection dưới */}
+				<Card className="rounded-2xl shadow-2xl mb-6" style={{ background: 'var(--card-gradient)', border: '1px solid var(--border)' }}>
+					<CardContent className="pt-6 pb-6">
 						{deploys.length === 0 ? (
 							<div className="flex flex-col gap-4">
 								<p className="text-gray-600 dark:text-gray-300">
@@ -191,50 +250,57 @@ export default function ProjectGenApp() {
 											PATHS.PROJECT_DEPLOY(projectId)
 										)
 									}
-									className="bg-blue-600 hover:bg-blue-700 text-white"
+									className="bg-gray-600 hover:bg-gray-500 text-white"
 								>
 									Go to Deploy page
 								</Button>
 							</div>
 						) : (
-							<div className="flex flex-wrap gap-4 items-end">
-								<div className="flex-1 min-w-[200px]">
-									<label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+							<div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
+								{/* Trái: Gen App + mô tả */}
+								<div className="flex-1 min-w-0">
+									<h3 className="flex items-center gap-2 text-xl font-semibold text-gray-900 dark:text-white mb-1">
+										<span className="w-2 h-2 rounded-full bg-gray-400 dark:bg-gray-500" />
+										Gen App
+									</h3>
+									<p className="text-gray-500 dark:text-gray-400 text-sm">
+										Select a model and click Gen App to create an app from the model.
+									</p>
+								</div>
+								{/* Phải (cùng hàng thẳng): Model select + nút Gen App */}
+								<div className="flex flex-row items-center gap-3 shrink-0 flex-wrap sm:flex-nowrap">
+									<label className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
 										Model
 									</label>
 									<CustomSelect
 										value={selectedModelId}
 										onChange={(val) => {
-											setSelectedModelId(val)
+											const id = val ?? null
+											setSelectedModelId(id)
 											const found = deploys.find(
-												(d) => d.model_id === val
+												(d) => d.model_id === id
 											)
 											if (found) {
 												setAppName(found.name ?? '')
 											}
 										}}
 										placeholder="Select a model..."
-										className="bg-gray-50 dark:bg-slate-900 border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white"
+										className="theme-dropdown h-10 min-w-[200px] sm:min-w-[220px]"
 									>
 										{deploys.map((d) => (
-											<Option
-												key={d.model_id}
-												value={d.model_id}
-											>
-												{d.name ??
-													`Model #${d.model_id}`}{' '}
-												(ID: {d.model_id})
+											<Option key={d.model_id} value={d.model_id}>
+												{d.name ?? `Model #${d.model_id}`} (ID: {d.model_id})
 											</Option>
 										))}
 									</CustomSelect>
+									<Button
+										onClick={() => setIsFormOpen(true)}
+										disabled={!selectedModelId}
+										className="h-10 px-6 shrink-0 bg-gray-600 hover:bg-gray-500 text-white disabled:opacity-50"
+									>
+										Gen App
+									</Button>
 								</div>
-								<Button
-									onClick={() => setIsFormOpen(true)}
-									disabled={!selectedModelId}
-									className="bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50"
-								>
-									Gen App
-								</Button>
 							</div>
 						)}
 					</CardContent>
@@ -250,7 +316,7 @@ export default function ProjectGenApp() {
 					</Card>
 				)}
 				{loading ? (
-					<Card className="rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700">
+					<Card className="rounded-2xl shadow-2xl" style={{ background: 'var(--card-gradient)', border: '1px solid var(--border)' }}>
 						<CardContent className="flex flex-col items-center justify-center py-16 text-gray-500 dark:text-gray-400">
 							Loading...
 						</CardContent>
@@ -261,19 +327,24 @@ export default function ProjectGenApp() {
 							<AppCard
 								key={app.id ?? i}
 								app={app}
-								onViewDetails={(app) => {
-									// Navigate to code editor page for this app
+								onViewDetails={async (app) => {
+									// Init draft before navigating so workspace is ready on edit page
+									try {
+										await initDraft(app.id)
+									} catch (e) {
+										console.warn('[GenApp] initDraft before nav:', e)
+									}
 									navigate(
-										`/app/project/${projectId}/my-apps/${app.run_id}/edit`
+										`/app/project/${projectId}/my-apps/${app.id}/edit`
 									)
 								}}
 							/>
 						))}
 					</div>
 				) : (
-					<Card className="rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700">
+					<Card className="rounded-2xl shadow-2xl" style={{ background: 'var(--card-gradient)', border: '1px solid var(--border)' }}>
 						<CardContent className="flex flex-col items-center justify-center py-16">
-							<div className="p-4 rounded-full mb-4 bg-blue-50 dark:bg-blue-500/10">
+							<div className="p-4 rounded-full mb-4 bg-gray-100 dark:bg-[#2a2a2c]">
 								<EmptyIcon className="h-12 w-12 text-gray-400 dark:text-gray-500" />
 							</div>
 							<h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
@@ -296,33 +367,40 @@ export default function ProjectGenApp() {
 			>
 				<div className="space-y-4">
 					<div>
-						<label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+						<label
+							className="block text-sm font-medium mb-1"
+							style={{ color: 'var(--form-label-color)' }}
+						>
 							Model
 						</label>
 						<CustomSelect
 							value={selectedModelId}
 							onChange={(val) => {
-								setSelectedModelId(val)
+								const id = val ?? null
+								setSelectedModelId(id)
 								const found = deploys.find(
-									(d) => d.model_id === val
+									(d) => d.model_id === id
 								)
 								if (found) {
 									setAppName(found.name ?? '')
 								}
 							}}
-							className="bg-gray-50 dark:bg-slate-900 border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white"
+							placeholder="Select a model..."
+							className="theme-dropdown w-full"
 						>
 							{deploys.map((d) => (
 								<Option key={d.model_id} value={d.model_id}>
-									{d.name ?? `Model #${d.model_id}`} (ID:{' '}
-									{d.model_id})
+									{d.name ?? `Model #${d.model_id}`} (ID: {d.model_id})
 								</Option>
 							))}
 						</CustomSelect>
 					</div>
 
 					<div>
-						<label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+						<label
+							className="block text-sm font-medium mb-1"
+							style={{ color: 'var(--form-label-color)' }}
+						>
 							App name
 						</label>
 						<input
@@ -330,12 +408,20 @@ export default function ProjectGenApp() {
 							value={appName}
 							onChange={(e) => setAppName(e.target.value)}
 							placeholder="Please enter the app name"
-							className="w-full rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-4 py-3 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+							className="modal-form-input w-full rounded-xl border px-4 py-3 text-sm focus:outline-none"
+							style={{
+								backgroundColor: 'var(--input-bg)',
+								borderColor: 'var(--input-border)',
+								color: 'var(--input-color)',
+							}}
 						/>
 					</div>
 
 					<div>
-						<label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+						<label
+							className="block text-sm font-medium mb-1"
+							style={{ color: 'var(--form-label-color)' }}
+						>
 							Task type
 						</label>
 						<input
@@ -345,13 +431,22 @@ export default function ProjectGenApp() {
 									? 'Object Detection'
 									: resolveTaskType() ===
 										'text_classification'
+										'text_classification'
 										? 'Text Classification'
 										: 'Image Classification'
 							}
 							readOnly
-							className="w-full rounded-2xl border border-gray-300 dark:border-slate-600 bg-gray-100 dark:bg-slate-800 px-3 py-3 text-sm text-gray-500 dark:text-gray-300 cursor-not-allowed"
+							className="w-full rounded-xl border px-3 py-3 text-sm cursor-not-allowed"
+							style={{
+								backgroundColor: 'var(--input-disabled-bg)',
+								borderColor: 'var(--input-border)',
+								color: 'var(--input-disabled-color)',
+							}}
 						/>
-						<p className="mt-1 text-xs text-gray-400">
+						<p
+							className="mt-1 text-xs"
+							style={{ color: 'var(--secondary-text)' }}
+						>
 							Task type is automatically determined from the
 							project.
 						</p>
@@ -361,14 +456,16 @@ export default function ProjectGenApp() {
 						<Button
 							variant="outline"
 							onClick={() => setIsFormOpen(false)}
-							className="border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-200"
+							size="sm"
+							className="theme-modal-btn-outline"
 						>
 							Cancel
 						</Button>
 						<Button
 							onClick={handleConfirmGenApp}
 							disabled={genLoading}
-							className="bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50"
+							size="sm"
+							className="theme-modal-btn-primary"
 						>
 							{genLoading ? 'Processing...' : 'Confirm'}
 						</Button>

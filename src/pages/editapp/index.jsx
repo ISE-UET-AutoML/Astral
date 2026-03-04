@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { message } from 'antd'
-import { workspaceApi } from 'src/api/workspace'
+import { workspaceApi, initDraft } from 'src/api/workspace'
 import {
 	ChatPanel,
 	TreePanel,
@@ -16,28 +16,18 @@ import {
 	BookmarkIcon,
 } from '@heroicons/react/24/outline'
 
-/**
- * Code Editor Page for editing generated apps
- * Uses AI-assisted editing and file navigation
- */
 const EditAppPage = () => {
 	const { appId, id: projectId } = useParams()
 	const navigate = useNavigate()
 	const [currentFile, setCurrentFile] = useState('')
 	const [originalCode, setOriginalCode] = useState('')
-	const [messages, setMessages] = useState([])
-	const [chatInput, setChatInput] = useState('')
 	const [isAdapting, setIsAdapting] = useState(false)
 	const [isSnapshotting, setIsSnapshotting] = useState(false)
 	const [isDeploying, setIsDeploying] = useState(false)
 
 	// All hooks must be called before any conditional returns
 	const { tree, refetch: refetchTree } = useFileTree(appId)
-	const { code, setCode, isSaving } = useFileEditor(
-		appId,
-		currentFile,
-		originalCode
-	)
+	const { code, setCode, isSaving } = useFileEditor(appId, currentFile, originalCode)
 	const hasAutoLoadedRef = useRef(false)
 
 	// Ensure draft is initialized in versioning backend (idempotent)
@@ -62,43 +52,48 @@ const EditAppPage = () => {
 	// Helper functions (must be defined before conditional return)
 	const findIndexHtml = useCallback((node, currentPath = '') => {
 		if (!node.children) return null
-
-		// Check current level first
 		for (const [name, child] of Object.entries(node.children)) {
 			if (name === 'index.html' && child.type === 'file') {
 				return currentPath ? `${currentPath}/index.html` : 'index.html'
 			}
 		}
-
-		// Then search in directories (prefer frontend directory)
 		const sortedEntries = Object.entries(node.children)
 			.filter(([_, child]) => child.type === 'dir')
 			.sort(([nameA], [nameB]) => {
-				// Prefer frontend directory
 				if (nameA === 'frontend') return -1
 				if (nameB === 'frontend') return 1
 				return nameA.localeCompare(nameB)
 			})
-
 		for (const [name, child] of sortedEntries) {
 			const path = currentPath ? `${currentPath}/${name}` : name
 			const found = findIndexHtml(child, path)
 			if (found) return found
 		}
-
 		return null
 	}, [])
 
+	// Auto-save vào Redis sau khi dừng gõ 1.5s
+	const handleCodeChange = useCallback((newCode) => {
+		setCode(newCode)
+		if (!currentFile || !appId) return
+		clearTimeout(autoSaveTimerRef.current)
+		autoSaveTimerRef.current = setTimeout(() => {
+			workspaceApi.saveFile(appId, currentFile, newCode).catch(() => {})
+		}, AUTOSAVE_DEBOUNCE_MS)
+	}, [appId, currentFile, setCode])
+
+	// Ctrl+S: save Redis + Git snapshot
 	const handleSaveFile = useCallback(async () => {
 		if (!currentFile) {
 			message.warning('No file opened!')
 			return
 		}
-
+		clearTimeout(autoSaveTimerRef.current)
 		try {
 			await workspaceApi.saveFile(appId, currentFile, code)
+			await workspaceApi.saveDraftSnapshot(appId)
 			setOriginalCode(code)
-			message.success('Saved successfully!')
+			message.success('Saved!')
 		} catch (error) {
 			console.error('Failed to save file:', error)
 			message.error('Failed to save file!')
@@ -163,6 +158,14 @@ const EditAppPage = () => {
 
 	useSaveShortcut(currentFile, code, handleSaveFile)
 
+	// Init draft workspace when entering edit page (covers: Details click + direct URL)
+	useEffect(() => {
+		if (!appId) return
+		initDraft(appId).catch((err) => {
+			console.warn('[EditAppPage] initDraft failed:', err)
+		})
+	}, [appId])
+
 	const loadFile = useCallback(
 		async (path) => {
 			try {
@@ -178,10 +181,8 @@ const EditAppPage = () => {
 		[appId, setCode]
 	)
 
-	// Auto-load index.html when tree is ready and no file is open
 	useEffect(() => {
 		if (!tree || currentFile || hasAutoLoadedRef.current) return
-
 		const indexHtmlPath = findIndexHtml(tree)
 		if (indexHtmlPath) {
 			hasAutoLoadedRef.current = true
@@ -189,105 +190,14 @@ const EditAppPage = () => {
 		}
 	}, [tree, currentFile, findIndexHtml, loadFile])
 
-	const sendMessage = useCallback(async () => {
-		if (!chatInput.trim() || isAdapting) return
+	// sendChatMessage from useAmtaChat handles the LLM streaming
 
-		const userMessage = { role: 'user', content: chatInput }
-		setMessages((prev) => [...prev, userMessage])
-		const prompt = chatInput
-		setChatInput('')
-		setIsAdapting(true)
-
-		try {
-			// Add "thinking" message
-			setMessages((prev) => [
-				...prev,
-				{ role: 'assistant', content: '🔄 Starting adaptation...' },
-			])
-
-			// Start adapt operation
-			const adaptResponse = await workspaceApi.startAdapt(appId, prompt)
-
-			// Poll for completion with status updates
-			const finalResult = await workspaceApi.pollAdaptCompletion(
-				appId,
-				adaptResponse.adapt_id,
-				(status) => {
-					// Update the last assistant message with current status
-					setMessages((prev) => {
-						const newMessages = [...prev]
-						const lastIdx = newMessages.length - 1
-						if (newMessages[lastIdx]?.role === 'assistant') {
-							newMessages[lastIdx] = {
-								role: 'assistant',
-								content: `🔄 ${status.message}`,
-							}
-						}
-						return newMessages
-					})
-				}
-			)
-
-			// Update with final result
-			if (finalResult.status === 'completed') {
-				setMessages((prev) => {
-					const newMessages = [...prev]
-					const lastIdx = newMessages.length - 1
-					if (newMessages[lastIdx]?.role === 'assistant') {
-						newMessages[lastIdx] = {
-							role: 'assistant',
-							content:
-								finalResult.result ||
-								'✅ Adaptation completed successfully!',
-						}
-					}
-					return newMessages
-				})
-				message.success('Adaptation completed!')
-
-				// Refresh file tree and current file to show changes
-				if (refetchTree) refetchTree()
-				if (currentFile) loadFile(currentFile)
-			} else {
-				setMessages((prev) => {
-					const newMessages = [...prev]
-					const lastIdx = newMessages.length - 1
-					if (newMessages[lastIdx]?.role === 'assistant') {
-						newMessages[lastIdx] = {
-							role: 'assistant',
-							content: `❌ Adaptation failed: ${finalResult.error || 'Unknown error'}`,
-						}
-					}
-					return newMessages
-				})
-				message.error('Adaptation failed')
-			}
-		} catch (error) {
-			console.error('Adapt error:', error)
-			setMessages((prev) => [
-				...prev.slice(0, -1), // Remove "thinking" message
-				{
-					role: 'assistant',
-					content: `❌ Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
-				},
-			])
-			message.error('Failed to adapt')
-		} finally {
-			setIsAdapting(false)
-		}
-	}, [chatInput, isAdapting, appId, refetchTree, currentFile, loadFile])
-
-	// Conditional return after all hooks
 	if (!appId) {
 		return (
 			<div className="flex items-center justify-center h-screen">
 				<div className="text-center">
 					<p className="text-gray-600 mb-4">Invalid app ID</p>
-					<Button
-						onClick={() =>
-							navigate(`/app/project/${projectId}/my-apps`)
-						}
-					>
+					<Button onClick={() => navigate(`/app/project/${projectId}/my-apps`)}>
 						Go Back
 					</Button>
 				</div>

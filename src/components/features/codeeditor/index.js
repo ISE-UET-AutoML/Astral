@@ -1,3 +1,5 @@
 export { default as ChatPanel } from './ChatPanel'
 export { default as TreePanel } from './TreePanel'
 export { default as CodeEditorPanel } from './CodeEditorPanel'
+export { default as MessagesPanel } from './MessagesPanel'
+export { default as ManageVersionPanel } from './ManageVersionPanel'

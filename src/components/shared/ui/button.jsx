@@ -33,7 +33,7 @@ const buttonVariants = {
 
 const Button = React.forwardRef(({ 
   className, 
-  variant = "gradient", 
+  variant = "default", 
   size = "default", 
   width,
   children,

@@ -1,41 +1,102 @@
-import { Button } from 'src/components/shared/ui/button'
+import { useEffect, useRef, useState } from 'react'
+import { StopCircleIcon } from '@heroicons/react/20/solid'
+import { HistoryOutlined } from '@ant-design/icons'
+import MessagesPanel from './MessagesPanel'
+import ManageVersionPanel from './ManageVersionPanel'
+import { SendOutlined } from '@ant-design/icons'
 
-/**
- * Chat panel for AI-assisted code editing
- * @param {{messages: Array, input: string, onInputChange: Function, onSendMessage: Function}} props
- */
-const ChatPanel = ({ messages, input, onInputChange, onSendMessage }) => {
+const TABS = { chat: 'chat', history: 'history' }
+
+const ChatPanel = ({ appId, input, onInputChange, onSendMessage, isStreaming, streamingContent, liveMessages, onDeployVersion }) => {
+	const textareaRef = useRef(null)
+	const [activeTab, setActiveTab] = useState(TABS.chat)
+
+	useEffect(() => {
+		const el = textareaRef.current
+		if (!el) return
+		el.style.height = 'auto'
+		el.style.height = el.scrollHeight + 'px'
+	}, [input])
+
 	return (
-		<div className="flex flex-col h-full min-h-0 bg-white border-r border-gray-200 overflow-hidden">
-			<div className="px-4 py-3 border-b border-gray-200 bg-gray-50 font-semibold text-gray-700">Chat</div>
-			<div className="flex-1 min-h-0 overflow-auto p-4 space-y-3">
-				{messages.map((msg, i) => (
-					<div
-						key={i}
-						className={`p-3 rounded-lg border ${
-							msg.role === 'user' ? 'bg-blue-50 border-blue-200' : 'bg-gray-50 border-gray-200'
-						}`}
-					>
-						<strong className={msg.role === 'user' ? 'text-blue-600' : 'text-green-600'}>
-							{msg.role === 'user' ? 'User' : 'AI'}:
-						</strong>
-						<div className="mt-1 whitespace-pre-wrap text-sm text-gray-700">{msg.content}</div>
+		<div className="flex flex-col h-full min-h-0 bg-white dark:bg-[#1e1e1e] border-r border-gray-200 dark:border-[#333]">
+			{/* Tabs: Chat | History – cùng hàng, bấm History thay nội dung Chat AI bằng Version */}
+			<div className="shrink-0 flex border-b border-gray-200 dark:border-[#333] bg-gray-100 dark:bg-[#252526]">
+				<button
+					type="button"
+					onClick={() => setActiveTab(TABS.chat)}
+					className={`flex-1 px-4 py-3 text-sm font-medium transition-colors border-b-2 -mb-px ${
+						activeTab === TABS.chat
+							? 'text-gray-900 dark:text-white border-gray-900 dark:border-white bg-white dark:bg-[#1e1e1e]'
+							: 'text-gray-500 dark:text-[#888] border-transparent hover:text-gray-700 dark:hover:text-[#aaa]'
+					}`}
+				>
+					Chat
+				</button>
+				<button
+					type="button"
+					onClick={() => setActiveTab(TABS.history)}
+					className={`flex-1 px-4 py-3 text-sm font-medium transition-colors flex items-center justify-center gap-1.5 border-b-2 -mb-px ${
+						activeTab === TABS.history
+							? 'text-gray-900 dark:text-white border-gray-900 dark:border-white bg-white dark:bg-[#1e1e1e]'
+							: 'text-gray-500 dark:text-[#888] border-transparent hover:text-gray-700 dark:hover:text-[#aaa]'
+					}`}
+				>
+					<HistoryOutlined className="w-4 h-4" />
+					History
+				</button>
+			</div>
+
+			{activeTab === TABS.chat && (
+				<>
+					<div className="flex-1 min-h-0 overflow-hidden">
+						<MessagesPanel
+							appId={appId}
+							liveMessages={liveMessages}
+							streamingContent={streamingContent}
+							isStreaming={isStreaming}
+						/>
 					</div>
-				))}
-			</div>
-			<div className="p-3 border-t border-gray-200 bg-gray-50 flex gap-2">
-				<input
-					type="text"
-					value={input}
-					onChange={(e) => onInputChange(e.target.value)}
-					onKeyPress={(e) => e.key === 'Enter' && onSendMessage()}
-					placeholder="Enter message..."
-					className="flex-1 px-3 py-2 bg-white border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-				/>
-				<Button onClick={onSendMessage} size="sm" className="px-4">
-					Send
-				</Button>
-			</div>
+				</>
+			)}
+
+			{activeTab === TABS.history && (
+				<div className="flex-1 min-h-0 overflow-hidden">
+					<ManageVersionPanel appId={appId} onDeployVersion={onDeployVersion} />
+				</div>
+			)}
+
+			{activeTab === TABS.chat && (
+				<div className="shrink-0 p-3 border-t border-gray-200 dark:border-[#333] bg-gray-50 dark:bg-[#252526] text-gray-900 dark:text-[#cccccc]">
+					<div className="flex items-end gap-2 bg-white dark:bg-[#3c3c3c] border border-gray-300 dark:border-[#555] rounded-xl px-1 mb-2">
+						<textarea
+							ref={textareaRef}
+							value={input}
+							onChange={(e) => onInputChange(e.target.value)}
+							onKeyDown={(e) => {
+								if (e.key === 'Enter' && !e.shiftKey && !isStreaming) {
+									e.preventDefault()
+									onSendMessage()
+								}
+							}}
+							placeholder={isStreaming ? 'Waiting for response...' : 'Enter message...'}
+							disabled={isStreaming}
+							rows={1}
+							style={{ overflowY: 'hidden', maxHeight: '160px' }}
+							className="mx-2 flex-1 px-3 py-2 text-sm resize-none bg-transparent outline-none border-0 placeholder:text-gray-400 dark:placeholder:text-[#888] disabled:opacity-50"
+						/>
+						<button
+							onClick={onSendMessage}
+							className="p-1 w-8 h-8 flex items-center justify-center shrink-0"
+							disabled={isStreaming}
+						>
+							{isStreaming
+								? <StopCircleIcon className="w-5 h-5" />
+								: <SendOutlined className="dark:text-white text-blue-500" />}
+						</button>
+					</div>
+				</div>
+			)}
 		</div>
 	)
 }

@@ -1,12 +1,7 @@
 import Editor from '@monaco-editor/react'
-import { Button } from 'src/components/shared/ui/button'
-import { ArrowPathIcon, BookmarkIcon } from '@heroicons/react/24/outline'
+import { Button } from '../ui/button'
+import { useTheme } from 'src/theme/ThemeProvider'
 
-/**
- * Get monaco editor language from filename
- * @param {string} filename - File name with extension
- * @returns {string} Monaco language identifier
- */
 const getLanguageFromFile = (filename) => {
 	const extension = filename.split('.').pop()?.toLowerCase()
 	switch (extension) {
@@ -44,43 +39,43 @@ const getLanguageFromFile = (filename) => {
 }
 
 /**
- * Code editor panel with Monaco editor
- * @param {{currentFile: string, code: string, originalCode: string, isSaving: boolean, onCodeChange: Function, onSave: Function}} props
+ * Code editor panel with Monaco editor – dark/light aware.
+ * @param {{currentFile: string, code: string, originalCode: string, isSaving: boolean, isDeploying?: boolean, onCodeChange: Function, onSave: Function, onDeploy: Function}} props
  */
-const CodeEditorPanel = ({ currentFile, code, originalCode, isSaving, onCodeChange, onSave }) => {
+const CodeEditorPanel = ({ currentFile, code, originalCode, isSaving, isDeploying, onCodeChange, onSave, onDeploy }) => {
+	const { theme } = useTheme()
+	const isDark = theme === 'dark'
 	const hasUnsavedChanges = code !== originalCode
 
 	return (
-		<div className="flex flex-col h-full bg-white">
+		<div className="flex flex-col h-full min-h-0 bg-white dark:bg-[#1e1e1e]">
 			{currentFile && (
-				<div className="px-4 py-3 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
-					<span className="text-sm text-gray-600">{currentFile}</span>
+				<div className="shrink-0 px-4 py-3 border-b border-gray-200 dark:border-[#333] bg-gray-50 dark:bg-[#252526] flex justify-between items-center">
+					<span className="text-sm text-gray-600 dark:text-[#cccccc]">{currentFile}</span>
 					<div className="flex gap-2 items-center">
-						{isSaving && <span className="text-xs text-gray-500">Saving...</span>}
+						{isSaving && <span className="text-xs text-gray-500 dark:text-[#888]">Saving...</span>}
 						{!isSaving && hasUnsavedChanges && <span className="text-orange-500 text-sm">●</span>}
-						<Button onClick={onSave} disabled={isSaving} size="sm" variant={isSaving ? 'secondary' : 'default'}>
-							{isSaving ? (
-								<ArrowPathIcon className="h-4 w-4 mr-2 animate-spin" />
-							) : (
-								<BookmarkIcon className="h-4 w-4 mr-2" />
-							)}
+						<Button variant="outline" size="sm" onClick={onSave} disabled={isSaving}>
 							Save
+						</Button>
+						<Button onClick={onDeploy} disabled={isDeploying} size="sm" variant={isDeploying ? 'secondary' : 'default'}>
+							{isDeploying ? 'Deploying...' : 'Deploy'}
 						</Button>
 					</div>
 				</div>
 			)}
-			<div className="flex-1">
+			<div className="flex-1 min-h-0">
 				<Editor
 					height="100%"
 					language={getLanguageFromFile(currentFile)}
-					theme="vs-light"
+					theme={isDark ? 'vs-dark' : 'vs-light'}
 					value={code}
 					onChange={(v) => onCodeChange(v ?? '')}
 					options={{
 						readOnly: false,
 						minimap: { enabled: true },
 						automaticLayout: true,
-						fontSize: 14
+						fontSize: 14,
 					}}
 				/>
 			</div>
