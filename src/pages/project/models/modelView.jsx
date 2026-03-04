@@ -33,7 +33,6 @@ function toNormalCase(str) {
 const ModelView = () => {
     const { theme } = useTheme()
     const navigate = useNavigate()
-    const { theme } = useTheme()
     const { modelId, id } = useParams()
     const [model, setModel] = useState({})
     const [metrics, setMetrics] = useState([])

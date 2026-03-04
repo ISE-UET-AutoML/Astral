@@ -79,24 +79,8 @@ const Training = () => {
 
 	return (
 		<>
-<<<<<<< HEAD
 			<div className="relative min-h-screen bg-[var(--surface)] font-poppins">
 				{/* BackgroundShapes removed */}
-=======
-			<style>{`
-                body, html {
-                    background-color: var(--surface) !important;
-                    font-family: 'Poppins', sans-serif !important;
-                }
-            `}</style>
-			<div
-				className="min-h-screen relative"
-				style={{ background: 'var(--surface)' }}
-			>
-				{theme === 'dark' && (
-					<BackgroundShapes width="1280px" height="1200px" grayVariant />
-				)}
->>>>>>> feat/gen-app
 				<div className="relative z-10 p-6">
 					<animated.div
 						style={useSpring({

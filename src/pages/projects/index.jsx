@@ -87,35 +87,12 @@ export default function Projects() {
 	const hasProjects = (projectState.projects || []).length > 0
 
 	return (
-<<<<<<< HEAD
 		<div className="min-h-screen bg-white dark:bg-[#01000A] text-gray-900 dark:text-white">
 			<div className="min-h-screen pt-12 bg-white dark:bg-[#01000A]">
 				<main className="relative pt-20 px-6 pb-20">
 					<ContentContainer className="relative z-10">
 						{/* Header */}
 						<ProjectHeader onNewProject={() => updateProjState({ showUploader: true })} />
-=======
-		<>
-			<div
-				className="min-h-screen"
-				style={{ background: 'var(--surface)', color: 'var(--text)' }}
-			>
-				<Layout
-					className="min-h-screen pt-12"
-					style={{ background: 'var(--surface)' }}
-				>
-					<Content className="relative pt-20 px-6 pb-20">
-						{theme === 'dark' && (
-							<BackgroundShapes width="1280px" height="1100px" grayVariant />
-						)}
-						<ContentContainer className="relative z-10">
-							{/* Header Section */}
-							<ProjectHeader
-								onNewProject={() =>
-									updateProjState({ showUploader: true })
-								}
-							/>
->>>>>>> feat/gen-app
 
 						{/* Filter */}
 						<TaskFilter

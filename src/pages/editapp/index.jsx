@@ -14,7 +14,17 @@ import {
 	ArrowUpTrayIcon,
 	ArrowPathIcon,
 	BookmarkIcon,
+	CodeBracketSquareIcon,
+	ComputerDesktopIcon,
+	FolderIcon,
+	ExclamationTriangleIcon,
+	XMarkIcon,
 } from '@heroicons/react/24/outline'
+
+const AUTOSAVE_DEBOUNCE_MS = 1500
+
+/** Host app preview (iframe) – tạm hardcode cho đến khi lấy từ API. */
+const APP_PREVIEW_URL = 'http://142.170.89.112:54559'
 
 const EditAppPage = () => {
 	const { appId, id: projectId } = useParams()
@@ -24,11 +34,38 @@ const EditAppPage = () => {
 	const [isAdapting, setIsAdapting] = useState(false)
 	const [isSnapshotting, setIsSnapshotting] = useState(false)
 	const [isDeploying, setIsDeploying] = useState(false)
+	const [chatInput, setChatInput] = useState('')
+	const [liveMessages, setLiveMessages] = useState([])
+	const [isStreaming, setIsStreaming] = useState(false)
+	const [streamingContent, setStreamingContent] = useState('')
+	/** Figma-style: 'code' | 'app' – bấm icon Code hiện editor, icon App hiện iframe. */
+	const [activeMainView, setActiveMainView] = useState('code')
+	/** Thanh lỗi ngang kiểu Figma: [{ id, message, type: 'error'|'warning' }] */
+	const [errors, setErrors] = useState([])
+
+	const autoSaveTimerRef = useRef(null)
+	const addError = useCallback((message, type = 'error') => {
+		setErrors((prev) => [...prev, { id: Date.now() + Math.random(), message, type }])
+	}, [])
+	const dismissError = useCallback((id) => {
+		setErrors((prev) => prev.filter((e) => e.id !== id))
+	}, [])
+	const clearAllErrors = useCallback(() => setErrors([]), [])
+
+	const hasAutoLoadedRef = useRef(false)
+
+	// Disable global page scroll while edit app workspace is open
+	useEffect(() => {
+		const prevOverflow = document.documentElement.style.overflow
+		document.documentElement.style.overflow = 'hidden'
+		return () => {
+			document.documentElement.style.overflow = prevOverflow
+		}
+	}, [])
 
 	// All hooks must be called before any conditional returns
 	const { tree, refetch: refetchTree } = useFileTree(appId)
 	const { code, setCode, isSaving } = useFileEditor(appId, currentFile, originalCode)
-	const hasAutoLoadedRef = useRef(false)
 
 	// Ensure draft is initialized in versioning backend (idempotent)
 	useEffect(() => {
@@ -46,8 +83,9 @@ const EditAppPage = () => {
 			.catch((err) => {
 				console.error('[EditAppPage] Failed to init draft:', err)
 				message.error('Failed to initialize draft. Check console for details.')
+				addError('Failed to initialize draft. Check console for details.')
 			})
-	}, [appId])
+	}, [appId, addError])
 
 	// Helper functions (must be defined before conditional return)
 	const findIndexHtml = useCallback((node, currentPath = '') => {
@@ -78,7 +116,7 @@ const EditAppPage = () => {
 		if (!currentFile || !appId) return
 		clearTimeout(autoSaveTimerRef.current)
 		autoSaveTimerRef.current = setTimeout(() => {
-			workspaceApi.saveFile(appId, currentFile, newCode).catch(() => {})
+			workspaceApi.saveFile(appId, currentFile, newCode).catch(() => { })
 		}, AUTOSAVE_DEBOUNCE_MS)
 	}, [appId, currentFile, setCode])
 
@@ -97,8 +135,9 @@ const EditAppPage = () => {
 		} catch (error) {
 			console.error('Failed to save file:', error)
 			message.error('Failed to save file!')
+			addError('Failed to save file!')
 		}
-	}, [appId, currentFile, code])
+	}, [appId, currentFile, code, addError])
 
 	const handleSaveSnapshot = useCallback(async () => {
 		if (!appId) {
@@ -118,11 +157,12 @@ const EditAppPage = () => {
 		} catch (err) {
 			console.error('[EditAppPage] Failed to save snapshot:', err)
 			message.error('Failed to save draft snapshot')
+			addError('Failed to save draft snapshot')
 		} finally {
 			hide()
 			setIsSnapshotting(false)
 		}
-	}, [appId])
+	}, [appId, addError])
 
 	const handleDeployDraft = useCallback(async () => {
 		if (!appId) {
@@ -150,11 +190,20 @@ const EditAppPage = () => {
 		} catch (err) {
 			console.error('[EditAppPage] Failed to deploy draft:', err)
 			message.error('Failed to deploy draft')
+			addError('Failed to deploy draft')
 		} finally {
 			hide()
 			setIsDeploying(false)
 		}
-	}, [appId])
+	}, [appId, addError])
+
+	const sendMessage = useCallback(() => {
+		const text = chatInput.trim()
+		if (!text || isStreaming) return
+		setLiveMessages((prev) => [...prev, { role: 'user', content: text }])
+		setChatInput('')
+		// TODO: wire to chat API when available; set isStreaming/streamingContent
+	}, [chatInput, isStreaming])
 
 	useSaveShortcut(currentFile, code, handleSaveFile)
 
@@ -176,9 +225,10 @@ const EditAppPage = () => {
 			} catch (error) {
 				console.error('Failed to load file:', error)
 				message.error('Failed to load file')
+				addError('Failed to load file')
 			}
 		},
-		[appId, setCode]
+		[appId, setCode, addError]
 	)
 
 	useEffect(() => {
@@ -206,87 +256,149 @@ const EditAppPage = () => {
 	}
 
 	return (
-		<div className="flex flex-col h-full w-full bg-gray-100 overflow-hidden min-w-0">
-			<div className="flex items-center justify-between gap-2 px-4 py-2 bg-white border-b">
-				<div className="flex items-center gap-2 flex-wrap justify-end">
-					<Button
-						variant="ghost"
-						size="sm"
-						onClick={() =>
-							navigate(`/app/project/${projectId}/my-apps`)
-						}
-					>
-						<ArrowLeftIcon className="h-4 w-4 mr-2" />
-						Back to Apps
-					</Button>
-					{isAdapting && (
-						<span className="text-sm text-orange-600 ml-4">
-							🔄 Adapting...
-						</span>
-					)}
-				</div>
-				<div className="flex items-center gap-2">
-					<Button
-						size="sm"
-						variant="outline"
-						onClick={handleSaveFile}
-						disabled={!currentFile}
-					>
-						<BookmarkIcon className="h-4 w-4 mr-2" />
-						Save file
-					</Button>
-					<Button
-						size="sm"
-						variant="outline"
-						onClick={handleSaveSnapshot}
-						disabled={isSnapshotting}
-					>
-						{isSnapshotting ? (
-							<ArrowPathIcon className="h-4 w-4 mr-2 animate-spin" />
-						) : (
-							<BookmarkIcon className="h-4 w-4 mr-2" />
-						)}
-						{isSnapshotting ? 'Saving snapshot...' : 'Save snapshot'}
-					</Button>
-					<Button
-						size="sm"
-						variant="outline"
-						onClick={handleDeployDraft}
-						disabled={isDeploying}
-						className="border-green-500 text-green-600 hover:bg-green-50"
-					>
-						{isDeploying ? (
-							<ArrowPathIcon className="h-4 w-4 mr-2 animate-spin" />
-						) : (
-							<ArrowUpTrayIcon className="h-4 w-4 mr-2" />
-						)}
-						{isDeploying ? 'Deploying...' : 'Deploy'}
-					</Button>
-				</div>
-			</div>
-			<div className="grid grid-cols-[360px_240px_1fr] flex-1 min-h-0 overflow-hidden">
-				<div className="min-w-0 min-h-0 overflow-hidden">
+		<div className="fixed top-5 left-0 right-0 bottom-0 z-50 flex flex-col bg-gray-100 overflow-hidden min-w-0">
+			<div className="grid grid-cols-[360px_1fr] flex-1 min-h-0 overflow-hidden">
+				{/* Cột 1: Chat – flex để panel có chiều cao cố định, scroll bên trong */}
+				<div className="min-w-0 min-h-0 overflow-hidden flex flex-col">
 					<ChatPanel
-						messages={messages}
+						appId={appId}
 						input={chatInput}
 						onInputChange={setChatInput}
 						onSendMessage={sendMessage}
+						isStreaming={isStreaming}
+						streamingContent={streamingContent}
+						liveMessages={liveMessages}
+						onDeployVersion={handleDeployDraft}
 					/>
 				</div>
-				<div className="min-w-0 min-h-0 overflow-hidden">
-					<TreePanel tree={tree} onOpen={loadFile} />
-				</div>
-				<div className="min-w-0 min-h-0 overflow-hidden">
-					<CodeEditorPanel
-						currentFile={currentFile}
-						code={code}
-						originalCode={originalCode}
-						isSaving={isSaving}
-						onCodeChange={setCode}
-						onSave={handleSaveFile}
-					/>
+				{/* Cột 2: Workspace – bấm Code hiện Tree + Editor cùng khu vực (Figma-style), bấm App chỉ hiện preview */}
+				<div className="min-w-0 min-h-0 overflow-hidden flex flex-col bg-white dark:bg-[#1e1e1e]">
+					{/* Một hàng: Code, App bên trái; Save, Deploy cố định ở cuối bên phải */}
+					<div className="shrink-0 flex items-center justify-between gap-2 px-2 py-1.5 border-b border-gray-200 dark:border-[#333] bg-gray-50 dark:bg-[#252526]">
+						<div className="flex items-center gap-1">
+							<button
+								type="button"
+								onClick={() => setActiveMainView('code')}
+								title="Code"
+								className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeMainView === 'code'
+									? 'bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400'
+									: 'text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-[#3c3c3c]'
+									}`}
+							>
+								<CodeBracketSquareIcon className="w-4 h-4 shrink-0" />
+								<span>Code</span>
+							</button>
+							<button
+								type="button"
+								onClick={() => setActiveMainView('app')}
+								title="App"
+								className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeMainView === 'app'
+									? 'bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400'
+									: 'text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-[#3c3c3c]'
+									}`}
+							>
+								<ComputerDesktopIcon className="w-4 h-4 shrink-0" />
+								<span>App</span>
+							</button>
+						</div>
+						<div className="flex items-center gap-2 shrink-0">
+							<button
+								type="button"
+								onClick={handleSaveFile}
+								disabled={!currentFile}
+								className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium border border-blue-300 dark:border-blue-600 text-blue-700 dark:text-blue-300 bg-white dark:bg-[#2d2d2d] hover:bg-blue-50 dark:hover:bg-blue-950/30 transition-colors disabled:opacity-50 disabled:pointer-events-none"
+							>
+								<BookmarkIcon className="w-4 h-4 shrink-0" />
+								Save
+							</button>
+							<button
+								type="button"
+								onClick={handleDeployDraft}
+								disabled={isDeploying}
+								className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600 disabled:opacity-50 disabled:pointer-events-none transition-all shadow-sm"
+							>
+								{isDeploying ? (
+									<ArrowPathIcon className="w-4 h-4 shrink-0 animate-spin" />
+								) : (
+									<ArrowUpTrayIcon className="w-4 h-4 shrink-0" />
+								)}
+								{isDeploying ? 'Deploying...' : 'Deploy'}
+							</button>
+						</div>
+					</div>
+					{/* Khi Code: TreePanel + Editor cạnh nhau trong cùng workspace */}
+					{activeMainView === 'code' && (
+						<div className="flex-1 min-h-0 flex overflow-hidden">
+							{/* Tree: scroll riêng bên trong TreePanel, không scroll theo layout */}
+							<div className="w-[240px] shrink-0 min-h-0 flex flex-col overflow-hidden border-r border-gray-200 dark:border-[#333] bg-gray-50 dark:bg-[#252526]">
+								<TreePanel tree={tree} onOpen={loadFile} />
+							</div>
+							<div className="flex-1 min-w-0 min-h-0 overflow-hidden flex flex-col">
+								<CodeEditorPanel
+									currentFile={currentFile}
+									code={code}
+									originalCode={originalCode}
+									isSaving={isSaving}
+									onCodeChange={handleCodeChange}
+									onSave={handleSaveFile}
+								/>
+							</div>
+						</div>
+					)}
+					{activeMainView === 'app' && (
+						<div className="flex flex-col flex-1 min-h-0">
+							<div className="shrink-0 px-3 py-2 border-b border-gray-200 dark:border-[#333] text-sm text-gray-600 dark:text-[#cccccc]">
+								App Preview
+							</div>
+							<div className="flex-1 min-h-0 relative">
+								<iframe
+									title="App Preview"
+									src={APP_PREVIEW_URL}
+									className="absolute inset-0 w-full h-full border-0 bg-white dark:bg-[#1e1e1e]"
+									sandbox="allow-scripts allow-same-origin allow-forms"
+									referrerPolicy="no-referrer"
+								/>
+							</div>
+						</div>
+					)}
 				</div>
 			</div>
+			{/* Thanh lỗi ngang kiểu Figma – hiển thị ngang phía dưới */}
+			{errors.length > 0 && (
+				<div className="shrink-0 flex items-center gap-2 px-3 py-2 bg-red-50 dark:bg-red-950/30 border-t border-red-200 dark:border-red-900/50 overflow-x-auto">
+					<span className="text-xs font-medium text-red-700 dark:text-red-400 shrink-0 flex items-center gap-1">
+						<ExclamationTriangleIcon className="w-4 h-4" />
+						{errors.length} lỗi
+					</span>
+					<div className="flex items-center gap-2 min-w-0 flex-1 overflow-x-auto">
+						{errors.map((e) => (
+							<div
+								key={e.id}
+								className="shrink-0 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-300 text-sm"
+							>
+								<span className="max-w-[280px] truncate" title={e.message}>
+									{e.message}
+								</span>
+								<button
+									type="button"
+									onClick={() => dismissError(e.id)}
+									className="p-0.5 rounded hover:bg-red-200 dark:hover:bg-red-800/60 text-red-600 dark:text-red-400"
+									title="Đóng"
+								>
+									<XMarkIcon className="w-4 h-4" />
+								</button>
+							</div>
+						))}
+					</div>
+					<button
+						type="button"
+						onClick={clearAllErrors}
+						className="shrink-0 text-xs font-medium text-red-600 dark:text-red-400 hover:underline"
+					>
+						Xóa tất cả
+					</button>
+				</div>
+			)}
 		</div>
 	)
 }

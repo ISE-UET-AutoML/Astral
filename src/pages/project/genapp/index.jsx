@@ -429,9 +429,7 @@ export default function ProjectGenApp() {
 							value={
 								resolveTaskType() === 'object_detection'
 									? 'Object Detection'
-									: resolveTaskType() ===
-										'text_classification'
-										'text_classification'
+									: resolveTaskType() === 'text_classification'
 										? 'Text Classification'
 										: 'Image Classification'
 							}

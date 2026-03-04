@@ -151,7 +151,7 @@ const MessagesPanel = ({ appId, liveMessages = [], streamingContent = '', isStre
 	}, [liveMessages.length, streamingContent])
 
 	return (
-		<div className="flex flex-col h-full min-h-0 bg-white dark:bg-[#1e1e1e] overflow-hidden [&_::-webkit-scrollbar]:w-1.5 [&_::-webkit-scrollbar-track]:bg-transparent [&_::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&_::-webkit-scrollbar-thumb]:bg-[#555] [&_::-webkit-scrollbar-thumb]:rounded-full">
+		<div className="flex flex-col flex-1 min-h-0 overflow-hidden bg-white dark:bg-[#1e1e1e] [&_::-webkit-scrollbar]:w-1.5 [&_::-webkit-scrollbar-track]:bg-transparent [&_::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&_::-webkit-scrollbar-thumb]:bg-[#555] [&_::-webkit-scrollbar-thumb]:rounded-full">
 			<div className="shrink-0 px-4 py-3 border-b border-gray-200 dark:border-[#333] flex items-center justify-between">
 				<div className="flex items-center gap-2">
 					<span className="text-sm font-semibold text-gray-900 dark:text-[#cccccc]">

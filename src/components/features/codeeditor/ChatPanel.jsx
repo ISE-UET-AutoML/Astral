@@ -19,7 +19,7 @@ const ChatPanel = ({ appId, input, onInputChange, onSendMessage, isStreaming, st
 	}, [input])
 
 	return (
-		<div className="flex flex-col h-full min-h-0 bg-white dark:bg-[#1e1e1e] border-r border-gray-200 dark:border-[#333]">
+		<div className="flex flex-col flex-1 min-h-0 overflow-hidden bg-white dark:bg-[#1e1e1e] border-r border-gray-200 dark:border-[#333]">
 			{/* Tabs: Chat | History – cùng hàng, bấm History thay nội dung Chat AI bằng Version */}
 			<div className="shrink-0 flex border-b border-gray-200 dark:border-[#333] bg-gray-100 dark:bg-[#252526]">
 				<button
@@ -49,7 +49,7 @@ const ChatPanel = ({ appId, input, onInputChange, onSendMessage, isStreaming, st
 
 			{activeTab === TABS.chat && (
 				<>
-					<div className="flex-1 min-h-0 overflow-hidden">
+					<div className="flex-1 min-h-0 min-w-0 overflow-hidden flex flex-col">
 						<MessagesPanel
 							appId={appId}
 							liveMessages={liveMessages}
@@ -61,7 +61,7 @@ const ChatPanel = ({ appId, input, onInputChange, onSendMessage, isStreaming, st
 			)}
 
 			{activeTab === TABS.history && (
-				<div className="flex-1 min-h-0 overflow-hidden">
+				<div className="flex-1 min-h-0 min-w-0 overflow-hidden flex flex-col">
 					<ManageVersionPanel appId={appId} onDeployVersion={onDeployVersion} />
 				</div>
 			)}

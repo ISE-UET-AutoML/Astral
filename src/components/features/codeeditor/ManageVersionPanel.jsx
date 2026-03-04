@@ -143,7 +143,7 @@ const ManageVersionPanel = ({ appId, onDeployVersion }) => {
 	}
 
 	return (
-		<div className="flex flex-col h-full min-h-0 overflow-hidden">
+		<div className="flex flex-col flex-1 min-h-0 overflow-hidden">
 			<div className="shrink-0 px-3 py-2 border-b border-gray-200 dark:border-[#333] flex justify-between items-center">
 				<span className="text-xs font-medium text-gray-500 dark:text-[#888]">
 					{versions.length} version{versions.length !== 1 ? 's' : ''}
