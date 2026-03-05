@@ -23,18 +23,18 @@ export function InstanceSummarySidebar({
 					)}
 				/>
 			</Space>
-			<div className="action-container mt-4 w-full justify-between items-center">
-				<Button
+			<div className="action-container mt-4 w-full flex justify-end items-center">
+				<button
 					type="primary"
 					size="large"
 					icon={<ThunderboltOutlined />}
 					onClick={onStartTraining}
 					loading={isProcessing}
 					disabled={!formData.trainingTime || isProcessing}
-					className="dark-build-button"
+					className="bg-blue-500 text-white p-3 rounded-xl"
 				>
 					{isProcessing ? 'Finding instance...' : 'Start Training'}
-				</Button>
+				</button>
 			</div>
 		</>
 	)
