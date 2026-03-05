@@ -28,9 +28,9 @@ export function DeploySummaryStats({ deployData, recentPredictions }) {
 						}
 						value={`${hours} hour(s) ${minutes} minute(s)`}
 						valueStyle={{
-							color: '#f0b100',
+							color: 'var(--deploy-uptime-color)',
 						}}
-						prefix={<ClockCircleOutlined />}
+						prefix={<ClockCircleOutlined className="text-[var(--deploy-uptime-color)]" />}
 					/>
 				</Card>
 			</div>
@@ -49,9 +49,9 @@ export function DeploySummaryStats({ deployData, recentPredictions }) {
 							</span>
 						}
 						value={recentPredictions?.length || 0}
-						prefix={<HourglassOutlined />}
+						prefix={<HourglassOutlined className="text-[var(--deploy-total-color)]" />}
 						valueStyle={{
-							color: '#2b7fff',
+							color: 'var(--deploy-total-color)',
 						}}
 					/>
 				</Card>

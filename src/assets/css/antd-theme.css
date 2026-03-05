@@ -237,6 +237,25 @@
 	color: var(--secondary-text) !important;
 }
 
+/* AntD List – đồng bộ dark/light mode */
+.ant-list {
+	background: transparent !important;
+	color: var(--text) !important;
+}
+
+.ant-list-item {
+	border-color: var(--border) !important;
+	color: var(--text) !important;
+}
+
+.ant-list-item-meta-title {
+	color: var(--text) !important;
+}
+
+.ant-list-item-meta-description {
+	color: var(--secondary-text) !important;
+}
+
 /* AntD Steps – done = ocean blue, rest = white; wait = light gray in dark mode */
 .ant-steps-item-icon .anticon {
 	color: var(--text) !important;

@@ -10,13 +10,13 @@ export function DeployMonitoringPanel({ deployData, projectInfo, taskConfig, onU
 			<Card
 				title={
 					<div className="flex items-center gap-2">
-						<MonitorOutlined className="text-[#1890ff]" />
-						<span className="font-poppins text-[var(--secondary-text)]">
+						<MonitorOutlined className="text-[var(--accent-text)]" />
+						<span className="font-poppins text-lg font-semibold text-[var(--text)]">
 							Monitoring
 						</span>
 					</div>
 				}
-				className="border border-[var(--border)] rounded-xl [background:var(--card-gradient)]"
+				className="border border-[var(--border)] rounded-xl [background:var(--card-gradient)] shadow-lg"
 				style={{
 					backdropFilter: 'blur(10px)',
 					fontFamily: 'Poppins, sans-serif',
@@ -25,14 +25,15 @@ export function DeployMonitoringPanel({ deployData, projectInfo, taskConfig, onU
 				<Divider
 					orientation="left"
 					orientationMargin={0}
-					className="font-poppins text-[var(--secondary-text)]"
+					className="!my-4 font-poppins font-semibold !border-[var(--border)] [&_.ant-divider-inner-text]:!text-[var(--text)]"
 				>
 					Monitor Endpoint URL
 				</Divider>
-				<div className="flex flex-wrap items-center gap-3">
-					<Input.Group compact>
+				<div className="flex flex-col gap-4">
+					{/* URL + Copy URL cùng hàng */}
+					<div className="flex items-center gap-2 flex-nowrap">
 						<Input
-							className="w-full md:w-[30%]"
+							className="flex-1 min-w-0 [&.ant-input]:!bg-[var(--input-bg)] [&.ant-input]:!border-[var(--input-border)] [&.ant-input]:!text-[var(--input-color)]"
 							value={
 								deployData?.monitor_url ||
 								'https://api.example.com'
@@ -41,6 +42,7 @@ export function DeployMonitoringPanel({ deployData, projectInfo, taskConfig, onU
 						/>
 						<Button
 							type="primary"
+							className="!bg-[#0ea5e9] hover:!bg-[#0284c7] !border-0 shrink-0"
 							onClick={() => {
 								const textToCopy =
 									deployData?.monitor_url ||
@@ -54,19 +56,21 @@ export function DeployMonitoringPanel({ deployData, projectInfo, taskConfig, onU
 									document.execCommand('copy')
 									document.body.removeChild(textarea)
 								} catch (err) {
-									// eslint-disable-next-line no-console
 									console.error('Failed to copy', err)
 								}
 							}}
 						>
 							Copy URL
 						</Button>
-					</Input.Group>
-					<div className="flex flex-wrap items-center gap-3">
+					</div>
+
+					{/* Hai nút ở góc cuối (phải) */}
+					<div className="flex justify-end items-center gap-3 flex-wrap">
 						<Button
 							type="primary"
 							size="large"
 							icon={<LineChartOutlined />}
+							className="!bg-[#0ea5e9] hover:!bg-[#0284c7] !border-0 disabled:!opacity-50"
 							disabled={!deployData?.monitor_url}
 							onClick={() => {
 								if (deployData?.monitor_url) {
@@ -84,6 +88,7 @@ export function DeployMonitoringPanel({ deployData, projectInfo, taskConfig, onU
 							type="primary"
 							size="large"
 							icon={<CalculatorOutlined />}
+							className="!bg-[#0ea5e9] hover:!bg-[#0284c7] !border-0 disabled:!opacity-50"
 							disabled={!deployData?.monitor_url}
 							onClick={() => {
 								if (deployData?.monitor_url) {

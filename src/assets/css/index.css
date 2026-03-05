@@ -149,6 +149,10 @@
     /* Divider */
     --divider-color: rgba(31, 41, 55, 0.1);
 
+    /* Deploy page accents */
+    --deploy-uptime-color: #f59e0b;
+    --deploy-total-color: #3b82f6;
+
     /* Dropdown styling */
     --dropdown-head: #000000;
     --dropdown-bg: #ffffff;
@@ -259,6 +263,10 @@
     --table-cell-color: white;
     --table-row-hover: rgba(255, 255, 255, 0.05);
     --table-row-selected: rgba(101, 255, 160, 0.1);
+
+    /* Deploy page accents */
+    --deploy-uptime-color: #fbbf24;
+    --deploy-total-color: #60a5fa;
 
     /* Tag styling - preserve original dark theme */
     --tag-bg: rgba(101, 255, 160, 0.2);

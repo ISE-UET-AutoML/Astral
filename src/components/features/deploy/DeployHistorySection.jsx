@@ -7,24 +7,19 @@ export function DeployHistorySection({
 	recentPredictions,
 	isLoadingPredictions,
 	onViewPrediction,
-	backgroundGradient,
 }) {
 	return (
 		<div className="mt-8">
 			<Card
 				title={
 					<div className="flex items-center gap-2">
-						<ClockCircleOutlined />
-						<span className="text-[var(--text)]">
+						<ClockCircleOutlined className="text-[var(--accent-text)]" />
+						<span className="text-lg font-semibold text-[var(--text)]">
 							Recent Predictions
 						</span>
 					</div>
 				}
-				className="border border-[var(--border)] bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-xl shadow-2xl"
-				style={{
-					background: backgroundGradient,
-					borderRadius: '12px',
-				}}
+				className="border border-[var(--border)] rounded-xl [background:var(--card-gradient)] backdrop-blur-xl shadow-lg"
 			>
 				{!isLoadingPredictions && (
 					<List
@@ -48,6 +43,7 @@ export function DeployHistorySection({
 									actions={[
 										<Button
 											type="primary"
+											className="!bg-[#0ea5e9] hover:!bg-[#0284c7] !border-0"
 											onClick={() =>
 												onViewPrediction(prediction)
 											}
@@ -58,7 +54,7 @@ export function DeployHistorySection({
 								>
 									<List.Item.Meta
 										avatar={
-											<CheckCircleOutlined className="text-green-500" />
+											<CheckCircleOutlined className="text-[var(--accent-text)]" />
 										}
 										title={
 											<span className="text-[var(--text)]">
