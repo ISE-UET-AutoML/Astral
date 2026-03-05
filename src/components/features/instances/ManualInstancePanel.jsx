@@ -8,6 +8,7 @@ import {
 	Col,
 	Select,
 } from 'antd'
+import { ClockCircleOutlined } from '@ant-design/icons'
 import {
 	SERVICES,
 	GPU_LEVELS,
@@ -41,29 +42,37 @@ export function ManualInstancePanel({
 							size="large"
 							className="w-full"
 						>
-							<div>
-								<Text className="dark-build-text-gradient">
-									Training Duration
-								</Text>
-								<div className="flex items-center gap-4 mt-2">
-									<Slider
-										className="dark-build-slider flex-1"
-										min={0}
-										max={24}
-										step={0.5}
-										value={formData.trainingTime || 0}
-										onChange={handleTrainingTimeChange}
-										tooltip={{ open: false }}
-									/>
-									<InstanceMetricPill
-										value={formData.trainingTime || 0}
-										suffix="hours"
-									/>
+							<Card
+								size="small"
+								title={
+									<span className="font-semibold text-[var(--text)]">
+										<ClockCircleOutlined className="text-[var(--accent-text)] mr-2" />
+										Training Duration
+									</span>
+								}
+								className="rounded-xl border border-[var(--border)] bg-[var(--hover-bg)]"
+							>
+								<div className="flex flex-col gap-4">
+									<div className="flex items-center gap-4">
+										<Slider
+											className="dark-build-slider flex-1 min-w-0"
+											min={0}
+											max={24}
+											step={0.5}
+											value={formData.trainingTime || 0}
+											onChange={handleTrainingTimeChange}
+											tooltip={{ open: false }}
+										/>
+										<InstanceMetricPill
+											value={formData.trainingTime || 0}
+											suffix="hours"
+										/>
+									</div>
+									<Text className="text-[var(--secondary-text)] text-sm">
+										Recommended: 1-24 hours for most models
+									</Text>
 								</div>
-								<Text className="dark-build-text">
-									Recommended: 1-24 hours for most models
-								</Text>
-							</div>
+							</Card>
 
 							<div>
 								<Text className="dark-build-text-gradient">
