@@ -228,11 +228,51 @@
 	color: var(--alert-color) !important;
 }
 
-/* AntD Steps – done = ocean blue, rest = white */
+/* AntD Empty – nền xám đồng bộ */
+.ant-empty {
+	background: transparent !important;
+}
+
+.ant-empty-description {
+	color: var(--secondary-text) !important;
+}
+
+/* AntD Steps – done = ocean blue, rest = white; wait = light gray in dark mode */
 .ant-steps-item-icon .anticon {
 	color: var(--text) !important;
 }
 
 .ant-steps-item-finish .ant-steps-item-icon .anticon {
 	color: #0ea5e9 !important;
+}
+
+/* Pending steps (chưa chạy đến) – xám nhạt trong dark mode */
+.ant-steps-item-wait .ant-steps-item-title,
+.ant-steps-item-wait .ant-steps-item-title * {
+	color: var(--secondary-text) !important;
+}
+
+.ant-steps-item-wait .ant-steps-item-description,
+.ant-steps-item-wait .ant-steps-item-description * {
+	color: var(--secondary-text) !important;
+	opacity: 0.9;
+}
+
+.ant-steps-item-wait .ant-steps-item-icon {
+	background: transparent !important;
+	border-color: var(--secondary-text) !important;
+}
+
+.ant-steps-item-wait .ant-steps-item-icon .anticon {
+	color: var(--secondary-text) !important;
+}
+
+.ant-steps-item-wait .ant-steps-item-tail::after {
+	background: var(--secondary-text) !important;
+	opacity: 0.5;
+}
+
+.ant-steps-item-wait .ant-steps-icon-dot {
+	background: var(--secondary-text) !important;
+	opacity: 0.6;
 }

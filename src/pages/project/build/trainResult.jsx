@@ -59,7 +59,7 @@ const TrainResult = () => {
 								)
 							}}
 							size="large"
-							className="mt-4 h-[50px] w-[25%] font-poppins text-lg font-bold border-none bg-gradient-to-br from-[#10b981] to-[#34d399] transition-all duration-300 hover:shadow-lg"
+							className="mt-4 h-[50px] w-[25%] font-poppins text-lg font-bold border-none bg-gradient-to-br from-[#0ea5e9] to-[#38bdf8] hover:from-[#0284c7] hover:to-[#0ea5e9] transition-all duration-300 hover:shadow-lg"
 						>
 							View Model
 						</Button>

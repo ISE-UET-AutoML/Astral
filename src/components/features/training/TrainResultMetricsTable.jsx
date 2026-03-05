@@ -69,7 +69,7 @@ export function TrainResultMetricsTable({ metrics }) {
 					Comprehensive Metrics
 				</span>
 			}
-			className="theme-table rounded-xl border border-[var(--border)] bg-[radial-gradient(circle_at_top,_rgba(148,163,184,0.15),_transparent_55%),linear-gradient(135deg,_rgba(15,23,42,0.9),_rgba(15,23,42,0.95))] shadow-lg backdrop-blur-md"
+			className="theme-table rounded-xl border border-[var(--border)] [background:var(--card-gradient)] shadow-lg backdrop-blur-md"
 		>
 			<Table
 				columns={columns}
