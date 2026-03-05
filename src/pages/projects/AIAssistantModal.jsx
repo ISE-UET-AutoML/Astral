@@ -38,8 +38,8 @@ const ChatMessage = ({ message, role }) => {
 			)}
 			<div
 				className={clsx(
-					'relative max-w-[70%] rounded-xl border border-[var(--border)] px-2 py-0 pl-2 pr-2',
-					isUser ? 'rounded-tr-none [background:var(--button-gradient)] text-white' : 'rounded-tl-none [background:var(--card-gradient)] text-[var(--text)]'
+					'relative max-w-[70%] rounded-xl border border-gray-200 dark:border-gray-700 px-2 py-0 pl-2 pr-2',
+					isUser ? 'rounded-tr-none bg-gray-700 text-white' : 'rounded-tl-none bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-200'
 				)}
 			>
 				{message.content === 'loading...' ? (
@@ -155,7 +155,7 @@ const AIAssistantModal = ({
 				</div>
 
 				{/* Input Section */}
-				<div className="mb-2 bg-[var(--surface)]">
+				<div className="mb-2 bg-gray-50 dark:bg-gray-800">
 					{selectedDataset && (
 						<Tag
 							color="blue"
