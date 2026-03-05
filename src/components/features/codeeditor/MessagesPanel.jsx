@@ -21,11 +21,10 @@ const MessageCard = ({ msg, isOldVersion, streaming }) => {
 
 	return (
 		<div
-			className={`relative rounded-2xl border shadow-sm transition-colors ${
-				isAssistant
+			className={`relative rounded-2xl border shadow-sm transition-colors ${isAssistant
 					? 'bg-gray-50 dark:bg-[#252526] text-gray-900 dark:text-[#cccccc] border-gray-200 dark:border-[#444]'
 					: 'bg-white dark:bg-[#2d2d2d] text-gray-900 dark:text-[#cccccc] border-gray-200 dark:border-[#444]'
-			}`}
+				}`}
 		>
 			<div className="flex items-start gap-3 px-4 pt-4">
 				<div className="flex-1">
@@ -50,11 +49,10 @@ const MessageCard = ({ msg, isOldVersion, streaming }) => {
 					</div>
 				</div>
 				<div
-					className={`shrink-0 mt-0.5 w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold ${
-						isAssistant
-							? 'bg-pink-500 text-white'
+					className={`shrink-0 mt-0.5 w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold ${isAssistant
+							? 'bg-gray-500 text-white'
 							: 'bg-gray-200 text-gray-800 dark:bg-[#555] dark:text-[#cccccc]'
-					}`}
+						}`}
 				>
 					{initials}
 				</div>
@@ -151,7 +149,7 @@ const MessagesPanel = ({ appId, liveMessages = [], streamingContent = '', isStre
 	}, [liveMessages.length, streamingContent])
 
 	return (
-		<div className="flex flex-col flex-1 min-h-0 overflow-hidden bg-white dark:bg-[#1e1e1e] [&_::-webkit-scrollbar]:w-1.5 [&_::-webkit-scrollbar-track]:bg-transparent [&_::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&_::-webkit-scrollbar-thumb]:bg-[#555] [&_::-webkit-scrollbar-thumb]:rounded-full">
+		<div className="flex flex-col flex-1 min-h-0 overflow-hidden bg-gray-50 dark:bg-[#1e1e1e] [&_::-webkit-scrollbar]:w-1.5 [&_::-webkit-scrollbar-track]:bg-transparent [&_::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&_::-webkit-scrollbar-thumb]:bg-[#555] [&_::-webkit-scrollbar-thumb]:rounded-full">
 			<div className="shrink-0 px-4 py-3 border-b border-gray-200 dark:border-[#333] flex items-center justify-between">
 				<div className="flex items-center gap-2">
 					<span className="text-sm font-semibold text-gray-900 dark:text-[#cccccc]">

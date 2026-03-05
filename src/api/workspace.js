@@ -18,7 +18,7 @@ export const workspaceApi = {
 	// Initialize draft for an app (idempotent)
 	async initDraft(appId) {
 		const response = await axiosClient.post(
-			`${AMTA_PREFIX}/apps/${appId}/draft/init`
+			`/api/service/adaptive_model_to_app/apps/${appId}/draft/init`
 		)
 		return response.data
 	},
@@ -97,7 +97,7 @@ export const workspaceApi = {
 	 */
 	async getAdaptStatus(appId, adaptId) {
 		const response = await axiosClient.get(
-			`${AMTA_PREFIX}/apps/${appId}/draft/adapt/${adaptId}`
+			`/api/service/adaptive_model_to_app/apps/${appId}/draft/adapt/${adaptId}`
 		)
 		return response.data
 	},
@@ -142,7 +142,7 @@ export const workspaceApi = {
 		}
 
 		throw new Error('Adapt operation timed out')
-		},
+	},
 
 	initDraft,
 

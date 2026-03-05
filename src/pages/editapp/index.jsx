@@ -272,7 +272,7 @@ const EditAppPage = () => {
 					/>
 				</div>
 				{/* Cột 2: Workspace – bấm Code hiện Tree + Editor cùng khu vực (Figma-style), bấm App chỉ hiện preview */}
-				<div className="min-w-0 min-h-0 overflow-hidden flex flex-col bg-white dark:bg-[#1e1e1e]">
+				<div className="min-w-0 min-h-0 overflow-hidden flex flex-col bg-gray-50 dark:bg-[#1e1e1e]">
 					{/* Một hàng: Code, App bên trái; Save, Deploy cố định ở cuối bên phải */}
 					<div className="shrink-0 flex items-center justify-between gap-2 px-2 py-1.5 border-b border-gray-200 dark:border-[#333] bg-gray-50 dark:bg-[#252526]">
 						<div className="flex items-center gap-1">

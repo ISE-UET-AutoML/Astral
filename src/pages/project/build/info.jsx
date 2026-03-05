@@ -33,7 +33,7 @@ const ProjectInfo = () => {
 				const deployedModelsData = await getAllDeployedModel(
 					projectInfo.id
 				)
-				
+
 				setExperiments(
 					Array.isArray(experimentsData)
 						? experimentsData
@@ -83,8 +83,7 @@ const ProjectInfo = () => {
 								Project Overview
 							</h1>
 							<p className="mx-auto max-w-3xl text-lg sm:text-xl leading-relaxed text-[var(--secondary-text)]">
-								{projectInfo?.description ||
-									'Comprehensive overview of your project metrics and deployment status'}
+								Comprehensive overview of your project metrics and deployment status
 							</p>
 						</div>
 
@@ -178,8 +177,8 @@ const ProjectInfo = () => {
 											value={
 												experiments.filter(
 													(e) =>
-														e.status === 'TRAINING' || 
-													    e.status === 'SETTING_UP' ||
+														e.status === 'TRAINING' ||
+														e.status === 'SETTING_UP' ||
 														e.status === 'CREATING_INSTANCE' ||
 														e.status === 'DOWNLOADING_DATA' ||
 														e.status === 'DOWNLOADING_DEPENDENCIES'

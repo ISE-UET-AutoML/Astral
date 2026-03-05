@@ -19,28 +19,26 @@ const ChatPanel = ({ appId, input, onInputChange, onSendMessage, isStreaming, st
 	}, [input])
 
 	return (
-		<div className="flex flex-col flex-1 min-h-0 overflow-hidden bg-white dark:bg-[#1e1e1e] border-r border-gray-200 dark:border-[#333]">
+		<div className="flex flex-col flex-1 min-h-0 overflow-hidden bg-gray-50 dark:bg-[#1e1e1e] border-r border-gray-200 dark:border-[#333]">
 			{/* Tabs: Chat | History – cùng hàng, bấm History thay nội dung Chat AI bằng Version */}
 			<div className="shrink-0 flex border-b border-gray-200 dark:border-[#333] bg-gray-100 dark:bg-[#252526]">
 				<button
 					type="button"
 					onClick={() => setActiveTab(TABS.chat)}
-					className={`flex-1 px-4 py-3 text-sm font-medium transition-colors border-b-2 -mb-px ${
-						activeTab === TABS.chat
+					className={`flex-1 px-4 py-3 text-sm font-medium transition-colors border-b-2 -mb-px ${activeTab === TABS.chat
 							? 'text-gray-900 dark:text-white border-gray-900 dark:border-white bg-white dark:bg-[#1e1e1e]'
 							: 'text-gray-500 dark:text-[#888] border-transparent hover:text-gray-700 dark:hover:text-[#aaa]'
-					}`}
+						}`}
 				>
 					Chat
 				</button>
 				<button
 					type="button"
 					onClick={() => setActiveTab(TABS.history)}
-					className={`flex-1 px-4 py-3 text-sm font-medium transition-colors flex items-center justify-center gap-1.5 border-b-2 -mb-px ${
-						activeTab === TABS.history
+					className={`flex-1 px-4 py-3 text-sm font-medium transition-colors flex items-center justify-center gap-1.5 border-b-2 -mb-px ${activeTab === TABS.history
 							? 'text-gray-900 dark:text-white border-gray-900 dark:border-white bg-white dark:bg-[#1e1e1e]'
 							: 'text-gray-500 dark:text-[#888] border-transparent hover:text-gray-700 dark:hover:text-[#aaa]'
-					}`}
+						}`}
 				>
 					<HistoryOutlined className="w-4 h-4" />
 					History
@@ -92,7 +90,7 @@ const ChatPanel = ({ appId, input, onInputChange, onSendMessage, isStreaming, st
 						>
 							{isStreaming
 								? <StopCircleIcon className="w-5 h-5" />
-								: <SendOutlined className="dark:text-white text-blue-500" />}
+								: <SendOutlined className="dark:text-white text-gray-500" />}
 						</button>
 					</div>
 				</div>
