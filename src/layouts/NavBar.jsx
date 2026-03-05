@@ -72,7 +72,7 @@ const NavBar = () => {
 			className={clsx(
 				'fixed top-0 w-full z-[999] transition-all duration-300',
 				scrolled
-					? 'bg-white/95 dark:bg-[#01000A]/95 backdrop-blur-[10px] border-b border-gray-200/50 dark:border-white/5'
+					? 'bg-[var(--nav-bg)] backdrop-blur-[10px] border-b border-gray-200/50 dark:border-white/10'
 					: 'bg-transparent'
 			)}
 		>
