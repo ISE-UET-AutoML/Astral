@@ -42,7 +42,7 @@ export function DeployMonitoringPanel({ deployData, projectInfo, taskConfig, onU
 						/>
 						<Button
 							type="primary"
-							className="!bg-[#0ea5e9] hover:!bg-[#0284c7] !border-0 shrink-0"
+							className="deploy-btn-solid shrink-0"
 							onClick={() => {
 								const textToCopy =
 									deployData?.monitor_url ||
@@ -70,7 +70,7 @@ export function DeployMonitoringPanel({ deployData, projectInfo, taskConfig, onU
 							type="primary"
 							size="large"
 							icon={<LineChartOutlined />}
-							className="!bg-[#0ea5e9] hover:!bg-[#0284c7] !border-0 disabled:!opacity-50"
+							className="deploy-btn-solid"
 							disabled={!deployData?.monitor_url}
 							onClick={() => {
 								if (deployData?.monitor_url) {
@@ -88,7 +88,7 @@ export function DeployMonitoringPanel({ deployData, projectInfo, taskConfig, onU
 							type="primary"
 							size="large"
 							icon={<CalculatorOutlined />}
-							className="!bg-[#0ea5e9] hover:!bg-[#0284c7] !border-0 disabled:!opacity-50"
+							className="deploy-btn-solid"
 							disabled={!deployData?.monitor_url}
 							onClick={() => {
 								if (deployData?.monitor_url) {

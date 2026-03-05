@@ -56,7 +56,7 @@ export function DeployEndpointPanel({
 						/>
 						<Button
 							type="primary"
-							className="!bg-[#0ea5e9] hover:!bg-[#0284c7] !border-0 shrink-0"
+							className="deploy-btn-solid shrink-0"
 							onClick={() => {
 								const textToCopy =
 									deployData?.api_base_url ||
@@ -86,7 +86,7 @@ export function DeployEndpointPanel({
 							loading={uploading}
 							icon={<CloudUploadOutlined />}
 							size="large"
-							className="!bg-[#0ea5e9] hover:!bg-[#0284c7] !border-0"
+							className="deploy-btn-solid"
 						>
 							{uploading ? 'Predicting...' : 'Upload Files to Predict'}
 						</Button>
@@ -112,7 +112,7 @@ export function DeployEndpointPanel({
 							icon={
 								isUIGenerated ? <ExportOutlined /> : <StarOutlined />
 							}
-							className="!bg-[#0ea5e9] hover:!bg-[#0284c7] !border-0 disabled:!opacity-50"
+							className="deploy-btn-solid"
 						>
 							{isCheckingUIStatus ? (
 								<span>Checking</span>

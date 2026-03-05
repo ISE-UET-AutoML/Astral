@@ -43,7 +43,7 @@ export function DeployHistorySection({
 									actions={[
 										<Button
 											type="primary"
-											className="!bg-[#0ea5e9] hover:!bg-[#0284c7] !border-0"
+											className="deploy-btn-solid"
 											onClick={() =>
 												onViewPrediction(prediction)
 											}

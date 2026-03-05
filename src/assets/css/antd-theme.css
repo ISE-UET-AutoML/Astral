@@ -53,6 +53,38 @@
 	color: var(--button-primary-color) !important;
 }
 
+/* Deploy buttons – xanh đậm solid, chữ trắng */
+.ant-btn-primary.deploy-btn-solid {
+	background: #2563eb !important;
+	background-image: none !important;
+	border: none !important;
+	color: #ffffff !important;
+}
+
+.ant-btn-primary.deploy-btn-solid:hover:not(:disabled) {
+	background: #1d4ed8 !important;
+	background-image: none !important;
+	color: #ffffff !important;
+}
+
+.ant-btn-primary.deploy-btn-solid:disabled {
+	opacity: 0.5;
+}
+
+/* Deploy Delete button – đỏ solid */
+.ant-btn-primary.deploy-btn-danger {
+	background: #ef4444 !important;
+	background-image: none !important;
+	border: none !important;
+	color: #ffffff !important;
+}
+
+.ant-btn-primary.deploy-btn-danger:hover:not(:disabled) {
+	background: #dc2626 !important;
+	background-image: none !important;
+	color: #ffffff !important;
+}
+
 .ant-btn-default {
 	background: var(--button-default-bg) !important;
 	border-color: var(--button-default-border) !important;
