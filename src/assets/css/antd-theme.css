@@ -227,3 +227,12 @@
 .ant-alert-description {
 	color: var(--alert-color) !important;
 }
+
+/* AntD Steps – done = ocean blue, rest = white */
+.ant-steps-item-icon .anticon {
+	color: var(--text) !important;
+}
+
+.ant-steps-item-finish .ant-steps-item-icon .anticon {
+	color: #0ea5e9 !important;
+}

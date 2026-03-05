@@ -246,10 +246,7 @@ export default function DeploySettingUpView() {
                         <div className="flex flex-col w-full gap-6">
                             <h2 className="m-0 flex items-center text-xl font-semibold font-poppins text-[var(--text)]">
                                 <RocketOutlined
-                                    className="mr-2 text-[20px]"
-                                    style={{
-                                        color: 'var(--accent-text)',
-                                    }}
+                                    className="mr-2 text-[20px] text-[var(--secondary-text)]"
                                 />
                                 Deployment Preparation
                             </h2>
@@ -264,9 +261,9 @@ export default function DeploySettingUpView() {
                                         ),
                                         icon:
                                             currentStep !== 0 ? (
-                                                <DatabaseOutlined />
+                                                <DatabaseOutlined className="text-[var(--secondary-text)]" />
                                             ) : (
-                                                <LoadingOutlined />
+                                                <LoadingOutlined className="text-[var(--secondary-text)]" />
                                             ),
                                         description: (
                                             <span className="text-slate-400">
@@ -283,9 +280,9 @@ export default function DeploySettingUpView() {
                                         ),
                                         icon:
                                             currentStep !== 1 ? (
-                                                <SettingOutlined />
+                                                <SettingOutlined className="text-[var(--secondary-text)]" />
                                             ) : (
-                                                <LoadingOutlined />
+                                                <LoadingOutlined className="text-[var(--secondary-text)]" />
                                             ),
                                         description: (
                                             <span className="text-slate-400">
@@ -301,9 +298,9 @@ export default function DeploySettingUpView() {
                                         ),
                                         icon:
                                             currentStep !== 2 ? (
-                                                <CloudDownloadOutlined />
+                                                <CloudDownloadOutlined className="text-[var(--secondary-text)]" />
                                             ) : (
-                                                <LoadingOutlined />
+                                                <LoadingOutlined className="text-[var(--secondary-text)]" />
                                             ),
                                         description: (
                                             <span className="text-slate-400">
@@ -319,9 +316,9 @@ export default function DeploySettingUpView() {
                                         ),
                                         icon:
                                             currentStep !== 3 ? (
-                                                <CloudServerOutlined />
+                                                <CloudServerOutlined className="text-[var(--secondary-text)]" />
                                             ) : (
-                                                <LoadingOutlined />
+                                                <LoadingOutlined className="text-[var(--secondary-text)]" />
                                             ),
                                         description: (
                                             <span className="text-slate-400">
@@ -335,10 +332,7 @@ export default function DeploySettingUpView() {
                                 title={
                                     <h2 className="m-0 flex items-center text-xl font-semibold font-poppins text-[var(--text)]">
                                         <SettingOutlined
-                                            className="mr-2"
-                                            style={{
-                                                color: 'var(--accent-text)',
-                                            }}
+                                            className="mr-2 text-[var(--secondary-text)]"
                                         />
                                         Current Step Progress
                                     </h2>
