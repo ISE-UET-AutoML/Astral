@@ -182,4 +182,12 @@ export const workspaceApi = {
 		)
 		return res.data
 	},
+
+	/** Get app details (including host/ports) */
+	async getApp(appId) {
+		const res = await axiosClient.get(
+			`/api/service/adaptive_model_to_app/generated_app/${appId}`
+		)
+		return res.data
+	},
 }

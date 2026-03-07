@@ -23,8 +23,8 @@ import {
 
 const AUTOSAVE_DEBOUNCE_MS = 1500
 
-/** Host app preview (iframe) – tạm hardcode cho đến khi lấy từ API. */
-const APP_PREVIEW_URL = 'http://142.170.89.112:54559'
+/** Default fallback - will be overridden by dynamic app data */
+const DEFAULT_PREVIEW_URL = 'http://localhost:8080'
 
 const EditAppPage = () => {
 	const { appId, id: projectId } = useParams()
@@ -42,6 +42,7 @@ const EditAppPage = () => {
 	const [activeMainView, setActiveMainView] = useState('code')
 	/** Thanh lỗi ngang kiểu Figma: [{ id, message, type: 'error'|'warning' }] */
 	const [errors, setErrors] = useState([])
+	const [app, setApp] = useState(null)
 
 	const autoSaveTimerRef = useRef(null)
 	const addError = useCallback((message, type = 'error') => {
@@ -74,7 +75,13 @@ const EditAppPage = () => {
 			return
 		}
 
-		console.log('[EditAppPage] Initializing draft for appId:', appId)
+		console.log('[EditAppPage] Initializing draft and fetching app info for appId:', appId)
+
+		// Fetch app info for dynamic URL
+		workspaceApi.getApp(appId).then(setApp).catch(err => {
+			console.error('[EditAppPage] Failed to fetch app info:', err)
+		})
+
 		workspaceApi
 			.initDraft(appId)
 			.then((result) => {
@@ -151,7 +158,7 @@ const EditAppPage = () => {
 		setIsSnapshotting(true)
 		const hide = message.loading('Saving draft snapshot to S3...', 0)
 		try {
-			const result = await workspaceApi.saveSnapshot(appId, description || undefined)
+			const result = await workspaceApi.saveDraftSnapshot(appId, description || undefined)
 			console.log('[EditAppPage] Snapshot saved:', result)
 			message.success('Draft snapshot saved to S3')
 		} catch (err) {
@@ -164,33 +171,48 @@ const EditAppPage = () => {
 		}
 	}, [appId, addError])
 
-	const handleDeployDraft = useCallback(async () => {
+	const handleDeploy = useCallback(async (versionNumber) => {
 		if (!appId) {
 			message.error('Invalid app ID, cannot deploy')
 			return
 		}
 
-		const description = window.prompt('Version description (optional):')
-		if (description === null) return
+		const isRedeploy = versionNumber !== undefined
+		let description = ''
 
-		if (!window.confirm('Deploy this draft as a new version and push to Vast.ai?')) {
-			return
+		if (isRedeploy) {
+			if (!window.confirm(`Redeploy version v${versionNumber} to Vast.ai?`)) {
+				return
+			}
+		} else {
+			description = window.prompt('Version description (optional):')
+			if (description === null) return
+
+			if (!window.confirm('Deploy this draft as a new version and push to Vast.ai?')) {
+				return
+			}
 		}
 
 		setIsDeploying(true)
-		const hide = message.loading('Deploying draft as new version...', 0)
+		const hide = message.loading(
+			isRedeploy ? `Redeploying version v${versionNumber}...` : 'Deploying draft as new version...',
+			0
+		)
 		try {
-			const result = await workspaceApi.deployDraft(appId, description || undefined)
-			console.log('[EditAppPage] Draft deployed:', result)
+			const result = isRedeploy
+				? await workspaceApi.deployVersion(appId, versionNumber)
+				: await workspaceApi.deployDraft(appId, description || undefined)
+
+			console.log('[EditAppPage] Deployment successful:', result)
 			message.success(
 				result?.version_number
 					? `Deployed as version v${result.version_number}`
-					: 'Draft deployed successfully'
+					: 'Deployed successfully'
 			)
 		} catch (err) {
-			console.error('[EditAppPage] Failed to deploy draft:', err)
-			message.error('Failed to deploy draft')
-			addError('Failed to deploy draft')
+			console.error('[EditAppPage] Failed to deploy:', err)
+			message.error('Failed to deploy')
+			addError('Failed to deploy')
 		} finally {
 			hide()
 			setIsDeploying(false)
@@ -268,7 +290,7 @@ const EditAppPage = () => {
 						isStreaming={isStreaming}
 						streamingContent={streamingContent}
 						liveMessages={liveMessages}
-						onDeployVersion={handleDeployDraft}
+						onDeployVersion={handleDeploy}
 					/>
 				</div>
 				{/* Cột 2: Workspace – bấm Code hiện Tree + Editor cùng khu vực (Figma-style), bấm App chỉ hiện preview */}
@@ -313,7 +335,7 @@ const EditAppPage = () => {
 							</button>
 							<button
 								type="button"
-								onClick={handleDeployDraft}
+								onClick={() => handleDeploy()}
 								disabled={isDeploying}
 								className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600 disabled:opacity-50 disabled:pointer-events-none transition-all shadow-sm"
 							>
@@ -353,7 +375,11 @@ const EditAppPage = () => {
 							<div className="flex-1 min-h-0 relative">
 								<iframe
 									title="App Preview"
-									src={APP_PREVIEW_URL}
+									src={
+										app?.host && app?.ports?.frontend
+											? `http://${app.host}:${app.ports.frontend}`
+											: DEFAULT_PREVIEW_URL
+									}
 									className="absolute inset-0 w-full h-full border-0 bg-white dark:bg-[#1e1e1e]"
 									sandbox="allow-scripts allow-same-origin allow-forms"
 									referrerPolicy="no-referrer"
