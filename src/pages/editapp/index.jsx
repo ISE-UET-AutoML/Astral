@@ -256,7 +256,7 @@ const EditAppPage = () => {
 	}
 
 	return (
-		<div className="fixed top-5 left-0 right-0 bottom-0 z-50 flex flex-col bg-gray-100 overflow-hidden min-w-0">
+		<div className="flex flex-col h-[calc(100dvh-100px)] bg-gray-100 dark:bg-[#1e1e1e] overflow-hidden -m-px">
 			<div className="grid grid-cols-[360px_1fr] flex-1 min-h-0 overflow-hidden">
 				{/* Cột 1: Chat – flex để panel có chiều cao cố định, scroll bên trong */}
 				<div className="min-w-0 min-h-0 overflow-hidden flex flex-col">
@@ -370,7 +370,7 @@ const EditAppPage = () => {
 						<ExclamationTriangleIcon className="w-4 h-4" />
 						{errors.length} lỗi
 					</span>
-					<div className="flex items-center gap-2 min-w-0 flex-1 overflow-x-auto">
+					<div className="flex items-center gap-2 min-w-0 flex-1 overflow-x-auto mt-5">
 						{errors.map((e) => (
 							<div
 								key={e.id}
