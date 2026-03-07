@@ -19,12 +19,12 @@ import {
 	FolderIcon,
 	ExclamationTriangleIcon,
 	XMarkIcon,
+	ArrowTopRightOnSquareIcon,
 } from '@heroicons/react/24/outline'
 
 const AUTOSAVE_DEBOUNCE_MS = 1500
 
-/** Default fallback - will be overridden by dynamic app data */
-const DEFAULT_PREVIEW_URL = 'http://localhost:8080'
+
 
 const EditAppPage = () => {
 	const { appId, id: projectId } = useParams()
@@ -40,9 +40,9 @@ const EditAppPage = () => {
 	const [streamingContent, setStreamingContent] = useState('')
 	/** Figma-style: 'code' | 'app' – bấm icon Code hiện editor, icon App hiện iframe. */
 	const [activeMainView, setActiveMainView] = useState('code')
-	/** Thanh lỗi ngang kiểu Figma: [{ id, message, type: 'error'|'warning' }] */
 	const [errors, setErrors] = useState([])
 	const [app, setApp] = useState(null)
+	const [previewKey, setPreviewKey] = useState(0)
 
 	const autoSaveTimerRef = useRef(null)
 	const addError = useCallback((message, type = 'error') => {
@@ -278,7 +278,7 @@ const EditAppPage = () => {
 	}
 
 	return (
-		<div className="flex flex-col h-[calc(100dvh-100px)] bg-gray-100 dark:bg-[#1e1e1e] overflow-hidden -m-px">
+		<div className="mt-10 flex flex-col h-[calc(100dvh-100px)] bg-gray-100 dark:bg-[#1e1e1e] overflow-hidden -m-px">
 			<div className="grid grid-cols-[360px_1fr] flex-1 min-h-0 overflow-hidden">
 				{/* Cột 1: Chat – flex để panel có chiều cao cố định, scroll bên trong */}
 				<div className="min-w-0 min-h-0 overflow-hidden flex flex-col">
@@ -312,7 +312,10 @@ const EditAppPage = () => {
 							</button>
 							<button
 								type="button"
-								onClick={() => setActiveMainView('app')}
+								onClick={() => {
+									setActiveMainView('app')
+									setPreviewKey(k => k + 1)
+								}}
 								title="App"
 								className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeMainView === 'app'
 									? 'bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400'
@@ -369,21 +372,56 @@ const EditAppPage = () => {
 					)}
 					{activeMainView === 'app' && (
 						<div className="flex flex-col flex-1 min-h-0">
-							<div className="shrink-0 px-3 py-2 border-b border-gray-200 dark:border-[#333] text-sm text-gray-600 dark:text-[#cccccc]">
-								App Preview
+							<div className="shrink-0 px-3 py-2 border-b border-gray-200 dark:border-[#333] flex items-center justify-between bg-gray-50 dark:bg-[#252526]">
+								<div className="flex items-center gap-3">
+									<span className="text-sm font-medium text-gray-700 dark:text-[#cccccc]">App Preview</span>
+									{app?.host && app?.ports?.frontend && (
+										<a
+											href={`http://${app.host}:${app.ports.frontend}`}
+											target="_blank"
+											rel="noreferrer"
+											className="text-[11px] text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 flex items-center gap-1 transition-colors"
+										>
+											{`http://${app.host}:${app.ports.frontend}`}
+											<ArrowTopRightOnSquareIcon className="w-3 h-3" />
+										</a>
+									)}
+								</div>
+								<button
+									type="button"
+									onClick={() => setPreviewKey((k) => k + 1)}
+									className="p-1.5 rounded-md hover:bg-gray-200 dark:hover:bg-[#3c3c3c] text-gray-500 dark:text-[#888] transition-colors"
+									title="Reload Preview"
+								>
+									<ArrowPathIcon className="w-4 h-4" />
+								</button>
 							</div>
 							<div className="flex-1 min-h-0 relative">
-								<iframe
-									title="App Preview"
-									src={
-										app?.host && app?.ports?.frontend
-											? `http://${app.host}:${app.ports.frontend}`
-											: DEFAULT_PREVIEW_URL
-									}
-									className="absolute inset-0 w-full h-full border-0 bg-white dark:bg-[#1e1e1e]"
-									sandbox="allow-scripts allow-same-origin allow-forms"
-									referrerPolicy="no-referrer"
-								/>
+								{app?.host && app?.ports?.frontend ? (
+									<iframe
+										key={previewKey}
+										title="App Preview"
+										src={`http://${app.host}:${app.ports.frontend}`}
+										className="absolute inset-0 w-full h-full border-0 bg-white dark:bg-[#1e1e1e]"
+										sandbox="allow-scripts allow-same-origin allow-forms"
+										referrerPolicy="no-referrer"
+									/>
+								) : (
+									<div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
+										{app ? (
+											<>
+												<ExclamationTriangleIcon className="w-10 h-10 text-yellow-500 mb-3" />
+												<p className="text-gray-600 dark:text-gray-400 font-medium">Instance scaling or not yet available</p>
+												<p className="text-sm text-gray-500 dark:text-gray-500 mt-1">Please wait a moment while the instance starts up.</p>
+											</>
+										) : (
+											<>
+												<ArrowPathIcon className="w-8 h-8 text-blue-500 animate-spin mb-3" />
+												<p className="text-gray-600 dark:text-gray-400">Fetching instance info...</p>
+											</>
+										)}
+									</div>
+								)}
 							</div>
 						</div>
 					)}
