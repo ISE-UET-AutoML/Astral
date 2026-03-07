@@ -35,32 +35,18 @@ const Modal = ({
 
 			{/* Modal content */}
 			<div
-				className={`relative z-50 w-full ${maxWidth} rounded-2xl ${className}`}
-				style={{
-					background: 'var(--modal-bg)',
-					border: '1px solid var(--modal-border)',
-					boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-				}}
+				className={`relative z-50 w-full ${maxWidth} bg-white dark:[background:var(--modal-bg)] rounded-2xl shadow-2xl border border-gray-200 dark:border-[var(--modal-border)] ${className}`}
 				{...props}
 			>
 				{/* Header */}
 				{title && (
-					<div
-						className="flex items-center justify-between px-6 py-4 border-b"
-						style={{
-							borderColor: 'var(--modal-header-border)',
-						}}
-					>
-						<h2
-							className="text-xl font-semibold"
-							style={{ color: 'var(--modal-title-color)' }}
-						>
+					<div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-[var(--modal-header-border)]">
+						<h2 className="text-xl font-semibold text-gray-900 dark:text-[var(--modal-title-color)]">
 							{title}
 						</h2>
 						<button
 							onClick={onClose}
-							className="modal-close-btn transition-colors p-1 rounded-lg -mr-1"
-							style={{ color: 'var(--modal-close-color)' }}
+							className="text-gray-400 hover:text-gray-600 dark:text-[var(--modal-close-color)] dark:hover:text-[var(--modal-close-hover)] transition-colors"
 							aria-label="Close modal"
 						>
 							<svg

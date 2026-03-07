@@ -2,35 +2,35 @@ import React from 'react'
 import { Card, Alert, Button } from 'antd'
 import { StopOutlined, CheckCircleOutlined, DeleteOutlined } from '@ant-design/icons'
 
-export function DeployCloudServerCard({ deployData, backgroundGradient }) {
+export function DeployCloudServerCard({ deployData }) {
 	if (!deployData) return null
 
 	const isOnline = deployData.status === 'ONLINE'
 
 	return (
-		<Card
-			title={
-				<span className="font-poppins text-[var(--secondary-text)]">
-					🚀 Cloud Server
-				</span>
-			}
-			className="rounded-xl shadow-sm border border-[var(--border)] [background:var(--card-gradient)]"
-			style={{
-				backdropFilter: 'blur(10px)',
-				borderRadius: '12px',
-				fontFamily: 'Poppins, sans-serif',
-			}}
-		>
+			<Card
+				title={
+					<span className="font-poppins text-lg font-semibold text-[var(--text)]">
+						🚀 Cloud Server
+					</span>
+				}
+				className="deploy-cloud-server-card rounded-xl shadow-lg border border-[var(--border)] [background:var(--card-gradient)]"
+				style={{
+					backdropFilter: 'blur(10px)',
+					borderRadius: '12px',
+					fontFamily: 'Poppins, sans-serif',
+				}}
+			>
 			<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
 				<div>
 					<Alert
 						message={
 							isOnline ? (
-								<span className="font-poppins text-[var(--secondary-text)]">
+								<span className="font-poppins text-[var(--text)]">
 									Shut down server instance
 								</span>
 							) : (
-								<span className="font-poppins text-[var(--secondary-text)]">
+								<span className="font-poppins text-[var(--text)]">
 									Start server instance
 								</span>
 							)
@@ -52,19 +52,17 @@ export function DeployCloudServerCard({ deployData, backgroundGradient }) {
 						}
 						type={isOnline ? 'warning' : 'info'}
 						showIcon
-						className="border border-[var(--border)] rounded-xl"
+						className="border border-[var(--border)] rounded-xl [background:var(--hover-bg)]"
 						style={{
 							height: 130,
-							background: backgroundGradient,
-							borderRadius: '12px',
 							fontFamily: 'Poppins, sans-serif',
 						}}
 					/>
 					<Button
-						type="default"
+						type="primary"
 						icon={isOnline ? <StopOutlined /> : <CheckCircleOutlined />}
 						size="large"
-						className="w-full font-bold"
+						className="w-full mt-4 font-bold deploy-btn-solid"
 					>
 						{isOnline ? 'Shut down' : 'Start'}
 					</Button>
@@ -72,7 +70,7 @@ export function DeployCloudServerCard({ deployData, backgroundGradient }) {
 				<div>
 					<Alert
 						message={
-							<span className="font-poppins text-[var(--secondary-text)]">
+							<span className="font-poppins text-[var(--text)]">
 								Delete server instance
 							</span>
 						}
@@ -85,19 +83,17 @@ export function DeployCloudServerCard({ deployData, backgroundGradient }) {
 						}
 						type="error"
 						showIcon
-						className="border border-[var(--border)] rounded-xl"
+						className="border border-[var(--border)] rounded-xl [background:var(--hover-bg)]"
 						style={{
 							height: 130,
-							background: backgroundGradient,
-							borderRadius: '12px',
 							fontFamily: 'Poppins, sans-serif',
 						}}
 					/>
 					<Button
-						type="default"
+						type="primary"
 						icon={<DeleteOutlined />}
 						size="large"
-						className="w-full font-bold mt-[15px]"
+						className="w-full mt-4 font-bold deploy-btn-danger"
 					>
 						Delete Server
 					</Button>

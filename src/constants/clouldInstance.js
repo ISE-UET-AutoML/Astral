@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, Space, Typography, Badge, Row, Col, Divider, Collapse } from 'antd'
+import { Card, Space, Typography, Badge, Row, Col, Divider, Collapse, Button } from 'antd'
 import {
 	ClockCircleOutlined,
 	CloudServerOutlined,
@@ -181,7 +181,13 @@ export const InstanceSizeCard = ({ size, details, selected, onClick }) => (
 	</Card>
 )
 
-export const CostEstimator = ({ hours, gpuLevel }) => {
+export const CostEstimator = ({
+	hours,
+	gpuLevel,
+	onStartTraining,
+	isProcessing,
+	canStart,
+}) => {
 	const hourlyRate = gpuLevel?.cost || 0
 	const totalCost = hours * hourlyRate
 
@@ -234,6 +240,28 @@ export const CostEstimator = ({ hours, gpuLevel }) => {
 						</Text>
 					</Col>
 				</Row>
+				{onStartTraining && (
+					<div className="pt-4 mt-2 w-full">
+						<button
+							type="button"
+							onClick={onStartTraining}
+							disabled={!canStart || isProcessing}
+							className="w-full py-3 px-4 rounded-2xl font-medium text-white bg-blue-500 hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-500 transition-colors border-0"
+						>
+							{isProcessing ? (
+								<span className="inline-flex items-center justify-center gap-2">
+									<svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+										<circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+										<path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+									</svg>
+									Finding instance...
+								</span>
+							) : (
+								'Start Training'
+							)}
+						</button>
+					</div>
+				)}
 			</Space>
 		</Card>
 	)
@@ -261,8 +289,8 @@ export const InstanceInfo = ({ formData }) => {
 				size="large"
 				className="w-full"
 			>
-				<Row gutter={[16, 16]}>
-					<Col span={12}>
+				<div className="flex w-full gap-4">
+					<div className="flex-1 min-w-0">
 						<Card
 							size="small"
 							title={
@@ -272,7 +300,7 @@ export const InstanceInfo = ({ formData }) => {
 									Hardware Specs
 								</span>
 							}
-							className="rounded-xl border border-[var(--border)] bg-[var(--hover-bg)]"
+							className="rounded-xl border border-[var(--border)] bg-[var(--hover-bg)] h-full"
 						>
 							<Space direction="vertical">
 								<Text
@@ -302,8 +330,8 @@ export const InstanceInfo = ({ formData }) => {
 								</Text>
 							</Space>
 						</Card>
-					</Col>
-					<Col span={12}>
+					</div>
+					<div className="flex-1 min-w-0">
 						<Card
 							size="small"
 							title={
@@ -313,7 +341,7 @@ export const InstanceInfo = ({ formData }) => {
 									Training Details
 								</span>
 							}
-							className="rounded-xl border border-[var(--border)] bg-[var(--hover-bg)]"
+							className="rounded-xl border border-[var(--border)] bg-[var(--hover-bg)] h-full"
 						>
 							<Space direction="vertical">
 								<Text
@@ -335,8 +363,8 @@ export const InstanceInfo = ({ formData }) => {
 								</Text>
 							</Space>
 						</Card>
-					</Col>
-				</Row>
+					</div>
+				</div>
 			</Space>
 		</Card>
 	)

@@ -108,7 +108,7 @@ export default function DatasetCard({ dataset, onDelete, isDeleting }) {
     return (
         <div
             key={dataset.id}
-            className={`group rounded-2xl shadow-lg w-full min-h-[360px] overflow-hidden font-poppins transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col relative bg-white dark:bg-[#141821] ${borderClass} ${isCompleted ? 'cursor-pointer' : 'cursor-default'} ${isProcessing ? 'opacity-25' : ''}`}
+            className={`group rounded-2xl shadow-lg w-full min-h-[360px] overflow-hidden font-poppins transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col relative bg-white dark:[background:var(--card-gradient)] ${borderClass} ${isCompleted ? 'cursor-pointer' : 'cursor-default'} ${isProcessing ? 'opacity-25' : ''}`}
             onClick={handleCardClick}
         >
             {/* Header Section */}

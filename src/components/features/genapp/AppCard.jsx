@@ -137,17 +137,14 @@ function AppCard({ app, onViewDetails }) {
 	}
 
 	return (
-		<Card className="rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 hover:-translate-y-1" style={{ background: 'var(--card-gradient)', border: '1px solid var(--border)' }}>
+		<Card className="rounded-2xl shadow-lg bg-white dark:[background:var(--card-gradient)] border border-gray-200 dark:border-[var(--border)] hover:shadow-xl transition-all duration-200 hover:-translate-y-1">
 			<CardHeader className="pb-3">
 				<div className="flex items-start justify-between gap-2">
 					<div className="flex items-center gap-2 flex-1 min-w-0">
-						<div className="p-2 rounded-lg bg-gradient-to-br from-blue-100 to-blue-200 dark:from-[#2a2a2c] dark:to-[#252527] text-blue-600 dark:text-gray-300 flex-shrink-0">
+						<div className="p-2 rounded-lg bg-gradient-to-br from-blue-100 to-blue-200 dark:from-white/10 dark:to-white/5 text-blue-600 dark:text-[var(--accent-text)] flex-shrink-0">
 							<AppIcon taskType={app?.task_type} />
 						</div>
-						<CardTitle
-							className="text-lg text-gray-900 dark:text-white truncate"
-							title={app?.name}
-						>
+						<CardTitle className="text-lg text-gray-900 dark:text-[var(--text)] truncate" title={app?.name}>
 							{app?.name || `App #${app?.id}`}
 						</CardTitle>
 					</div>
@@ -158,10 +155,8 @@ function AppCard({ app, onViewDetails }) {
 			<CardContent className="space-y-3">
 				{/* Task Type */}
 				<div className="flex items-center gap-2 text-sm">
-					<span className="text-gray-500 dark:text-gray-400 font-medium">
-						Task:
-					</span>
-					<span className="text-gray-900 dark:text-white capitalize">
+					<span className="text-gray-500 dark:text-[var(--secondary-text)] font-medium">Task:</span>
+					<span className="text-gray-900 dark:text-[var(--text)] capitalize">
 						{app?.task_type?.replace(/_/g, ' ') || 'N/A'}
 					</span>
 				</div>
@@ -169,10 +164,8 @@ function AppCard({ app, onViewDetails }) {
 				{/* Model ID */}
 				{app?.model_id != null && (
 					<div className="flex items-center gap-2 text-sm">
-						<span className="text-gray-500 dark:text-gray-400 font-medium">
-							Model ID:
-						</span>
-						<span className="text-gray-900 dark:text-white font-mono">
+						<span className="text-gray-500 dark:text-[var(--secondary-text)] font-medium">Model ID:</span>
+						<span className="text-gray-900 dark:text-[var(--text)] font-mono">
 							{app.model_id}
 						</span>
 					</div>
@@ -181,10 +174,8 @@ function AppCard({ app, onViewDetails }) {
 				{/* Created At */}
 				{app?.created_at && (
 					<div className="flex items-center gap-2 text-sm">
-						<span className="text-gray-500 dark:text-gray-400 font-medium">
-							Created:
-						</span>
-						<span className="text-gray-900 dark:text-white text-xs">
+						<span className="text-gray-500 dark:text-[var(--secondary-text)] font-medium">Created:</span>
+						<span className="text-gray-900 dark:text-[var(--text)] text-xs">
 							{formatDate(app.created_at)}
 						</span>
 					</div>
@@ -192,22 +183,18 @@ function AppCard({ app, onViewDetails }) {
 
 				{/* Instance Info */}
 				{hasInstance && (
-					<div className="pt-2 mt-2 border-t" style={{ borderColor: 'var(--border)' }}>
-						<div className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
+					<div className="pt-2 mt-2 border-t border-gray-200 dark:border-[var(--border)]">
+						<div className="text-xs text-gray-500 dark:text-[var(--secondary-text)] space-y-1">
 							<div className="flex justify-between">
 								<span>Instance:</span>
-								<span className="font-mono text-gray-700 dark:text-gray-300">
-									{String(app.instance_id ?? '').substring(
-										0,
-										8
-									)}
-									...
+								<span className="font-mono text-gray-700 dark:text-[var(--text)]">
+									{String(app.instance_id ?? '').substring(0, 8)}...
 								</span>
 							</div>
 							{app.ports?.frontend && (
 								<div className="flex justify-between">
 									<span>Port:</span>
-									<span className="font-mono text-gray-700 dark:text-gray-300">
+									<span className="font-mono text-gray-700 dark:text-[var(--text)]">
 										{app.ports.frontend}
 									</span>
 								</div>
@@ -257,7 +244,7 @@ function AppCard({ app, onViewDetails }) {
 							size="sm"
 							variant="outline"
 							onClick={() => onViewDetails(app)}
-							className="flex-1 app-card-details-btn text-xs"
+							className="flex-1 border-gray-300 dark:border-[var(--border)] text-gray-700 dark:text-[var(--text)] text-xs"
 						>
 							Details
 						</Button>

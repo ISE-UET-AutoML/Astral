@@ -35,7 +35,6 @@ export default function DeployedModelView() {
         isCheckingUIStatus,
         isUIGenerated,
         s3Url,
-        livePredictGradient,
         taskConfig,
         handleOpenUpload,
         handleCloseUpload,
@@ -122,7 +121,6 @@ export default function DeployedModelView() {
                         recentPredictions={recentPredictions}
                         isLoadingPredictions={isLoadingPredictions}
                         onViewPrediction={handleViewPrediction}
-                        backgroundGradient={livePredictGradient}
                     />
 
                     <DeployPredictionViewerModal
@@ -137,10 +135,7 @@ export default function DeployedModelView() {
                     />
 
 
-                    <DeployCloudServerCard
-                        deployData={deployData}
-                        backgroundGradient={livePredictGradient}
-                    />
+                    <DeployCloudServerCard deployData={deployData} />
                 </div>
             </div>
         </>

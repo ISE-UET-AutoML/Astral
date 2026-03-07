@@ -215,19 +215,24 @@ export default function ProjectGenApp() {
 	console.log("Gen app:", apps);
 
 	return (
-		<div className="relative min-h-screen bg-gray-50 dark:bg-slate-900">
+		<div className="relative min-h-screen bg-gray-50 dark:bg-[var(--surface)]">
 			<div className="relative z-10 p-6">
 				{/* Header */}
 				<div className="mb-8">
 					<div className="flex items-center gap-3 mb-4">
+<<<<<<< HEAD
 						<div className="p-2 rounded-xl bg-gray-200 dark:bg-[#2a2a2c]">
 							<AppIcon className="h-6 w-6 text-gray-600 dark:text-gray-300" />
+=======
+						<div className="p-2 rounded-xl bg-gradient-to-br from-blue-100 to-blue-200 dark:from-white/10 dark:to-white/5">
+							<AppIcon className="h-6 w-6 text-blue-600 dark:text-[var(--accent-text)]" />
+>>>>>>> refactorFEHV
 						</div>
 						<div>
-							<h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+							<h1 className="text-3xl font-bold text-gray-900 dark:text-[var(--text)]">
 								My Apps
 							</h1>
-							<p className="mt-1 text-gray-500 dark:text-gray-400">
+							<p className="mt-1 text-gray-500 dark:text-[var(--secondary-text)]">
 								{loading
 									? '...'
 									: `${apps.length} app generated`}
@@ -236,12 +241,24 @@ export default function ProjectGenApp() {
 					</div>
 				</div>
 
+<<<<<<< HEAD
 				{/* Gen App: bên trái tiêu đề + mô tả, bên phải nút Gen App trên / Model selection dưới */}
 				<Card className="rounded-2xl shadow-2xl mb-6" style={{ background: 'var(--card-gradient)', border: '1px solid var(--border)' }}>
 					<CardContent className="pt-6 pb-6">
+=======
+				{/* Gen App: chọn deploy_id rồi bấm Gen App */}
+				<Card className="gen-app-card rounded-2xl shadow-2xl mb-6 bg-white dark:[background:var(--card-gradient)] border border-gray-200 dark:border-[var(--border)]">
+					<CardHeader>
+						<CardTitle className="flex items-center gap-2 text-gray-900 dark:text-[var(--text)]">
+							<span className="w-2 h-2 rounded-full bg-gray-500 dark:bg-[var(--secondary-text)]" />
+							Gen App
+						</CardTitle>
+					</CardHeader>
+					<CardContent>
+>>>>>>> refactorFEHV
 						{deploys.length === 0 ? (
 							<div className="flex flex-col gap-4">
-								<p className="text-gray-600 dark:text-gray-300">
+								<p className="text-gray-600 dark:text-[var(--secondary-text)]">
 									No model found. Please deploy a model first.
 								</p>
 								<Button
@@ -250,12 +267,17 @@ export default function ProjectGenApp() {
 											PATHS.PROJECT_DEPLOY(projectId)
 										)
 									}
+<<<<<<< HEAD
 									className="bg-gray-600 hover:bg-gray-500 text-white"
+=======
+									className="bg-gray-600 hover:bg-gray-700 dark:bg-[#2a2a2a] dark:hover:bg-[#333333] dark:border dark:border-[var(--border)] text-white"
+>>>>>>> refactorFEHV
 								>
 									Go to Deploy page
 								</Button>
 							</div>
 						) : (
+<<<<<<< HEAD
 							<div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
 								{/* Trái: Gen App + mô tả */}
 								<div className="flex-1 min-w-0">
@@ -298,6 +320,46 @@ export default function ProjectGenApp() {
 										disabled={!selectedModelId}
 										className="h-10 px-6 shrink-0 bg-gray-600 hover:bg-gray-500 text-white disabled:opacity-50"
 									>
+=======
+							<div className="flex flex-wrap gap-4 items-center justify-between">
+								<p className="text-sm text-gray-500 dark:text-[var(--secondary-text)]">
+									Select a model and click Gen App to create an app from the model.
+								</p>
+								<div className="flex items-center gap-3 shrink-0">
+									<div className="flex items-center gap-2 min-w-[200px]">
+										<label className="text-sm font-medium text-gray-700 dark:text-[var(--text)] whitespace-nowrap">
+											Model
+										</label>
+										<CustomSelect
+											value={selectedModelId}
+											onChange={(val) => {
+												setSelectedModelId(val)
+												const found = deploys.find(
+													(d) => d.model_id === val
+												)
+												if (found) {
+													setAppName(found.name ?? '')
+												}
+											}}
+											placeholder="Select a model..."
+											className="w-[220px] bg-gray-50 dark:bg-[var(--input-bg)] border-gray-200 dark:border-[var(--input-border)] text-gray-900 dark:text-[var(--text)]"
+										>
+											{[...new Map(deploys.map((d) => [d.model_id, d])).values()].map((d) => (
+												<Option
+													key={d.model_id}
+													value={d.model_id}
+												>
+													{d.name ?? `Model #${d.model_id}`} (ID: {d.model_id})
+												</Option>
+											))}
+										</CustomSelect>
+									</div>
+									<Button
+										onClick={() => setIsFormOpen(true)}
+										disabled={!selectedModelId}
+										className="bg-gray-600 hover:bg-gray-700 dark:bg-[#2a2a2a] dark:hover:bg-[#333333] dark:border dark:border-[var(--border)] text-white disabled:opacity-50"
+									>
+>>>>>>> refactorFEHV
 										Gen App
 									</Button>
 								</div>
@@ -316,8 +378,13 @@ export default function ProjectGenApp() {
 					</Card>
 				)}
 				{loading ? (
+<<<<<<< HEAD
 					<Card className="rounded-2xl shadow-2xl" style={{ background: 'var(--card-gradient)', border: '1px solid var(--border)' }}>
 						<CardContent className="flex flex-col items-center justify-center py-16 text-gray-500 dark:text-gray-400">
+=======
+					<Card className="rounded-2xl shadow-2xl bg-white dark:[background:var(--card-gradient)] border border-gray-200 dark:border-[var(--border)]">
+						<CardContent className="flex flex-col items-center justify-center py-16 text-gray-500 dark:text-[var(--secondary-text)]">
+>>>>>>> refactorFEHV
 							Loading...
 						</CardContent>
 					</Card>
@@ -342,15 +409,22 @@ export default function ProjectGenApp() {
 						))}
 					</div>
 				) : (
+<<<<<<< HEAD
 					<Card className="rounded-2xl shadow-2xl" style={{ background: 'var(--card-gradient)', border: '1px solid var(--border)' }}>
 						<CardContent className="flex flex-col items-center justify-center py-16">
 							<div className="p-4 rounded-full mb-4 bg-gray-100 dark:bg-[#2a2a2c]">
 								<EmptyIcon className="h-12 w-12 text-gray-400 dark:text-gray-500" />
+=======
+					<Card className="rounded-2xl shadow-2xl bg-white dark:[background:var(--card-gradient)] border border-gray-200 dark:border-[var(--border)]">
+						<CardContent className="flex flex-col items-center justify-center py-16">
+							<div className="p-4 rounded-full mb-4 bg-blue-50 dark:bg-[var(--hover-bg)]">
+								<EmptyIcon className="h-12 w-12 text-gray-400 dark:text-[var(--secondary-text)]" />
+>>>>>>> refactorFEHV
 							</div>
-							<h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
+							<h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-[var(--text)]">
 								You haven't generated any apps yet
 							</h3>
-							<p className="text-center max-w-md text-gray-500 dark:text-gray-400">
+							<p className="text-center max-w-md text-gray-500 dark:text-[var(--secondary-text)]">
 								Select a model and click Gen App to create your
 								first app.
 							</p>
@@ -367,10 +441,14 @@ export default function ProjectGenApp() {
 			>
 				<div className="space-y-4">
 					<div>
+<<<<<<< HEAD
 						<label
 							className="block text-sm font-medium mb-1"
 							style={{ color: 'var(--form-label-color)' }}
 						>
+=======
+						<label className="block text-sm font-medium text-gray-700 dark:text-[var(--text)] mb-1">
+>>>>>>> refactorFEHV
 							Model
 						</label>
 						<CustomSelect
@@ -385,8 +463,12 @@ export default function ProjectGenApp() {
 									setAppName(found.name ?? '')
 								}
 							}}
+<<<<<<< HEAD
 							placeholder="Select a model..."
 							className="theme-dropdown w-full"
+=======
+							className="bg-gray-50 dark:bg-[var(--input-bg)] border-gray-200 dark:border-[var(--input-border)] text-gray-900 dark:text-[var(--text)]"
+>>>>>>> refactorFEHV
 						>
 							{deploys.map((d) => (
 								<Option key={d.model_id} value={d.model_id}>
@@ -397,10 +479,14 @@ export default function ProjectGenApp() {
 					</div>
 
 					<div>
+<<<<<<< HEAD
 						<label
 							className="block text-sm font-medium mb-1"
 							style={{ color: 'var(--form-label-color)' }}
 						>
+=======
+						<label className="block text-sm font-medium text-gray-700 dark:text-[var(--text)] mb-1">
+>>>>>>> refactorFEHV
 							App name
 						</label>
 						<input
@@ -408,20 +494,28 @@ export default function ProjectGenApp() {
 							value={appName}
 							onChange={(e) => setAppName(e.target.value)}
 							placeholder="Please enter the app name"
+<<<<<<< HEAD
 							className="modal-form-input w-full rounded-xl border px-4 py-3 text-sm focus:outline-none"
 							style={{
 								backgroundColor: 'var(--input-bg)',
 								borderColor: 'var(--input-border)',
 								color: 'var(--input-color)',
 							}}
+=======
+							className="w-full rounded-xl border border-gray-300 dark:border-[var(--input-border)] bg-white dark:bg-[var(--input-bg)] px-4 py-3 text-sm text-gray-900 dark:text-[var(--text)] placeholder-gray-400 dark:placeholder-[var(--placeholder-text)] focus:outline-none focus:ring-2 focus:ring-[var(--input-focus-border)]"
+>>>>>>> refactorFEHV
 						/>
 					</div>
 
 					<div>
+<<<<<<< HEAD
 						<label
 							className="block text-sm font-medium mb-1"
 							style={{ color: 'var(--form-label-color)' }}
 						>
+=======
+						<label className="block text-sm font-medium text-gray-700 dark:text-[var(--text)] mb-1">
+>>>>>>> refactorFEHV
 							Task type
 						</label>
 						<input
@@ -434,6 +528,7 @@ export default function ProjectGenApp() {
 										: 'Image Classification'
 							}
 							readOnly
+<<<<<<< HEAD
 							className="w-full rounded-xl border px-3 py-3 text-sm cursor-not-allowed"
 							style={{
 								backgroundColor: 'var(--input-disabled-bg)',
@@ -445,6 +540,11 @@ export default function ProjectGenApp() {
 							className="mt-1 text-xs"
 							style={{ color: 'var(--secondary-text)' }}
 						>
+=======
+							className="w-full rounded-2xl border border-gray-300 dark:border-[var(--input-border)] bg-gray-100 dark:bg-[var(--input-disabled-bg)] px-3 py-3 text-sm text-gray-500 dark:text-[var(--secondary-text)] cursor-not-allowed"
+						/>
+						<p className="mt-1 text-xs text-gray-400 dark:text-[var(--secondary-text)]">
+>>>>>>> refactorFEHV
 							Task type is automatically determined from the
 							project.
 						</p>
@@ -454,16 +554,24 @@ export default function ProjectGenApp() {
 						<Button
 							variant="outline"
 							onClick={() => setIsFormOpen(false)}
+<<<<<<< HEAD
 							size="sm"
 							className="theme-modal-btn-outline"
+=======
+							className="border-gray-300 dark:border-[var(--border)] text-gray-700 dark:text-[var(--text)]"
+>>>>>>> refactorFEHV
 						>
 							Cancel
 						</Button>
 						<Button
 							onClick={handleConfirmGenApp}
 							disabled={genLoading}
+<<<<<<< HEAD
 							size="sm"
 							className="theme-modal-btn-primary"
+=======
+							className="bg-gray-600 hover:bg-gray-700 dark:bg-[#2a2a2a] dark:hover:bg-[#333333] dark:border dark:border-[var(--border)] text-white disabled:opacity-50"
+>>>>>>> refactorFEHV
 						>
 							{genLoading ? 'Processing...' : 'Confirm'}
 						</Button>

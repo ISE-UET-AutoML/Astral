@@ -118,7 +118,7 @@ export default function ProjectCard({ project, getProjects }) {
         <Spin spinning={isDeleting} tip="Deleting..." size="large">
             <div
                 key={project.id}
-                className="group rounded-2xl shadow-lg w-full h-[320px] overflow-hidden font-poppins cursor-pointer transition-all duration-300 border-2 hover:-translate-y-1 hover:shadow-xl flex flex-col relative bg-white dark:bg-[#141821] border-gray-300 border-5 dark:border-white/10"
+                className="group rounded-2xl shadow-lg w-full h-[320px] overflow-hidden font-poppins cursor-pointer transition-all duration-300 border-2 hover:-translate-y-1 hover:shadow-xl flex flex-col relative bg-white dark:[background:var(--card-gradient)] border-gray-300 dark:border-[var(--border)]"
                 onClick={handleCardClick}
             >
                 {/* Background Image Section */}
@@ -129,7 +129,7 @@ export default function ProjectCard({ project, getProjects }) {
                             backgroundImage: `url(${getTaskBackgroundImage(taskType)})`,
                         }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white/10 dark:to-black/20" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white/10 dark:to-[var(--surface)]/30" />
 
                     {/* Header with Avatar and Actions */}
                     <div className="absolute top-4 left-4 right-4 flex justify-between items-start">

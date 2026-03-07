@@ -56,7 +56,7 @@ const ProjectInfo = () => {
 		}
 
 		if (projectInfo?.id) fetchData()
-	}, [projectInfo]) // Updated dependency array to use the entire projectInfo object
+	}, [projectInfo])
 
 	// Format created_at
 	const formattedDate = new Date(projectInfo?.created_at).toLocaleString(
@@ -73,17 +73,22 @@ const ProjectInfo = () => {
 
 	return (
 		<>
-			<div className="min-h-screen bg-[var(--surface)]">
+			<div className="min-h-screen" style={{ background: 'var(--surface)' }}>
 				<div className="relative pt-16 px-4 sm:px-6 lg:px-8 pb-20">
 					<div className="relative z-10 max-w-7xl mx-auto">
 						<div className="mb-16 text-center">
 							<h1
-								className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-[var(--title-project)]"
+								className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight"
+								style={{ color: 'var(--title-project)' }}
 							>
 								Project Overview
 							</h1>
-							<p className="mx-auto max-w-3xl text-lg sm:text-xl leading-relaxed text-[var(--secondary-text)]">
-								Comprehensive overview of your project metrics and deployment status
+							<p
+								className="mx-auto max-w-3xl text-lg sm:text-xl leading-relaxed"
+								style={{ color: 'var(--secondary-text)' }}
+							>
+								{projectInfo?.description ||
+									'Comprehensive overview of your project metrics and deployment status'}
 							</p>
 						</div>
 
@@ -91,16 +96,22 @@ const ProjectInfo = () => {
 							<div className="xl:col-span-4">
 								<div className="sticky top-8">
 									<div
-										className="p-8 rounded-3xl border backdrop-blur-xl shadow-2xl [border-color:var(--border)] [background:var(--card-gradient)]"
+										className="p-8 rounded-3xl border backdrop-blur-xl shadow-2xl"
+										style={{
+											borderColor: 'var(--border)',
+											background: 'var(--card-gradient)',
+										}}
 									>
 										<div className="flex items-center space-x-3 mb-8">
 											<div className="p-2 rounded-xl bg-gradient-to-br from-white/20 to-white/10">
 												<SettingOutlined
-													className="text-xl text-[var(--accent-text)]"
+													className="text-xl"
+													style={{ color: 'var(--accent-text)' }}
 												/>
 											</div>
 											<h2
-												className="text-xl font-bold text-[var(--text)]"
+												className="text-xl font-bold"
+												style={{ color: 'var(--text)' }}
 											>
 												Project Details
 											</h2>
@@ -136,22 +147,29 @@ const ProjectInfo = () => {
 
 							<div className="xl:col-span-8 space-y-8">
 								<div
-									className="p-8 rounded-3xl border backdrop-blur-xl shadow-2xl [border-color:var(--border)] [background:var(--card-gradient)]"
+									className="p-8 rounded-3xl border backdrop-blur-xl shadow-2xl"
+									style={{
+										borderColor: 'var(--border)',
+										background: 'var(--card-gradient)',
+									}}
 								>
 									<div className="flex items-center space-x-3 mb-8">
 										<div className="p-3 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-600/10">
 											<ExperimentOutlined
-												className="text-2xl text-[var(--accent-text)]"
+												className="text-2xl"
+												style={{ color: 'var(--accent-text)' }}
 											/>
 										</div>
 										<div>
 											<h3
-												className="text-2xl font-bold text-[var(--text)]"
+												className="text-2xl font-bold"
+												style={{ color: 'var(--text)' }}
 											>
 												Experiments
 											</h3>
 											<p
-												className="text-sm opacity-70 text-[var(--secondary-text)]"
+												className="text-sm opacity-70"
+												style={{ color: 'var(--secondary-text)' }}
 											>
 												Training and validation status
 											</p>
@@ -209,22 +227,29 @@ const ProjectInfo = () => {
 								</div>
 
 								<div
-									className="p-8 rounded-3xl border backdrop-blur-xl shadow-2xl [border-color:var(--border)] [background:var(--card-gradient)]"
+									className="p-8 rounded-3xl border backdrop-blur-xl shadow-2xl"
+									style={{
+										borderColor: 'var(--border)',
+										background: 'var(--card-gradient)',
+									}}
 								>
 									<div className="flex items-center space-x-3 mb-8">
 										<div className="p-3 rounded-xl bg-gradient-to-br from-purple-500/20 to-purple-600/10">
 											<DatabaseOutlined
-												className="text-2xl text-[var(--accent-text)]"
+												className="text-2xl"
+												style={{ color: 'var(--accent-text)' }}
 											/>
 										</div>
 										<div>
 											<h3
-												className="text-2xl font-bold text-[var(--text)]"
+												className="text-2xl font-bold"
+												style={{ color: 'var(--text)' }}
 											>
 												Models
 											</h3>
 											<p
-												className="text-sm opacity-70 text-[var(--secondary-text)]"
+												className="text-sm opacity-70"
+												style={{ color: 'var(--secondary-text)' }}
 											>
 												Available trained models
 											</p>
@@ -245,22 +270,29 @@ const ProjectInfo = () => {
 								</div>
 
 								<div
-									className="p-8 rounded-3xl border backdrop-blur-xl shadow-2xl [border-color:var(--border)] [background:var(--card-gradient)]"
+									className="p-8 rounded-3xl border backdrop-blur-xl shadow-2xl"
+									style={{
+										borderColor: 'var(--border)',
+										background: 'var(--card-gradient)',
+									}}
 								>
 									<div className="flex items-center space-x-3 mb-8">
 										<div className="p-3 rounded-xl bg-gradient-to-br from-cyan-500/20 to-cyan-600/10">
 											<CloudOutlined
-												className="text-2xl text-[var(--accent-text)]"
+												className="text-2xl"
+												style={{ color: 'var(--accent-text)' }}
 											/>
 										</div>
 										<div>
 											<h3
-												className="text-2xl font-bold text-[var(--text)]"
+												className="text-2xl font-bold"
+												style={{ color: 'var(--text)' }}
 											>
 												Deployed Models
 											</h3>
 											<p
-												className="text-sm opacity-70 text-[var(--secondary-text)]"
+												className="text-sm opacity-70"
+												style={{ color: 'var(--secondary-text)' }}
 											>
 												Production deployment status
 											</p>

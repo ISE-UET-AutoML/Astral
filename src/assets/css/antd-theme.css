@@ -53,6 +53,38 @@
 	color: var(--button-primary-color) !important;
 }
 
+/* Deploy buttons – xanh đậm solid, chữ trắng */
+.ant-btn-primary.deploy-btn-solid {
+	background: #2563eb !important;
+	background-image: none !important;
+	border: none !important;
+	color: #ffffff !important;
+}
+
+.ant-btn-primary.deploy-btn-solid:hover:not(:disabled) {
+	background: #1d4ed8 !important;
+	background-image: none !important;
+	color: #ffffff !important;
+}
+
+.ant-btn-primary.deploy-btn-solid:disabled {
+	opacity: 0.5;
+}
+
+/* Deploy Delete button – đỏ solid */
+.ant-btn-primary.deploy-btn-danger {
+	background: #ef4444 !important;
+	background-image: none !important;
+	border: none !important;
+	color: #ffffff !important;
+}
+
+.ant-btn-primary.deploy-btn-danger:hover:not(:disabled) {
+	background: #dc2626 !important;
+	background-image: none !important;
+	color: #ffffff !important;
+}
+
 .ant-btn-default {
 	background: var(--button-default-bg) !important;
 	border-color: var(--button-default-border) !important;
@@ -223,7 +255,83 @@
 	border-color: var(--alert-warning-border) !important;
 }
 
+/* Cloud Server cards – nền xám đồng nhất cho cả hai action card */
+.deploy-cloud-server-card .ant-alert-warning,
+.deploy-cloud-server-card .ant-alert-info,
+.deploy-cloud-server-card .ant-alert-error {
+	background: var(--alert-bg) !important;
+	border-color: var(--alert-border) !important;
+}
+
 .ant-alert-message,
 .ant-alert-description {
 	color: var(--alert-color) !important;
+}
+
+/* AntD Empty – nền xám đồng bộ */
+.ant-empty {
+	background: transparent !important;
+}
+
+.ant-empty-description {
+	color: var(--secondary-text) !important;
+}
+
+/* AntD List – đồng bộ dark/light mode */
+.ant-list {
+	background: transparent !important;
+	color: var(--text) !important;
+}
+
+.ant-list-item {
+	border-color: var(--border) !important;
+	color: var(--text) !important;
+}
+
+.ant-list-item-meta-title {
+	color: var(--text) !important;
+}
+
+.ant-list-item-meta-description {
+	color: var(--secondary-text) !important;
+}
+
+/* AntD Steps – done = ocean blue, rest = white; wait = light gray in dark mode */
+.ant-steps-item-icon .anticon {
+	color: var(--text) !important;
+}
+
+.ant-steps-item-finish .ant-steps-item-icon .anticon {
+	color: #0ea5e9 !important;
+}
+
+/* Pending steps (chưa chạy đến) – xám nhạt trong dark mode */
+.ant-steps-item-wait .ant-steps-item-title,
+.ant-steps-item-wait .ant-steps-item-title * {
+	color: var(--secondary-text) !important;
+}
+
+.ant-steps-item-wait .ant-steps-item-description,
+.ant-steps-item-wait .ant-steps-item-description * {
+	color: var(--secondary-text) !important;
+	opacity: 0.9;
+}
+
+.ant-steps-item-wait .ant-steps-item-icon {
+	background: transparent !important;
+	border-color: var(--secondary-text) !important;
+}
+
+.ant-steps-item-wait .ant-steps-item-icon .anticon {
+	color: var(--secondary-text) !important;
+}
+
+.ant-steps-item-wait .ant-steps-item-tail::after {
+	background: var(--secondary-text) !important;
+	opacity: 0.5;
+}
+
+.ant-steps-item-wait .ant-steps-icon-dot {
+	background: var(--secondary-text) !important;
+	opacity: 0.6;
 }

@@ -5,9 +5,15 @@ html {
 }
 
 .theme-table .ant-table {
-	background: transparent !important;
+	background: var(--surface) !important;
 	color: var(--text) !important;
 	font-family: 'Poppins', sans-serif !important;
+}
+
+.theme-table .ant-table-container,
+.theme-table .ant-table-content,
+.theme-table .ant-table-body {
+	background: var(--surface) !important;
 }
 
 .theme-table .ant-table-thead > tr > th {
@@ -29,8 +35,24 @@ html {
 	background: var(--table-row-hover) !important;
 }
 
+/* Empty state - grey background đồng bộ */
+.theme-table .ant-table-placeholder,
+.theme-table .ant-table-placeholder td {
+	background: var(--surface) !important;
+	border-color: var(--table-cell-border) !important;
+}
+
+.theme-table .ant-table-placeholder .ant-empty {
+	background: transparent !important;
+}
+
 .theme-table .ant-empty-description {
 	color: var(--secondary-text) !important;
 	font-family: 'Poppins', sans-serif !important;
+}
+
+.theme-table .ant-empty .ant-empty-image svg {
+	fill: var(--secondary-text) !important;
+	opacity: 0.5;
 }
 

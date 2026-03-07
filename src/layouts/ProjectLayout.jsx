@@ -7,9 +7,9 @@ export default function ProjectLayout() {
 	const { theme } = useTheme()
 
 	return (
-		<div className="relative min-h-screen bg-white dark:bg-[#01000A]">
+		<div className="relative min-h-screen bg-gray-50 dark:bg-[#111111]">
 			{/* Full-viewport background fill */}
-			<div className="fixed inset-0 bg-white dark:bg-[#01000A] -z-50" />
+			<div className="fixed inset-0 bg-gray-50 dark:bg-[#111111] -z-50" />
 
 			{/* Dark mode decorative background shapes */}
 			{theme === 'dark' && (
@@ -25,12 +25,12 @@ export default function ProjectLayout() {
 
 			<ProjectSidebar
 				projectID={params.id}
-				className="fixed h-[calc(100vh-60px)] w-[80px] top-[60px] z-50"
+				className="fixed h-[calc(100vh)] w-[120px] top-[60px] z-50 shadow-[4px_0_24px_rgba(0,0,0,0.02)] dark:shadow-[4px_0_24px_rgba(0,0,0,0.2)]"
 			/>
-			<div className="mx-auto w-[calc(100%-80px)] pl-[60px] pt-12 ml-[80px] mr-4 flex-grow lg:flex mt-4 min-h-[calc(100dvh-60px)] overflow-hidden">
+			<div className="mx-auto w-[calc(100%)] pl-[120px] lg:pl-[140px] pt-12 pr-4 lg:pr-6 flex-grow lg:flex mt-4 min-h-[calc(100dvh)] overflow-hidden transition-all duration-300">
 				{/* Left sidebar & main wrapper */}
-				<div className="min-w-0 flex-1 w-max xl:flex rounded-md">
-					<div className="backdrop-blur-sm border border-gray-200 dark:border-white/10 rounded-[20px] shadow-lg bg-white dark:bg-[#141821] lg:min-w-0 lg:flex-1 min-h-[calc(100dvh-60px)]">
+				<div className="min-w-0 flex-1 w-max xl:flex rounded-2xl">
+					<div className="border border-gray-200 dark:border-white/5 rounded-2xl shadow-sm bg-white dark:bg-[var(--surface)] lg:min-w-0 lg:flex-1 min-h-[calc(100dvh-100px)] overflow-hidden">
 						<Outlet className="outlet h-max" />
 					</div>
 				</div>

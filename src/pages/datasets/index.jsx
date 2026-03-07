@@ -189,8 +189,8 @@ export default function Datasets() {
 	const { theme } = useTheme()
 
 	return (
-		<div className="min-h-screen bg-white dark:bg-[#01000A] text-gray-900 dark:text-white">
-			<div className="min-h-screen pt-12 bg-white dark:bg-[#01000A]">
+		<div className="min-h-screen bg-white dark:bg-[var(--surface)] text-gray-900 dark:text-white">
+			<div className="min-h-screen pt-12 bg-white dark:bg-[var(--surface)]">
 				<main className="relative pt-20 px-6 pb-20">
 					<ContentContainer className="relative z-10">
 						{/* Header */}

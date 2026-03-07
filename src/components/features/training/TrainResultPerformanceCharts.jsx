@@ -11,7 +11,7 @@ export function TrainResultPerformanceCharts({ valGraphs }) {
 					Training Performance
 				</span>
 			}
-			className="rounded-xl border border-[var(--border)] bg-[radial-gradient(circle_at_top,_rgba(148,163,184,0.15),_transparent_55%),linear-gradient(135deg,_rgba(15,23,42,0.9),_rgba(15,23,42,0.95))] shadow-lg backdrop-blur-md"
+			className="rounded-xl border border-[var(--border)] [background:var(--card-gradient)] shadow-lg backdrop-blur-md"
 		>
 			<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
 				{Object.entries(valGraphs).map(([metricName, metricData]) => (

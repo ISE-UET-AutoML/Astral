@@ -35,9 +35,9 @@ export function TrainingProgressSteps({
 						),
 						icon:
 							currentStep !== 0 ? (
-								<DatabaseOutlined />
+								<DatabaseOutlined className="text-[var(--secondary-text)]" />
 							) : (
-								<LoadingOutlined />
+								<LoadingOutlined className="text-[var(--secondary-text)]" />
 							),
 						description: (
 							<span className="text-slate-400">
@@ -53,9 +53,9 @@ export function TrainingProgressSteps({
 						),
 						icon:
 							currentStep !== 1 ? (
-								<SettingOutlined />
+								<SettingOutlined className="text-[var(--secondary-text)]" />
 							) : (
-								<LoadingOutlined />
+								<LoadingOutlined className="text-[var(--secondary-text)]" />
 							),
 						description: (
 							<span className="text-slate-400">
@@ -71,9 +71,9 @@ export function TrainingProgressSteps({
 						),
 						icon:
 							currentStep !== 2 ? (
-								<CloudDownloadOutlined />
+								<CloudDownloadOutlined className="text-[var(--secondary-text)]" />
 							) : (
-								<LoadingOutlined />
+								<LoadingOutlined className="text-[var(--secondary-text)]" />
 							),
 						description: (
 							<span className="text-slate-400">
@@ -87,12 +87,12 @@ export function TrainingProgressSteps({
 						),
 						icon:
 							currentStep !== 3 ? (
-								<LineChartOutlined />
+								<LineChartOutlined className="text-[var(--secondary-text)]" />
 							) : maxTrainingTime &&
 							  elapsedTime >= maxTrainingTime ? (
 								<CloseCircleOutlined className="text-red-500" />
 							) : (
-								<LoadingOutlined />
+								<LoadingOutlined className="text-[var(--secondary-text)]" />
 							),
 						description: (
 							<span className="text-slate-400">
@@ -104,7 +104,7 @@ export function TrainingProgressSteps({
 						title: (
 							<span className="text-[var(--text)]">Done</span>
 						),
-						icon: <CheckCircleOutlined />,
+						icon: <CheckCircleOutlined className="text-[var(--secondary-text)]" />,
 						description: (
 							<span className="text-slate-400">
 								Finished training your model
@@ -173,7 +173,7 @@ export function TrainingProgressSteps({
 				<Card
 					title={
 						<h2 className="m-0 flex items-center text-xl font-semibold font-poppins text-[var(--text)]">
-							<SettingOutlined className="mr-2 text-[var(--accent-text)]" />
+							<SettingOutlined className="mr-2 text-[var(--secondary-text)]" />
 							Setting Up Progress
 						</h2>
 					}

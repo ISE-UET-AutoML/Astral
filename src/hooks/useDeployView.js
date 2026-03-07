@@ -39,14 +39,6 @@ export const useDeployView = ({ deployId, projectId, theme }) => {
 	const [s3Url, setS3Url] = useState(null)
 
 	// Derived
-	const livePredictGradient = useMemo(
-		() =>
-			theme === 'dark'
-				? 'linear-gradient(135deg, rgba(51, 65, 85, 0.4) 0%, rgba(15, 23, 42, 0.4) 100%)'
-				: 'rgb(249 250 251 / var(--tw-bg-opacity, 1)',
-		[theme]
-	)
-
 	const taskConfig = useMemo(
 		() => config[projectInfo.task_type],
 		[projectInfo.task_type]
@@ -414,7 +406,6 @@ export const useDeployView = ({ deployId, projectId, theme }) => {
 		s3Url,
 
 		// derived
-		livePredictGradient,
 		taskConfig,
 
 		// handlers

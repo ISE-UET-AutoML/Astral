@@ -31,26 +31,26 @@ const ProjectSidebar = ({ projectID, className }) => {
 	return (
 		<div
 			className={clsx(
-				'bg-white dark:bg-[#141821] border-r border-gray-200 dark:border-white/10 backdrop-blur-sm',
+				'bg-[var(--surface)] border-r border-gray-200 dark:border-white/10 z-50',
 				'w-[120px] fixed top-[60px] left-0 bottom-0 h-[calc(100vh-60px)] overflow-hidden',
 				'duration-300',
 				className
 			)}
 		>
 			<div className="h-full flex flex-grow flex-col">
-				<div className="py-6 flex flex-grow flex-col justify-between">
-					<nav className="flex flex-col gap-2 px-2 pb-4">
+				<div className="py-6 flex flex-grow flex-col justify-between items-center">
+					<nav className="flex flex-col gap-2 px-3 pb-4 w-full">
 						{navigation.map((item) => (
 							<NavLink
 								key={item.name}
 								to={item.href}
 								className={({ isActive }) =>
 									clsx(
-										'group flex flex-col items-center justify-center text-sm font-medium',
-										'relative rounded-2xl mx-2 my-1.5 px-2 py-3 transition-all duration-300',
+										'group flex flex-col items-center justify-center text-xs font-medium w-full',
+										'relative rounded-2xl py-3 transition-all duration-300',
 										isActive
-											? 'bg-blue-500/10 dark:bg-blue-400/20 border border-blue-500/40 dark:border-blue-400/40 shadow-md'
-											: 'hover:bg-blue-500/5 dark:hover:bg-blue-400/10 hover:translate-x-0.5'
+											? 'bg-gray-100 dark:bg-white/15 border border-gray-300 dark:border-white/40 shadow-sm dark:shadow-[0_0_12px_rgba(255,255,255,0.08)]'
+											: 'hover:bg-gray-100/50 dark:hover:bg-white/5 border border-transparent'
 									)
 								}
 							>
@@ -58,18 +58,18 @@ const ProjectSidebar = ({ projectID, className }) => {
 									<>
 										<item.icon
 											className={clsx(
-												'mx-auto flex-shrink-0 rounded-xl w-10 h-10 p-2 transition-all duration-300',
+												'mx-auto flex-shrink-0 w-7 h-7 mb-2 transition-all duration-300',
 												isActive
-													? 'text-blue-500 dark:text-blue-400'
-													: 'text-gray-500 dark:text-gray-400 group-hover:text-blue-500 dark:group-hover:text-blue-400 group-hover:scale-110'
+													? 'text-gray-900 dark:text-white'
+													: 'text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-200 group-hover:scale-110'
 											)}
 										/>
 										<span
 											className={clsx(
-												'text-xs mt-1 font-medium transition-all duration-300',
+												'text-[11px] text-center font-medium transition-all duration-300 leading-tight',
 												isActive
-													? 'text-blue-500 dark:text-blue-400 font-semibold'
-													: 'text-gray-500 dark:text-gray-400 group-hover:text-blue-500 dark:group-hover:text-blue-400'
+													? 'text-gray-900 dark:text-white font-semibold'
+													: 'text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-200'
 											)}
 										>
 											{item.name}
@@ -84,22 +84,31 @@ const ProjectSidebar = ({ projectID, className }) => {
 						to={PATHS.PROJECT_SETTINGS(projectID)}
 						className={({ isActive }) =>
 							clsx(
-								'group flex flex-col items-center text-sm font-medium px-2 py-3 rounded-lg transition-all duration-300',
-								'border-t border-gray-200 dark:border-white/10 mt-4 pt-4 mx-2',
+								'group flex flex-col items-center justify-center text-xs font-medium w-[calc(100%-24px)] py-3 rounded-2xl transition-all duration-300',
+								'mt-auto',
 								isActive
-									? 'text-blue-500 dark:text-blue-400'
-									: 'text-gray-500 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 hover:translate-x-0.5'
+									? 'bg-gray-100 dark:bg-white/15 border border-gray-300 dark:border-white/40 shadow-sm dark:shadow-[0_0_12px_rgba(255,255,255,0.08)] text-gray-900 dark:text-white'
+									: 'hover:bg-gray-100/50 dark:hover:bg-white/5 border border-transparent text-gray-500 dark:text-gray-400'
 							)
 						}
 					>
-						<SettingIcon
-							className="flex-shrink-0 rounded-xl w-10 h-10 px-2 py-2 group-hover:scale-110 transition-transform duration-300"
-						/>
-						<span className="text-xs mt-1">Settings</span>
+						{({ isActive }) => (
+							<>
+								<SettingIcon
+									className={clsx(
+										"flex-shrink-0 w-7 h-7 mb-2 transition-transform duration-300 group-hover:scale-110",
+										isActive
+											? "text-gray-900 dark:text-white"
+											: "text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-200"
+									)}
+								/>
+								<span className="text-[11px] leading-tight">Settings</span>
+							</>
+						)}
 					</NavLink>
 				</div>
-			</div>
-		</div>
+			</div >
+		</div >
 	)
 }
 

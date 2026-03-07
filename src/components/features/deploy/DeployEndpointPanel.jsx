@@ -24,13 +24,13 @@ export function DeployEndpointPanel({
 			<Card
 				title={
 					<div className="flex items-center gap-2">
-						<LinkOutlined className="text-[#1890ff]" />
-						<span className="font-poppins text-[var(--secondary-text)]">
+						<LinkOutlined className="text-[var(--accent-text)]" />
+						<span className="font-poppins text-lg font-semibold text-[var(--text)]">
 							Endpoint Information
 						</span>
 					</div>
 				}
-				className="border border-[var(--border)] rounded-xl [background:var(--card-gradient)]"
+				className="border border-[var(--border)] rounded-xl [background:var(--card-gradient)] shadow-lg"
 				style={{
 					backdropFilter: 'blur(10px)',
 					fontFamily: 'Poppins, sans-serif',
@@ -39,14 +39,15 @@ export function DeployEndpointPanel({
 				<Divider
 					orientation="left"
 					orientationMargin={0}
-					className="font-poppins text-[var(--secondary-text)]"
+					className="!my-4 font-poppins font-semibold !border-[var(--border)] [&_.ant-divider-inner-text]:!text-[var(--text)]"
 				>
 					API Endpoint URL
 				</Divider>
-				<div className="flex flex-wrap items-center gap-3">
-					<Input.Group compact>
+				<div className="flex flex-col gap-4">
+					{/* URL + Copy URL cùng hàng */}
+					<div className="flex items-center gap-2 flex-nowrap">
 						<Input
-							className="w-full md:w-[30%]"
+							className="flex-1 min-w-0 [&.ant-input]:!bg-[var(--input-bg)] [&.ant-input]:!border-[var(--input-border)] [&.ant-input]:!text-[var(--input-color)]"
 							value={
 								deployData?.api_base_url ||
 								'https://api.example.com/predict/model-123'
@@ -55,6 +56,7 @@ export function DeployEndpointPanel({
 						/>
 						<Button
 							type="primary"
+							className="deploy-btn-solid shrink-0"
 							onClick={() => {
 								const textToCopy =
 									deployData?.api_base_url ||
@@ -67,25 +69,24 @@ export function DeployEndpointPanel({
 									textarea.select()
 									document.execCommand('copy')
 									document.body.removeChild(textarea)
-									// message is global antd; rely on it being imported at page level if needed
 								} catch (err) {
-									// swallow, page can show its own message if needed
-									// eslint-disable-next-line no-console
 									console.error('Failed to copy', err)
 								}
 							}}
 						>
 							Copy URL
 						</Button>
-					</Input.Group>
+					</div>
 
-					<div className="flex flex-wrap items-center gap-3">
+					{/* Hai nút ở góc cuối (phải) */}
+					<div className="flex justify-end items-center gap-3 flex-wrap">
 						<Button
 							type="primary"
 							onClick={onOpenUpload}
 							loading={uploading}
 							icon={<CloudUploadOutlined />}
 							size="large"
+							className="deploy-btn-solid"
 						>
 							{uploading ? 'Predicting...' : 'Upload Files to Predict'}
 						</Button>
@@ -98,7 +99,6 @@ export function DeployEndpointPanel({
 							onUploadStart={null}
 							onUploadComplete={onUploadComplete}
 						/>
-
 						<Button
 							type="primary"
 							onClick={
@@ -112,6 +112,7 @@ export function DeployEndpointPanel({
 							icon={
 								isUIGenerated ? <ExportOutlined /> : <StarOutlined />
 							}
+							className="deploy-btn-solid"
 						>
 							{isCheckingUIStatus ? (
 								<span>Checking</span>
