@@ -14,7 +14,7 @@ export function DeployCloudServerCard({ deployData }) {
 						🚀 Cloud Server
 					</span>
 				}
-				className="rounded-xl shadow-lg border border-[var(--border)] [background:var(--card-gradient)]"
+				className="deploy-cloud-server-card rounded-xl shadow-lg border border-[var(--border)] [background:var(--card-gradient)]"
 				style={{
 					backdropFilter: 'blur(10px)',
 					borderRadius: '12px',
@@ -62,7 +62,7 @@ export function DeployCloudServerCard({ deployData }) {
 						type="primary"
 						icon={isOnline ? <StopOutlined /> : <CheckCircleOutlined />}
 						size="large"
-						className="w-full font-bold deploy-btn-solid"
+						className="w-full mt-4 font-bold deploy-btn-solid"
 					>
 						{isOnline ? 'Shut down' : 'Start'}
 					</Button>
@@ -93,7 +93,7 @@ export function DeployCloudServerCard({ deployData }) {
 						type="primary"
 						icon={<DeleteOutlined />}
 						size="large"
-						className="w-full font-bold mt-[15px] deploy-btn-danger"
+						className="w-full mt-4 font-bold deploy-btn-danger"
 					>
 						Delete Server
 					</Button>

@@ -255,6 +255,14 @@
 	border-color: var(--alert-warning-border) !important;
 }
 
+/* Cloud Server cards – nền xám đồng nhất cho cả hai action card */
+.deploy-cloud-server-card .ant-alert-warning,
+.deploy-cloud-server-card .ant-alert-info,
+.deploy-cloud-server-card .ant-alert-error {
+	background: var(--alert-bg) !important;
+	border-color: var(--alert-border) !important;
+}
+
 .ant-alert-message,
 .ant-alert-description {
 	color: var(--alert-color) !important;

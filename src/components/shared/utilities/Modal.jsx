@@ -35,18 +35,18 @@ const Modal = ({
 
 			{/* Modal content */}
 			<div
-				className={`relative z-50 w-full ${maxWidth} bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-slate-700 ${className}`}
+				className={`relative z-50 w-full ${maxWidth} bg-white dark:[background:var(--modal-bg)] rounded-2xl shadow-2xl border border-gray-200 dark:border-[var(--modal-border)] ${className}`}
 				{...props}
 			>
 				{/* Header */}
 				{title && (
-					<div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-slate-700">
-						<h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+					<div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-[var(--modal-header-border)]">
+						<h2 className="text-xl font-semibold text-gray-900 dark:text-[var(--modal-title-color)]">
 							{title}
 						</h2>
 						<button
 							onClick={onClose}
-							className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+							className="text-gray-400 hover:text-gray-600 dark:text-[var(--modal-close-color)] dark:hover:text-[var(--modal-close-hover)] transition-colors"
 							aria-label="Close modal"
 						>
 							<svg

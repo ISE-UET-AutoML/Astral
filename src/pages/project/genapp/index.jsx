@@ -146,19 +146,19 @@ export default function ProjectGenApp() {
 	}
 
 	return (
-		<div className="relative min-h-screen bg-gray-50 dark:bg-slate-900">
+		<div className="relative min-h-screen bg-gray-50 dark:bg-[var(--surface)]">
 			<div className="relative z-10 p-6">
 				{/* Header */}
 				<div className="mb-8">
 					<div className="flex items-center gap-3 mb-4">
-						<div className="p-2 rounded-xl bg-gradient-to-br from-blue-100 to-blue-200 dark:from-slate-700 dark:to-slate-600">
-							<AppIcon className="h-6 w-6 text-blue-600 dark:text-blue-300" />
+						<div className="p-2 rounded-xl bg-gradient-to-br from-blue-100 to-blue-200 dark:from-white/10 dark:to-white/5">
+							<AppIcon className="h-6 w-6 text-blue-600 dark:text-[var(--accent-text)]" />
 						</div>
 						<div>
-							<h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+							<h1 className="text-3xl font-bold text-gray-900 dark:text-[var(--text)]">
 								My Apps
 							</h1>
-							<p className="mt-1 text-gray-500 dark:text-gray-400">
+							<p className="mt-1 text-gray-500 dark:text-[var(--secondary-text)]">
 								{loading
 									? '...'
 									: `${apps.length} app generated`}
@@ -168,21 +168,17 @@ export default function ProjectGenApp() {
 				</div>
 
 				{/* Gen App: chọn deploy_id rồi bấm Gen App */}
-				<Card className="rounded-2xl shadow-2xl mb-6 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700">
+				<Card className="gen-app-card rounded-2xl shadow-2xl mb-6 bg-white dark:[background:var(--card-gradient)] border border-gray-200 dark:border-[var(--border)]">
 					<CardHeader>
-						<CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
-							<span className="w-2 h-2 rounded-full bg-blue-500" />
+						<CardTitle className="flex items-center gap-2 text-gray-900 dark:text-[var(--text)]">
+							<span className="w-2 h-2 rounded-full bg-gray-500 dark:bg-[var(--secondary-text)]" />
 							Gen App
 						</CardTitle>
-						<CardDescription className="text-gray-500 dark:text-gray-400">
-							Select a model and click Gen App to create an app
-							from the model.
-						</CardDescription>
 					</CardHeader>
 					<CardContent>
 						{deploys.length === 0 ? (
 							<div className="flex flex-col gap-4">
-								<p className="text-gray-600 dark:text-gray-300">
+								<p className="text-gray-600 dark:text-[var(--secondary-text)]">
 									No model found. Please deploy a model first.
 								</p>
 								<Button
@@ -191,50 +187,53 @@ export default function ProjectGenApp() {
 											PATHS.PROJECT_DEPLOY(projectId)
 										)
 									}
-									className="bg-blue-600 hover:bg-blue-700 text-white"
+									className="bg-gray-600 hover:bg-gray-700 dark:bg-[#2a2a2a] dark:hover:bg-[#333333] dark:border dark:border-[var(--border)] text-white"
 								>
 									Go to Deploy page
 								</Button>
 							</div>
 						) : (
-							<div className="flex flex-wrap gap-4 items-end">
-								<div className="flex-1 min-w-[200px]">
-									<label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-										Model
-									</label>
-									<CustomSelect
-										value={selectedModelId}
-										onChange={(val) => {
-											setSelectedModelId(val)
-											const found = deploys.find(
-												(d) => d.model_id === val
-											)
-											if (found) {
-												setAppName(found.name ?? '')
-											}
-										}}
-										placeholder="Select a model..."
-										className="bg-gray-50 dark:bg-slate-900 border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white"
+							<div className="flex flex-wrap gap-4 items-center justify-between">
+								<p className="text-sm text-gray-500 dark:text-[var(--secondary-text)]">
+									Select a model and click Gen App to create an app from the model.
+								</p>
+								<div className="flex items-center gap-3 shrink-0">
+									<div className="flex items-center gap-2 min-w-[200px]">
+										<label className="text-sm font-medium text-gray-700 dark:text-[var(--text)] whitespace-nowrap">
+											Model
+										</label>
+										<CustomSelect
+											value={selectedModelId}
+											onChange={(val) => {
+												setSelectedModelId(val)
+												const found = deploys.find(
+													(d) => d.model_id === val
+												)
+												if (found) {
+													setAppName(found.name ?? '')
+												}
+											}}
+											placeholder="Select a model..."
+											className="w-[220px] bg-gray-50 dark:bg-[var(--input-bg)] border-gray-200 dark:border-[var(--input-border)] text-gray-900 dark:text-[var(--text)]"
+										>
+											{[...new Map(deploys.map((d) => [d.model_id, d])).values()].map((d) => (
+												<Option
+													key={d.model_id}
+													value={d.model_id}
+												>
+													{d.name ?? `Model #${d.model_id}`} (ID: {d.model_id})
+												</Option>
+											))}
+										</CustomSelect>
+									</div>
+									<Button
+										onClick={() => setIsFormOpen(true)}
+										disabled={!selectedModelId}
+										className="bg-gray-600 hover:bg-gray-700 dark:bg-[#2a2a2a] dark:hover:bg-[#333333] dark:border dark:border-[var(--border)] text-white disabled:opacity-50"
 									>
-										{deploys.map((d) => (
-											<Option
-												key={d.model_id}
-												value={d.model_id}
-											>
-												{d.name ??
-													`Model #${d.model_id}`}{' '}
-												(ID: {d.model_id})
-											</Option>
-										))}
-									</CustomSelect>
+										Gen App
+									</Button>
 								</div>
-								<Button
-									onClick={() => setIsFormOpen(true)}
-									disabled={!selectedModelId}
-									className="bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50"
-								>
-									Gen App
-								</Button>
 							</div>
 						)}
 					</CardContent>
@@ -250,8 +249,8 @@ export default function ProjectGenApp() {
 					</Card>
 				)}
 				{loading ? (
-					<Card className="rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700">
-						<CardContent className="flex flex-col items-center justify-center py-16 text-gray-500 dark:text-gray-400">
+					<Card className="rounded-2xl shadow-2xl bg-white dark:[background:var(--card-gradient)] border border-gray-200 dark:border-[var(--border)]">
+						<CardContent className="flex flex-col items-center justify-center py-16 text-gray-500 dark:text-[var(--secondary-text)]">
 							Loading...
 						</CardContent>
 					</Card>
@@ -264,22 +263,22 @@ export default function ProjectGenApp() {
 								onViewDetails={(app) => {
 									// Navigate to code editor page for this app
 									navigate(
-										`/app/project/${projectId}/my-apps/${app.run_id}/edit`
+										`/app/project/${projectId}/my-apps/${app.id}/edit`
 									)
 								}}
 							/>
 						))}
 					</div>
 				) : (
-					<Card className="rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700">
+					<Card className="rounded-2xl shadow-2xl bg-white dark:[background:var(--card-gradient)] border border-gray-200 dark:border-[var(--border)]">
 						<CardContent className="flex flex-col items-center justify-center py-16">
-							<div className="p-4 rounded-full mb-4 bg-blue-50 dark:bg-blue-500/10">
-								<EmptyIcon className="h-12 w-12 text-gray-400 dark:text-gray-500" />
+							<div className="p-4 rounded-full mb-4 bg-blue-50 dark:bg-[var(--hover-bg)]">
+								<EmptyIcon className="h-12 w-12 text-gray-400 dark:text-[var(--secondary-text)]" />
 							</div>
-							<h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
+							<h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-[var(--text)]">
 								You haven't generated any apps yet
 							</h3>
-							<p className="text-center max-w-md text-gray-500 dark:text-gray-400">
+							<p className="text-center max-w-md text-gray-500 dark:text-[var(--secondary-text)]">
 								Select a model and click Gen App to create your
 								first app.
 							</p>
@@ -296,7 +295,7 @@ export default function ProjectGenApp() {
 			>
 				<div className="space-y-4">
 					<div>
-						<label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+						<label className="block text-sm font-medium text-gray-700 dark:text-[var(--text)] mb-1">
 							Model
 						</label>
 						<CustomSelect
@@ -310,7 +309,7 @@ export default function ProjectGenApp() {
 									setAppName(found.name ?? '')
 								}
 							}}
-							className="bg-gray-50 dark:bg-slate-900 border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white"
+							className="bg-gray-50 dark:bg-[var(--input-bg)] border-gray-200 dark:border-[var(--input-border)] text-gray-900 dark:text-[var(--text)]"
 						>
 							{deploys.map((d) => (
 								<Option key={d.model_id} value={d.model_id}>
@@ -322,7 +321,7 @@ export default function ProjectGenApp() {
 					</div>
 
 					<div>
-						<label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+						<label className="block text-sm font-medium text-gray-700 dark:text-[var(--text)] mb-1">
 							App name
 						</label>
 						<input
@@ -330,12 +329,12 @@ export default function ProjectGenApp() {
 							value={appName}
 							onChange={(e) => setAppName(e.target.value)}
 							placeholder="Please enter the app name"
-							className="w-full rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-4 py-3 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+							className="w-full rounded-xl border border-gray-300 dark:border-[var(--input-border)] bg-white dark:bg-[var(--input-bg)] px-4 py-3 text-sm text-gray-900 dark:text-[var(--text)] placeholder-gray-400 dark:placeholder-[var(--placeholder-text)] focus:outline-none focus:ring-2 focus:ring-[var(--input-focus-border)]"
 						/>
 					</div>
 
 					<div>
-						<label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+						<label className="block text-sm font-medium text-gray-700 dark:text-[var(--text)] mb-1">
 							Task type
 						</label>
 						<input
@@ -349,9 +348,9 @@ export default function ProjectGenApp() {
 										: 'Image Classification'
 							}
 							readOnly
-							className="w-full rounded-2xl border border-gray-300 dark:border-slate-600 bg-gray-100 dark:bg-slate-800 px-3 py-3 text-sm text-gray-500 dark:text-gray-300 cursor-not-allowed"
+							className="w-full rounded-2xl border border-gray-300 dark:border-[var(--input-border)] bg-gray-100 dark:bg-[var(--input-disabled-bg)] px-3 py-3 text-sm text-gray-500 dark:text-[var(--secondary-text)] cursor-not-allowed"
 						/>
-						<p className="mt-1 text-xs text-gray-400">
+						<p className="mt-1 text-xs text-gray-400 dark:text-[var(--secondary-text)]">
 							Task type is automatically determined from the
 							project.
 						</p>
@@ -361,14 +360,14 @@ export default function ProjectGenApp() {
 						<Button
 							variant="outline"
 							onClick={() => setIsFormOpen(false)}
-							className="border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-200"
+							className="border-gray-300 dark:border-[var(--border)] text-gray-700 dark:text-[var(--text)]"
 						>
 							Cancel
 						</Button>
 						<Button
 							onClick={handleConfirmGenApp}
 							disabled={genLoading}
-							className="bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50"
+							className="bg-gray-600 hover:bg-gray-700 dark:bg-[#2a2a2a] dark:hover:bg-[#333333] dark:border dark:border-[var(--border)] text-white disabled:opacity-50"
 						>
 							{genLoading ? 'Processing...' : 'Confirm'}
 						</Button>

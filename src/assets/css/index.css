@@ -190,7 +190,7 @@
     --nav-hover: rgba(255, 255, 255, 0.08);
 
     /* Form elements */
-    --input-bg: rgba(30, 41, 59, 0.5);
+    --input-bg: rgba(42, 42, 42, 0.8);
     --input-border: rgba(148, 163, 184, 0.3);
     --input-focus-border: #60a5fa;
     --input-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
@@ -369,8 +369,14 @@
 }
 
 .custom-select-item--selected {
-    background: var(--dropdown-selected-bg) !important;
-    color: var(--dropdown-selected-text) !important;
+	background: var(--dropdown-selected-bg) !important;
+	color: var(--dropdown-selected-text) !important;
+}
+
+/* Gen App card – dropdown selected item dùng xám thay vì xanh */
+.gen-app-card .custom-select-item--selected {
+	background: var(--hover-bg) !important;
+	color: var(--text) !important;
 }
 
 .theme-dropdown .ant-select-selector {
