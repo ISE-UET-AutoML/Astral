@@ -63,7 +63,7 @@ const EmptyIcon = ({ className, ...props }) => (
 export default function ProjectGenApp() {
 	const { id: projectId } = useParams()
 	const navigate = useNavigate()
-	const { apps, loading, error, refetch } = useGenApps(projectId)
+	const { apps, loading, error, total, page, setPage, refetch } = useGenApps(projectId, 1, 8)
 	const [projectInfo, setProjectInfo] = useState(null)
 	const [deploys, setDeploys] = useState([])
 	const [selectedModelId, setSelectedModelId] = useState(null)
@@ -231,7 +231,7 @@ export default function ProjectGenApp() {
 								My Apps
 							</h1>
 							<p className="mt-1 text-gray-500 dark:text-[var(--secondary-text)]">
-								{loading ? '...' : `${apps.length} app generated`}
+								{loading ? '...' : `${total} app generated`}
 							</p>
 						</div>
 					</div>
@@ -334,24 +334,76 @@ export default function ProjectGenApp() {
 							</CardContent>
 						</Card>
 					) : apps.length > 0 ? (
-						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
-							{apps.map((app, i) => (
-								<AppCard
-									key={app.id ?? i}
-									app={app}
-									onViewDetails={async (app) => {
-										try {
-											await initDraft(app.id)
-										} catch (e) {
-											console.warn('[GenApp] initDraft before nav:', e)
-										}
-										navigate(
-											`/app/project/${projectId}/my-apps/${app.id}/edit`
-										)
-									}}
-								/>
-							))}
-						</div>
+						<>
+							<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+								{apps.map((app, i) => (
+									<AppCard
+										key={app.id ?? i}
+										app={app}
+										onViewDetails={async (app) => {
+											try {
+												await initDraft(app.id)
+											} catch (e) {
+												console.warn('[GenApp] initDraft before nav:', e)
+											}
+											navigate(
+												`/app/project/${projectId}/my-apps/${app.id}/edit`
+											)
+										}}
+									/>
+								))}
+							</div>
+
+							{/* Pagination UI - Arrow & Oval Style */}
+							{total > 0 && (
+								<div className="mt-8 pb-10 flex items-center justify-center gap-3">
+									{/* First Page */}
+									<Button
+										variant="outline"
+										onClick={() => setPage(1)}
+										disabled={page === 1 || loading}
+										className="w-10 h-10 p-0 rounded-full border-gray-300 dark:border-white/10 bg-gray-200 dark:bg-gray-800 text-black dark:text-white hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
+									>
+										<span className="text-xs font-bold">«</span>
+									</Button>
+
+									{/* Previous Page */}
+									<Button
+										variant="outline"
+										onClick={() => setPage(p => Math.max(1, p - 1))}
+										disabled={page === 1 || loading}
+										className="w-10 h-10 p-0 rounded-full border-gray-300 dark:border-white/10 bg-gray-200 dark:bg-gray-800 text-black dark:text-white hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
+									>
+										<span className="text-xs font-bold">‹</span>
+									</Button>
+
+									{/* Page Indicator - Oval Style */}
+									<div className="flex items-center justify-center h-10 px-6 rounded-full bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold text-sm shadow-sm border border-gray-400/30 dark:border-white/10 min-w-[70px]">
+										{page} / {Math.max(1, Math.ceil(total / 8))}
+									</div>
+
+									{/* Next Page */}
+									<Button
+										variant="outline"
+										onClick={() => setPage(p => Math.min(Math.ceil(total / 8), p + 1))}
+										disabled={page === Math.ceil(total / 8) || loading}
+										className="w-10 h-10 p-0 rounded-full border-gray-300 dark:border-white/10 bg-gray-200 dark:bg-gray-800 text-black dark:text-white hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
+									>
+										<span className="text-xs font-bold">›</span>
+									</Button>
+
+									{/* Last Page */}
+									<Button
+										variant="outline"
+										onClick={() => setPage(Math.ceil(total / 8))}
+										disabled={page === Math.ceil(total / 8) || loading}
+										className="w-10 h-10 p-0 rounded-full border-gray-300 dark:border-white/10 bg-gray-200 dark:bg-gray-800 text-black dark:text-white hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
+									>
+										<span className="text-xs font-bold">»</span>
+									</Button>
+								</div>
+							)}
+						</>
 					) : (
 						<Card
 							className="rounded-2xl shadow-2xl"

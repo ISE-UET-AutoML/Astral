@@ -29,8 +29,9 @@ const getDeployStatus = (modelId, deployModelId) => {
 	)
 }
 
-const getGenAppsList = (projectId) => {
-	const params = projectId ? { project_id: projectId } : {}
+const getGenAppsList = (projectId, limit = 8, offset = 0) => {
+	const params = { limit, offset }
+	if (projectId) params.project_id = projectId
 	return instance.get(`${ADAPTIVE_URL}/generated_app/list`, { params })
 }
 
