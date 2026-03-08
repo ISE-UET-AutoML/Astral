@@ -137,7 +137,7 @@ function AppCard({ app, onViewDetails }) {
 	}
 
 	return (
-		<Card className="rounded-2xl shadow-lg bg-white dark:[background:var(--card-gradient)] border border-gray-200 dark:border-[var(--border)] hover:shadow-xl transition-all duration-200 hover:-translate-y-1">
+		<Card className="flex flex-col h-full rounded-2xl shadow-lg bg-white dark:[background:var(--card-gradient)] border border-gray-200 dark:border-[var(--border)] hover:shadow-xl transition-all duration-200 hover:-translate-y-1">
 			<CardHeader className="pb-3">
 				<div className="flex items-start justify-between gap-2">
 					<div className="flex items-center gap-2 flex-1 min-w-0">
@@ -152,71 +152,61 @@ function AppCard({ app, onViewDetails }) {
 				</div>
 			</CardHeader>
 
-			<CardContent className="space-y-3">
-				{/* Task Type */}
-				<div className="flex items-center gap-2 text-sm">
-					<span className="text-gray-500 dark:text-[var(--secondary-text)] font-medium">Task:</span>
-					<span className="text-gray-900 dark:text-[var(--text)] capitalize">
-						{app?.task_type?.replace(/_/g, ' ') || 'N/A'}
-					</span>
-				</div>
-
-				{/* Model ID */}
-				{app?.model_id != null && (
+			<CardContent className="flex-1 flex flex-col">
+				<div className="flex-1 space-y-3">
+					{/* Task Type */}
 					<div className="flex items-center gap-2 text-sm">
-						<span className="text-gray-500 dark:text-[var(--secondary-text)] font-medium">Model ID:</span>
-						<span className="text-gray-900 dark:text-[var(--text)] font-mono">
-							{app.model_id}
+						<span className="text-gray-500 dark:text-[var(--secondary-text)] font-medium">Task:</span>
+						<span className="text-gray-900 dark:text-[var(--text)] capitalize">
+							{app?.task_type?.replace(/_/g, ' ') || 'N/A'}
 						</span>
 					</div>
-				)}
 
-				{/* Created At */}
-				{app?.created_at && (
-					<div className="flex items-center gap-2 text-sm">
-						<span className="text-gray-500 dark:text-[var(--secondary-text)] font-medium">Created:</span>
-						<span className="text-gray-900 dark:text-[var(--text)] text-xs">
-							{formatDate(app.created_at)}
-						</span>
-					</div>
-				)}
+					{/* Model ID */}
+					{app?.model_id != null && (
+						<div className="flex items-center gap-2 text-sm">
+							<span className="text-gray-500 dark:text-[var(--secondary-text)] font-medium">Model ID:</span>
+							<span className="text-gray-900 dark:text-[var(--text)] font-mono">
+								{app.model_id}
+							</span>
+						</div>
+					)}
 
-				{/* Instance Info */}
-				{hasInstance && (
-					<div className="pt-2 mt-2 border-t border-gray-200 dark:border-[var(--border)]">
-						<div className="text-xs text-gray-500 dark:text-[var(--secondary-text)] space-y-1">
-							<div className="flex justify-between">
-								<span>Instance:</span>
-								<span className="font-mono text-gray-700 dark:text-[var(--text)]">
-									{String(app.instance_id ?? '').substring(0, 8)}...
-								</span>
-							</div>
-							{app.ports?.frontend && (
+					{/* Created At */}
+					{app?.created_at && (
+						<div className="flex items-center gap-2 text-sm">
+							<span className="text-gray-500 dark:text-[var(--secondary-text)] font-medium">Created:</span>
+							<span className="text-gray-900 dark:text-[var(--text)] text-xs">
+								{formatDate(app.created_at)}
+							</span>
+						</div>
+					)}
+
+					{/* Instance Info */}
+					{hasInstance && (
+						<div className="pt-2 mt-2 border-t border-gray-200 dark:border-[var(--border)]">
+							<div className="text-xs text-gray-500 dark:text-[var(--secondary-text)] space-y-1">
 								<div className="flex justify-between">
-									<span>Port:</span>
+									<span>Instance:</span>
 									<span className="font-mono text-gray-700 dark:text-[var(--text)]">
-										{app.ports.frontend}
+										{String(app.instance_id ?? '').substring(0, 8)}...
 									</span>
 								</div>
-							)}
+								{app.ports?.frontend && (
+									<div className="flex justify-between">
+										<span>Port:</span>
+										<span className="font-mono text-gray-700 dark:text-[var(--text)]">
+											{app.ports.frontend}
+										</span>
+									</div>
+								)}
+							</div>
 						</div>
-					</div>
-				)}
-
-				{/* Error Message */}
-				{app?.error_message && (
-					<div className="mt-2 p-2 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
-						<p
-							className="text-xs text-red-600 dark:text-red-400 line-clamp-2"
-							title={app.error_message}
-						>
-							{app.error_message}
-						</p>
-					</div>
-				)}
+					)}
+				</div>
 
 				{/* Actions */}
-				<div className="flex gap-2 pt-2">
+				<div className="flex gap-2 pt-4 mt-auto">
 					{frontendUrl && (
 						<Button
 							size="sm"
@@ -244,7 +234,8 @@ function AppCard({ app, onViewDetails }) {
 							size="sm"
 							variant="outline"
 							onClick={() => onViewDetails(app)}
-							className="flex-1 border-gray-300 dark:border-[var(--border)] text-gray-700 dark:text-[var(--text)] text-xs"
+							disabled={['pending', 'running', 'generating', 'deploying'].includes(app?.status)}
+							className="flex-1 border-gray-300 dark:border-[var(--border)] text-gray-700 dark:text-[var(--text)] text-xs disabled:opacity-50 disabled:cursor-not-allowed"
 						>
 							Details
 						</Button>

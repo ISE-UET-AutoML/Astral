@@ -221,7 +221,7 @@ export default function ProjectGenApp() {
 		<div className="flex flex-col h-[calc(100dvh-100px)] bg-gray-50 dark:bg-[var(--surface)] overflow-hidden -m-px">
 			<div className="flex-1 overflow-y-auto p-6">
 				{/* Header */}
-				<div className="mb-8 max-w-7xl mx-auto">
+				<div className="mb-8 max-w-full mx-auto">
 					<div className="flex items-center gap-3 mb-4">
 						<div className="p-2 rounded-xl bg-gray-200 dark:bg-[#2a2a2c]">
 							<AppIcon className="h-6 w-6 text-gray-600 dark:text-gray-300" />
@@ -237,7 +237,7 @@ export default function ProjectGenApp() {
 					</div>
 				</div>
 
-				<div className="max-w-7xl mx-auto">
+				<div className="max-w-full mx-auto">
 					{/* Gen App Card */}
 					<Card
 						className="rounded-2xl shadow-2xl mb-6"
@@ -334,7 +334,7 @@ export default function ProjectGenApp() {
 							</CardContent>
 						</Card>
 					) : apps.length > 0 ? (
-						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
 							{apps.map((app, i) => (
 								<AppCard
 									key={app.id ?? i}

@@ -12,22 +12,18 @@ export function useGenApps(projectId) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const fetchApps = useCallback(async () => {
-        setLoading(true);
+    const fetchApps = useCallback(async (isBackground = false) => {
+        if (!isBackground) setLoading(true);
         setError(null);
         try {
             const { data } = await getGenAppsList(projectId);
             console.log('[useGenApps] Raw response:', data);
-            
-            // Backend  { items: [...], total: number }
+
             if (data?.items) {
-                //console.log('[useGenApps] Found items array:', data.items.length, 'apps');
                 setApps(data.items);
             } else if (Array.isArray(data)) {
-                //console.log('[useGenApps] Data is array:', data.length, 'apps');
                 setApps(data);
             } else {
-                //console.warn('[useGenApps] Unexpected response format:', data);
                 setApps([]);
             }
         } catch (err) {
@@ -35,16 +31,21 @@ export function useGenApps(projectId) {
             setError(err);
             setApps([]);
         } finally {
-            setLoading(false);
+            if (!isBackground) setLoading(false);
         }
     }, [projectId]);
 
     useEffect(() => {
-        // Chỉ gọi khi đã có projectId 
         if (projectId) {
             fetchApps();
+
+            // Set up polling every 1 minute (60000ms)
+            const intervalId = setInterval(() => {
+                fetchApps(true);
+            }, 60000);
+
+            return () => clearInterval(intervalId);
         } else {
-            // Nếu không có projectId thì coi như không có app
             setApps([]);
             setLoading(false);
         }
