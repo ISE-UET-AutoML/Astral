@@ -6,19 +6,13 @@ export function ExportProgressModal({ isExporting }) {
 
 	return (
 		<div className="absolute inset-0 z-50 flex items-center justify-center p-4">
-			<div className="absolute inset-0 bg-black/60 backdrop-blur-md" />
+			<div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
 
 			<div className="relative z-10 w-full max-w-md">
 				<div className="rounded-2xl shadow-2xl overflow-hidden border [background:var(--modal-bg)] [border-color:var(--modal-border)]">
 					<div className="px-8 py-6 border-b [background:var(--modal-header-bg)] [border-color:var(--modal-header-border)]">
 						<div className="flex items-center justify-center">
-							<div className="relative">
-								<div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 animate-spin">
-									<div className="w-14 h-14 rounded-full m-1 flex items-center justify-center [background:var(--modal-bg)]">
-										<DataPreparingIcon className="w-6 h-6 animate-pulse text-[var(--accent-text)]" />
-									</div>
-								</div>
-							</div>
+							<DataPreparingIcon className="w-12 h-12 animate-pulse text-[var(--accent-text)]" />
 						</div>
 					</div>
 
@@ -37,10 +31,10 @@ export function ExportProgressModal({ isExporting }) {
 						</p>
 
 						<div className="mt-6">
-							<div className="flex justify-center space-x-1">
+							<div className="flex justify-center gap-1.5">
 								<div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce [animation-delay:0ms]" />
-								<div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce [animation-delay:150ms]" />
-								<div className="w-2 h-2 bg-pink-500 rounded-full animate-bounce [animation-delay:300ms]" />
+								<div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce [animation-delay:150ms]" />
+								<div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce [animation-delay:300ms]" />
 							</div>
 						</div>
 					</div>
