@@ -134,7 +134,7 @@ const LandingNavbar = ({ scrolled, navbarOpen, setNavbarOpen }) => {
 									{/* Dropdown Menu */}
 									{item.dropdownItems && activeDropdown === item.name && (
 										<div 
-											className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-48 bg-gray-900 bg-opacity-95 backdrop-blur-sm rounded-lg shadow-xl border border-gray-700 overflow-hidden z-[60]"
+											className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-48 bg-white dark:bg-[#222222] bg-opacity-95 backdrop-blur-sm rounded-xl shadow-xl border border-gray-200 dark:border-white/10 overflow-hidden z-[60]"
 											onMouseEnter={() => {
 												if (hideTimeout) {
 													clearTimeout(hideTimeout)
@@ -145,14 +145,14 @@ const LandingNavbar = ({ scrolled, navbarOpen, setNavbarOpen }) => {
 											onMouseLeave={handleMouseLeave}
 										>
 											{/* Dropdown arrow */}
-											<div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-gray-900 rotate-45 border-l border-t border-gray-700"></div>
+											<div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-white dark:bg-[#222222] rotate-45 border-l border-t border-gray-200 dark:border-white/10"></div>
 											
 											{item.dropdownItems.map((dropdownItem, index) => (
 												<a
 													key={dropdownItem.name}
 													href={dropdownItem.href}
-													className={`block px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-[#5C8DFF]/20 hover:to-[#65FFA0]/20 transition-all duration-200 font-poppins ${
-														index !== item.dropdownItems.length - 1 ? 'border-b border-gray-700' : ''
+													className={`block px-4 py-3 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-white/10 transition-all duration-200 font-poppins ${
+														index !== item.dropdownItems.length - 1 ? 'border-b border-gray-200 dark:border-white/10' : ''
 													}`}
 												>
 													{dropdownItem.name}
