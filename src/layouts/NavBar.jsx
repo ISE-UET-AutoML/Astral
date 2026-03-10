@@ -146,15 +146,15 @@ const NavBar = () => {
 									leaveFrom="transform opacity-100 scale-100"
 									leaveTo="transform opacity-0 scale-95"
 								>
-									<Menu.Items className="absolute right-0 z-10 mt-2 w-48 bg-white dark:bg-gray-900 bg-opacity-95 backdrop-blur-sm rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden focus:outline-none">
+									<Menu.Items className="absolute right-0 z-10 mt-2 w-56 min-w-[14rem] bg-white dark:bg-[#222222] bg-opacity-95 backdrop-blur-sm rounded-xl shadow-xl border border-gray-200 dark:border-white/10 overflow-hidden focus:outline-none">
 										<Menu.Item>
 											{({ active }) => (
 												<button
 													onClick={() => navigate(PATHS.PROFILE)}
 													className={clsx(
-														'block w-full text-left px-4 py-3 text-sm transition-all duration-200',
+														'block w-full text-left px-3 py-3 text-sm transition-all duration-200 rounded-none',
 														active
-															? 'text-gray-900 dark:text-white bg-gradient-to-r from-[#5C8DFF]/20 to-[#65FFA0]/20'
+															? 'text-gray-900 dark:text-white bg-gray-200 dark:bg-white/10'
 															: 'text-gray-600 dark:text-gray-300'
 													)}
 												>
@@ -167,9 +167,9 @@ const NavBar = () => {
 												<button
 													onClick={() => navigate(PATHS.SETTINGS)}
 													className={clsx(
-														'block w-full text-left px-4 py-3 text-sm border-b border-gray-200 dark:border-gray-700 transition-all duration-200',
+														'block w-full text-left px-3 py-3 text-sm border-b border-gray-200 dark:border-white/10 transition-all duration-200 rounded-none',
 														active
-															? 'text-gray-900 dark:text-white bg-gradient-to-r from-[#5C8DFF]/20 to-[#65FFA0]/20'
+															? 'text-gray-900 dark:text-white bg-gray-200 dark:bg-white/10'
 															: 'text-gray-600 dark:text-gray-300'
 													)}
 												>
@@ -182,9 +182,9 @@ const NavBar = () => {
 												<button
 													onClick={async () => await logout()}
 													className={clsx(
-														'block w-full text-left px-4 py-3 text-sm transition-all duration-200',
+														'block w-full text-left px-3 py-3 text-sm transition-all duration-200 rounded-none',
 														active
-															? 'text-gray-900 dark:text-white bg-gradient-to-r from-[#5C8DFF]/20 to-[#65FFA0]/20'
+															? 'text-gray-900 dark:text-white bg-gray-200 dark:bg-white/10'
 															: 'text-gray-600 dark:text-gray-300'
 													)}
 												>
