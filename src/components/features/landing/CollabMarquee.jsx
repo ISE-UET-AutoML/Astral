@@ -67,7 +67,7 @@ const CollabMarquee = () => {
 					{doubled.map((logo, i) => (
 						<div
 							key={i}
-							className="flex items-center justify-center h-30 w-50 shrink-0 rounded-xl bg-white/90 dark:bg-gray-800/90 px-4 py-2 hover:bg-white dark:hover:bg-gray-700 transition-all duration-300 shadow-md"
+							className="flex items-center justify-center h-30 w-50 shrink-0 rounded-xl bg-white px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-100 transition-all duration-300 shadow-md border border-gray-200/50 dark:border-gray-600/50"
 						>
 							<img
 								src={logo.src}
