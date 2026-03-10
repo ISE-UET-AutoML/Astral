@@ -87,8 +87,8 @@ export default function Projects() {
 	const hasProjects = (projectState.projects || []).length > 0
 
 	return (
-		<div className="min-h-screen bg-gray-100 dark:bg-[#1f1f1f] text-gray-900 dark:text-white">
-			<div className="min-h-screen pt-12 bg-gray-100 dark:bg-[#1f1f1f]">
+		<div className="min-h-screen bg-gray-100 dark:bg-[#161616] text-gray-900 dark:text-white">
+			<div className="min-h-screen pt-12 bg-gray-100 dark:bg-[#161616]">
 				<main className="relative pt-20 px-6 pb-20">
 					<ContentContainer className="relative z-10">
 						{/* Header */}

@@ -169,21 +169,21 @@
 }
 
 .dark {
-    /* Landing / page background gradient */
-    --bg-gradient: linear-gradient(135deg, #111111 0%, #1a1a1a 100%);
+    /* Landing / page background gradient – enterprise, balanced */
+    --bg-gradient: linear-gradient(135deg, #121212 0%, #181818 100%);
 
     /* Core surfaces */
-    --surface: #1f1f1f;
+    --surface: #161616;
     --text: #ffffff;
     --secondary-text: #d1d5db;
     --accent-text: #60a5fa;
 
     /* Card & container gradients */
-    --card-gradient: linear-gradient(135deg, #1f1f1f 0%, #2a2a2a 100%);
-    --tag-gradient: linear-gradient(135deg, #2a2a2a 0%, #252525 100%);
+    --card-gradient: linear-gradient(135deg, #1a1a1a 0%, #222222 100%);
+    --tag-gradient: linear-gradient(135deg, #1f1f1f 0%, #252525 100%);
     --button-gradient: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
     --button-gradient-dark: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-    --accent-gradient: linear-gradient(135deg, #2a2a2a 0%, #333333 100%);
+    --accent-gradient: linear-gradient(135deg, #1f1f1f 0%, #2a2a2a 100%);
 
     /* Borders & dividers */
     --border: rgba(148, 163, 184, 0.25);
@@ -191,12 +191,12 @@
     --divider: rgba(148, 163, 184, 0.15);
 
     /* Navigation */
-    --nav-bg: rgba(31, 31, 31, 0.95);
+    --nav-bg: rgba(18, 18, 18, 0.95);
     --nav-text: #ffffff;
     --nav-hover: rgba(255, 255, 255, 0.08);
 
     /* Form elements */
-    --input-bg: rgba(42, 42, 42, 0.8);
+    --input-bg: rgba(26, 26, 26, 0.9);
     --input-border: rgba(148, 163, 184, 0.3);
     --input-focus-border: #60a5fa;
     --input-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
@@ -216,16 +216,16 @@
     /* Filter component styling - preserve original dark theme */
     --filter-bg: rgba(255, 255, 255, 0.05);
     --filter-border: rgba(255, 255, 255, 0.1);
-    --filter-input-bg: rgba(42, 42, 42, 0.8);
+    --filter-input-bg: rgba(26, 26, 26, 0.9);
     --filter-input-border: rgba(255, 255, 255, 0.2);
     --filter-input-hover: rgba(255, 255, 255, 0.4);
     --filter-input-focus: rgba(59, 130, 246, 0.5);
-    --filter-dropdown-bg: rgba(42, 42, 42, 0.95);
+    --filter-dropdown-bg: rgba(16, 16, 16, 0.98);
     --filter-dropdown-border: rgba(255, 255, 255, 0.1);
     --filter-item-hover: rgba(255, 255, 255, 0.1);
 
     /* Modal components - preserve original dark theme */
-    --modal-bg: linear-gradient(135deg, #1f1f1f 0%, #2a2a2a 50%, #333333 100%);
+    --modal-bg: linear-gradient(135deg, #141414 0%, #1a1a1a 50%, #222222 100%);
     --modal-border: rgba(255, 255, 255, 0.2);
     --modal-header-bg: transparent;
     --modal-header-border: rgba(255, 255, 255, 0.1);
@@ -536,11 +536,11 @@ html.light #root {
     background-color: #f3f4f6;
 }
 
-/* Dark mode – base background (html, body, #root) */
+/* Dark mode – base background (html, body, #root) – enterprise darker */
 html.dark,
 html.dark body,
 html.dark #root {
-    background-color: #1a1a1a !important;
+    background-color: #0d0d0d !important;
 }
 
 

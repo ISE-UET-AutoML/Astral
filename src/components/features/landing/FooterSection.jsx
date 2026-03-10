@@ -6,7 +6,7 @@ const FooterSection = () => {
 	return (
 		<footer className="relative">
 			{/* Getting Started CTA Section */}
-			<section className="py-24 relative bg-gray-800 dark:bg-[#1a1a1a] z-[20]">
+			<section className="py-24 relative bg-gray-800 dark:bg-[#161616] z-[20]">
 				<ContentContainer>
 					<div className="text-center">
 						<p 
