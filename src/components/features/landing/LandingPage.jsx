@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTheme } from 'src/theme/ThemeProvider'
 import LandingNavbar from './LandingNavbar'
 import HeroSection from './HeroSection'
 import CollabMarquee from './CollabMarquee'
@@ -16,6 +17,7 @@ import FooterSection from './FooterSection'
  * - Section organization
  */
 const LandingPage = () => {
+	const { theme } = useTheme()
 	const [navbarOpen, setNavbarOpen] = React.useState(false)
 	const [scrolled, setScrolled] = React.useState(false)
 
@@ -29,12 +31,16 @@ const LandingPage = () => {
 		return () => window.removeEventListener('scroll', handleScroll)
 	}, [])
 
-    return (
-        <div 
-            className="min-h-screen relative"
-        >
-            {/* Full-viewport background fill following app theme */}
-            <div className="fixed inset-0 bg-[#01000A] -z-50" />
+	const isDark = theme === 'dark'
+	const bgClass = isDark ? 'bg-theme-gradient' : 'bg-gray-50'
+	const textClass = isDark ? 'text-white' : 'text-gray-900'
+
+	return (
+		<div 
+			className={`min-h-screen relative ${bgClass} ${textClass}`}
+		>
+			{/* Full-viewport background fill following app theme */}
+			<div className={`fixed inset-0 ${bgClass} -z-50`} />
 			
 			{/* Navigation / orbital logo layer (positioned below fixed global NavBar) */}
 			<div className="pt-24">

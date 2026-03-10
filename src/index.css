@@ -16,7 +16,8 @@ body,
 
 html.dark body,
 html.dark #root {
-  background-color: #1f1f1f;
+  /* Dark mode base background – match CTA section (#1a1a1a) */
+  background-color: #1a1a1a;
 }
 
 html,
@@ -71,7 +72,8 @@ body {
   }
 
   .dark {
-    --background: 0 0% 12%;
+    /* Use neutral dark gray instead of navy */
+    --background: 0 0% 8%;
     --foreground: 0 0% 80%;
     --card: 0 0% 15%;
     --card-foreground: 0 0% 80%;
@@ -91,9 +93,9 @@ body {
     --input: 0 0% 20%;
     --ring: 0 0% 55%;
 
-    /* Dark mode - gray gradient */
-    --bg-gradient: linear-gradient(135deg, #4b5563 0%, #374151 100%);
-    --bg-gradient-overlay: linear-gradient(135deg, rgba(75, 85, 99, 0.15) 0%, rgba(55, 65, 81, 0.15) 100%);
+    /* Dark mode - neutral dark gray gradient */
+    --bg-gradient: linear-gradient(135deg, #111111 0%, #1a1a1a 100%);
+    --bg-gradient-overlay: linear-gradient(135deg, rgba(26, 26, 26, 0.45) 0%, rgba(26, 26, 26, 0.15) 100%);
     --glass-bg: rgba(31, 31, 31, 0.7);
     --glass-border: rgba(107, 114, 128, 0.3);
     --blur-amount: 20px;

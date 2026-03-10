@@ -95,14 +95,14 @@ const ServicesSection = () => {
 				{/* Section Header */}
 				<div className="text-center mb-16">
 					<h2 
-						className="text-5xl font-bold text-white mb-4 font-poppins"
+						className="text-5xl font-bold text-gray-900 dark:text-white mb-4 font-poppins"
 					>
 						Our Services
 					</h2>
 					<p 
-						className="text-xl text-gray-300 font-poppins"
+						className="text-xl text-gray-700 dark:text-gray-300 font-poppins"
 					>
-						All you need is <span className="font-bold text-white">data</span>, the rest is on us!
+						All you need is <span className="font-bold text-gray-900 dark:text-white">data</span>, the rest is on us!
 					</p>
 				</div>
 
@@ -111,7 +111,7 @@ const ServicesSection = () => {
 					{services.map((service) => (
 						<div 
 							key={service.id}
-							className="bg-gray-800 bg-opacity-20 backdrop-blur-sm rounded-2xl p-8 text-center hover:bg-opacity-70 transition-all duration-300 group"
+							className="bg-white dark:bg-gray-800 bg-opacity-80 dark:bg-opacity-20 backdrop-blur-sm rounded-2xl p-8 text-center hover:bg-opacity-90 dark:hover:bg-opacity-70 transition-all duration-300 group border border-gray-200 dark:border-transparent"
 						>
 							{/* Icon */}
 							<div className="mb-6 flex justify-center">
@@ -120,14 +120,14 @@ const ServicesSection = () => {
 
 							{/* Title */}
 							<h3 
-								className="text-2xl font-bold text-white mb-4 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-[#5C8DFF] group-hover:to-[#65FFA0] group-hover:bg-clip-text transition-all duration-300 font-poppins"
+								className="text-2xl font-bold text-gray-900 dark:text-white mb-4 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-[#5C8DFF] group-hover:to-[#65FFA0] group-hover:bg-clip-text transition-all duration-300 font-poppins"
 							>
 								{service.title}
 							</h3>
 
 							{/* Description */}
 							<p 
-								className="text-gray-300 leading-relaxed font-poppins"
+								className="text-gray-600 dark:text-gray-300 leading-relaxed font-poppins"
 							>
 								{service.description}
 							</p>

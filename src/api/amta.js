@@ -19,18 +19,7 @@ function getAuthHeaders() {
 /**
  * Stream chat completions from the LLM endpoint.
  *
- * POST {ADAPTIVE_URL}/chat/completions
- * Body: { "text": "<user message>" }
- *
- * Server sends SSE lines:
- *   data: {"content": "X"}
- *   data: [DONE]
- *
- * @param {string} text                      - User message to send
- * @param {(chunk: string) => void} onChunk  - Called for each content chunk
- * @param {AbortSignal} [signal]             - Optional AbortController signal
- * @returns {Promise<string>}                - Resolves with full accumulated response
- */
+*/
 export async function streamChat(text, onChunk, signal) {
 	const url = `${ADAPTIVE_URL}/chat/completions`
 

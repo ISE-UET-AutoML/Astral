@@ -54,7 +54,7 @@ const ShowcaseSection = () => {
 				{/* Section Header */}
 				<div className="text-center mb-16">
 					<h2 
-						className="text-3xl font-bold text-white mb-4 font-poppins"
+						className="text-3xl font-bold text-gray-900 dark:text-white mb-4 font-poppins"
 					>
 						Building an <span 
 							className="bg-gradient-to-r from-[#FFAF40] to-[#DE64BF] bg-clip-text text-transparent"
@@ -93,7 +93,7 @@ const ShowcaseSection = () => {
 							>
 								{/* Image Card */}
 								<div 
-									className="relative bg-gray-800 bg-opacity-50 backdrop-blur-sm rounded-xl overflow-hidden shadow-2xl"
+									className="relative bg-white dark:bg-gray-800 bg-opacity-90 dark:bg-opacity-50 backdrop-blur-sm rounded-xl overflow-hidden shadow-2xl border border-gray-200 dark:border-transparent"
 									style={{
 										boxShadow: hoveredIndex === index 
 											? '0 25px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(92, 141, 255, 0.3)'
@@ -122,12 +122,12 @@ const ShowcaseSection = () => {
 									{/* Content */}
 									<div className="p-6">
 										<h3 
-											className="text-xl font-bold text-white mb-2 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-[#5C8DFF] group-hover:to-[#65FFA0] group-hover:bg-clip-text transition-all duration-300 font-poppins"
+											className="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-[#5C8DFF] group-hover:to-[#65FFA0] group-hover:bg-clip-text transition-all duration-300 font-poppins"
 										>
 											{item.title}
 										</h3>
 										<p 
-											className="text-gray-300 text-sm font-poppins"
+											className="text-gray-600 dark:text-gray-300 text-sm font-poppins"
 										>
 											{item.description}
 										</p>
@@ -151,7 +151,7 @@ const ShowcaseSection = () => {
 				{/* Bottom CTA */}
 				<div className="text-center mt-16">
 					<p 
-						className="text-gray-300 mb-6 font-poppins"
+						className="text-gray-600 dark:text-gray-300 mb-6 font-poppins"
 					>
 						Experience the power of automated machine learning
 					</p>

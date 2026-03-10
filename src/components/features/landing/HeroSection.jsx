@@ -11,7 +11,7 @@ const HeroSection = () => {
 				<div className="relative">
 					{/* Left side: Content */}
 					<div className="max-w-4xl">
-						<h1 className="text-left text-7xl lh-6 ld-04 text-white mb-6">
+						<h1 className="text-left text-7xl lh-6 ld-04 text-gray-900 dark:text-white mb-6">
 							<div 
 								className="font-bold font-poppins"
 							>
@@ -25,7 +25,7 @@ const HeroSection = () => {
 						</h1>
 						
 						<h2 
-							className="text-xl font-4 font-regular lh-6 ld-04 pb-11 text-white text-left font-poppins"
+							className="text-xl font-4 font-regular lh-6 ld-04 pb-11 text-gray-700 dark:text-white text-left font-poppins"
 						>
 							Launch powerful AI models in minutes with our automated platform. <br />
 							<span className="font-bold">No coding</span> — just faster results, lower costs, and smarter decisions.

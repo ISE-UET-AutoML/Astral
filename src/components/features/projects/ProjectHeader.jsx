@@ -17,7 +17,6 @@ const ProjectHeader = ({ onNewProject }) => {
                 <Tooltip title="Create a new project with AI assistance or manual setup">
                     <button
                         onClick={onNewProject}
-                        // Đã sửa lại class ở dưới đây: Bỏ bg-clip-text, đổi thành nền gradient xanh dương và chữ trắng
                         className="px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg text-white border-none bg-gradient-to-r from-blue-700 to-blue-600"
                     >
                         New Project

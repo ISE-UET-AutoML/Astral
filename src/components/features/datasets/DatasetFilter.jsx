@@ -59,7 +59,6 @@ const DatasetFilter = ({
               value={selectedType || 'none'}
               className="w-full"
               onChange={(value) => onTypeChange && onTypeChange(value)}
-              className="!h-10"
             />
           </div>
         </div>
@@ -73,7 +72,6 @@ const DatasetFilter = ({
               value={sortBy || 'latest'}
               className="w-full"
               onChange={(value) => onSortChange && onSortChange(value)}
-              className="!h-10"
             />
           </div>
         </div>

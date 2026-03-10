@@ -1,5 +1,5 @@
 /**
- * BuildPager (icon-only)
+ * ager (icon-only)
  *
  * Minimal, theme-aware pager used in Project Build pages.
  * - Icon buttons for First/Prev/Next/Last
