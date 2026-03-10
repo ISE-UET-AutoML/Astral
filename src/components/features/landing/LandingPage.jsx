@@ -6,6 +6,7 @@ import CollabMarquee from './CollabMarquee'
 import ServicesSection from './ServicesSection'
 import ShowcaseSection from './ShowcaseSection'
 import FooterSection from './FooterSection'
+import DecorativeBlocks from './DecorativeBlocks'
 
 /**
  * LandingPage - Main wrapper component for the landing page
@@ -40,7 +41,9 @@ const LandingPage = () => {
 			className={`min-h-screen relative ${bgClass} ${textClass}`}
 		>
 			{/* Full-viewport background fill following app theme */}
-			<div className={`fixed inset-0 ${bgClass} -z-50`} />
+			<div className={`fixed inset-0 ${bgClass} -z-[100]`} />
+			{/* Decorative sea blue blocks */}
+			<DecorativeBlocks />
 			
 			{/* Navigation / orbital logo layer (positioned below fixed global NavBar) */}
 			<div className="pt-24">
@@ -52,7 +55,7 @@ const LandingPage = () => {
 			</div>
 			
 			{/* Content Sections */}
-			<main>
+			<main className="relative z-[20]">
 				<HeroSection />
 				<CollabMarquee />
 				<ServicesSection />

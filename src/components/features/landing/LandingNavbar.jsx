@@ -78,18 +78,20 @@ const LandingNavbar = ({ scrolled, navbarOpen, setNavbarOpen }) => {
 		}
 	}
 
+	const headerClass = [
+		'fixed top-0 w-full z-50 transition-all duration-300 pt-6 pb-6',
+		'backdrop-blur-xl border-b',
+		scrolled
+			? theme === 'dark'
+				? 'bg-[#1a1a1a]/95 shadow-lg border-white/10'
+				: 'bg-white/95 shadow-lg border-gray-200'
+			: theme === 'dark'
+				? 'bg-[#121212]/70 shadow-sm border-white/5'
+				: 'bg-white/80 shadow-sm border-gray-200/60',
+	].join(' ')
+
 	return (
-		<header 
-			className="fixed top-0 w-full z-50 transition-all duration-300 pt-6 pb-6 shadow-md" 
-			style={{ 
-				backgroundColor: scrolled 
-					? (theme === 'dark' ? 'rgba(26, 26, 26, 0.95)' : 'rgba(249, 250, 251, 0.95)')
-					: 'transparent',
-				backdropFilter: scrolled ? 'blur(10px)' : 'none',
-				zIndex: 50,
-				boxShadow: scrolled ? '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' : 'none'
-			}}
-		>
+		<header className={headerClass}>
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				<div className="flex justify-between items-center h-16">
 					{/* Left: ASTRAL Logo */}
