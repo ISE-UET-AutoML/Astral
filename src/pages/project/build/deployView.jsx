@@ -161,7 +161,7 @@ const DeployView = () => {
     return (
         <div className="min-h-screen bg-[var(--surface)] px-6 py-6">
             <div className="mx-auto px-8 mt-16 space-y-6">
-                <div className="rounded-2xl border border-[var(--border)] bg-[var(--card-gradient)] py-10 px-16 shadow-[0_8px_32px_rgba(0,0,0,0.3)] backdrop-blur-xl">
+                <div className="rounded-2xl border border-[var(--border)] bg-white dark:bg-[#282828] py-10 px-16 shadow-[0_8px_32px_rgba(0,0,0,0.3)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] backdrop-blur-xl">
                     <div className="flex flex-col gap-4">
                         <div className="flex items-center gap-3">
                             <RocketOutlined className="text-[28px] text-[var(--accent-text)]" />
@@ -189,10 +189,10 @@ const DeployView = () => {
                                         }
                                     >
                                         <div
-                                            className={`h-full rounded-xl border border-[var(--border)] bg-[var(--card-gradient)] p-6 transition-all duration-300 ${
+                                            className={`h-full rounded-xl border border-[var(--border)] bg-white dark:bg-[#2a2a2a] p-6 transition-all duration-300 ${
                                                 isSelected
-                                                    ? 'border-[var(--accent-text)] bg-[var(--selection-bg)] shadow-[0_8px_24px_var(--selection-bg)]'
-                                                    : 'hover:bg-[var(--hover-bg)] hover:border-[var(--border-hover)] hover:shadow-[0_8px_24px_var(--selection-bg)]'
+                                                    ? 'border-[var(--accent-text)] bg-blue-50 dark:bg-[#333333] shadow-[0_8px_24px_rgba(96,165,250,0.2)]'
+                                                    : 'hover:bg-gray-50 dark:hover:bg-[#2f2f2f] hover:border-[var(--border-hover)] hover:shadow-lg'
                                             }`}
                                         >
                                             <div className="flex flex-col gap-4">

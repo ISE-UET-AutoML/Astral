@@ -178,8 +178,8 @@
     --secondary-text: #d1d5db;
     --accent-text: #60a5fa;
 
-    /* Card & container gradients */
-    --card-gradient: linear-gradient(135deg, #1a1a1a 0%, #222222 100%);
+    /* Card & container gradients – lighter gray for visibility in dark mode */
+    --card-gradient: linear-gradient(135deg, #282828 0%, #2d2d2d 100%);
     --tag-gradient: linear-gradient(135deg, #1f1f1f 0%, #252525 100%);
     --button-gradient: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
     --button-gradient-dark: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
