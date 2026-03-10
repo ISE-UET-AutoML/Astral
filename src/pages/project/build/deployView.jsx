@@ -160,22 +160,22 @@ const DeployView = () => {
 
     return (
         <div className="min-h-screen bg-[var(--surface)] px-6 py-6">
-            <div className="mx-auto max-w-5xl space-y-6">
-                <div className="rounded-2xl border border-[var(--border)] bg-[var(--card-gradient)] p-6 shadow-[0_8px_32px_rgba(0,0,0,0.3)] backdrop-blur-xl">
+            <div className="mx-auto px-8 mt-16 space-y-6">
+                <div className="rounded-2xl border border-[var(--border)] bg-[var(--card-gradient)] py-10 px-16 shadow-[0_8px_32px_rgba(0,0,0,0.3)] backdrop-blur-xl">
                     <div className="flex flex-col gap-4">
                         <div className="flex items-center gap-3">
                             <RocketOutlined className="text-[28px] text-[var(--accent-text)]" />
-                            <h1 className="bg-[var(--title-gradient)] bg-clip-text text-2xl font-bold tracking-tight text-transparent">
+                            <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                                 Deploy Model {modelId}
                             </h1>
                         </div>
-                        <p className="text-[16px] text-[var(--text)]">
+                        <p className="text-[16px] text-gray-900 dark:text-white">
                             Choose your deployment option and launch your
                             application with our optimized infrastructure
                         </p>
                     </div>
 
-                    <div className="mt-6 grid gap-4 md:grid-cols-2">
+                    <div className="mt-6 grid gap-10 md:grid-cols-2 px-4 mb-10">
                         {deployOptions.map((option) => {
                             const Icon = option.icon
                             const isSelected = selectedOption === option.id
@@ -207,7 +207,7 @@ const DeployView = () => {
                                                                 }
                                                             />
                                                         </div>
-                                                        <h2 className="text-base font-semibold text-[var(--text)]">
+                                                        <h2 className="text-base font-semibold text-gray-900 dark:text-white">
                                                             {option.title}
                                                         </h2>
                                                     </div>
@@ -222,7 +222,7 @@ const DeployView = () => {
                                                     )}
                                                 </div>
 
-                                                <p className="text-sm text-[var(--text)]">
+                                                <p className="text-sm text-gray-700 dark:text-gray-200">
                                                     {option.description}
                                                 </p>
 
@@ -247,7 +247,7 @@ const DeployView = () => {
                                                             key={key}
                                                             className="space-y-1"
                                                         >
-                                                            <div className="font-semibold capitalize text-[var(--text)]">
+                                                            <div className="font-semibold capitalize text-gray-900 dark:text-white">
                                                                 {key}
                                                             </div>
                                                             <div
@@ -272,7 +272,7 @@ const DeployView = () => {
                         type="default"
                         size="large"
                         onClick={handleCancel}
-                        className="rounded-xl border border-[var(--border)] bg-[var(--input-bg)] px-6 py-2 font-semibold text-[var(--text)] shadow-sm hover:border-[var(--modal-close-hover)]"
+                        className="rounded-xl border border-[var(--border)] bg-[var(--input-bg)] px-6 py-2 font-semibold text-gray-900 dark:text-white shadow-sm hover:border-[var(--modal-close-hover)]"
                     >
                         Cancel
                     </Button>
@@ -281,7 +281,7 @@ const DeployView = () => {
                         size="large"
                         onClick={startDeployment}
                         disabled={!selectedOption}
-                        className="rounded-xl bg-[var(--button-primary-bg)] px-6 py-2 font-semibold text-[var(--button-primary-color)] shadow-md disabled:bg-[var(--input-disabled-bg)] disabled:text-[var(--input-disabled-color)]"
+                        className="deploy-btn-solid rounded-xl px-6 py-2 font-semibold shadow-md"
                     >
                         Deploy Now
                     </Button>
