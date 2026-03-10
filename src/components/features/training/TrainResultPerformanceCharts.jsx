@@ -7,7 +7,7 @@ export function TrainResultPerformanceCharts({ valGraphs }) {
 	return (
 		<Card
 			title={
-				<span className="font-poppins text-[#e2e8f0]">
+				<span className="font-poppins text-gray-900 dark:text-[#e2e8f0]">
 					Training Performance
 				</span>
 			}
@@ -20,7 +20,7 @@ export function TrainResultPerformanceCharts({ valGraphs }) {
 							<LineGraph
 								data={metricData}
 								label={
-									<span className="text-white">
+									<span className="text-gray-900 dark:text-white">
 										{metricName.replace('_', ' ')} graph
 									</span>
 								}

@@ -10,6 +10,7 @@ import { TrainResultSummaryCards } from 'src/components/features/training/TrainR
 import { TrainResultPerformanceCharts } from 'src/components/features/training/TrainResultPerformanceCharts'
 import { TrainResultMetricsTable } from 'src/components/features/training/TrainResultMetricsTable'
 import 'src/components/features/training/trainResultTheme.css'
+import { ChartBarSquareIcon } from '@heroicons/react/20/solid'
 
 const TrainResult = () => {
 	const { projectInfo } = useOutletContext()
@@ -32,9 +33,14 @@ const TrainResult = () => {
 		projectId: projectInfo.id,
 	})
 
+
 	return (
-		<div className="relative min-h-screen bg-[var(--surface)]">
+		<div className="relative min-h-screen bg-[var(--surface)] mt-4">
 			<div className="relative z-10 p-6">
+				<div className="mb-6 flex items-center gap-2">
+				    <ChartBarSquareIcon className="w-12 h-12 text-blue-200 dark:text-white"/>
+					<h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Training Result</h1>
+				</div>
 				<div className="flex w-full flex-col gap-6">
 					<TrainResultSummaryCards
 						metrics={metrics}

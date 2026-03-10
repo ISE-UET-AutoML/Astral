@@ -38,7 +38,7 @@ const columns = [
 		key: 'metric',
 		render: (text, record) => (
 			<Tooltip title={record.description}>
-				<span className="font-poppins text-[#e2e8f0]">{text}</span>{' '}
+				<span className="font-poppins text-gray-900 dark:text-[#e2e8f0]">{text}</span>{' '}
 				<InfoCircleOutlined className="ml-1 text-[#60a5fa]" />
 			</Tooltip>
 		),
@@ -50,7 +50,7 @@ const columns = [
 		render: (text) => {
 			const isNumeric = typeof text === 'number' || isFinite(Number(text))
 			const value = isNumeric ? Number(text).toFixed(2) : text
-			return <span className="font-poppins text-slate-200">{value}</span>
+			return <span className="font-poppins text-gray-700 dark:text-slate-200">{value}</span>
 		},
 	},
 	{
@@ -65,7 +65,7 @@ export function TrainResultMetricsTable({ metrics }) {
 	return (
 		<Card
 			title={
-				<span className="font-poppins text-[#e2e8f0]">
+				<span className="font-poppins text-gray-900 dark:text-[#e2e8f0]">
 					Comprehensive Metrics
 				</span>
 			}

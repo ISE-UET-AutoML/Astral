@@ -221,7 +221,7 @@ export const useLabelProjectsTable = ({ projectInfo, updateFields, navigate }) =
 
 	const renderServiceTag = (service) => (
 		<span
-			className={`inline-flex items-center px-3 py-1 rounded-lg text-xs font-medium border ${
+			className={`inline-flex items-center px-3 py-1 rounded-xl text-xs font-medium border ${
 				service === 'AWS_S3'
 					? 'bg-orange-500/10 text-orange-400 border-orange-500/20'
 					: 'bg-blue-500/10 text-blue-400 border-blue-500/20'
@@ -233,7 +233,7 @@ export const useLabelProjectsTable = ({ projectInfo, updateFields, navigate }) =
 
 	const renderLabeledTag = (isLabeled) => (
 		<span
-			className={`inline-flex items-center px-3 py-1 rounded-lg text-xs font-medium border ${
+			className={`inline-flex items-center px-3 py-1 rounded-xl text-xs font-medium border ${
 				isLabeled
 					? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
 					: 'bg-gray-500/10 text-gray-500 border-gray-500/20'
