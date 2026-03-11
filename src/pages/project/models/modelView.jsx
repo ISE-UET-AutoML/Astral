@@ -14,6 +14,7 @@ import {
 
 import * as mlServiceAPI from 'src/api/mlService'
 import * as modelServiceAPI from 'src/api/model'
+import * as modelVersionServiceAPI from 'src/api/model_version'
 import { useTheme } from 'src/theme/ThemeProvider'
 
 // Hàm render Tag trạng thái
@@ -36,7 +37,43 @@ const ModelView = () => {
     const { modelId, id } = useParams()
     const [model, setModel] = useState({})
     const [metrics, setMetrics] = useState([])
+    const [versions, setVersions] = useState([])
+    const [selectedVersion, setSelectedVersion] = useState(null)
     const [isDetailsExpanded, setIsDetailsExpanded] = useState(true)
+
+    const handleVersionSelect = async (versionId) => {
+        try {
+            const res = await modelVersionServiceAPI.getModelVersionById(versionId)
+            if (res.status === 200) {
+                setSelectedVersion(res.data)
+                // fetch metrics for this version
+                await fetchVersionMetrics(res.data.id)
+            }
+        } catch (err) {
+            console.log("Error fetching version details", err)
+        }
+    }
+
+    const fetchVersionMetrics = async (modelVersionId) => {
+        setMetrics([])
+        try {
+            const metricsRes = await modelVersionServiceAPI.getMetricsForModelVersion(modelVersionId)
+            if (metricsRes.status !== 200) throw new Error("Cannot get metrics")
+            
+            const metricsData = metricsRes.data || []
+            const formattedMetrics = metricsData.map((item) => ({
+                key: item.id,
+                metric: item.metric_name || 'Unknown',
+                value: parseFloat(item.score).toFixed(2),
+                description: item.description || 'No description',
+                status: getAccuracyStatus(item.score),
+            }))
+            setMetrics(formattedMetrics)
+        }
+        catch (error) {
+            console.log("Error while getting metrics", error)
+        }
+    }
 
     useEffect(() => {
         const fetchModel = async () => {
@@ -46,39 +83,57 @@ const ModelView = () => {
                 
                 const modelData = modelRes.data
                 setModel(modelData)
-                await fetchExperimentMetrics(modelData.experiment_id)
             }
             catch (error) {
                 console.log("Error while getting model", error)
             }
         }
 
-        const fetchExperimentMetrics = async (experimentId) => {
-            setMetrics([])
+        const loadVersions = async () => {
             try {
-                const metricsRes = await mlServiceAPI.getFinalMetrics(experimentId)
-                if (metricsRes.status !== 200) throw new Error("Cannot get metrics")
-                
-                const formattedMetrics = Object.keys(metricsRes.data).map(key => ({
-                    key: key,
-                    metric: metricsRes.data[key].name,
-                    value: parseFloat(metricsRes.data[key].score).toFixed(2),
-                    description: metricsRes.data[key].description,
-                    status: getAccuracyStatus(metricsRes.data[key].score),
-                }))
-                setMetrics(formattedMetrics)
-            }
-            catch (error) {
-                console.log("Error while getting metrics", error)
+                const verRes = await modelVersionServiceAPI.getAllModelVersions(modelId)
+                if (verRes.status === 200) {
+                    const list = verRes.data || []
+                    setVersions(list)
+                    if (list.length) {
+                        // sort descending by version number and pick first (latest)
+                        const sorted = [...list].sort((a, b) => b.version - a.version)
+                        handleVersionSelect(sorted[0].id)
+                    }
+                }
+            } catch (err) {
+                console.log("Error fetching model versions", err)
             }
         }
+
         fetchModel()
+        loadVersions()
     }, [modelId])
 
     return (
         <div className="min-h-screen relative w-full bg-[var(--surface)] font-poppins text-[var(--text)]">
             {/* Chỉnh lại padding và giới hạn chiều rộng để cân đối với Sidebar */}
             <div className="relative z-10 w-full p-6 lg:p-8 flex flex-col gap-6">
+                
+                {/* Version Selector */}
+                {versions.length > 0 && (
+                    <div className="flex items-center gap-3">
+                        <label className="text-sm font-medium text-[var(--text)]">Model Version:</label>
+                        <select
+                            value={selectedVersion?.id || ''}
+                            onChange={(e) => handleVersionSelect(Number(e.target.value))}
+                            className="border border-[var(--border)] rounded px-3 py-2 bg-[var(--surface)] text-[var(--text)] hover:bg-[var(--hover-bg)] transition-colors text-sm"
+                        >
+                            {versions
+                                .sort((a, b) => b.version - a.version)
+                                .map((v) => (
+                                    <option key={v.id} value={v.id}>
+                                        v{v.version}
+                                    </option>
+                                ))}
+                        </select>
+                    </div>
+                )}
                 
                 {/* 1. TOP METRICS CARDS */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -97,7 +152,7 @@ const ModelView = () => {
                         <div className="text-4xl font-bold flex items-center gap-3">
                             <CloudDownloadOutlined className="text-[#f59e0b]" />
                             <span className="bg-gradient-to-br from-[#f59e0b] to-[#fbbf24] bg-clip-text text-transparent">
-                                {model.metadata?.model_size || 0} MB
+                                {(selectedVersion?.metadata?.model_size || model.metadata?.model_size) || 0} MB
                             </span>
                         </div>
                     </div>
@@ -200,7 +255,7 @@ const ModelView = () => {
                                 </div>
                                 
                                 <div className="flex flex-col gap-4">
-                                    {Object.entries(model.metadata || {}).map(([key, value]) => (
+                                    {Object.entries((selectedVersion?.metadata || model.metadata) || {}).map(([key, value]) => (
                                         <div key={key} className="flex flex-col sm:flex-row sm:items-start gap-4 pb-4 border-b border-[var(--border)] border-opacity-30 last:border-0 last:pb-0">
                                             <span className="px-4 py-1.5 rounded bg-gradient-to-br from-[#3b82f6] to-[#60a5fa] text-white text-sm font-medium min-w-[140px] text-center shrink-0">
                                                 {key}

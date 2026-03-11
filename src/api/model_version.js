@@ -10,7 +10,27 @@ const getLatestModelVersionByModelId = (modelId) => {
     )
 }
 
+const getAllModelVersions = (modelId) => {
+    return instance.get(
+        `${URL}/database_service/model-versions-service?model_id=${modelId}`
+    )
+}
+
+const getModelVersionById = (versionId) => {
+    return instance.get(
+        `${URL}/database_service/model-versions-service/${versionId}`
+    )
+}
+
+const getMetricsForModelVersion = (modelVersionId) => {
+    return instance.get(
+        `${URL}/database_service/model_metrics_service/all?model_version_id=${modelVersionId}`
+    )
+}
 
 export {
-    getLatestModelVersionByModelId
+    getLatestModelVersionByModelId,
+    getAllModelVersions,
+    getModelVersionById,
+    getMetricsForModelVersion,
 }
