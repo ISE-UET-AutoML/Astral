@@ -212,7 +212,49 @@ export default function ProjectGenApp() {
 			setGenLoading(false)
 		}
 	}
-	console.log("Gen app:", apps);
+
+	const handleRetry = async (app) => {
+		if (!app?.model_id) {
+			message.error('Cannot retry: missing model info')
+			return
+		}
+		const deploy = deploys.find((d) => d.model_id === app.model_id)
+		if (!deploy) {
+			message.error('Không tìm thấy deploy cho model này')
+			return
+		}
+		setGenLoading(true)
+		try {
+			const [modelRes, deployRes] = await Promise.all([
+				getLatestModelVersionByModelId(app.model_id),
+				getDeployData(deploy.id),
+			])
+			const metadata = {
+				projectName: projectInfo?.name,
+				projectDescription: projectInfo?.description,
+				taskType: app.task_type || projectInfo?.task_type,
+				description: projectInfo?.description || `A model for ${app.task_type}`,
+				labelsName: modelRes.data?.metadata?.label_column,
+				labelValues: modelRes.data?.metadata?.labels,
+				apiUrl: deployRes.data?.api_base_url,
+				sampleData: modelRes.data?.metadata?.sample_data,
+				modelInfo: modelRes.data,
+			}
+			await genApp({
+				modelId: app.model_id,
+				projectId,
+				name: app.name || `App #${app.id}`,
+				taskType: app.task_type || resolveTaskType(),
+				metadata,
+			})
+			message.success('Retry gen app thành công')
+			refetch()
+		} catch (e) {
+			message.error('Retry gen app thất bại')
+		} finally {
+			setGenLoading(false)
+		}
+	}
 
 
 
@@ -331,6 +373,8 @@ export default function ProjectGenApp() {
 												`/app/project/${projectId}/my-apps/${app.id}/edit`
 											)
 										}}
+										onRetry={handleRetry}
+										isRetrying={genLoading}
 									/>
 								))}
 							</div>

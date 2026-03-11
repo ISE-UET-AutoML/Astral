@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from 'src/components/shared/ui/card'
 import { Button } from 'src/components/shared/ui/button'
+import { ArrowPathIcon } from '@heroicons/react/24/outline'
 
 const StatusBadge = ({ status }) => {
 	const statusConfig = {
@@ -114,7 +115,7 @@ const AppIcon = ({ taskType }) => {
 	)
 }
 
-function AppCard({ app, onViewDetails }) {
+function AppCard({ app, onViewDetails, onRetry, isRetrying }) {
 	const hasInstance = app?.instance_id && app?.host
 	const frontendUrl =
 		hasInstance && app?.ports?.frontend
@@ -207,38 +208,52 @@ function AppCard({ app, onViewDetails }) {
 
 				{/* Actions */}
 				<div className="flex gap-2 pt-4 mt-auto">
-					{frontendUrl && (
+					{app?.status === 'failed' && onRetry ? (
 						<Button
 							size="sm"
-							onClick={() => window.open(frontendUrl, '_blank')}
-							className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs"
+							onClick={() => onRetry(app)}
+							disabled={isRetrying}
+							className="flex-1 bg-amber-400 hover:bg-amber-500 dark:bg-slate-600 dark:hover:bg-slate-500 text-white text-xs focus:ring-0 focus:ring-offset-0 disabled:opacity-50"
 						>
-							<svg
-								className="h-4 w-4 mr-1"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-							>
-								<path
-									d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"
-									strokeWidth="2"
-									strokeLinecap="round"
-									strokeLinejoin="round"
-								/>
-							</svg>
-							Open App
+							<ArrowPathIcon className={`h-4 w-4 mr-1.5 ${isRetrying ? 'animate-spin' : ''}`} />
+							Retry
 						</Button>
-					)}
-					{onViewDetails && (
-						<Button
-							size="sm"
-							variant="outline"
-							onClick={() => onViewDetails(app)}
-							disabled={['pending', 'running', 'generating', 'deploying'].includes(app?.status)}
-							className="flex-1 border-gray-300 dark:border-[var(--border)] hover:border-gray-400 dark:hover:border-white text-gray-700 dark:text-[var(--text)] hover:text-gray-900 dark:hover:text-white text-xs disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-offset-0 focus:outline-none"
-						>
-							Details
-						</Button>
+					) : (
+						<>
+							{frontendUrl && (
+								<Button
+									size="sm"
+									onClick={() => window.open(frontendUrl, '_blank')}
+									className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs"
+								>
+									<svg
+										className="h-4 w-4 mr-1"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+									>
+										<path
+											d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"
+											strokeWidth="2"
+											strokeLinecap="round"
+											strokeLinejoin="round"
+										/>
+									</svg>
+									Open App
+								</Button>
+							)}
+							{onViewDetails && (
+								<Button
+									size="sm"
+									variant="outline"
+									onClick={() => onViewDetails(app)}
+									disabled={['pending', 'running', 'generating', 'deploying'].includes(app?.status)}
+									className="flex-1 border-gray-300 dark:border-[var(--border)] hover:border-gray-400 dark:hover:border-white text-gray-700 dark:text-[var(--text)] hover:text-gray-900 dark:hover:text-white text-xs disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-offset-0 focus:outline-none"
+								>
+									Details
+								</Button>
+							)}
+						</>
 					)}
 				</div>
 			</CardContent>

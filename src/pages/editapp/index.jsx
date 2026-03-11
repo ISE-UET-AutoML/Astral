@@ -374,13 +374,13 @@ const EditAppPage = () => {
 						<div className="flex flex-col flex-1 min-h-0">
 							<div className="shrink-0 px-3 py-2 border-b border-gray-200 dark:border-[#333] flex items-center justify-between bg-gray-50 dark:bg-[#252526]">
 								<div className="flex items-center gap-3">
-									<span className="text-sm font-medium text-gray-700 dark:text-[#cccccc]">App Preview</span>
+
 									{app?.host && app?.ports?.frontend && (
 										<a
 											href={`http://${app.host}:${app.ports.frontend}`}
 											target="_blank"
 											rel="noreferrer"
-											className="text-[11px] text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 flex items-center gap-1 transition-colors"
+											className="text-sm text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 flex items-center gap-1 transition-colors"
 										>
 											{`http://${app.host}:${app.ports.frontend}`}
 											<ArrowTopRightOnSquareIcon className="w-3 h-3" />
