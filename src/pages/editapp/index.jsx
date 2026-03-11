@@ -331,7 +331,7 @@ const EditAppPage = () => {
 								type="button"
 								onClick={handleSaveFile}
 								disabled={!currentFile}
-								className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium border border-blue-300 dark:border-blue-600 text-blue-700 dark:text-blue-300 bg-white dark:bg-[#2d2d2d] hover:bg-blue-50 dark:hover:bg-blue-950/30 transition-colors disabled:opacity-50 disabled:pointer-events-none"
+								className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium border border-blue-300 dark:border-blue-600 text-blue-700 dark:text-blue-300 bg-white dark:bg-[#2d2d2d] hover:bg-blue-50 dark:hover:bg-blue-950/30 transition-colors disabled:opacity-50 disabled:pointer-events-none"
 							>
 								<BookmarkIcon className="w-4 h-4 shrink-0" />
 								Save
@@ -340,7 +340,7 @@ const EditAppPage = () => {
 								type="button"
 								onClick={() => handleDeploy()}
 								disabled={isDeploying}
-								className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600 disabled:opacity-50 disabled:pointer-events-none transition-all shadow-sm"
+								className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl disabled:opacity-50 disabled:pointer-events-none transition-all shadow-sm"
 							>
 								{isDeploying ? (
 									<ArrowPathIcon className="w-4 h-4 shrink-0 animate-spin" />
