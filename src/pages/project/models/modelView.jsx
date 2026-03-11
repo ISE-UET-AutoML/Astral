@@ -14,6 +14,7 @@ import {
 
 import * as mlServiceAPI from 'src/api/mlService'
 import * as modelServiceAPI from 'src/api/model'
+import * as modelVersionServiceAPI from 'src/api/model_version'
 import { useTheme } from 'src/theme/ThemeProvider'
 
 // Hàm render Tag trạng thái
@@ -36,14 +37,29 @@ const ModelView = () => {
     const { modelId, id } = useParams()
     const [model, setModel] = useState({})
     const [metrics, setMetrics] = useState([])
+    const [versions, setVersions] = useState([])
+    const [selectedVersion, setSelectedVersion] = useState(null)
     const [isDetailsExpanded, setIsDetailsExpanded] = useState(true)
+
+    const handleVersionSelect = async (versionId) => {
+        try {
+            const res = await modelVersionServiceAPI.getModelVersionById(versionId)
+            if (res.status === 200) {
+                setSelectedVersion(res.data)
+            }
+        } catch (err) {
+            console.log("Error fetching version details", err)
+        }
+    }
 
     useEffect(() => {
         const fetchModel = async () => {
             try {
                 const modelRes = await modelServiceAPI.getModelById(modelId)
-                if (modelRes.status !== 200) throw new Error("Cannot find model")
-                
+                if (modelRes.status !== 200) {
+                    message.error("Failed to load model info")
+                    return
+                }
                 const modelData = modelRes.data
                 setModel(modelData)
                 await fetchExperimentMetrics(modelData.experiment_id)
@@ -72,7 +88,27 @@ const ModelView = () => {
                 console.log("Error while getting metrics", error)
             }
         }
+
+        // load model + available versions, defaulting to latest version
+        const loadVersions = async () => {
+            try {
+                const verRes = await modelVersionServiceAPI.getAllModelVersions(modelId)
+                if (verRes.status === 200) {
+                    const list = verRes.data || []
+                    setVersions(list)
+                    if (list.length) {
+                        // sort descending by version number and pick first
+                        const sorted = [...list].sort((a,b) => b.version - a.version)
+                        handleVersionSelect(sorted[0].id)
+                    }
+                }
+            } catch (err) {
+                console.log("Error fetching model versions", err)
+            }
+        }
+
         fetchModel()
+        loadVersions()
     }, [modelId])
 
     return (
@@ -80,10 +116,34 @@ const ModelView = () => {
             {/* Chỉnh lại padding và giới hạn chiều rộng để cân đối với Sidebar */}
             <div className="relative z-10 w-full p-6 lg:p-8 flex flex-col gap-6">
                 
+                {/* version picker */}
+                {versions.length > 0 && (
+                    <div className="mb-4 flex items-center gap-2">
+                        <label className="text-sm font-medium">Version:</label>
+                        <select
+                            value={selectedVersion?.id || ''}
+                            onChange={(e) => handleVersionSelect(Number(e.target.value))}
+                            className="border rounded px-2 py-1 bg-[var(--surface)] text-[var(--text)]"
+                        >
+                            {versions.map((v) => (
+                                <option key={v.id} value={v.id}>
+                                    v{v.version}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                )}
                 {/* 1. TOP METRICS CARDS */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="group rounded-2xl border border-[var(--border)] border-opacity-20 shadow-lg p-6 bg-[linear-gradient(135deg,var(--hover-bg)_0%,rgba(255,255,255,0.02)_100%)]">
-                        <div className="text-[var(--secondary-text)] text-sm mb-3">Model {toNormalCase(metrics[0]?.metric)} Score</div>
+                        <div className="text-[var(--secondary-text)] text-sm mb-3">
+                        Model {toNormalCase(metrics[0]?.metric)} Score
+                        {selectedVersion && (
+                            <span className="ml-4 text-xs italic text-[var(--secondary-text)]">
+                                (v{selectedVersion.version})
+                            </span>
+                        )}
+                    </div>
                         <div className="text-4xl font-bold flex items-center gap-3">
                             <TrophyOutlined className="text-[#10b981]" />
                             <span className="bg-gradient-to-br from-[#10b981] to-[#34d399] bg-clip-text text-transparent">
@@ -97,7 +157,7 @@ const ModelView = () => {
                         <div className="text-4xl font-bold flex items-center gap-3">
                             <CloudDownloadOutlined className="text-[#f59e0b]" />
                             <span className="bg-gradient-to-br from-[#f59e0b] to-[#fbbf24] bg-clip-text text-transparent">
-                                {model.metadata?.model_size || 0} MB
+                                {(selectedVersion?.metadata?.model_size || model.metadata?.model_size) || 0} MB
                             </span>
                         </div>
                     </div>
@@ -200,7 +260,7 @@ const ModelView = () => {
                                 </div>
                                 
                                 <div className="flex flex-col gap-4">
-                                    {Object.entries(model.metadata || {}).map(([key, value]) => (
+                                    {Object.entries((selectedVersion?.metadata || model.metadata) || {}).map(([key, value]) => (
                                         <div key={key} className="flex flex-col sm:flex-row sm:items-start gap-4 pb-4 border-b border-[var(--border)] border-opacity-30 last:border-0 last:pb-0">
                                             <span className="px-4 py-1.5 rounded bg-gradient-to-br from-[#3b82f6] to-[#60a5fa] text-white text-sm font-medium min-w-[140px] text-center shrink-0">
                                                 {key}

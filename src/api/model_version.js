@@ -10,7 +10,22 @@ const getLatestModelVersionByModelId = (modelId) => {
     )
 }
 
+// fetch all versions for a given model
+const getAllModelVersions = (modelId) => {
+    return instance.get(
+        `${URL}/database_service/model-versions-service?model_id=${modelId}`
+    )
+}
+
+// fetch a specific version by its ID
+const getModelVersionById = (versionId) => {
+    return instance.get(
+        `${URL}/database_service/model-versions-service/${versionId}`
+    )
+}
 
 export {
-    getLatestModelVersionByModelId
+    getLatestModelVersionByModelId,
+    getAllModelVersions,
+    getModelVersionById,
 }
