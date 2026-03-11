@@ -39,92 +39,87 @@ export function DeployEndpointPanel({
 				<Divider
 					orientation="left"
 					orientationMargin={0}
-					className="!my-4 font-poppins font-semibold !border-[var(--border)] [&_.ant-divider-inner-text]:!text-[var(--text)]"
+					className="!my-4 font-poppins font-semibold !border-[var(--border)] [&_.ant-divider-inner-text]:!text-[var(--text)] [&_.ant-divider-inner-text]:!text-base"
 				>
 					API Endpoint URL
 				</Divider>
-				<div className="flex flex-col gap-4">
-					{/* URL + Copy URL cùng hàng */}
-					<div className="flex items-center gap-2 flex-nowrap">
-						<Input
-							className="flex-1 min-w-0 [&.ant-input]:!bg-[var(--input-bg)] [&.ant-input]:!border-[var(--input-border)] [&.ant-input]:!text-[var(--input-color)]"
-							value={
+				{/* URL + Copy URL + Upload + Generate UI trên 1 dòng */}
+				<div className="flex items-center gap-2 flex-wrap">
+					<Input
+						className="flex-1 min-w-[180px] [&.ant-input]:!bg-[var(--input-bg)] [&.ant-input]:!border-[var(--input-border)] [&.ant-input]:!text-[var(--input-color)] [&.ant-input]:!text-[15px] [&.ant-input]:!px-4 [&.ant-input]:!py-2.5"
+						value={
+							deployData?.api_base_url ||
+							'https://api.example.com/predict/model-123'
+						}
+						readOnly
+					/>
+					<Button
+						type="primary"
+						size="large"
+						className="deploy-btn-solid shrink-0"
+						onClick={() => {
+							const textToCopy =
 								deployData?.api_base_url ||
 								'https://api.example.com/predict/model-123'
+							try {
+								const textarea =
+									document.createElement('textarea')
+								textarea.value = textToCopy
+								document.body.appendChild(textarea)
+								textarea.select()
+								document.execCommand('copy')
+								document.body.removeChild(textarea)
+							} catch (err) {
+								console.error('Failed to copy', err)
 							}
-							readOnly
-						/>
-						<Button
-							type="primary"
-							className="deploy-btn-solid shrink-0"
-							onClick={() => {
-								const textToCopy =
-									deployData?.api_base_url ||
-									'https://api.example.com/predict/model-123'
-								try {
-									const textarea =
-										document.createElement('textarea')
-									textarea.value = textToCopy
-									document.body.appendChild(textarea)
-									textarea.select()
-									document.execCommand('copy')
-									document.body.removeChild(textarea)
-								} catch (err) {
-									console.error('Failed to copy', err)
-								}
-							}}
-						>
-							Copy URL
-						</Button>
-					</div>
-
-					{/* Hai nút ở góc cuối (phải) */}
-					<div className="flex justify-end items-center gap-3 flex-wrap">
-						<Button
-							type="primary"
-							onClick={onOpenUpload}
-							loading={uploading}
-							icon={<CloudUploadOutlined />}
-							size="large"
-							className="deploy-btn-solid"
-						>
-							{uploading ? 'Predicting...' : 'Upload Files to Predict'}
-						</Button>
-						<UpDataDeploy
-							isOpen={isShowUpload}
-							onClose={onCloseUpload}
-							projectId={model?.id}
-							taskType={projectInfo?.task_type}
-							featureColumns={Object.keys(model?.metadata?.csv || {})}
-							onUploadStart={null}
-							onUploadComplete={onUploadComplete}
-						/>
-						<Button
-							type="primary"
-							onClick={
-								isGeneratingUI || isCheckingUIStatus
-									? undefined
-									: onGenerateUI
-							}
-							disabled={isGeneratingUI || isCheckingUIStatus}
-							loading={isGeneratingUI}
-							size="large"
-							icon={
-								isUIGenerated ? <ExportOutlined /> : <StarOutlined />
-							}
-							className="deploy-btn-solid"
-						>
-							{isCheckingUIStatus ? (
-								<span>Checking</span>
-							) : isGeneratingUI ? (
-								<span>Generating</span>
-							) : isUIGenerated ? (
-								<span>Your App is Ready</span>
-							) : (
-								<span>Generate UI</span>
-							)}
-						</Button>
-					</div>
+						}}
+					>
+						Copy URL
+					</Button>
+					<Button
+						type="primary"
+						size="large"
+						onClick={onOpenUpload}
+						loading={uploading}
+						icon={<CloudUploadOutlined />}
+						className="deploy-btn-solid shrink-0"
+					>
+						{uploading ? 'Predicting...' : 'Upload Files to Predict'}
+					</Button>
+					<UpDataDeploy
+						isOpen={isShowUpload}
+						onClose={onCloseUpload}
+						projectId={model?.id}
+						taskType={projectInfo?.task_type}
+						featureColumns={Object.keys(model?.metadata?.csv || {})}
+						onUploadStart={null}
+						onUploadComplete={onUploadComplete}
+					/>
+					<Button
+						type="primary"
+						size="large"
+						onClick={
+							isGeneratingUI || isCheckingUIStatus
+								? undefined
+								: onGenerateUI
+						}
+						disabled={isGeneratingUI || isCheckingUIStatus}
+						loading={isGeneratingUI}
+						icon={
+							isUIGenerated ? <ExportOutlined /> : <StarOutlined />
+						}
+						className="deploy-btn-solid shrink-0"
+					>
+						{isCheckingUIStatus ? (
+							<span>Checking</span>
+						) : isGeneratingUI ? (
+							<span>Generating</span>
+						) : isUIGenerated ? (
+							<span>Your App is Ready</span>
+						) : (
+							<span>Generate UI</span>
+						)}
+					</Button>
 				</div>
 			</Card>
 		</div>

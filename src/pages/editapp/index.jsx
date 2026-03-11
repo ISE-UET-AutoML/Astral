@@ -13,7 +13,6 @@ import {
 	ArrowLeftIcon,
 	ArrowUpTrayIcon,
 	ArrowPathIcon,
-	BookmarkIcon,
 	CodeBracketSquareIcon,
 	ComputerDesktopIcon,
 	FolderIcon,
@@ -278,7 +277,7 @@ const EditAppPage = () => {
 	}
 
 	return (
-		<div className="mt-10 flex flex-col h-[calc(100dvh-100px)] bg-gray-100 dark:bg-[#1e1e1e] overflow-hidden -m-px">
+		<div className="flex flex-col h-[calc(100dvh-100px)] bg-gray-100 dark:bg-[#1e1e1e] overflow-hidden -m-px mt-0">
 			<div className="grid grid-cols-[360px_1fr] flex-1 min-h-0 overflow-hidden">
 				{/* Cột 1: Chat – flex để panel có chiều cao cố định, scroll bên trong */}
 				<div className="min-w-0 min-h-0 overflow-hidden flex flex-col">
@@ -298,6 +297,7 @@ const EditAppPage = () => {
 					{/* Một hàng: Code, App bên trái; Save, Deploy cố định ở cuối bên phải */}
 					<div className="shrink-0 flex items-center justify-between gap-2 px-2 py-1.5 border-b border-gray-200 dark:border-[#333] bg-gray-50 dark:bg-[#252526]">
 						<div className="flex items-center gap-1">
+							
 							<button
 								type="button"
 								onClick={() => setActiveMainView('code')}
@@ -329,18 +329,9 @@ const EditAppPage = () => {
 						<div className="flex items-center gap-2 shrink-0">
 							<button
 								type="button"
-								onClick={handleSaveFile}
-								disabled={!currentFile}
-								className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium border border-blue-300 dark:border-blue-600 text-blue-700 dark:text-blue-300 bg-white dark:bg-[#2d2d2d] hover:bg-blue-50 dark:hover:bg-blue-950/30 transition-colors disabled:opacity-50 disabled:pointer-events-none"
-							>
-								<BookmarkIcon className="w-4 h-4 shrink-0" />
-								Save
-							</button>
-							<button
-								type="button"
 								onClick={() => handleDeploy()}
 								disabled={isDeploying}
-								className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600 disabled:opacity-50 disabled:pointer-events-none transition-all shadow-sm"
+								className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl disabled:opacity-50 disabled:pointer-events-none transition-all shadow-sm"
 							>
 								{isDeploying ? (
 									<ArrowPathIcon className="w-4 h-4 shrink-0 animate-spin" />
@@ -374,13 +365,13 @@ const EditAppPage = () => {
 						<div className="flex flex-col flex-1 min-h-0">
 							<div className="shrink-0 px-3 py-2 border-b border-gray-200 dark:border-[#333] flex items-center justify-between bg-gray-50 dark:bg-[#252526]">
 								<div className="flex items-center gap-3">
-									<span className="text-sm font-medium text-gray-700 dark:text-[#cccccc]">App Preview</span>
+
 									{app?.host && app?.ports?.frontend && (
 										<a
 											href={`http://${app.host}:${app.ports.frontend}`}
 											target="_blank"
 											rel="noreferrer"
-											className="text-[11px] text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 flex items-center gap-1 transition-colors"
+											className="text-sm text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 flex items-center gap-1 transition-colors"
 										>
 											{`http://${app.host}:${app.ports.frontend}`}
 											<ArrowTopRightOnSquareIcon className="w-3 h-3" />

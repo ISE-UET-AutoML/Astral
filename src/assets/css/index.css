@@ -161,10 +161,10 @@
     --dropdown-bg: #ffffff;
     --dropdown-border: #e2e8f0;
     --dropdown-text: #1f2937;
-    --dropdown-hover-bg: #f8fafc;
-    --dropdown-hover-text: #1f2937;
-    --dropdown-selected-bg: #3b82f6;
-    --dropdown-selected-text: #ffffff;
+    --dropdown-hover-bg: #3b82f6;
+    --dropdown-hover-text: #ffffff;
+    --dropdown-selected-bg: #dbeafe;
+    --dropdown-selected-text: #1e40af;
     --dropdown-placeholder: #9ca3af;
 }
 
@@ -326,10 +326,10 @@
     --dropdown-bg: rgba(31, 31, 31, 0.95);
     --dropdown-border: rgba(148, 163, 184, 0.25);
     --dropdown-text: #e2e8f0;
-    --dropdown-hover-bg: rgba(255, 255, 255, 0.1);
+    --dropdown-hover-bg: #2563eb;
     --dropdown-hover-text: #ffffff;
-    --dropdown-selected-bg: #3b3b3b;
-    --dropdown-selected-text: #ffffff;
+    --dropdown-selected-bg: rgba(96, 165, 250, 0.2);
+    --dropdown-selected-text: #93c5fd;
     --dropdown-placeholder: #6b7280;
 }
 
@@ -379,10 +379,9 @@
     color: var(--dropdown-selected-text) !important;
 }
 
-/* Gen App card – dropdown selected item dùng xám thay vì xanh */
-.gen-app-card .custom-select-item--selected {
-    background: var(--hover-bg) !important;
-    color: var(--text) !important;
+.custom-select-item--selected:hover {
+    background: var(--dropdown-hover-bg) !important;
+    color: var(--dropdown-hover-text) !important;
 }
 
 .theme-dropdown .ant-select-selector {

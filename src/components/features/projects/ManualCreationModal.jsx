@@ -403,13 +403,13 @@ const ManualCreationModal = ({
 	const content = (
 		<form
 			onSubmit={handleSubmit}
-			className="theme-form theme-manual-form h-[95%] flex flex-col [scrollbar-width:thin] [scrollbar-color:#94a3b8_transparent]"
+			className="theme-form theme-manual-form flex-1 min-h-0 flex flex-col overflow-hidden [scrollbar-width:thin] [scrollbar-color:#94a3b8_transparent]"
 		>
 			{/* Two-column overall layout */}
-			<div className="grid grid-cols-[1.1fr_0.9fr] gap-5 items-stretch h-[calc(85vh-180px)] overflow-hidden">
+			<div className="grid grid-cols-[1.1fr_0.9fr] grid-rows-[minmax(0,1fr)] gap-5 items-stretch min-h-0 flex-1 overflow-hidden">
 				
 				{/* Left column */}
-				<div className="border-r-2 border-sky-500 pr-3 flex flex-col overflow-hidden">
+				<div className="border-r-2 border-sky-500 pr-3 flex flex-col overflow-hidden min-h-0">
 					
 					{/* Project Name */}
 					<div className="mb-4">
@@ -516,7 +516,7 @@ const ManualCreationModal = ({
 				</div>
 
 				{/* Right column - task details */}
-				<div className="task-details-column px-5 pb-5 overflow-y-auto flex flex-col min-h-0 [scrollbar-width:thin] [scrollbar-color:#94a3b8_transparent]">
+				<div className="task-details-column px-5 pb-5 overflow-y-auto overflow-x-hidden flex flex-col min-h-0 [scrollbar-width:thin] [scrollbar-color:#94a3b8_transparent]">
 					{displayTask ? (
 						<div className="task-details w-full min-w-[300px]">
 							<div className="text-center mb-6">
@@ -618,7 +618,7 @@ const ManualCreationModal = ({
 				<button
 					type="button"
 					onClick={onCancel}
-					className="px-8 py-2 rounded-xl border border-slate-500 text-slate-200 text-sm hover:bg-slate-700/60 transition-colors mt-1"
+					className="px-8 py-2 rounded-xl border border-slate-500  text-black dark:text-white hover:text-white text-sm hover:bg-red-500 transition-colors mt-1"
 				>
 					Cancel
 				</button>
@@ -634,13 +634,15 @@ const ManualCreationModal = ({
 
 	return (
 		<ProjectBaseModal open={open} onCancel={onCancel} className="theme-manual-modal">
-			<Title
-				level={4}
-				className="text-center mb-4 text-[var(--modal-title-color)] font-semibold"
-			>
-				Let&apos;s Create Your Project
-			</Title>
-			{content}
+			<div className="flex flex-col min-h-0 max-h-[calc(90vh-80px)] overflow-hidden">
+				<Title
+					level={4}
+					className="text-center mb-4 text-[var(--modal-title-color)] font-semibold shrink-0"
+				>
+					Let&apos;s Create Your Project
+				</Title>
+				{content}
+			</div>
 		</ProjectBaseModal>
 	)
 }

@@ -26,7 +26,7 @@ const ChatPanel = ({ appId, input, onInputChange, onSendMessage, isStreaming, st
 					type="button"
 					onClick={() => setActiveTab(TABS.chat)}
 					className={`flex-1 px-4 py-3 text-sm font-medium transition-colors border-b-2 -mb-px ${activeTab === TABS.chat
-							? 'text-gray-900 dark:text-white border-gray-900 dark:border-white bg-white dark:bg-[#1e1e1e]'
+							? 'text-blue-600 dark:text-white border-blue-500 dark:border-white bg-white dark:bg-[#1e1e1e]'
 							: 'text-gray-500 dark:text-[#888] border-transparent hover:text-gray-700 dark:hover:text-[#aaa]'
 						}`}
 				>
@@ -36,7 +36,7 @@ const ChatPanel = ({ appId, input, onInputChange, onSendMessage, isStreaming, st
 					type="button"
 					onClick={() => setActiveTab(TABS.history)}
 					className={`flex-1 px-4 py-3 text-sm font-medium transition-colors flex items-center justify-center gap-1.5 border-b-2 -mb-px ${activeTab === TABS.history
-							? 'text-gray-900 dark:text-white border-gray-900 dark:border-white bg-white dark:bg-[#1e1e1e]'
+							? 'text-blue-600 dark:text-white border-blue-500 dark:border-white bg-white dark:bg-[#1e1e1e]'
 							: 'text-gray-500 dark:text-[#888] border-transparent hover:text-gray-700 dark:hover:text-[#aaa]'
 						}`}
 				>
