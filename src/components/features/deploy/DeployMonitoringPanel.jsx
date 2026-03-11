@@ -25,14 +25,14 @@ export function DeployMonitoringPanel({ deployData, projectInfo, taskConfig, onU
 				<Divider
 					orientation="left"
 					orientationMargin={0}
-					className="!my-4 font-poppins font-semibold !border-[var(--border)] [&_.ant-divider-inner-text]:!text-[var(--text)]"
+					className="!my-4 font-poppins font-semibold !border-[var(--border)] [&_.ant-divider-inner-text]:!text-[var(--text)] [&_.ant-divider-inner-text]:!text-base"
 				>
 					Monitor Endpoint URL
 				</Divider>
 				{/* URL + Copy URL + System Monitoring + GPU Monitoring trên 1 dòng */}
 				<div className="flex items-center gap-2 flex-wrap">
 					<Input
-						className="flex-1 min-w-[180px] [&.ant-input]:!bg-[var(--input-bg)] [&.ant-input]:!border-[var(--input-border)] [&.ant-input]:!text-[var(--input-color)]"
+						className="flex-1 min-w-[180px] [&.ant-input]:!bg-[var(--input-bg)] [&.ant-input]:!border-[var(--input-border)] [&.ant-input]:!text-[var(--input-color)] [&.ant-input]:!text-[15px] [&.ant-input]:!px-4 [&.ant-input]:!py-2.5"
 						value={
 							deployData?.monitor_url ||
 							'https://api.example.com'
@@ -41,6 +41,7 @@ export function DeployMonitoringPanel({ deployData, projectInfo, taskConfig, onU
 					/>
 					<Button
 						type="primary"
+						size="large"
 						className="deploy-btn-solid shrink-0"
 						onClick={() => {
 							const textToCopy =
@@ -63,6 +64,7 @@ export function DeployMonitoringPanel({ deployData, projectInfo, taskConfig, onU
 					</Button>
 					<Button
 						type="primary"
+						size="large"
 						icon={<LineChartOutlined />}
 						className="deploy-btn-solid shrink-0"
 						disabled={!deployData?.monitor_url}
@@ -80,6 +82,7 @@ export function DeployMonitoringPanel({ deployData, projectInfo, taskConfig, onU
 					</Button>
 					<Button
 						type="primary"
+						size="large"
 						icon={<CalculatorOutlined />}
 						className="deploy-btn-solid shrink-0"
 						disabled={!deployData?.monitor_url}
