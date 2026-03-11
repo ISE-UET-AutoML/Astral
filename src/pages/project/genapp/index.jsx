@@ -238,7 +238,8 @@ export default function ProjectGenApp() {
 				</div>
 
 				<div className="max-w-full mx-auto">
-					{/* Gen App Card */}
+					{/* Gen App Card - chỉ hiện khi có model deploy */}
+					{deploys.length > 0 && (
 					<Card
 						className="rounded-2xl shadow-2xl mb-6"
 						style={{
@@ -247,70 +248,53 @@ export default function ProjectGenApp() {
 						}}
 					>
 						<CardContent className="pt-6 pb-6">
-							{deploys.length === 0 ? (
-								<div className="flex flex-col gap-4">
-									<p className="text-gray-600 dark:text-[var(--secondary-text)]">
-										No model found. Please deploy a model first.
+							<div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
+								<div className="flex-1 min-w-0">
+									<h3 className="flex items-center gap-2 text-xl font-semibold text-gray-900 dark:text-white mb-1">
+										<span className="w-2 h-2 rounded-full bg-gray-400 dark:bg-gray-500" />
+										Gen App
+									</h3>
+									<p className="text-gray-500 dark:text-gray-400 text-sm">
+										Select a model and click Gen App to create an app from the model.
 									</p>
-									<Button
-										onClick={() =>
-											navigate(
-												PATHS.PROJECT_DEPLOY(projectId)
+								</div>
+								<div className="flex flex-row items-center gap-3 shrink-0 flex-wrap sm:flex-nowrap">
+									<label className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
+										Model
+									</label>
+									<CustomSelect
+										value={selectedModelId}
+										onChange={(val) => {
+											const id = val ?? null
+											setSelectedModelId(id)
+											const found = deploys.find(
+												(d) => d.model_id === id
 											)
-										}
-										className="bg-gray-600 hover:bg-gray-500 text-white"
+											if (found) {
+												setAppName(found.name ?? '')
+											}
+										}}
+										placeholder="Select a model..."
+										className="theme-dropdown h-10 min-w-[200px] sm:min-w-[220px]"
 									>
-										Go to Deploy page
+										{deploys.map((d) => (
+											<Option key={d.model_id} value={d.model_id}>
+												{d.name ?? `Model #${d.model_id}`} (ID: {d.model_id})
+											</Option>
+										))}
+									</CustomSelect>
+									<Button
+										onClick={() => setIsFormOpen(true)}
+										disabled={!selectedModelId}
+										className="h-10 px-6 shrink-0 bg-gray-600 hover:bg-gray-500 text-white disabled:opacity-50"
+									>
+										Gen App
 									</Button>
 								</div>
-							) : (
-								<div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
-									<div className="flex-1 min-w-0">
-										<h3 className="flex items-center gap-2 text-xl font-semibold text-gray-900 dark:text-white mb-1">
-											<span className="w-2 h-2 rounded-full bg-gray-400 dark:bg-gray-500" />
-											Gen App
-										</h3>
-										<p className="text-gray-500 dark:text-gray-400 text-sm">
-											Select a model and click Gen App to create an app from the model.
-										</p>
-									</div>
-									<div className="flex flex-row items-center gap-3 shrink-0 flex-wrap sm:flex-nowrap">
-										<label className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
-											Model
-										</label>
-										<CustomSelect
-											value={selectedModelId}
-											onChange={(val) => {
-												const id = val ?? null
-												setSelectedModelId(id)
-												const found = deploys.find(
-													(d) => d.model_id === id
-												)
-												if (found) {
-													setAppName(found.name ?? '')
-												}
-											}}
-											placeholder="Select a model..."
-											className="theme-dropdown h-10 min-w-[200px] sm:min-w-[220px]"
-										>
-											{deploys.map((d) => (
-												<Option key={d.model_id} value={d.model_id}>
-													{d.name ?? `Model #${d.model_id}`} (ID: {d.model_id})
-												</Option>
-											))}
-										</CustomSelect>
-										<Button
-											onClick={() => setIsFormOpen(true)}
-											disabled={!selectedModelId}
-											className="h-10 px-6 shrink-0 bg-gray-600 hover:bg-gray-500 text-white disabled:opacity-50"
-										>
-											Gen App
-										</Button>
-									</div>
-								</div>
-							)}
+							</div>
 						</CardContent>
 					</Card>
+					)}
 
 					{/* List app đã gen */}
 					{error && (
@@ -416,13 +400,28 @@ export default function ProjectGenApp() {
 								<div className="p-4 rounded-full mb-4 bg-gray-100 dark:bg-[#2a2a2c]">
 									<EmptyIcon className="h-12 w-12 text-gray-400 dark:text-gray-500" />
 								</div>
-								<h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-[var(--text)]">
-									You haven't generated any apps yet
-								</h3>
-								<p className="text-center max-w-md text-gray-500 dark:text-[var(--secondary-text)]">
-									Select a model and click Gen App to create your
-									first app.
-								</p>
+								{deploys.length === 0 ? (
+									<>
+										<h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-[var(--text)]">
+											No model found. Please deploy a model first.
+										</h3>
+										<Button
+											onClick={() => navigate(PATHS.PROJECT_DEPLOY(projectId))}
+											className="mt-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl"
+										>
+											Go to Deploy page
+										</Button>
+									</>
+								) : (
+									<>
+										<h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-[var(--text)]">
+											You haven't generated any apps yet
+										</h3>
+										<p className="text-center max-w-md text-gray-500 dark:text-[var(--secondary-text)]">
+											Select a model and click Gen App to create your first app.
+										</p>
+									</>
+								)}
 							</CardContent>
 						</Card>
 					)}
