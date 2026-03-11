@@ -78,6 +78,8 @@ const LandingNavbar = ({ scrolled, navbarOpen, setNavbarOpen }) => {
 		}
 	}
 
+	const logoSrc = theme === 'light' ? '/BlackLogo.svg' : '/PrimaryLogo.svg'
+
 	const headerClass = [
 		'fixed top-0 w-full z-50 transition-all duration-300 pt-6 pb-6',
 		'backdrop-blur-xl border-b',
@@ -97,7 +99,7 @@ const LandingNavbar = ({ scrolled, navbarOpen, setNavbarOpen }) => {
 					{/* Left: ASTRAL Logo */}
 					<div className="flex-shrink-0">
 						<img
-							src="/PrimaryLogo.svg"
+							src={logoSrc}
 							alt="ASTRAL"
 							className="h-10 w-auto cursor-pointer transition-transform duration-300 hover:scale-105"
 							onClick={() => window.location.href = '/'}
