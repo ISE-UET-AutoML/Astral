@@ -28,9 +28,10 @@ export default function ProjectLayout() {
 				className="fixed h-[calc(100vh)] w-[120px] top-[60px] z-50 shadow-[4px_0_24px_rgba(0,0,0,0.02)] dark:shadow-[4px_0_24px_rgba(0,0,0,0.2)]"
 			/>
 			<div className="mx-auto w-[calc(100%)] pl-[120px] lg:pl-[140px] pt-12 pr-4 lg:pr-6 flex-grow lg:flex mt-4 min-h-[calc(100dvh)] overflow-hidden transition-all duration-300">
-				{/* Left sidebar & main wrapper */}
-				<div className="min-w-0 flex-1 w-max xl:flex rounded-2xl">
-					<div className="border border-gray-200 dark:border-white/5 rounded-2xl shadow-sm bg-white dark:bg-[var(--surface)] lg:min-w-0 lg:flex-1 min-h-[calc(100dvh-100px)] overflow-hidden">
+				{/* Thêm margin-left để content không bị khuất bởi sidebar */}
+				<div className="ml-0 min-w-0 flex-1 w-full py-4">
+					{/* Card với padding để con không bị border đè */}
+					<div className="border border-gray-200 dark:border-white/5 rounded-2xl shadow-sm bg-white dark:bg-[var(--surface)] lg:min-w-0 lg:flex-1 min-h-[calc(100dvh-100px)] overflow-y-auto overflow-x-hidden p-4 lg:p-6">
 						<Outlet className="outlet h-max" />
 					</div>
 				</div>

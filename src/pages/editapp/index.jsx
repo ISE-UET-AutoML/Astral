@@ -277,7 +277,7 @@ const EditAppPage = () => {
 	}
 
 	return (
-		<div className="mt-10 flex flex-col h-[calc(100dvh-100px)] bg-gray-100 dark:bg-[#1e1e1e] overflow-hidden -m-px">
+		<div className="flex flex-col h-[calc(100dvh-100px)] bg-gray-100 dark:bg-[#1e1e1e] overflow-hidden -m-px mt-0">
 			<div className="grid grid-cols-[360px_1fr] flex-1 min-h-0 overflow-hidden">
 				{/* Cột 1: Chat – flex để panel có chiều cao cố định, scroll bên trong */}
 				<div className="min-w-0 min-h-0 overflow-hidden flex flex-col">
@@ -297,6 +297,7 @@ const EditAppPage = () => {
 					{/* Một hàng: Code, App bên trái; Save, Deploy cố định ở cuối bên phải */}
 					<div className="shrink-0 flex items-center justify-between gap-2 px-2 py-1.5 border-b border-gray-200 dark:border-[#333] bg-gray-50 dark:bg-[#252526]">
 						<div className="flex items-center gap-1">
+							
 							<button
 								type="button"
 								onClick={() => setActiveMainView('code')}

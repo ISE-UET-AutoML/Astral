@@ -140,9 +140,14 @@ const MessagesPanel = ({ appId, liveMessages = [], streamingContent = '', isStre
 
 	const totalCount = sortedHistory.length + liveMessages.length + (isStreaming ? 1 : 0)
 
-	// Auto-scroll to bottom whenever content changes
+	const scrollContainerRef = useRef(null)
+
+	// Auto-scroll to bottom whenever content changes – scroll only the Messages panel,
+	// not the parent page (scrollIntoView can scroll ancestor containers and cause top to be clipped)
 	useEffect(() => {
-		bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+		const el = scrollContainerRef.current
+		if (!el) return
+		el.scrollTop = el.scrollHeight
 	}, [liveMessages.length, streamingContent])
 
 	return (
@@ -156,7 +161,7 @@ const MessagesPanel = ({ appId, liveMessages = [], streamingContent = '', isStre
 				</div>
 			</div>
 
-			<div className="flex-1 min-h-0 overflow-auto p-4 space-y-4">
+			<div ref={scrollContainerRef} className="flex-1 min-h-0 overflow-auto p-4 space-y-4">
 				{/* Hard-coded version history */}
 				{sortedHistory.map((msg) => {
 					const isOldVersion =
