@@ -29,80 +29,72 @@ export function DeployMonitoringPanel({ deployData, projectInfo, taskConfig, onU
 				>
 					Monitor Endpoint URL
 				</Divider>
-				<div className="flex flex-col gap-4">
-					{/* URL + Copy URL cùng hàng */}
-					<div className="flex items-center gap-2 flex-nowrap">
-						<Input
-							className="flex-1 min-w-0 [&.ant-input]:!bg-[var(--input-bg)] [&.ant-input]:!border-[var(--input-border)] [&.ant-input]:!text-[var(--input-color)]"
-							value={
+				{/* URL + Copy URL + System Monitoring + GPU Monitoring trên 1 dòng */}
+				<div className="flex items-center gap-2 flex-wrap">
+					<Input
+						className="flex-1 min-w-[180px] [&.ant-input]:!bg-[var(--input-bg)] [&.ant-input]:!border-[var(--input-border)] [&.ant-input]:!text-[var(--input-color)]"
+						value={
+							deployData?.monitor_url ||
+							'https://api.example.com'
+						}
+						readOnly
+					/>
+					<Button
+						type="primary"
+						className="deploy-btn-solid shrink-0"
+						onClick={() => {
+							const textToCopy =
 								deployData?.monitor_url ||
 								'https://api.example.com'
+							try {
+								const textarea =
+									document.createElement('textarea')
+								textarea.value = textToCopy
+								document.body.appendChild(textarea)
+								textarea.select()
+								document.execCommand('copy')
+								document.body.removeChild(textarea)
+							} catch (err) {
+								console.error('Failed to copy', err)
 							}
-							readOnly
-						/>
-						<Button
-							type="primary"
-							className="deploy-btn-solid shrink-0"
-							onClick={() => {
-								const textToCopy =
-									deployData?.monitor_url ||
-									'https://api.example.com'
-								try {
-									const textarea =
-										document.createElement('textarea')
-									textarea.value = textToCopy
-									document.body.appendChild(textarea)
-									textarea.select()
-									document.execCommand('copy')
-									document.body.removeChild(textarea)
-								} catch (err) {
-									console.error('Failed to copy', err)
-								}
-							}}
-						>
-							Copy URL
-						</Button>
-					</div>
-
-					{/* Hai nút ở góc cuối (phải) */}
-					<div className="flex justify-end items-center gap-3 flex-wrap">
-						<Button
-							type="primary"
-							size="large"
-							icon={<LineChartOutlined />}
-							className="deploy-btn-solid"
-							disabled={!deployData?.monitor_url}
-							onClick={() => {
-								if (deployData?.monitor_url) {
-									window.open(
-										`${deployData.monitor_url}/d/rYdddlPWk/node-exporter-full`,
-										'_blank',
-										'noopener,noreferrer'
-									)
-								}
-							}}
-						>
-							System Monitoring
-						</Button>
-						<Button
-							type="primary"
-							size="large"
-							icon={<CalculatorOutlined />}
-							className="deploy-btn-solid"
-							disabled={!deployData?.monitor_url}
-							onClick={() => {
-								if (deployData?.monitor_url) {
-									window.open(
-										`${deployData.monitor_url}/d/vlvPlrgnk/gpu-metrics`,
-										'_blank',
-										'noopener,noreferrer'
-									)
-								}
-							}}
-						>
-							GPU Monitoring
-						</Button>
-					</div>
+						}}
+					>
+						Copy URL
+					</Button>
+					<Button
+						type="primary"
+						icon={<LineChartOutlined />}
+						className="deploy-btn-solid shrink-0"
+						disabled={!deployData?.monitor_url}
+						onClick={() => {
+							if (deployData?.monitor_url) {
+								window.open(
+									`${deployData.monitor_url}/d/rYdddlPWk/node-exporter-full`,
+									'_blank',
+									'noopener,noreferrer'
+								)
+							}
+						}}
+					>
+						System Monitoring
+					</Button>
+					<Button
+						type="primary"
+						icon={<CalculatorOutlined />}
+						className="deploy-btn-solid shrink-0"
+						disabled={!deployData?.monitor_url}
+						onClick={() => {
+							if (deployData?.monitor_url) {
+								window.open(
+									`${deployData.monitor_url}/d/vlvPlrgnk/gpu-metrics`,
+									'_blank',
+									'noopener,noreferrer'
+								)
+							}
+						}}
+					>
+						GPU Monitoring
+					</Button>
 				</div>
 			</Card>
 
