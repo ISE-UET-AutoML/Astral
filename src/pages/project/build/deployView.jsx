@@ -16,6 +16,7 @@ import {
     DatabaseOutlined,
     ThunderboltOutlined,
     CloudDownloadOutlined,
+    CheckCircleFilled,
 } from '@ant-design/icons'
 import { useSpring, animated } from '@react-spring/web'
 import * as modelAPI from 'src/api/model'
@@ -189,10 +190,10 @@ const DeployView = () => {
                                         }
                                     >
                                         <div
-                                            className={`h-full rounded-xl border border-[var(--border)] bg-white dark:bg-[#2a2a2a] p-6 transition-all duration-300 ${
+                                            className={`h-full rounded-xl border border-[var(--border)] p-6 transition-all duration-300 ${
                                                 isSelected
-                                                    ? 'border-[var(--accent-text)] bg-blue-50 dark:bg-[#333333] shadow-[0_8px_24px_rgba(96,165,250,0.2)]'
-                                                    : 'hover:bg-gray-50 dark:hover:bg-[#2f2f2f] hover:border-[var(--border-hover)] hover:shadow-lg'
+                                                    ? 'bg-blue-100 dark:bg-[#1e1e1e] dark:border-blue-400/80 dark:border-2'
+                                                    : 'bg-white dark:bg-[#2a2a2a] hover:bg-gray-50 dark:hover:bg-[#2f2f2f] hover:border-[var(--border-hover)] hover:shadow-lg'
                                             }`}
                                         >
                                             <div className="flex flex-col gap-4">
@@ -211,6 +212,10 @@ const DeployView = () => {
                                                             {option.title}
                                                         </h2>
                                                     </div>
+                                                    <div className="flex items-center gap-2">
+                                                    {isSelected && (
+                                                        <CheckCircleFilled className="text-blue-500 dark:text-blue-400 text-3xl shrink-0" />
+                                                    )}
                                                     {option.badge && (
                                                         <Badge
                                                             count={option.badge}
@@ -220,6 +225,7 @@ const DeployView = () => {
                                                             className="text-xs font-medium"
                                                         />
                                                     )}
+                                                    </div>
                                                 </div>
 
                                                 <p className="text-sm text-gray-700 dark:text-gray-200">
