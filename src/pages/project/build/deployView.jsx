@@ -55,6 +55,7 @@ const DeployView = () => {
     const searchParams = new URLSearchParams(location.search)
     const { id: projectId } = useParams()
     const modelId = searchParams.get('modelId')
+    const modelVersionId = searchParams.get('modelVersionId')
     const [isDeploying, setIsDeploying] = useState(false)
     const [selectedOption, setSelectedOption] = useState('')
 
@@ -136,7 +137,7 @@ const DeployView = () => {
                 PATHS.SETTING_UP_DEPLOY(projectId, 'temp-deploy-id')
             )
 
-            const deployRequest = await modelAPI.deployModel(modelId)
+            const deployRequest = await modelAPI.deployModel(modelId, modelVersionId)
             console.log(deployRequest)
             if (deployRequest.status !== 200) {
                 throw new Error('Failed to deploy model')

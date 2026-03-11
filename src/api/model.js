@@ -22,8 +22,8 @@ const getModelByExperimentId = (experimentId) => {
 	)
 }
 
-const deployModel = (modelId) => {
-	return instance.post(`${AGGREGATE_URL}/model/${modelId}/deploy`)
+const deployModel = (modelId, modelVersionId) => {
+	return instance.post(`${AGGREGATE_URL}/model/${modelId}/deploy/${modelVersionId}`)
 }
 
 const modelPredict = (formData, modelId) => {
