@@ -17,6 +17,69 @@ import * as modelServiceAPI from 'src/api/model'
 import * as modelVersionServiceAPI from 'src/api/model_version'
 import { useTheme } from 'src/theme/ThemeProvider'
 
+const METRIC_MAP = {
+  1: {
+    name: "ACCURACY",
+    description: "Proportion of correctly predicted samples",
+  },
+  2: {
+    name: "F1",
+    description: "Harmonic mean of precision and recall",
+  },
+  3: {
+    name: "PRECISION",
+    description: "Proportion of positive identifications that are correct",
+  },
+  4: {
+    name: "RECALL",
+    description: "Proportion of actual positives that are correctly identified",
+  },
+  5: {
+    name: "F1_MACRO",
+    description: "Macro-averaged F1 score across classes",
+  },
+  6: {
+    name: "PRECISION_MACRO",
+    description: "Macro-averaged precision across classes",
+  },
+  7: {
+    name: "RECALL_MACRO",
+    description: "Macro-averaged recall across classes",
+  },
+  8: {
+    name: "IOU",
+    description: "Intersection over Union, ratio of overlap to union of predicted and true regions",
+  },
+  9: {
+    name: "MEAN_SQUARED_ERROR",
+    description: "Average of squared differences between predicted and actual values",
+  },
+  10: {
+    name: "MEAN_ABSOLUTE_ERROR",
+    description: "Average of absolute differences between predicted and actual values",
+  },
+  11: {
+    name: "R2_SCORE",
+    description: "Coefficient of determination, proportion of variance explained by the model",
+  },
+  12: {
+    name: "LOG_LOSS",
+    description: "Logarithmic loss for probabilistic classification models",
+  },
+  13: {
+    name: "SILHOUETTE_SCORE",
+    description: "Measures how similar an object is to its own cluster compared to other clusters",
+  },
+  14: {
+    name: "CALINSKI_HARABASZ_SCORE",
+    description: "Ratio of between-cluster dispersion to within-cluster dispersion",
+  },
+  15: {
+    name: "DAVIES_BOULDIN_SCORE",
+    description: "Average similarity between each cluster and its most similar one, lower is better",
+  },
+};
+
 // Hàm render Tag trạng thái
 const getAccuracyStatus = (score) => {
     const baseClass = "px-3 py-1 rounded text-xs text-white font-poppins font-medium inline-block text-center min-w-[90px]"
@@ -46,9 +109,35 @@ const ModelView = () => {
             const res = await modelVersionServiceAPI.getModelVersionById(versionId)
             if (res.status === 200) {
                 setSelectedVersion(res.data)
+                // fetch metrics for this version
+                await fetchVersionMetrics(res.data.id)
             }
         } catch (err) {
             console.log("Error fetching version details", err)
+        }
+    }
+
+    const fetchVersionMetrics = async (modelVersionId) => {
+        setMetrics([])
+        try {
+            const metricsRes = await modelVersionServiceAPI.getMetricsForModelVersion(modelVersionId)
+            if (metricsRes.status !== 200) throw new Error("Cannot get metrics")
+            
+            const metricsData = metricsRes.data || []
+            const formattedMetrics = metricsData.map((item) => {
+                const metricInfo = METRIC_MAP[item.metric_id] || { name: 'Unknown', description: 'No description' }
+                return {
+                    key: item.id,
+                    metric: metricInfo.name,
+                    value: parseFloat(item.score).toFixed(2),
+                    description: metricInfo.description,
+                    status: getAccuracyStatus(item.score),
+                }
+            })
+            setMetrics(formattedMetrics)
+        }
+        catch (error) {
+            console.log("Error while getting metrics", error)
         }
     }
 
@@ -62,34 +151,12 @@ const ModelView = () => {
                 }
                 const modelData = modelRes.data
                 setModel(modelData)
-                await fetchExperimentMetrics(modelData.experiment_id)
             }
             catch (error) {
                 console.log("Error while getting model", error)
             }
         }
 
-        const fetchExperimentMetrics = async (experimentId) => {
-            setMetrics([])
-            try {
-                const metricsRes = await mlServiceAPI.getFinalMetrics(experimentId)
-                if (metricsRes.status !== 200) throw new Error("Cannot get metrics")
-                
-                const formattedMetrics = Object.keys(metricsRes.data).map(key => ({
-                    key: key,
-                    metric: metricsRes.data[key].name,
-                    value: parseFloat(metricsRes.data[key].score).toFixed(2),
-                    description: metricsRes.data[key].description,
-                    status: getAccuracyStatus(metricsRes.data[key].score),
-                }))
-                setMetrics(formattedMetrics)
-            }
-            catch (error) {
-                console.log("Error while getting metrics", error)
-            }
-        }
-
-        // load model + available versions, defaulting to latest version
         const loadVersions = async () => {
             try {
                 const verRes = await modelVersionServiceAPI.getAllModelVersions(modelId)
@@ -97,8 +164,8 @@ const ModelView = () => {
                     const list = verRes.data || []
                     setVersions(list)
                     if (list.length) {
-                        // sort descending by version number and pick first
-                        const sorted = [...list].sort((a,b) => b.version - a.version)
+                        // sort descending by version number and pick first (latest)
+                        const sorted = [...list].sort((a, b) => b.version - a.version)
                         handleVersionSelect(sorted[0].id)
                     }
                 }
@@ -116,38 +183,37 @@ const ModelView = () => {
             {/* Chỉnh lại padding và giới hạn chiều rộng để cân đối với Sidebar */}
             <div className="relative z-10 w-full p-6 lg:p-8 flex flex-col gap-6">
                 
-                {/* version picker */}
+                {/* Version Selector */}
                 {versions.length > 0 && (
-                    <div className="mb-4 flex items-center gap-2">
-                        <label className="text-sm font-medium">Version:</label>
+                    <div className="flex items-center gap-3">
+                        <label className="text-sm font-medium text-[var(--text)]">Model Version:</label>
                         <select
                             value={selectedVersion?.id || ''}
                             onChange={(e) => handleVersionSelect(Number(e.target.value))}
-                            className="border rounded px-2 py-1 bg-[var(--surface)] text-[var(--text)]"
+                            className="border border-[var(--border)] rounded px-3 py-2 bg-[var(--surface)] text-[var(--text)] hover:bg-[var(--hover-bg)] transition-colors text-sm"
                         >
-                            {versions.map((v) => (
-                                <option key={v.id} value={v.id}>
-                                    v{v.version}
-                                </option>
-                            ))}
+                            {versions
+                                .sort((a, b) => b.version - a.version)
+                                .map((v) => (
+                                    <option key={v.id} value={v.id}>
+                                        v{v.version}
+                                    </option>
+                                ))}
                         </select>
                     </div>
                 )}
+                
                 {/* 1. TOP METRICS CARDS */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="group rounded-2xl border border-[var(--border)] border-opacity-20 shadow-lg p-6 bg-[linear-gradient(135deg,var(--hover-bg)_0%,rgba(255,255,255,0.02)_100%)]">
-                        <div className="text-[var(--secondary-text)] text-sm mb-3">
-                        Model {toNormalCase(metrics[0]?.metric)} Score
-                        {selectedVersion && (
-                            <span className="ml-4 text-xs italic text-[var(--secondary-text)]">
-                                (v{selectedVersion.version})
-                            </span>
-                        )}
-                    </div>
+                        <div className="text-[var(--secondary-text)] text-sm mb-3">Model Score</div>
                         <div className="text-4xl font-bold flex items-center gap-3">
                             <TrophyOutlined className="text-[#10b981]" />
                             <span className="bg-gradient-to-br from-[#10b981] to-[#34d399] bg-clip-text text-transparent">
-                                {metrics[0]?.value ? (metrics[0]?.value * 100).toFixed(2) : 'NaN'}%
+                                {(() => {
+                                    const accuracyMetric = metrics.find(m => m.metric === 'ACCURACY')
+                                    return accuracyMetric ? (accuracyMetric.value * 100).toFixed(2) : 'NaN'
+                                })()}%
                             </span>
                         </div>
                     </div>
@@ -157,7 +223,7 @@ const ModelView = () => {
                         <div className="text-4xl font-bold flex items-center gap-3">
                             <CloudDownloadOutlined className="text-[#f59e0b]" />
                             <span className="bg-gradient-to-br from-[#f59e0b] to-[#fbbf24] bg-clip-text text-transparent">
-                                {(selectedVersion?.metadata?.model_size || model.metadata?.model_size) || 0} MB
+                                {(selectedVersion?.metadata?.model_size.toFixed(2) || model.metadata?.model_size.toFixed(2)) || 0} MB
                             </span>
                         </div>
                     </div>
@@ -189,7 +255,7 @@ const ModelView = () => {
                                 </div>
                             </div>
                             <button 
-                                onClick={() => navigate(`/app/project/${id}/build/deployView?modelId=${modelId}`)}
+                                onClick={() => navigate(`/app/project/${id}/build/deployView?modelId=${modelId}&modelVersionId=${selectedVersion.version}`)}
                                 className="mx-6 mb-6 mt-auto py-3 rounded-xl font-bold flex justify-center items-center gap-2 bg-gradient-to-br from-[#10b981] to-[#34d399] text-white hover:opacity-90 transition-opacity"
                             >
                                 <RocketOutlined /> Deploy Now
