@@ -13,7 +13,6 @@ import {
 	ArrowLeftIcon,
 	ArrowUpTrayIcon,
 	ArrowPathIcon,
-	BookmarkIcon,
 	CodeBracketSquareIcon,
 	ComputerDesktopIcon,
 	FolderIcon,
@@ -327,15 +326,6 @@ const EditAppPage = () => {
 							</button>
 						</div>
 						<div className="flex items-center gap-2 shrink-0">
-							<button
-								type="button"
-								onClick={handleSaveFile}
-								disabled={!currentFile}
-								className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium border border-blue-300 dark:border-blue-600 text-blue-700 dark:text-blue-300 bg-white dark:bg-[#2d2d2d] hover:bg-blue-50 dark:hover:bg-blue-950/30 transition-colors disabled:opacity-50 disabled:pointer-events-none"
-							>
-								<BookmarkIcon className="w-4 h-4 shrink-0" />
-								Save
-							</button>
 							<button
 								type="button"
 								onClick={() => handleDeploy()}

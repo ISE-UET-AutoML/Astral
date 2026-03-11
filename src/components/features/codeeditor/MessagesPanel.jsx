@@ -155,9 +155,7 @@ const MessagesPanel = ({ appId, liveMessages = [], streamingContent = '', isStre
 					<span className="text-sm font-semibold text-gray-900 dark:text-[#cccccc]">
 						Messages
 					</span>
-					<span className="text-xs text-gray-500 dark:text-[#888]">
-						{totalCount} messages
-					</span>
+					
 				</div>
 			</div>
 
