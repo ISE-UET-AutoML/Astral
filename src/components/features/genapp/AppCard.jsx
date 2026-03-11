@@ -235,7 +235,7 @@ function AppCard({ app, onViewDetails }) {
 							variant="outline"
 							onClick={() => onViewDetails(app)}
 							disabled={['pending', 'running', 'generating', 'deploying'].includes(app?.status)}
-							className="flex-1 border-gray-300 dark:border-[var(--border)] text-gray-700 dark:text-[var(--text)] text-xs disabled:opacity-50 disabled:cursor-not-allowed"
+							className="flex-1 border-gray-300 dark:border-[var(--border)] hover:border-gray-400 dark:hover:border-white text-gray-700 dark:text-[var(--text)] hover:text-gray-900 dark:hover:text-white text-xs disabled:opacity-50 disabled:cursor-not-allowed"
 						>
 							Details
 						</Button>
