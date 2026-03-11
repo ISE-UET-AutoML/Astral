@@ -277,7 +277,7 @@ export default function ProjectGenApp() {
 										placeholder="Select a model..."
 										className="theme-dropdown h-10 min-w-[200px] sm:min-w-[220px]"
 									>
-										{deploys.map((d) => (
+										{[...new Map(deploys.map((d) => [d.model_id, d])).values()].map((d) => (
 											<Option key={d.model_id} value={d.model_id}>
 												{d.name ?? `Model #${d.model_id}`} (ID: {d.model_id})
 											</Option>
