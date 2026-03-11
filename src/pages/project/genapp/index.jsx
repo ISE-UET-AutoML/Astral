@@ -283,13 +283,13 @@ export default function ProjectGenApp() {
 											</Option>
 										))}
 									</CustomSelect>
-									<Button
-										onClick={() => setIsFormOpen(true)}
-										disabled={!selectedModelId}
-										className="h-10 px-6 shrink-0 bg-gray-600 hover:bg-gray-500 text-white disabled:opacity-50"
-									>
-										Gen App
-									</Button>
+										<button
+											onClick={() => setIsFormOpen(true)}
+											disabled={!selectedModelId}
+											className="h-10 px-6 shrink-0 bg-blue-600 hover:bg-blue-500 text-white disabled:opacity-50 rounded-2xl"
+										>
+											Gen App
+										</button>
 								</div>
 							</div>
 						</CardContent>
