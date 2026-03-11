@@ -220,7 +220,7 @@ export default function ProjectGenApp() {
 		}
 		const deploy = deploys.find((d) => d.model_id === app.model_id)
 		if (!deploy) {
-			message.error('Không tìm thấy deploy cho model này')
+			message.error('Cannot retry: missing deploy info')
 			return
 		}
 		setGenLoading(true)
