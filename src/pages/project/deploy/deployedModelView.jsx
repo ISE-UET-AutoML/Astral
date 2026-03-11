@@ -1,5 +1,6 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
+import { RocketLaunchIcon } from '@heroicons/react/24/outline'
 import { useTheme } from 'src/theme/ThemeProvider'
 import {
     DeploySummaryStats,
@@ -56,8 +57,21 @@ export default function DeployedModelView() {
             `}
             </style>
             <div className="p-6 min-h-screen bg-[var(--surface)]">
-                {/* BackgroundShapes removed */}
                 <div className="flex flex-col w-full gap-6">
+                    <div className="flex items-center gap-3 mb-2">
+                        <div className="p-2 rounded-xl bg-blue-100 dark:bg-blue-900/30">
+                            <RocketLaunchIcon className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                        </div>
+                        <div>
+                            <h1 className="text-2xl font-bold text-gray-900 dark:text-[var(--text)]">
+                                Deployment View
+                            </h1>
+                            <p className="text-sm text-gray-500 dark:text-[var(--secondary-text)] mt-0.5">
+                                Monitor and manage your deployed model
+                            </p>
+                        </div>
+                    </div>
+
                     <DeploySummaryStats
                         deployData={deployData}
                         recentPredictions={recentPredictions}
