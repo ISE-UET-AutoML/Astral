@@ -213,9 +213,7 @@ const DeployView = () => {
                                                         </h2>
                                                     </div>
                                                     <div className="flex items-center gap-2">
-                                                    {isSelected && (
-                                                        <CheckCircleFilled className="text-blue-500 dark:text-blue-400 text-3xl shrink-0" />
-                                                    )}
+                                                    
                                                     {option.badge && (
                                                         <Badge
                                                             count={option.badge}
