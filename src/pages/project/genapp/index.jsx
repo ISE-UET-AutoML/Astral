@@ -66,7 +66,8 @@ export default function ProjectGenApp() {
 	const { apps, loading, error, total, page, setPage, refetch } = useGenApps(projectId, 1, 8)
 	const [projectInfo, setProjectInfo] = useState(null)
 	const [deploys, setDeploys] = useState([])
-	const [selectedModelId, setSelectedModelId] = useState(null)
+	const [selectedDeployId, setSelectedDeployId] = useState(null)
+	const selectedModelId = deploys.find((d) => d.id === selectedDeployId)?.model_id ?? null
 	const [genLoading, setGenLoading] = useState(false)
 	const [appName, setAppName] = useState('')
 	const [isFormOpen, setIsFormOpen] = useState(false)
@@ -85,14 +86,14 @@ export default function ProjectGenApp() {
 			)
 			setDeploys(sorted)
 
-			if (sorted.length > 0 && !selectedModelId) {
-				setSelectedModelId(sorted[0].model_id)
+			if (sorted.length > 0 && !selectedDeployId) {
+				setSelectedDeployId(sorted[0].id)
 				setAppName(sorted[0].name ?? '')
 			}
 		} catch (e) {
 			message.error('Không tải được danh sách deploy')
 		}
-	}, [projectId, selectedModelId])
+	}, [projectId, selectedDeployId])
 
 	useEffect(() => {
 		fetchDeploys()
@@ -111,35 +112,33 @@ export default function ProjectGenApp() {
 		fetchProject()
 	}, [projectId])
 
-	// Fetch model metadata when selectedModelId changes
+	// Fetch model metadata when selectedDeployId changes
 	useEffect(() => {
 		const fetchMetadata = async () => {
-			if (!selectedModelId) {
+			if (!selectedDeployId) {
 				setModelMetadata(null)
 				setSelectedDeploy(null)
 				return
 			}
 
+			const deploy = deploys.find((d) => d.id === selectedDeployId)
+			if (!deploy) return
+
 			try {
-				const deploy = deploys.find(
-					(d) => d.model_id === selectedModelId
-				)
 				setSelectedDeploy(deploy)
 
 				const modelRes =
-					await getLatestModelVersionByModelId(selectedModelId)
+					await getLatestModelVersionByModelId(deploy.model_id)
 				setModelMetadata(modelRes.data)
 
-				if (deploy?.id) {
-					const deployRes = await getDeployData(deploy.id)
-					setSelectedDeploy(deployRes.data)
-				}
+				const deployRes = await getDeployData(deploy.id)
+				setSelectedDeploy(deployRes.data)
 			} catch (e) {
 				console.error('Failed to fetch model metadata', e)
 			}
 		}
 		fetchMetadata()
-	}, [selectedModelId, deploys])
+	}, [selectedDeployId, deploys])
 
 	// Log metadata when model changes
 	useEffect(() => {
@@ -263,13 +262,11 @@ export default function ProjectGenApp() {
 										Model
 									</label>
 									<CustomSelect
-										value={selectedModelId}
+										value={selectedDeployId}
 										onChange={(val) => {
-											const id = val ?? null
-											setSelectedModelId(id)
-											const found = deploys.find(
-												(d) => d.model_id === id
-											)
+											const deployId = val ?? null
+											setSelectedDeployId(deployId)
+											const found = deploys.find((d) => d.id === deployId)
 											if (found) {
 												setAppName(found.name ?? '')
 											}
@@ -277,9 +274,9 @@ export default function ProjectGenApp() {
 										placeholder="Select a model..."
 										className="theme-dropdown h-10 min-w-[200px] sm:min-w-[220px]"
 									>
-										{[...new Map(deploys.map((d) => [d.model_id, d])).values()].map((d) => (
-											<Option key={d.model_id} value={d.model_id}>
-												{d.name ?? `Model #${d.model_id}`} (ID: {d.model_id})
+										{deploys.map((d) => (
+											<Option key={d.id} value={d.id}>
+												{d.name ?? `Model #${d.model_id}`} (Model: {d.model_id}, Deploy id: {d.id})
 											</Option>
 										))}
 									</CustomSelect>
@@ -443,13 +440,11 @@ export default function ProjectGenApp() {
 							Model
 						</label>
 						<CustomSelect
-							value={selectedModelId}
+							value={selectedDeployId}
 							onChange={(val) => {
-								const id = val ?? null
-								setSelectedModelId(id)
-								const found = deploys.find(
-									(d) => d.model_id === id
-								)
+								const deployId = val ?? null
+								setSelectedDeployId(deployId)
+								const found = deploys.find((d) => d.id === deployId)
 								if (found) {
 									setAppName(found.name ?? '')
 								}
@@ -458,8 +453,8 @@ export default function ProjectGenApp() {
 							className="theme-dropdown w-full"
 						>
 							{deploys.map((d) => (
-								<Option key={d.model_id} value={d.model_id}>
-									{d.name ?? `Model #${d.model_id}`} (ID: {d.model_id})
+								<Option key={d.id} value={d.id}>
+									{d.name ?? `Model #${d.model_id}`} (Model: {d.model_id}, Deploy id: {d.id})
 								</Option>
 							))}
 						</CustomSelect>
