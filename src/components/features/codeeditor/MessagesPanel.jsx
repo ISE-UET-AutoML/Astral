@@ -1,4 +1,5 @@
 import { useMemo, useEffect, useRef } from 'react'
+import { Bot } from 'lucide-react'
 import { useAmtaMessages } from 'src/hooks'
 
 const RevertIcon = () => (
@@ -17,7 +18,6 @@ const Cursor = () => (
  */
 const MessageCard = ({ msg, isOldVersion, streaming }) => {
 	const isAssistant = msg.role === 'assistant'
-	const initials = isAssistant ? 'H' : 'U'
 
 	return (
 		<div
@@ -26,10 +26,15 @@ const MessageCard = ({ msg, isOldVersion, streaming }) => {
 					: 'bg-white dark:bg-[#2d2d2d] text-gray-900 dark:text-[#cccccc] border-gray-200 dark:border-[#444]'
 				}`}
 		>
-			<div className="flex items-start gap-3 px-4 pt-4">
+			<div className="flex items-start gap-3 px-4 pt-4 pb-4">
 				<div className="flex-1">
 					<div className="flex items-center justify-between gap-3">
-						<span className="text-xs uppercase tracking-wide font-semibold text-gray-500 dark:text-[#888]">
+						<span className="flex items-center gap-2 text-xs uppercase tracking-wide font-semibold text-gray-500 dark:text-[#888]">
+							{isAssistant && (
+								<span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700/50 shrink-0">
+									<Bot className="w-6 h-6 text-blue-500 dark:text-blue-400" />
+								</span>
+							)}
 							{isAssistant ? 'Agent' : 'User'}
 						</span>
 						{msg.created_at && !streaming && (
@@ -47,14 +52,6 @@ const MessageCard = ({ msg, isOldVersion, streaming }) => {
 						{msg.content}
 						{streaming && <Cursor />}
 					</div>
-				</div>
-				<div
-					className={`shrink-0 mt-0.5 w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold ${isAssistant
-							? 'bg-gray-500 text-white'
-							: 'bg-gray-200 text-gray-800 dark:bg-[#555] dark:text-[#cccccc]'
-						}`}
-				>
-					{initials}
 				</div>
 			</div>
 
