@@ -9,6 +9,7 @@ import viettel from 'src/assets/collab/Viettel-without_slogan-01_34bf1bf614.png'
 import pytorch from 'src/assets/collab/pytorch_logo.png'
 import vnulict from 'src/assets/collab/vnulic.png'
 import h2o from 'src/assets/collab/h2o.png'
+import ise from "src/assets/collab/ise.jpg"
 
 const logos = [
 	{ src: google, alt: 'Google' },
@@ -21,6 +22,7 @@ const logos = [
 	{ src: pytorch, alt: 'PyTorch' },
 	{ src: h2o, alt: 'H2O' },
 	{ src: vnulict, alt: 'VNULICT' },
+	{ src: ise, alt: 'ISE' },
 ]
 
 const CollabMarquee = () => {

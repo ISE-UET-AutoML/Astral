@@ -344,7 +344,7 @@ const EditAppPage = () => {
 								/>
 							</div>
 							{currentVersionNumber !== null && (
-								<span className="text-sm font-semibold px-3 py-1.5 rounded-xl border border-green-300/60 dark:border-blue-400/40 text-white bg-green-400 dark:bg-blue-500/40">
+								<span className="ml-14 text-sm font-semibold px-3 py-1.5 rounded-full border border-green-600 dark:text-white bg-green-500/20 text-green-900">
 									Current v{currentVersionNumber}
 								</span>
 							)}
