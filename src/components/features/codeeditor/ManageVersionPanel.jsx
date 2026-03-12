@@ -33,7 +33,7 @@ const VersionRow = ({ version, isCurrent, onDeploy }) => {
 
 	return (
 		<div
-			className={`rounded-lg border transition-colors ${
+			className={`rounded-xl border transition-colors ${
 				isCurrent
 					? 'border-blue-500 bg-blue-50 dark:bg-blue-950/30 dark:border-blue-500'
 					: 'border-gray-200 dark:border-[#444] bg-white dark:bg-[#2d2d2d] hover:bg-gray-50 dark:hover:bg-[#333]'
@@ -66,7 +66,7 @@ const VersionRow = ({ version, isCurrent, onDeploy }) => {
 							}}
 							className="text-[11px] px-2 py-1 rounded bg-gray-200 dark:bg-[#444] hover:bg-gray-300 dark:hover:bg-[#555] text-gray-700 dark:text-[#ccc]"
 						>
-							Deploy
+							Revert
 						</button>
 					)}
 					{hasChangelog && (
@@ -78,7 +78,7 @@ const VersionRow = ({ version, isCurrent, onDeploy }) => {
 			</div>
 			{expanded && hasChangelog && (
 				<div className="px-3 pb-3 pt-0 border-t border-gray-100 dark:border-[#444]">
-					<p className="text-[11px] font-medium text-gray-500 dark:text-[#888] uppercase tracking-wide mb-1">Changelog</p>
+					<p className="text-[11px] font-medium text-gray-500 dark:text-[#888] uppercase tracking-wide mb-1 mt-3">Changelog</p>
 					<p className="text-sm text-gray-700 dark:text-[#aaa] whitespace-pre-wrap pl-0">
 						{version.changelog}
 					</p>
