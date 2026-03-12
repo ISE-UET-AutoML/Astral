@@ -28,8 +28,8 @@ CMD ["npm", "run", "start"]
 # ----------------------------------------------------------------
 FROM base AS builder
 
-# Cài production deps
-RUN npm ci --only=production
+# Cài tất cả deps
+RUN npm install
 
 # Copy source
 COPY . .
