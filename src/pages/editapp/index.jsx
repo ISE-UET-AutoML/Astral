@@ -277,7 +277,7 @@ const EditAppPage = () => {
 	}
 
 	return (
-		<div className="flex flex-col h-[calc(100dvh-100px)] bg-gray-100 dark:bg-[#1e1e1e] overflow-hidden -m-px mt-0">
+		<div className="flex flex-col h-full min-h-0 bg-gray-100 dark:bg-[#1e1e1e] overflow-hidden">
 			<div className="grid grid-cols-[360px_1fr] flex-1 min-h-0 overflow-hidden">
 				{/* Cột 1: Chat – flex để panel có chiều cao cố định, scroll bên trong */}
 				<div className="min-w-0 min-h-0 overflow-hidden flex flex-col">

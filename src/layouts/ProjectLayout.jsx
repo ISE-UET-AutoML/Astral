@@ -1,10 +1,13 @@
-import { Outlet, useParams } from 'react-router-dom'
+import { Outlet, useLocation, useParams } from 'react-router-dom'
 import ProjectSidebar from 'src/layouts/ProjectSidebar'
 import { useTheme } from 'src/theme/ThemeProvider'
 
 export default function ProjectLayout() {
 	const params = useParams()
+	const location = useLocation()
 	const { theme } = useTheme()
+	const isEditAppPage =
+		location.pathname.includes('/my-apps/') && location.pathname.includes('/edit')
 
 	return (
 		<div className="relative min-h-screen bg-gray-50 dark:bg-[#111111]">
@@ -31,7 +34,13 @@ export default function ProjectLayout() {
 				{/* Thêm margin-left để content không bị khuất bởi sidebar */}
 				<div className="ml-0 min-w-0 flex-1 w-full py-4">
 					{/* Card với padding để con không bị border đè */}
-					<div className="border border-gray-200 dark:border-white/5 rounded-2xl shadow-sm bg-white dark:bg-[var(--surface)] lg:min-w-0 lg:flex-1 min-h-[calc(100dvh-100px)] overflow-y-auto overflow-x-hidden p-4 lg:p-6">
+					<div
+						className={`border border-gray-200 dark:border-white/5 rounded-2xl shadow-sm bg-white dark:bg-[var(--surface)] lg:min-w-0 lg:flex-1 ${
+							isEditAppPage
+								? 'h-[calc(100dvh-100px)] overflow-hidden p-0'
+								: 'min-h-[calc(100dvh-100px)] overflow-y-auto overflow-x-hidden p-4 lg:p-6'
+						}`}
+					>
 						<Outlet className="outlet h-max" />
 					</div>
 				</div>

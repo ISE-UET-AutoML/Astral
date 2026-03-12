@@ -25,9 +25,9 @@ const ChatPanel = ({ appId, input, onInputChange, onSendMessage, isStreaming, st
 				<button
 					type="button"
 					onClick={() => setActiveTab(TABS.chat)}
-					className={`flex-1 h-full px-4 text-sm font-medium transition-colors ${activeTab === TABS.chat
-							? 'text-blue-600 dark:text-white bg-white dark:bg-[#1e1e1e]'
-							: 'text-gray-500 dark:text-[#888] hover:text-gray-700 dark:hover:text-[#aaa]'
+					className={`flex-1 h-full px-4 text-sm font-medium transition-colors border-b-2 -mb-px ${activeTab === TABS.chat
+							? 'text-blue-600 dark:text-white bg-white dark:bg-[#1e1e1e] border-blue-500 dark:border-white'
+							: 'text-gray-500 dark:text-[#888] hover:text-gray-700 dark:hover:text-[#aaa] border-transparent'
 						}`}
 				>
 					Chat
@@ -35,9 +35,9 @@ const ChatPanel = ({ appId, input, onInputChange, onSendMessage, isStreaming, st
 				<button
 					type="button"
 					onClick={() => setActiveTab(TABS.history)}
-					className={`flex-1 h-full px-4 text-sm font-medium transition-colors flex items-center justify-center gap-1.5 ${activeTab === TABS.history
-							? 'text-blue-600 dark:text-white bg-white dark:bg-[#1e1e1e]'
-							: 'text-gray-500 dark:text-[#888] hover:text-gray-700 dark:hover:text-[#aaa]'
+					className={`flex-1 h-full px-4 text-sm font-medium transition-colors flex items-center justify-center gap-1.5 border-b-2 -mb-px ${activeTab === TABS.history
+							? 'text-blue-600 dark:text-white bg-white dark:bg-[#1e1e1e] border-blue-500 dark:border-white'
+							: 'text-gray-500 dark:text-[#888] hover:text-gray-700 dark:hover:text-[#aaa] border-transparent'
 						}`}
 				>
 					<HistoryOutlined className="w-4 h-4" />
