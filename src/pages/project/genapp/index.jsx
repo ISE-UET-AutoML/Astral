@@ -563,7 +563,7 @@ export default function ProjectGenApp() {
 							variant="outline"
 							onClick={() => setIsFormOpen(false)}
 							size="sm"
-							className="theme-modal-btn-outline rounded-lg"
+							className="theme-modal-btn-outline rounded-xl"
 						>
 							Cancel
 						</Button>
@@ -571,7 +571,7 @@ export default function ProjectGenApp() {
 							onClick={handleConfirmGenApp}
 							disabled={genLoading}
 							size="sm"
-							className="theme-modal-btn-primary rounded-lg"
+							className="theme-modal-btn-primary rounded-xl"
 						>
 							{genLoading ? 'Processing...' : 'Confirm'}
 						</Button>

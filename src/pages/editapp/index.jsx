@@ -366,28 +366,28 @@ const EditAppPage = () => {
 					)}
 					{activeMainView === 'app' && (
 						<div className="flex flex-col flex-1 min-h-0">
-							<div className="shrink-0 px-3 py-2 border-b border-gray-200 dark:border-[#333] flex items-center justify-between gap-2 bg-gray-50 dark:bg-[#252526]">
-								<div className="flex-1 min-w-0 flex items-center">
-									{app?.host && app?.ports?.frontend && (
+							<div className="shrink-0 px-3 py-2 border-b border-gray-200 dark:border-[#333] bg-gray-50 dark:bg-[#252526]">
+								{app?.host && app?.ports?.frontend && (
+									<div className="w-full flex items-center rounded-full bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-[#444] hover:border-gray-300 dark:hover:border-[#555] hover:shadow-sm transition-all">
 										<a
 											href={`http://${app.host}:${app.ports.frontend}`}
 											target="_blank"
 											rel="noreferrer"
-											className="flex items-center gap-2 w-full max-w-md px-4 py-2 rounded-full bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-[#444] text-sm text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-[#555] hover:shadow-sm transition-all"
+											className="min-w-0 flex-1 flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-300"
 										>
 											<span className="truncate">{`http://${app.host}:${app.ports.frontend}`}</span>
 											<ArrowTopRightOnSquareIcon className="w-3.5 h-3.5 shrink-0 text-gray-400 dark:text-gray-500" />
 										</a>
-									)}
-								</div>
-								<button
-									type="button"
-									onClick={() => setPreviewKey((k) => k + 1)}
-									className="shrink-0 p-1.5 rounded-full hover:bg-gray-200 dark:hover:bg-[#3c3c3c] text-gray-500 dark:text-[#888] transition-colors"
-									title="Reload Preview"
-								>
-									<ArrowPathIcon className="w-4 h-4" />
-								</button>
+										<button
+											type="button"
+											onClick={() => setPreviewKey((k) => k + 1)}
+											className="shrink-0 mr-1 p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-[#2f2f2f] text-gray-500 dark:text-[#888] transition-colors"
+											title="Reload Preview"
+										>
+											<ArrowPathIcon className="w-4 h-4" />
+										</button>
+									</div>
+								)}
 							</div>
 							<div className="flex-1 min-h-0 relative">
 								{app?.host && app?.ports?.frontend ? (
