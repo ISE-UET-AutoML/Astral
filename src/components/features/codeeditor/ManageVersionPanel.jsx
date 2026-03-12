@@ -40,10 +40,10 @@ const VersionRow = ({ version, isCurrent, onDeploy }) => {
 			}`}
 		>
 			<div
-				className="flex items-center justify-between gap-2 px-3 py-2.5 cursor-pointer"
+				className="flex items-center justify-between gap-3 px-4 py-2.5 cursor-pointer"
 				onClick={() => hasChangelog && setExpanded((e) => !e)}
 			>
-				<div className="flex items-center gap-2 min-w-0">
+				<div className="flex items-center gap-5 min-w-0">
 					<span className={`text-sm font-semibold ${isCurrent ? 'text-blue-600 dark:text-blue-400' : 'text-gray-900 dark:text-[#cccccc]'}`}>
 						Version {version.version_number}
 						{isCurrent && (
@@ -56,7 +56,7 @@ const VersionRow = ({ version, isCurrent, onDeploy }) => {
 						{formatDate(version.last_modified_at || version.created_at)}
 					</span>
 				</div>
-				<div className="flex items-center gap-1 shrink-0">
+				<div className="flex items-center gap-2 shrink-0">
 					{!isCurrent && onDeploy && (
 						<button
 							type="button"
@@ -111,6 +111,7 @@ const ManageVersionPanel = ({ appId, onDeployVersion }) => {
 		} finally {
 			setLoading(false)
 		}
+		console.log('data', data)
 	}, [appId])
 
 	useEffect(() => {
@@ -144,7 +145,7 @@ const ManageVersionPanel = ({ appId, onDeployVersion }) => {
 
 	return (
 		<div className="flex flex-col flex-1 min-h-0 overflow-hidden">
-			<div className="shrink-0 px-3 py-2 border-b border-gray-200 dark:border-[#333] flex justify-between items-center">
+			<div className="shrink-0 px-3 py-2 border-b border-gray-200 dark:border-[#333] flex justify-between items-center gap-2">
 				<span className="text-xs font-medium text-gray-500 dark:text-[#888]">
 					{versions.length} version{versions.length !== 1 ? 's' : ''}
 				</span>

@@ -18,7 +18,6 @@ import {
 	FolderIcon,
 	ExclamationTriangleIcon,
 	XMarkIcon,
-	ArrowTopRightOnSquareIcon,
 } from '@heroicons/react/24/outline'
 
 const AUTOSAVE_DEBOUNCE_MS = 1500
@@ -38,7 +37,7 @@ const EditAppPage = () => {
 	const [isStreaming, setIsStreaming] = useState(false)
 	const [streamingContent, setStreamingContent] = useState('')
 	/** Figma-style: 'code' | 'app' – bấm icon Code hiện editor, icon App hiện iframe. */
-	const [activeMainView, setActiveMainView] = useState('code')
+	const [activeMainView, setActiveMainView] = useState('app')
 	const [errors, setErrors] = useState([])
 	const [app, setApp] = useState(null)
 	const [previewKey, setPreviewKey] = useState(0)
@@ -369,23 +368,22 @@ const EditAppPage = () => {
 							<div className="shrink-0 px-3 py-2 border-b border-gray-200 dark:border-[#333] bg-gray-50 dark:bg-[#252526]">
 								{app?.host && app?.ports?.frontend && (
 									<div className="w-full flex items-center rounded-full bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-[#444] hover:border-gray-300 dark:hover:border-[#555] hover:shadow-sm transition-all">
-										<a
-											href={`http://${app.host}:${app.ports.frontend}`}
-											target="_blank"
-											rel="noreferrer"
-											className="min-w-0 flex-1 flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-300"
-										>
-											<span className="truncate">{`http://${app.host}:${app.ports.frontend}`}</span>
-											<ArrowTopRightOnSquareIcon className="w-3.5 h-3.5 shrink-0 text-gray-400 dark:text-gray-500" />
-										</a>
 										<button
 											type="button"
 											onClick={() => setPreviewKey((k) => k + 1)}
-											className="shrink-0 mr-1 p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-[#2f2f2f] text-gray-500 dark:text-[#888] transition-colors"
+											className="shrink-0 ml-1 p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-[#2f2f2f] text-gray-500 dark:text-[#888] transition-colors"
 											title="Reload Preview"
 										>
 											<ArrowPathIcon className="w-4 h-4" />
 										</button>
+										<a
+											href={`http://${app.host}:${app.ports.frontend}`}
+											target="_blank"
+											rel="noreferrer"
+											className="min-w-0 flex-1 flex items-center px-3 py-2 text-sm text-gray-700 dark:text-gray-300"
+										>
+											<span className="truncate">{`http://${app.host}:${app.ports.frontend}`}</span>
+										</a>
 									</div>
 								)}
 							</div>
