@@ -7,6 +7,7 @@ import ServicesSection from './ServicesSection'
 import ShowcaseSection from './ShowcaseSection'
 import FooterSection from './FooterSection'
 import DecorativeBlocks from './DecorativeBlocks'
+import DecorativeBlocksRevert from './DecorativeBlockRevert'
 
 /**
  * LandingPage - Main wrapper component for the landing page
@@ -58,9 +59,26 @@ const LandingPage = () => {
 			<main className="relative z-[20]">
 				<HeroSection />
 				<CollabMarquee />
+				
 				<ServicesSection />
 				<ShowcaseSection />
 				<FooterSection />
+
+				{/* Bottom decorative layer (kept, but clipped to avoid extra page height) */}
+				<div
+					className="pointer-events-none absolute inset-x-0 bottom-[1600px] h-[1200px] overflow-hidden z-[1]"
+					aria-hidden="true"
+				>
+					<DecorativeBlocks />
+					<DecorativeBlocksRevert />
+				</div>
+				<div
+					className="pointer-events-none absolute inset-x-0 bottom-[600px] h-[1200px] overflow-hidden z-[1]"
+					aria-hidden="true"
+				>
+					
+					<DecorativeBlocksRevert />
+				</div>
 				
 				{/* 
 				Future sections can be easily added here:
@@ -72,7 +90,7 @@ const LandingPage = () => {
 				*/}
 			</main>
 		</div>
-	)
-}
+	);
+};
 
-export default LandingPage
+export default LandingPage;
