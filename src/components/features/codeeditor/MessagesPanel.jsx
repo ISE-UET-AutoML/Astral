@@ -27,7 +27,7 @@ const MessageCard = ({ msg, isOldVersion, streaming }) => {
 				}`}
 		>
 			<div className="flex items-start gap-3 px-4 pt-4 pb-4">
-				<div className="flex-1">
+				<div className="flex-1 min-w-0">
 					<div className="flex items-center justify-between gap-3">
 						<span className="flex items-center gap-2 text-xs uppercase tracking-wide font-semibold text-gray-500 dark:text-[#888]">
 							{isAssistant && (
@@ -48,7 +48,7 @@ const MessageCard = ({ msg, isOldVersion, streaming }) => {
 							</span>
 						)}
 					</div>
-					<div className="mt-3 text-sm leading-relaxed whitespace-pre-wrap">
+					<div className="mt-3 text-sm leading-relaxed whitespace-pre-wrap break-words">
 						{msg.content}
 						{streaming && <Cursor />}
 					</div>
@@ -152,15 +152,6 @@ const MessagesPanel = ({ appId, liveMessages = [], streamingContent = '', isStre
 
 	return (
 		<div className="flex flex-col flex-1 min-h-0 overflow-hidden bg-gray-50 dark:bg-[#1e1e1e] [&_::-webkit-scrollbar]:w-1.5 [&_::-webkit-scrollbar-track]:bg-transparent [&_::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&_::-webkit-scrollbar-thumb]:bg-[#555] [&_::-webkit-scrollbar-thumb]:rounded-full">
-			<div className="shrink-0 px-4 py-3 border-b border-gray-200 dark:border-[#333] flex items-center justify-between">
-				<div className="flex items-center gap-2">
-					<span className="text-sm font-semibold text-gray-900 dark:text-[#cccccc]">
-						Messages
-					</span>
-					
-				</div>
-			</div>
-
 			<div ref={scrollContainerRef} className="flex-1 min-h-0 overflow-auto p-4 space-y-4">
 				{/* Hard-coded version history */}
 				{sortedHistory.map((msg) => {

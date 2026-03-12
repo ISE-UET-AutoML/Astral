@@ -295,36 +295,39 @@ const EditAppPage = () => {
 				{/* Cột 2: Workspace – bấm Code hiện Tree + Editor cùng khu vực (Figma-style), bấm App chỉ hiện preview */}
 				<div className="min-w-0 min-h-0 overflow-hidden flex flex-col bg-gray-50 dark:bg-[#1e1e1e]">
 					{/* Một hàng: Code, App bên trái; Save, Deploy cố định ở cuối bên phải */}
-					<div className="shrink-0 flex items-center justify-between gap-2 px-2 py-1.5 border-b border-gray-200 dark:border-[#333] bg-gray-50 dark:bg-[#252526]">
-						<div className="flex items-center gap-1">
-							
-							<button
-								type="button"
-								onClick={() => setActiveMainView('code')}
-								title="Code"
-								className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeMainView === 'code'
-									? 'bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400'
-									: 'text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-[#3c3c3c]'
+					<div className="shrink-0 h-14 flex items-center justify-between gap-2 px-2 border-b border-gray-200 dark:border-[#333] bg-gray-50 dark:bg-[#252526]">
+						<div className="flex items-center gap-2">
+							{/* Segmented control – Code / App */}
+							<div className="relative grid grid-cols-2 rounded-full bg-gray-100 dark:bg-[#2d2d2d] w-[178px] h-11 border border-gray-200/80 dark:border-[#404040] overflow-hidden">
+								<button
+									type="button"
+									onClick={() => setActiveMainView('code')}
+									title="Code"
+									className={`relative z-10 flex items-center justify-center gap-2 h-full rounded-full text-sm font-medium transition-colors duration-200 ${activeMainView === 'code' ? 'text-blue-600 dark:text-white' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}`}
+								>
+									<CodeBracketSquareIcon className="w-4 h-4 shrink-0" />
+									<span>Code</span>
+								</button>
+								<button
+									type="button"
+									onClick={() => {
+										setActiveMainView('app')
+										setPreviewKey(k => k + 1)
+									}}
+									title="App"
+									className={`relative z-10 flex items-center justify-center gap-2 h-full rounded-full text-sm font-medium transition-colors duration-200 ${activeMainView === 'app' ? 'text-blue-600 dark:text-white' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}`}
+								>
+									<ComputerDesktopIcon className="w-4 h-4 shrink-0" />
+									<span>App</span>
+								</button>
+								{/* Sliding pill */}
+								<div
+									className={`absolute top-0.5 bottom-0.5 rounded-full bg-white dark:bg-[#404040] shadow-sm ring-1 ring-gray-200/60 dark:ring-[#555] transition-all duration-200 ease-out ${
+										activeMainView === 'code' ? 'left-0.5 right-[calc(50%+0.5px)]' : 'left-[calc(50%+0.5px)] right-0.5'
 									}`}
-							>
-								<CodeBracketSquareIcon className="w-4 h-4 shrink-0" />
-								<span>Code</span>
-							</button>
-							<button
-								type="button"
-								onClick={() => {
-									setActiveMainView('app')
-									setPreviewKey(k => k + 1)
-								}}
-								title="App"
-								className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeMainView === 'app'
-									? 'bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400'
-									: 'text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-[#3c3c3c]'
-									}`}
-							>
-								<ComputerDesktopIcon className="w-4 h-4 shrink-0" />
-								<span>App</span>
-							</button>
+									aria-hidden
+								/>
+							</div>
 						</div>
 						<div className="flex items-center gap-2 shrink-0">
 							<button
@@ -363,25 +366,24 @@ const EditAppPage = () => {
 					)}
 					{activeMainView === 'app' && (
 						<div className="flex flex-col flex-1 min-h-0">
-							<div className="shrink-0 px-3 py-2 border-b border-gray-200 dark:border-[#333] flex items-center justify-between bg-gray-50 dark:bg-[#252526]">
-								<div className="flex items-center gap-3">
-
+							<div className="shrink-0 px-3 py-2 border-b border-gray-200 dark:border-[#333] flex items-center justify-between gap-2 bg-gray-50 dark:bg-[#252526]">
+								<div className="flex-1 min-w-0 flex items-center">
 									{app?.host && app?.ports?.frontend && (
 										<a
 											href={`http://${app.host}:${app.ports.frontend}`}
 											target="_blank"
 											rel="noreferrer"
-											className="text-sm text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 flex items-center gap-1 transition-colors"
+											className="flex items-center gap-2 w-full max-w-md px-4 py-2 rounded-full bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-[#444] text-sm text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-[#555] hover:shadow-sm transition-all"
 										>
-											{`http://${app.host}:${app.ports.frontend}`}
-											<ArrowTopRightOnSquareIcon className="w-3 h-3" />
+											<span className="truncate">{`http://${app.host}:${app.ports.frontend}`}</span>
+											<ArrowTopRightOnSquareIcon className="w-3.5 h-3.5 shrink-0 text-gray-400 dark:text-gray-500" />
 										</a>
 									)}
 								</div>
 								<button
 									type="button"
 									onClick={() => setPreviewKey((k) => k + 1)}
-									className="p-1.5 rounded-md hover:bg-gray-200 dark:hover:bg-[#3c3c3c] text-gray-500 dark:text-[#888] transition-colors"
+									className="shrink-0 p-1.5 rounded-full hover:bg-gray-200 dark:hover:bg-[#3c3c3c] text-gray-500 dark:text-[#888] transition-colors"
 									title="Reload Preview"
 								>
 									<ArrowPathIcon className="w-4 h-4" />
