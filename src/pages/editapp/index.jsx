@@ -296,17 +296,8 @@ const EditAppPage = () => {
 					{/* Một hàng: Code, App bên trái; Save, Deploy cố định ở cuối bên phải */}
 					<div className="shrink-0 h-14 flex items-center justify-between gap-2 px-2 border-b border-gray-200 dark:border-[#333] bg-gray-50 dark:bg-[#252526]">
 						<div className="flex items-center gap-2">
-							{/* Segmented control – Code / App */}
+							{/* Segmented control – App / Code */}
 							<div className="relative grid grid-cols-2 rounded-full bg-gray-100 dark:bg-[#2d2d2d] w-[178px] h-11 border border-gray-200/80 dark:border-[#404040] overflow-hidden">
-								<button
-									type="button"
-									onClick={() => setActiveMainView('code')}
-									title="Code"
-									className={`relative z-10 flex items-center justify-center gap-2 h-full rounded-full text-sm font-medium transition-colors duration-200 ${activeMainView === 'code' ? 'text-blue-600 dark:text-white' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}`}
-								>
-									<CodeBracketSquareIcon className="w-4 h-4 shrink-0" />
-									<span>Code</span>
-								</button>
 								<button
 									type="button"
 									onClick={() => {
@@ -319,10 +310,19 @@ const EditAppPage = () => {
 									<ComputerDesktopIcon className="w-4 h-4 shrink-0" />
 									<span>App</span>
 								</button>
+								<button
+									type="button"
+									onClick={() => setActiveMainView('code')}
+									title="Code"
+									className={`relative z-10 flex items-center justify-center gap-2 h-full rounded-full text-sm font-medium transition-colors duration-200 ${activeMainView === 'code' ? 'text-blue-600 dark:text-white' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}`}
+								>
+									<CodeBracketSquareIcon className="w-4 h-4 shrink-0" />
+									<span>Code</span>
+								</button>
 								{/* Sliding pill */}
 								<div
 									className={`absolute top-0.5 bottom-0.5 rounded-full bg-white dark:bg-[#404040] shadow-sm ring-1 ring-gray-200/60 dark:ring-[#555] transition-all duration-200 ease-out ${
-										activeMainView === 'code' ? 'left-0.5 right-[calc(50%+0.5px)]' : 'left-[calc(50%+0.5px)] right-0.5'
+										activeMainView === 'app' ? 'left-0.5 right-[calc(50%+0.5px)]' : 'left-[calc(50%+0.5px)] right-0.5'
 									}`}
 									aria-hidden
 								/>
@@ -423,7 +423,7 @@ const EditAppPage = () => {
 				<div className="shrink-0 flex items-center gap-2 px-3 py-2 bg-red-50 dark:bg-red-950/30 border-t border-red-200 dark:border-red-900/50 overflow-x-auto">
 					<span className="text-xs font-medium text-red-700 dark:text-red-400 shrink-0 flex items-center gap-1">
 						<ExclamationTriangleIcon className="w-4 h-4" />
-						{errors.length} lỗi
+						{errors.length} Errors
 					</span>
 					<div className="flex items-center gap-2 min-w-0 flex-1 overflow-x-auto mt-5">
 						{errors.map((e) => (
