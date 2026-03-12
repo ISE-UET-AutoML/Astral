@@ -41,6 +41,7 @@ const EditAppPage = () => {
 	const [errors, setErrors] = useState([])
 	const [app, setApp] = useState(null)
 	const [previewKey, setPreviewKey] = useState(0)
+	const [currentVersionNumber, setCurrentVersionNumber] = useState(null)
 
 	const autoSaveTimerRef = useRef(null)
 	const addError = useCallback((message, type = 'error') => {
@@ -65,6 +66,16 @@ const EditAppPage = () => {
 	// All hooks must be called before any conditional returns
 	const { tree, refetch: refetchTree } = useFileTree(appId)
 	const { code, setCode, isSaving } = useFileEditor(appId, currentFile, originalCode)
+
+	const refreshCurrentVersion = useCallback(async () => {
+		if (!appId) return
+		try {
+			const res = await workspaceApi.getVersionsSummary(appId)
+			setCurrentVersionNumber(res?.current_version ?? null)
+		} catch {
+			setCurrentVersionNumber(null)
+		}
+	}, [appId])
 
 	// Ensure draft is initialized in versioning backend (idempotent)
 	useEffect(() => {
@@ -91,6 +102,10 @@ const EditAppPage = () => {
 				addError('Failed to initialize draft. Check console for details.')
 			})
 	}, [appId, addError])
+
+	useEffect(() => {
+		refreshCurrentVersion()
+	}, [refreshCurrentVersion])
 
 	// Helper functions (must be defined before conditional return)
 	const findIndexHtml = useCallback((node, currentPath = '') => {
@@ -207,6 +222,7 @@ const EditAppPage = () => {
 					? `Deployed as version v${result.version_number}`
 					: 'Deployed successfully'
 			)
+			refreshCurrentVersion()
 		} catch (err) {
 			console.error('[EditAppPage] Failed to deploy:', err)
 			message.error('Failed to deploy')
@@ -215,7 +231,7 @@ const EditAppPage = () => {
 			hide()
 			setIsDeploying(false)
 		}
-	}, [appId, addError])
+	}, [appId, addError, refreshCurrentVersion])
 
 	const sendMessage = useCallback(() => {
 		const text = chatInput.trim()
@@ -327,6 +343,11 @@ const EditAppPage = () => {
 									aria-hidden
 								/>
 							</div>
+							{currentVersionNumber !== null && (
+								<span className="text-sm font-semibold px-3 py-1.5 rounded-xl border border-green-300/60 dark:border-blue-400/40 text-white bg-green-400 dark:bg-blue-500/40">
+									Current v{currentVersionNumber}
+								</span>
+							)}
 						</div>
 						<div className="flex items-center gap-2 shrink-0">
 							<button
