@@ -12,21 +12,6 @@ const ChevronDown = ({ open }) => (
 	</svg>
 )
 
-const formatDate = (d) => {
-	if (!d) return '-'
-	try {
-		return new Date(d).toLocaleString(undefined, {
-			month: 'short',
-			day: 'numeric',
-			year: 'numeric',
-			hour: '2-digit',
-			minute: '2-digit',
-		})
-	} catch {
-		return String(d)
-	}
-}
-
 const VersionRow = ({ version, isCurrent, onDeploy }) => {
 	const [expanded, setExpanded] = useState(false)
 	const hasChangelog = Boolean(version?.changelog?.trim())
@@ -35,7 +20,7 @@ const VersionRow = ({ version, isCurrent, onDeploy }) => {
 		<div
 			className={`rounded-xl border transition-colors ${
 				isCurrent
-					? 'border-blue-500 bg-blue-50 dark:bg-blue-950/30 dark:border-blue-500'
+					? 'border-blue-500 bg-blue-50 dark:bg-[#3a3a3a] dark:border-white'
 					: 'border-gray-200 dark:border-[#444] bg-white dark:bg-[#2d2d2d] hover:bg-gray-50 dark:hover:bg-[#333]'
 			}`}
 		>
@@ -44,16 +29,13 @@ const VersionRow = ({ version, isCurrent, onDeploy }) => {
 				onClick={() => hasChangelog && setExpanded((e) => !e)}
 			>
 				<div className="flex items-center gap-5 min-w-0">
-					<span className={`text-sm font-semibold ${isCurrent ? 'text-blue-600 dark:text-blue-400' : 'text-gray-900 dark:text-[#cccccc]'}`}>
+					<span className={`text-sm font-semibold ${isCurrent ? 'text-blue-600 dark:text-white' : 'text-gray-900 dark:text-[#cccccc]'}`}>
 						Version {version.version_number}
 						{isCurrent && (
-							<span className="ml-1.5 text-[10px] font-normal px-1.5 py-0.5 rounded bg-blue-200 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300">
+							<span className="ml-4 text-[10px] font-semibold px-1.5 py-0.5 rounded bg-blue-200 dark:bg-blue-600 dark:border dark:border-blue-400/60 text-blue-700 dark:text-white">
 								Deployed
 							</span>
 						)}
-					</span>
-					<span className="text-[11px] text-gray-500 dark:text-[#888] shrink-0">
-						{formatDate(version.last_modified_at || version.created_at)}
 					</span>
 				</div>
 				<div className="flex items-center gap-2 shrink-0">
@@ -66,7 +48,7 @@ const VersionRow = ({ version, isCurrent, onDeploy }) => {
 							}}
 							className="text-[11px] px-2 py-1 rounded bg-gray-200 dark:bg-[#444] hover:bg-gray-300 dark:hover:bg-[#555] text-gray-700 dark:text-[#ccc]"
 						>
-							Revert
+							Deploy
 						</button>
 					)}
 					{hasChangelog && (
@@ -106,12 +88,13 @@ const ManageVersionPanel = ({ appId, onDeployVersion }) => {
 				versions: res.versions ?? [],
 				current_version: res.current_version ?? null,
 			})
+			console.log('data versions summary', res)
 		} catch (err) {
 			setError(err?.message || 'Failed to load versions')
 		} finally {
 			setLoading(false)
 		}
-		console.log('data', data)
+		
 	}, [appId])
 
 	useEffect(() => {
@@ -162,7 +145,7 @@ const ManageVersionPanel = ({ appId, onDeployVersion }) => {
 					<VersionRow
 						key={v.id ?? v.version_number}
 						version={v}
-						isCurrent={v.version_number === current_version}
+						isCurrent={String(v.version_number) === String(current_version)}
 						onDeploy={onDeployVersion}
 					/>
 				))}
