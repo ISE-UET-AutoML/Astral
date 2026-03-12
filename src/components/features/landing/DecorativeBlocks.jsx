@@ -34,14 +34,14 @@ const DecorativeBlocks = () => {
 
 	return (
 		<div
-			className="fixed inset-0 overflow-hidden pointer-events-none z-[1]"
+			className="absolute top-[100px] left-0 w-full h-[880px] overflow-hidden pointer-events-none z-[1]"
 			aria-hidden="true"
 		>
 			{/* Top-left cluster */}
 			<div
 				className="absolute"
 				style={{
-					top: '15%',
+					top: '10%',
 					left: '5%',
 					display: 'grid',
 					gridTemplateColumns: `repeat(3, ${size}px)`,
@@ -64,11 +64,11 @@ const DecorativeBlocks = () => {
 				))}
 			</div>
 
-			{/* Bottom-right cluster (mirror for balance) */}
+			{/* Bottom-right cluster */}
 			<div
 				className="absolute"
 				style={{
-					bottom: '15%',
+					bottom: '5%',
 					right: '6%',
 					display: 'grid',
 					gridTemplateColumns: `repeat(3, ${size}px)`,

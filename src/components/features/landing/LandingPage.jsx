@@ -41,7 +41,7 @@ const LandingPage = () => {
 			className={`min-h-screen relative ${bgClass} ${textClass}`}
 		>
 			{/* Full-viewport background fill following app theme */}
-			<div className={`fixed inset-0 ${bgClass} -z-[100]`} />
+			<div className={`absolute inset-0 ${bgClass} -z-[100]`} />
 			{/* Decorative sea blue blocks */}
 			<DecorativeBlocks />
 			
