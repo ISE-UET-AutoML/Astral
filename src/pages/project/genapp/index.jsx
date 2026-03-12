@@ -69,7 +69,7 @@ export default function ProjectGenApp() {
 	const [selectedDeployId, setSelectedDeployId] = useState(null)
 	const selectedModelId = deploys.find((d) => d.id === selectedDeployId)?.model_id ?? null
 	const [genLoading, setGenLoading] = useState(false)
-	const [appName, setAppName] = useState('')
+	const [appName, setAppName] = useState(null)
 	const [isFormOpen, setIsFormOpen] = useState(false)
 	const [modelMetadata, setModelMetadata] = useState(null)
 	const [selectedDeploy, setSelectedDeploy] = useState(null)
@@ -88,10 +88,9 @@ export default function ProjectGenApp() {
 
 			if (sorted.length > 0 && !selectedDeployId) {
 				setSelectedDeployId(sorted[0].id)
-				setAppName(sorted[0].name ?? '')
 			}
 		} catch (e) {
-			message.error('Không tải được danh sách deploy')
+			message.error('Failed to fetch deploy list')
 		}
 	}, [projectId, selectedDeployId])
 
@@ -198,14 +197,14 @@ export default function ProjectGenApp() {
 			await genApp({
 				modelId: selectedModelId,
 				projectId,
-				name: appName,
+				name: appName?.trim() || null,
 				taskType: resolveTaskType(),
 				metadata: buildMetadata(),
 			})
 			message.success('Gen app successfully')
 			refetch()
 			setIsFormOpen(false)
-			setAppName('')
+			setAppName(null)
 		} catch (e) {
 			message.error('Gen app failed')
 		} finally {
@@ -308,10 +307,6 @@ export default function ProjectGenApp() {
 										onChange={(val) => {
 											const deployId = val ?? null
 											setSelectedDeployId(deployId)
-											const found = deploys.find((d) => d.id === deployId)
-											if (found) {
-												setAppName(found.name ?? '')
-											}
 										}}
 										placeholder="Select a model..."
 										className="theme-dropdown h-10 min-w-[200px] sm:min-w-[220px]"
@@ -323,7 +318,10 @@ export default function ProjectGenApp() {
 										))}
 									</CustomSelect>
 										<button
-											onClick={() => setIsFormOpen(true)}
+											onClick={() => {
+												setAppName(null)
+												setIsFormOpen(true)
+											}}
 											disabled={!selectedModelId}
 											className="h-10 px-6 shrink-0 bg-blue-600 hover:bg-blue-500 text-white disabled:opacity-50 rounded-2xl"
 										>
@@ -472,7 +470,10 @@ export default function ProjectGenApp() {
 			{/* Modal form để điền thông tin app */}
 			<Modal
 				open={isFormOpen}
-				onClose={() => setIsFormOpen(false)}
+				onClose={() => {
+					setIsFormOpen(false)
+					setAppName(null)
+				}}
 				title="Gen App Configuration"
 			>
 				<div className="space-y-4">
@@ -488,10 +489,6 @@ export default function ProjectGenApp() {
 							onChange={(val) => {
 								const deployId = val ?? null
 								setSelectedDeployId(deployId)
-								const found = deploys.find((d) => d.id === deployId)
-								if (found) {
-									setAppName(found.name ?? '')
-								}
 							}}
 							placeholder="Select a model..."
 							className="theme-dropdown w-full"
@@ -513,7 +510,7 @@ export default function ProjectGenApp() {
 						</label>
 						<input
 							type="text"
-							value={appName}
+							value={appName ?? ''}
 							onChange={(e) => setAppName(e.target.value)}
 							placeholder="Please enter the app name"
 							className="modal-form-input w-full rounded-xl border px-4 py-3 text-sm focus:outline-none"
@@ -561,7 +558,10 @@ export default function ProjectGenApp() {
 					<div className="flex justify-end gap-2 pt-2">
 						<Button
 							variant="outline"
-							onClick={() => setIsFormOpen(false)}
+							onClick={() => {
+								setIsFormOpen(false)
+								setAppName(null)
+							}}
 							size="sm"
 							className="theme-modal-btn-outline rounded-xl"
 						>
