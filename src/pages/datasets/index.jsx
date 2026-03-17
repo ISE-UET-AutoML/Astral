@@ -37,10 +37,11 @@ export default function Datasets() {
 	const [sortBy, setSortBy] = useState('latest')
 
 	// reducer state
-	const [datasetState, updateDataState] = useReducer(
-		(state, newState) => ({ ...state, ...newState }),
-		initialState
-	)
+	const [datasetState, updateDataState] = useReducer((state, newState) => {
+		const evaluatedState =
+			typeof newState === 'function' ? newState(state) : newState
+		return { ...state, ...evaluatedState }
+	}, initialState)
 
 	const [deletingIds, setDeletingIds] = useState(new Set())
 	const [currentPage, setCurrentPage] = useState(1)
@@ -49,16 +50,22 @@ export default function Datasets() {
 	// polling
 	const pollingRef = useRef(null)
 
+	const isProcessingStatus = (status) =>
+		['PROCESSING', 'CREATING_DATASET', 'CREATING_LABEL_PROJECT'].includes(
+			status
+		)
+
 	const hasProcessingDatasets = (datasets) =>
-		datasets.some((ds) => ds.processingStatus === 'PROCESSING')
+		datasets.some((ds) => isProcessingStatus(ds.processingStatus))
 
 	const updateDatasetStatus = async (datasetId) => {
 		try {
 			const statusData = await datasetAPI
 				.getProcessingStatus(datasetId)
 				.then((res) => res.data)
-			updateDataState({
-				datasets: datasetState.datasets.map((ds) =>
+
+			updateDataState((prevState) => ({
+				datasets: prevState.datasets.map((ds) =>
 					ds.id === datasetId
 						? {
 								...ds,
@@ -66,7 +73,7 @@ export default function Datasets() {
 							}
 						: ds
 				),
-			})
+			}))
 			return statusData.processingStatus
 		} catch (error) {
 			console.error(
@@ -81,8 +88,8 @@ export default function Datasets() {
 		if (pollingRef.current) clearInterval(pollingRef.current)
 
 		pollingRef.current = setInterval(async () => {
-			const processingDatasets = datasetState.datasets.filter(
-				(ds) => ds.processingStatus === 'PROCESSING' //|| ds.processingStatus === 'CREATING'
+			const processingDatasets = datasetState.datasets.filter((ds) =>
+				isProcessingStatus(ds.processingStatus)
 			)
 
 			if (processingDatasets.length === 0) {
@@ -93,7 +100,29 @@ export default function Datasets() {
 			for (const dataset of processingDatasets) {
 				const newStatus = await updateDatasetStatus(dataset.id)
 				if (newStatus === 'COMPLETED' || newStatus === 'FAILED') {
-					// thêm hành động nếu cần
+					// Lấy toàn bộ info mới nhất của dataset để cập nhật giao diện (ảnh, tiến độ label...)
+					try {
+						const res = await datasetAPI.getDataset(dataset.id)
+						const updatedDataset = res?.data
+						if (updatedDataset) {
+							updateDataState((prevState) => {
+								const updatedDatasets = prevState.datasets.map(
+									(ds) => {
+										if (ds.id === dataset.id) {
+											return { ...ds, ...updatedDataset }
+										}
+										return ds
+									}
+								)
+								return { datasets: updatedDatasets }
+							})
+						}
+					} catch (error) {
+						console.error(
+							'Lỗi khi fetch dataset info sau khi complete:',
+							error
+						)
+					}
 				}
 			}
 		}, POLL_DATASET_PROCESSING_STATUS_TIME)
@@ -107,7 +136,7 @@ export default function Datasets() {
 				page,
 				limit: pageSize,
 				search: searchTerm || undefined,
-				data_type: selectedType === "None" ? undefined : selectedType,
+				data_type: selectedType === 'None' ? undefined : selectedType,
 				sort_by: sortBy,
 			})
 
