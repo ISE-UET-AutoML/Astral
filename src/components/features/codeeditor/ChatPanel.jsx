@@ -7,7 +7,16 @@ import { SendOutlined } from '@ant-design/icons'
 
 const TABS = { chat: 'chat', history: 'history' }
 
-const ChatPanel = ({ appId, input, onInputChange, onSendMessage, isStreaming, streamingContent, liveMessages, onDeployVersion }) => {
+const ChatPanel = ({
+	appId,
+	input,
+	onInputChange,
+	onSendMessage,
+	isStreaming,
+	streamingContent,
+	liveMessages,
+	onDeployVersion,
+}) => {
 	const textareaRef = useRef(null)
 	const [activeTab, setActiveTab] = useState(TABS.chat)
 
@@ -25,20 +34,22 @@ const ChatPanel = ({ appId, input, onInputChange, onSendMessage, isStreaming, st
 				<button
 					type="button"
 					onClick={() => setActiveTab(TABS.chat)}
-					className={`flex-1 h-full px-4 text-sm font-medium transition-colors border-b-2 -mb-px ${activeTab === TABS.chat
+					className={`flex-1 h-full px-4 text-sm font-medium transition-colors border-b-2 -mb-px ${
+						activeTab === TABS.chat
 							? 'text-blue-600 dark:text-white bg-white dark:bg-[#1e1e1e] border-blue-500 dark:border-white'
 							: 'text-gray-500 dark:text-[#888] hover:text-gray-700 dark:hover:text-[#aaa] border-transparent'
-						}`}
+					}`}
 				>
 					Chat
 				</button>
 				<button
 					type="button"
 					onClick={() => setActiveTab(TABS.history)}
-					className={`flex-1 h-full px-4 text-sm font-medium transition-colors flex items-center justify-center gap-1.5 border-b-2 -mb-px ${activeTab === TABS.history
+					className={`flex-1 h-full px-4 text-sm font-medium transition-colors flex items-center justify-center gap-1.5 border-b-2 -mb-px ${
+						activeTab === TABS.history
 							? 'text-blue-600 dark:text-white bg-white dark:bg-[#1e1e1e] border-blue-500 dark:border-white'
 							: 'text-gray-500 dark:text-[#888] hover:text-gray-700 dark:hover:text-[#aaa] border-transparent'
-						}`}
+					}`}
 				>
 					<HistoryOutlined className="w-4 h-4" />
 					History
@@ -53,6 +64,7 @@ const ChatPanel = ({ appId, input, onInputChange, onSendMessage, isStreaming, st
 							liveMessages={liveMessages}
 							streamingContent={streamingContent}
 							isStreaming={isStreaming}
+							onDeployVersion={onDeployVersion}
 						/>
 					</div>
 				</>
@@ -60,7 +72,10 @@ const ChatPanel = ({ appId, input, onInputChange, onSendMessage, isStreaming, st
 
 			{activeTab === TABS.history && (
 				<div className="flex-1 min-h-0 min-w-0 overflow-hidden flex flex-col">
-					<ManageVersionPanel appId={appId} onDeployVersion={onDeployVersion} />
+					<ManageVersionPanel
+						appId={appId}
+						onDeployVersion={onDeployVersion}
+					/>
 				</div>
 			)}
 
@@ -72,12 +87,20 @@ const ChatPanel = ({ appId, input, onInputChange, onSendMessage, isStreaming, st
 							value={input}
 							onChange={(e) => onInputChange(e.target.value)}
 							onKeyDown={(e) => {
-								if (e.key === 'Enter' && !e.shiftKey && !isStreaming) {
+								if (
+									e.key === 'Enter' &&
+									!e.shiftKey &&
+									!isStreaming
+								) {
 									e.preventDefault()
 									onSendMessage()
 								}
 							}}
-							placeholder={isStreaming ? 'Waiting for response...' : 'Enter message...'}
+							placeholder={
+								isStreaming
+									? 'Waiting for response...'
+									: 'Enter message...'
+							}
 							disabled={isStreaming}
 							rows={1}
 							style={{ overflowY: 'hidden', maxHeight: '160px' }}
@@ -88,9 +111,11 @@ const ChatPanel = ({ appId, input, onInputChange, onSendMessage, isStreaming, st
 							className="p-1 w-8 h-8 flex items-center justify-center shrink-0"
 							disabled={isStreaming}
 						>
-							{isStreaming
-								? <StopCircleIcon className="w-5 h-5" />
-								: <SendOutlined className="dark:text-white text-gray-500" />}
+							{isStreaming ? (
+								<StopCircleIcon className="w-5 h-5" />
+							) : (
+								<SendOutlined className="dark:text-white text-gray-500" />
+							)}
 						</button>
 					</div>
 				</div>

@@ -7,7 +7,12 @@ import {
 	TreePanel,
 	CodeEditorPanel,
 } from 'src/components/features/codeeditor'
-import { useFileTree, useFileEditor, useSaveShortcut } from 'src/hooks'
+import {
+	useFileTree,
+	useFileEditor,
+	useSaveShortcut,
+	useAmtaModify,
+} from 'src/hooks'
 import { Button } from 'src/components/shared/ui/button'
 import {
 	ArrowLeftIcon,
@@ -22,8 +27,6 @@ import {
 
 const AUTOSAVE_DEBOUNCE_MS = 1500
 
-
-
 const EditAppPage = () => {
 	const { appId, id: projectId } = useParams()
 	const navigate = useNavigate()
@@ -32,9 +35,6 @@ const EditAppPage = () => {
 	const [isAdapting, setIsAdapting] = useState(false)
 	const [isSnapshotting, setIsSnapshotting] = useState(false)
 	const [isDeploying, setIsDeploying] = useState(false)
-	const [chatInput, setChatInput] = useState('')
-	const [liveMessages, setLiveMessages] = useState([])
-	const [isStreaming, setIsStreaming] = useState(false)
 	const [streamingContent, setStreamingContent] = useState('')
 	/** Figma-style: 'code' | 'app' – bấm icon Code hiện editor, icon App hiện iframe. */
 	const [activeMainView, setActiveMainView] = useState('app')
@@ -45,7 +45,10 @@ const EditAppPage = () => {
 
 	const autoSaveTimerRef = useRef(null)
 	const addError = useCallback((message, type = 'error') => {
-		setErrors((prev) => [...prev, { id: Date.now() + Math.random(), message, type }])
+		setErrors((prev) => [
+			...prev,
+			{ id: Date.now() + Math.random(), message, type },
+		])
 	}, [])
 	const dismissError = useCallback((id) => {
 		setErrors((prev) => prev.filter((e) => e.id !== id))
@@ -65,7 +68,56 @@ const EditAppPage = () => {
 
 	// All hooks must be called before any conditional returns
 	const { tree, refetch: refetchTree } = useFileTree(appId)
-	const { code, setCode, isSaving } = useFileEditor(appId, currentFile, originalCode)
+	const { code, setCode, isSaving } = useFileEditor(
+		appId,
+		currentFile,
+		originalCode
+	)
+
+	const loadFile = useCallback(
+		async (path) => {
+			try {
+				const data = await workspaceApi.getFile(appId, path)
+				setCode(data.content)
+				setOriginalCode(data.content)
+				setCurrentFile(path)
+			} catch (error) {
+				console.error('Failed to load file:', error)
+				message.error('Failed to load file')
+				addError('Failed to load file')
+			}
+		},
+		[appId, setCode, addError]
+	)
+
+	const currentFileRef = useRef(currentFile)
+	useEffect(() => {
+		currentFileRef.current = currentFile
+	}, [currentFile])
+
+	const handleModificationSuccess = useCallback(() => {
+		refetchTree()
+		// Defer slightly to ensure Redis is fully populated before reading
+		setTimeout(() => {
+			if (currentFileRef.current) {
+				loadFile(currentFileRef.current)
+			}
+		}, 800)
+	}, [refetchTree, loadFile])
+
+	// --- AMTA Modify Hook ---
+	const { chatInput, setChatInput, isStreaming, liveMessages, sendMessage } =
+		useAmtaModify({
+			appId,
+			instanceId: app?.instance_id,
+			modelId: app?.model_id,
+			taskType: app?.task_type,
+			metadata: app?.metadata,
+			projectId: app?.project_id,
+			name: app?.name,
+			onSuccess: handleModificationSuccess,
+		})
+	// ------------------------
 
 	const refreshCurrentVersion = useCallback(async () => {
 		if (!appId) return
@@ -84,22 +136,35 @@ const EditAppPage = () => {
 			return
 		}
 
-		console.log('[EditAppPage] Initializing draft and fetching app info for appId:', appId)
+		console.log(
+			'[EditAppPage] Initializing draft and fetching app info for appId:',
+			appId
+		)
 
 		// Fetch app info for dynamic URL
-		workspaceApi.getApp(appId).then(setApp).catch(err => {
-			console.error('[EditAppPage] Failed to fetch app info:', err)
-		})
+		workspaceApi
+			.getApp(appId)
+			.then(setApp)
+			.catch((err) => {
+				console.error('[EditAppPage] Failed to fetch app info:', err)
+			})
 
 		workspaceApi
 			.initDraft(appId)
 			.then((result) => {
-				console.log('[EditAppPage] Draft initialized successfully:', result)
+				console.log(
+					'[EditAppPage] Draft initialized successfully:',
+					result
+				)
 			})
 			.catch((err) => {
 				console.error('[EditAppPage] Failed to init draft:', err)
-				message.error('Failed to initialize draft. Check console for details.')
-				addError('Failed to initialize draft. Check console for details.')
+				message.error(
+					'Failed to initialize draft. Check console for details.'
+				)
+				addError(
+					'Failed to initialize draft. Check console for details.'
+				)
 			})
 	}, [appId, addError])
 
@@ -131,14 +196,19 @@ const EditAppPage = () => {
 	}, [])
 
 	// Auto-save vào Redis sau khi dừng gõ 1.5s
-	const handleCodeChange = useCallback((newCode) => {
-		setCode(newCode)
-		if (!currentFile || !appId) return
-		clearTimeout(autoSaveTimerRef.current)
-		autoSaveTimerRef.current = setTimeout(() => {
-			workspaceApi.saveFile(appId, currentFile, newCode).catch(() => { })
-		}, AUTOSAVE_DEBOUNCE_MS)
-	}, [appId, currentFile, setCode])
+	const handleCodeChange = useCallback(
+		(newCode) => {
+			setCode(newCode)
+			if (!currentFile || !appId) return
+			clearTimeout(autoSaveTimerRef.current)
+			autoSaveTimerRef.current = setTimeout(() => {
+				workspaceApi
+					.saveFile(appId, currentFile, newCode)
+					.catch(() => {})
+			}, AUTOSAVE_DEBOUNCE_MS)
+		},
+		[appId, currentFile, setCode]
+	)
 
 	// Ctrl+S: save Redis + Git snapshot
 	const handleSaveFile = useCallback(async () => {
@@ -171,7 +241,10 @@ const EditAppPage = () => {
 		setIsSnapshotting(true)
 		const hide = message.loading('Saving draft snapshot to S3...', 0)
 		try {
-			const result = await workspaceApi.saveDraftSnapshot(appId, description || undefined)
+			const result = await workspaceApi.saveDraftSnapshot(
+				appId,
+				description || undefined
+			)
 			console.log('[EditAppPage] Snapshot saved:', result)
 			message.success('Draft snapshot saved to S3')
 		} catch (err) {
@@ -184,62 +257,87 @@ const EditAppPage = () => {
 		}
 	}, [appId, addError])
 
-	const handleDeploy = useCallback(async (versionNumber) => {
-		if (!appId) {
-			message.error('Invalid app ID, cannot deploy')
-			return
-		}
-
-		const isRedeploy = versionNumber !== undefined
-		let description = ''
-
-		if (isRedeploy) {
-			if (!window.confirm(`Redeploy version v${versionNumber} to Vast.ai?`)) {
+	const handleDeploy = useCallback(
+		async (versionNumber) => {
+			if (!appId) {
+				message.error('Invalid app ID, cannot deploy')
 				return
 			}
-		} else {
-			description = window.prompt('Version description (optional):')
-			if (description === null) return
 
-			if (!window.confirm('Deploy this draft as a new version and push to Vast.ai?')) {
-				return
+			const isRedeploy = versionNumber !== undefined
+			let description = ''
+
+			if (isRedeploy) {
+				if (
+					!window.confirm(
+						`Redeploy version v${versionNumber} to Vast.ai?`
+					)
+				) {
+					return
+				}
+			} else {
+				description = window.prompt('Version description (optional):')
+				if (description === null) return
+
+				if (
+					!window.confirm(
+						'Deploy this draft as a new version and push to Vast.ai?'
+					)
+				) {
+					return
+				}
 			}
-		}
 
-		setIsDeploying(true)
-		const hide = message.loading(
-			isRedeploy ? `Redeploying version v${versionNumber}...` : 'Deploying draft as new version...',
-			0
-		)
-		try {
-			const result = isRedeploy
-				? await workspaceApi.deployVersion(appId, versionNumber)
-				: await workspaceApi.deployDraft(appId, description || undefined)
-
-			console.log('[EditAppPage] Deployment successful:', result)
-			message.success(
-				result?.version_number
-					? `Deployed as version v${result.version_number}`
-					: 'Deployed successfully'
+			setIsDeploying(true)
+			const hide = message.loading(
+				isRedeploy
+					? `Redeploying version v${versionNumber}...`
+					: 'Deploying draft as new version...',
+				0
 			)
-			refreshCurrentVersion()
-		} catch (err) {
-			console.error('[EditAppPage] Failed to deploy:', err)
-			message.error('Failed to deploy')
-			addError('Failed to deploy')
-		} finally {
-			hide()
-			setIsDeploying(false)
-		}
-	}, [appId, addError, refreshCurrentVersion])
+			try {
+				const result = isRedeploy
+					? await workspaceApi.deployVersion(appId, versionNumber)
+					: await workspaceApi.deployDraft(
+							appId,
+							description || undefined
+						)
 
-	const sendMessage = useCallback(() => {
-		const text = chatInput.trim()
-		if (!text || isStreaming) return
-		setLiveMessages((prev) => [...prev, { role: 'user', content: text }])
-		setChatInput('')
-		// TODO: wire to chat API when available; set isStreaming/streamingContent
-	}, [chatInput, isStreaming])
+				console.log('[EditAppPage] Deployment successful:', result)
+				message.success(
+					result?.version_number
+						? `Deployed as version v${result.version_number}`
+						: 'Deployed successfully'
+				)
+				refreshCurrentVersion()
+
+				if (isRedeploy) {
+					refetchTree()
+					// We need to defer loadFile slightly since the backend might take a moment to clear Redis
+					setTimeout(() => {
+						if (currentFile) {
+							loadFile(currentFile)
+						}
+					}, 500)
+				}
+			} catch (err) {
+				console.error('[EditAppPage] Failed to deploy:', err)
+				message.error('Failed to deploy')
+				addError('Failed to deploy')
+			} finally {
+				hide()
+				setIsDeploying(false)
+			}
+		},
+		[
+			appId,
+			addError,
+			currentFile,
+			refetchTree,
+			loadFile,
+			refreshCurrentVersion,
+		]
+	)
 
 	useSaveShortcut(currentFile, code, handleSaveFile)
 
@@ -250,22 +348,6 @@ const EditAppPage = () => {
 			console.warn('[EditAppPage] initDraft failed:', err)
 		})
 	}, [appId])
-
-	const loadFile = useCallback(
-		async (path) => {
-			try {
-				const data = await workspaceApi.getFile(appId, path)
-				setCode(data.content)
-				setOriginalCode(data.content)
-				setCurrentFile(path)
-			} catch (error) {
-				console.error('Failed to load file:', error)
-				message.error('Failed to load file')
-				addError('Failed to load file')
-			}
-		},
-		[appId, setCode, addError]
-	)
 
 	useEffect(() => {
 		if (!tree || currentFile || hasAutoLoadedRef.current) return
@@ -283,7 +365,11 @@ const EditAppPage = () => {
 			<div className="flex items-center justify-center h-screen">
 				<div className="text-center">
 					<p className="text-gray-600 mb-4">Invalid app ID</p>
-					<Button onClick={() => navigate(`/app/project/${projectId}/my-apps`)}>
+					<Button
+						onClick={() =>
+							navigate(`/app/project/${projectId}/my-apps`)
+						}
+					>
 						Go Back
 					</Button>
 				</div>
@@ -318,7 +404,7 @@ const EditAppPage = () => {
 									type="button"
 									onClick={() => {
 										setActiveMainView('app')
-										setPreviewKey(k => k + 1)
+										setPreviewKey((k) => k + 1)
 									}}
 									title="App"
 									className={`relative z-10 flex items-center justify-center gap-2 h-full rounded-full text-sm font-medium transition-colors duration-200 ${activeMainView === 'app' ? 'text-blue-600 dark:text-white' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}`}
@@ -338,7 +424,9 @@ const EditAppPage = () => {
 								{/* Sliding pill */}
 								<div
 									className={`absolute top-0.5 bottom-0.5 rounded-full bg-white dark:bg-[#404040] shadow-sm ring-1 ring-gray-200/60 dark:ring-[#555] transition-all duration-200 ease-out ${
-										activeMainView === 'app' ? 'left-0.5 right-[calc(50%+0.5px)]' : 'left-[calc(50%+0.5px)] right-0.5'
+										activeMainView === 'app'
+											? 'left-0.5 right-[calc(50%+0.5px)]'
+											: 'left-[calc(50%+0.5px)] right-0.5'
 									}`}
 									aria-hidden
 								/>
@@ -391,7 +479,9 @@ const EditAppPage = () => {
 									<div className="w-full flex items-center rounded-full bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-[#444] hover:border-gray-300 dark:hover:border-[#555] hover:shadow-sm transition-all">
 										<button
 											type="button"
-											onClick={() => setPreviewKey((k) => k + 1)}
+											onClick={() =>
+												setPreviewKey((k) => k + 1)
+											}
 											className="shrink-0 ml-1 p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-[#2f2f2f] text-gray-500 dark:text-[#888] transition-colors"
 											title="Reload Preview"
 										>
@@ -423,13 +513,21 @@ const EditAppPage = () => {
 										{app ? (
 											<>
 												<ExclamationTriangleIcon className="w-10 h-10 text-yellow-500 mb-3" />
-												<p className="text-gray-600 dark:text-gray-400 font-medium">Instance scaling or not yet available</p>
-												<p className="text-sm text-gray-500 dark:text-gray-500 mt-1">Please wait a moment while the instance starts up.</p>
+												<p className="text-gray-600 dark:text-gray-400 font-medium">
+													Instance scaling or not yet
+													available
+												</p>
+												<p className="text-sm text-gray-500 dark:text-gray-500 mt-1">
+													Please wait a moment while
+													the instance starts up.
+												</p>
 											</>
 										) : (
 											<>
 												<ArrowPathIcon className="w-8 h-8 text-blue-500 animate-spin mb-3" />
-												<p className="text-gray-600 dark:text-gray-400">Fetching instance info...</p>
+												<p className="text-gray-600 dark:text-gray-400">
+													Fetching instance info...
+												</p>
 											</>
 										)}
 									</div>
@@ -452,7 +550,10 @@ const EditAppPage = () => {
 								key={e.id}
 								className="shrink-0 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-300 text-sm"
 							>
-								<span className="max-w-[280px] truncate" title={e.message}>
+								<span
+									className="max-w-[280px] truncate"
+									title={e.message}
+								>
 									{e.message}
 								</span>
 								<button

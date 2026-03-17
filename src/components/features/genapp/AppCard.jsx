@@ -1,4 +1,9 @@
-import { Card, CardContent, CardHeader, CardTitle } from 'src/components/shared/ui/card'
+import {
+	Card,
+	CardContent,
+	CardHeader,
+	CardTitle,
+} from 'src/components/shared/ui/card'
 import { Button } from 'src/components/shared/ui/button'
 import { ArrowPathIcon } from '@heroicons/react/24/outline'
 
@@ -145,7 +150,10 @@ function AppCard({ app, onViewDetails, onRetry, isRetrying }) {
 						<div className="p-2 rounded-lg bg-gradient-to-br from-blue-100 to-blue-200 dark:from-white/10 dark:to-white/5 text-blue-600 dark:text-[var(--accent-text)] flex-shrink-0">
 							<AppIcon taskType={app?.task_type} />
 						</div>
-						<CardTitle className="text-lg text-gray-900 dark:text-[var(--text)] truncate" title={app?.name}>
+						<CardTitle
+							className="text-lg text-gray-900 dark:text-[var(--text)] truncate"
+							title={app?.name}
+						>
 							{app?.name || `App #${app?.id}`}
 						</CardTitle>
 					</div>
@@ -157,7 +165,9 @@ function AppCard({ app, onViewDetails, onRetry, isRetrying }) {
 				<div className="flex-1 space-y-3">
 					{/* Task Type */}
 					<div className="flex items-center gap-2 text-sm">
-						<span className="text-gray-500 dark:text-[var(--secondary-text)] font-medium">Task:</span>
+						<span className="text-gray-500 dark:text-[var(--secondary-text)] font-medium">
+							Task:
+						</span>
 						<span className="text-gray-900 dark:text-[var(--text)] capitalize">
 							{app?.task_type?.replace(/_/g, ' ') || 'N/A'}
 						</span>
@@ -166,7 +176,9 @@ function AppCard({ app, onViewDetails, onRetry, isRetrying }) {
 					{/* Model ID */}
 					{app?.model_id != null && (
 						<div className="flex items-center gap-2 text-sm">
-							<span className="text-gray-500 dark:text-[var(--secondary-text)] font-medium">Model ID:</span>
+							<span className="text-gray-500 dark:text-[var(--secondary-text)] font-medium">
+								Model ID:
+							</span>
 							<span className="text-gray-900 dark:text-[var(--text)] font-mono">
 								{app.model_id}
 							</span>
@@ -176,32 +188,12 @@ function AppCard({ app, onViewDetails, onRetry, isRetrying }) {
 					{/* Created At */}
 					{app?.created_at && (
 						<div className="flex items-center gap-2 text-sm">
-							<span className="text-gray-500 dark:text-[var(--secondary-text)] font-medium">Created:</span>
+							<span className="text-gray-500 dark:text-[var(--secondary-text)] font-medium">
+								Created:
+							</span>
 							<span className="text-gray-900 dark:text-[var(--text)] text-xs">
 								{formatDate(app.created_at)}
 							</span>
-						</div>
-					)}
-
-					{/* Instance Info */}
-					{hasInstance && (
-						<div className="pt-2 mt-2 border-t border-gray-200 dark:border-[var(--border)]">
-							<div className="text-xs text-gray-500 dark:text-[var(--secondary-text)] space-y-1">
-								<div className="flex justify-between">
-									<span>Instance:</span>
-									<span className="font-mono text-gray-700 dark:text-[var(--text)]">
-										{String(app.instance_id ?? '').substring(0, 8)}...
-									</span>
-								</div>
-								{app.ports?.frontend && (
-									<div className="flex justify-between">
-										<span>Port:</span>
-										<span className="font-mono text-gray-700 dark:text-[var(--text)]">
-											{app.ports.frontend}
-										</span>
-									</div>
-								)}
-							</div>
 						</div>
 					)}
 				</div>
@@ -215,7 +207,9 @@ function AppCard({ app, onViewDetails, onRetry, isRetrying }) {
 							disabled={isRetrying}
 							className="flex-1 bg-amber-400 hover:bg-amber-500 dark:bg-slate-600 dark:hover:bg-slate-500 text-white text-xs focus:ring-0 focus:ring-offset-0 disabled:opacity-50"
 						>
-							<ArrowPathIcon className={`h-4 w-4 mr-1.5 ${isRetrying ? 'animate-spin' : ''}`} />
+							<ArrowPathIcon
+								className={`h-4 w-4 mr-1.5 ${isRetrying ? 'animate-spin' : ''}`}
+							/>
 							Retry
 						</Button>
 					) : (
@@ -223,7 +217,9 @@ function AppCard({ app, onViewDetails, onRetry, isRetrying }) {
 							{frontendUrl && (
 								<Button
 									size="sm"
-									onClick={() => window.open(frontendUrl, '_blank')}
+									onClick={() =>
+										window.open(frontendUrl, '_blank')
+									}
 									className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs"
 								>
 									<svg
@@ -247,8 +243,13 @@ function AppCard({ app, onViewDetails, onRetry, isRetrying }) {
 									size="sm"
 									variant="outline"
 									onClick={() => onViewDetails(app)}
-									disabled={['pending', 'running', 'generating', 'deploying'].includes(app?.status)}
-									className="flex-1 border-gray-300 dark:border-[var(--border)] hover:border-gray-400 dark:hover:border-white text-gray-700 dark:text-[var(--text)] hover:text-gray-900 dark:hover:text-white text-xs disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-offset-0 focus:outline-none"
+									disabled={[
+										'pending',
+										'running',
+										'generating',
+										'deploying',
+									].includes(app?.status)}
+									className="flex-1 border-gray-300 dark:border-[var(--border)] hover:border-gray-400 dark:hover:border-white text-gray-700 dark:text-[var(--text)] hover:text-gray-900 dark:hover:text-white text-xs disabled:opacity-50 disabled:cursor-not-allowed"
 								>
 									Details
 								</Button>

@@ -1,144 +1,331 @@
-import { useState, useCallback, useRef } from 'react'
-import { streamChat } from 'src/api/amta'
+import { useState, useEffect, useCallback, useRef } from 'react'
+import {
+	runModify,
+	getPipelineStatus,
+	getMessages,
+	saveMessage,
+	triageMessage,
+	streamChatReply,
+} from 'src/api/amta'
 
-const DUMP_APP_MESSAGES = {
-    total: 4,
-    items: [
-        {
-            id: '55555555-5555-5555-5555-555555555555',
-            app_id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-            role: 'user',
-            content: 'The image upload preview is broken on mobile screens, and the prediction confidence scores aren\'t showing up after the model finishes running.',
-            adapt_id: '',
-            version_number: 4,
-            created_at: '2026-02-28T09:00:00.000Z',
-        },
-        {
-            id: '66666666-6666-6666-6666-666666666666',
-            app_id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-            role: 'assistant',
-            content: "I see the issue. The CSS Grid in `ImageUploader.tsx` was overflowing on smaller screens, and the state mapping for the model's output array was misaligned. I'll fix the responsive layout and ensure the results render properly.\n\nDone! The Animal Classifier app is now updated with:\n\n✅ Responsive image preview that scales perfectly on mobile and desktop.\n✅ A new `PredictionResults` component that clearly displays the Top-3 confidence scores with progress bars.\n✅ Camera capture support directly from mobile browsers.\n✅ Error handling for unsupported formats (non-JPEG/PNG) or images that are too large.\n✅ Mapped dictionary for over 100+ animal classes (e.g., returning 'Golden Retriever' instead of just a class ID).\n\nThe app is ready to use. You can upload a photo of an animal, and the results will display correctly formatted.",
-            adapt_id: 'adapt-run-1',
-            version_number: 4,
-            version_summary: [
-                'Fixed image preview on mobile',
-                'Added Top-3 prediction scores with progress bars',
-                'Camera capture support on mobile',
-                'Error handling for invalid formats and oversized images',
-                'Display animal names instead of class IDs',
-            ],
-            created_at: '2026-02-28T09:02:45.000Z',
-        },
-        {
-            id: '77777777-7777-7777-7777-777777777777',
-            app_id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-            role: 'user',
-            content: 'Looks great. Now, please add a loading spinner while the ONNX inference is running, and modify the upload component to support batch uploads (multiple images at once).',
-            adapt_id: 'adapt-run-2',
-            version_number: 5,
-            created_at: '2026-02-28T09:15:00.000Z',
-        },
-        {
-            id: '88888888-8888-8888-8888-888888888888',
-            app_id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-            role: 'assistant',
-            content: "I've implemented a global loading overlay with a custom spinner that activates during the model's inference phase so the UI doesn't freeze. For batch uploads, I updated the input attribute to `multiple` and created a `ResultsGrid` component. The app now queues the images, processes them via the classification model asynchronously, and displays a gallery of predictions side-by-side.",
-            adapt_id: 'adapt-run-2',
-            version_number: 5,
-            version_summary: [
-                'Loading spinner while processing images',
-                'Batch upload (multiple images at once)',
-                'Results displayed in a grid per image',
-            ],
-            created_at: '2026-02-28T09:18:20.000Z',
-        },
-    ],
+// ---------------------------------------------------------------------------
+// Real messages hook — fetches from GET /workspace/{appId}/messages
+// ---------------------------------------------------------------------------
+
+export const useAmtaMessages = (appId) => {
+	const [items, setItems] = useState([])
+	const [total, setTotal] = useState(0)
+	const [loading, setLoading] = useState(false)
+	const [error, setError] = useState(null)
+
+	const fetchMessages = useCallback(async () => {
+		if (!appId) {
+			setItems([])
+			setTotal(0)
+			return
+		}
+		setLoading(true)
+		setError(null)
+		try {
+			const data = await getMessages(appId)
+			setItems(data.items ?? [])
+			setTotal(data.total ?? 0)
+		} catch (err) {
+			setError(err)
+		} finally {
+			setLoading(false)
+		}
+	}, [appId])
+
+	useEffect(() => {
+		fetchMessages()
+	}, [fetchMessages])
+
+	return { items, total, loading, error, refetch: fetchMessages }
 }
+
+// ---------------------------------------------------------------------------
+// Modify & redeploy hook — with Gemini triage + streaming chat guardrail
+// ---------------------------------------------------------------------------
+
+const POLL_INTERVAL_MS = 3000
+const POLL_TIMEOUT_MS = 15 * 60 * 1000
 
 /**
- * Returns the static hard-coded message list (version history, etc.).
- * Replace with a real API call when the backend is ready.
+ * Hook for chat-driven code modification and redeployment.
  *
- * @param {string} appId
- * @returns {{ total: number, items: Array }}
+ * Flow:
+ *   1. User sends message
+ *   2. /triage → fast classify: "chat" | "modify"
+ *   3a. "chat"   → call /chat/stream, stream tokens into assistant bubble
+ *   3b. "modify" → call /pipeline/run, poll, show result
  */
-export const useAmtaMessages = (appId) => {
-	void appId
-	return DUMP_APP_MESSAGES
-}
-
-// ---------------------------------------------------------------------------
-// LLM streaming chat hook
-// ---------------------------------------------------------------------------
-
-export const useAmtaChat = () => {
+export function useAmtaModify({
+	appId,
+	instanceId,
+	modelId,
+	taskType,
+	metadata,
+	projectId,
+	name,
+	onSuccess,
+}) {
 	const [chatInput, setChatInput] = useState('')
-	const [isStreaming, setIsStreaming] = useState(false)
-	const [streamingContent, setStreamingContent] = useState('')
+	const [isRunning, setIsRunning] = useState(false)
+	const [runStatus, setRunStatus] = useState(null)
+	const [currentRunId, setCurrentRunId] = useState(null)
 	const [liveMessages, setLiveMessages] = useState([])
-	const abortRef = useRef(null)
+	const abortRef = useRef(false)
 
 	const sendMessage = useCallback(async () => {
 		const text = chatInput.trim()
-		if (!text || isStreaming) return
+		if (!text || isRunning) return
 
-		// Add user message immediately
-		const userMsg = { role: 'user', content: text, id: `user-${Date.now()}`, created_at: new Date().toISOString() }
+		// 1. Optimistic user bubble
+		const userMsg = {
+			role: 'user',
+			content: text,
+			id: `user-${Date.now()}`,
+			created_at: new Date().toISOString(),
+		}
 		setLiveMessages((prev) => [...prev, userMsg])
 		setChatInput('')
-		setIsStreaming(true)
-		setStreamingContent('')
+		setIsRunning(true)
+		setRunStatus('pending')
+		abortRef.current = false
 
-		// Cancel any previous in-flight request
-		if (abortRef.current) abortRef.current.abort()
-		const controller = new AbortController()
-		abortRef.current = controller
-
-		try {
-			let accumulated = ''
-			await streamChat(
-				text,
-				(chunk) => {
-					accumulated += chunk
-					setStreamingContent(accumulated)
-				},
-				controller.signal
+		// Persist user message
+		if (appId) {
+			saveMessage(appId, { role: 'user', content: text }).catch((e) =>
+				console.warn('[useAmtaModify] save user msg failed:', e)
 			)
+		}
 
-			// Commit the completed assistant message
-			const assistantMsg = {
-				role: 'assistant',
-				content: accumulated,
-				id: `assistant-${Date.now()}`,
-				created_at: new Date().toISOString(),
+		// 2. Build history context (last 6 turns before this message)
+		const recentHistory = [...liveMessages, userMsg]
+			.slice(-7, -1)
+			.map(({ role, content }) => ({ role, content }))
+
+		// 3. Triage — fast classify
+		let triageResult = { action: 'modify' }
+		if (appId) {
+			try {
+				triageResult = await triageMessage(appId, text, recentHistory)
+			} catch (e) {
+				console.warn(
+					'[useAmtaModify] triage failed, defaulting to modify:',
+					e
+				)
 			}
-			setLiveMessages((prev) => [...prev, assistantMsg])
-		} catch (err) {
-			if (err.name !== 'AbortError') {
-				console.error('[useAmtaChat] stream error:', err)
-				const errMsg = {
+		}
+
+		// 4a. CHAT — stream reply token-by-token
+		if (triageResult.action === 'chat') {
+			const placeholderId = `chat-${Date.now()}`
+			setLiveMessages((prev) => [
+				...prev,
+				{
 					role: 'assistant',
-					content: `❌ Error: ${err.message}`,
+					content: '',
+					id: placeholderId,
+					created_at: new Date().toISOString(),
+				},
+			])
+
+			let fullReply = ''
+			try {
+				fullReply = await streamChatReply(
+					appId,
+					text,
+					recentHistory,
+					(token) => {
+						// Incrementally append each token to the bubble
+						setLiveMessages((prev) =>
+							prev.map((m) =>
+								m.id === placeholderId
+									? { ...m, content: m.content + token }
+									: m
+							)
+						)
+					}
+				)
+			} catch (e) {
+				console.warn('[useAmtaModify] streamChatReply error:', e)
+				fullReply = '(Error generating reply)'
+				setLiveMessages((prev) =>
+					prev.map((m) =>
+						m.id === placeholderId
+							? { ...m, content: fullReply }
+							: m
+					)
+				)
+			}
+
+			setIsRunning(false)
+			setRunStatus('chat')
+
+			// Persist assistant reply
+			if (appId && fullReply) {
+				saveMessage(appId, {
+					role: 'assistant',
+					content: fullReply,
+				}).catch((e) =>
+					console.warn('[useAmtaModify] save chat reply failed:', e)
+				)
+			}
+			return
+		}
+
+		// 4b. MODIFY — check instance, run pipeline
+		if (!instanceId) {
+			setLiveMessages((prev) => [
+				...prev,
+				{
+					role: 'assistant',
+					content:
+						'❌ Cannot modify: this app has no deployed instance yet. Please generate the app first.',
 					id: `err-${Date.now()}`,
 					created_at: new Date().toISOString(),
-				}
-				setLiveMessages((prev) => [...prev, errMsg])
-			}
-		} finally {
-			setIsStreaming(false)
-			setStreamingContent('')
-			abortRef.current = null
+				},
+			])
+			setIsRunning(false)
+			setRunStatus('failed')
+			return
 		}
-	}, [chatInput, isStreaming])
+
+		const placeholderId = `assistant-${Date.now()}`
+		setLiveMessages((prev) => [
+			...prev,
+			{
+				role: 'assistant',
+				content: '⏳ Modifying and redeploying your app…',
+				id: placeholderId,
+				created_at: new Date().toISOString(),
+				isPlaceholder: true,
+			},
+		])
+
+		try {
+			const { run_id } = await runModify({
+				instanceId,
+				modelId,
+				taskType,
+				requirements: text,
+				projectId,
+				name,
+				metadata,
+				appId,
+			})
+
+			setCurrentRunId(run_id)
+			setRunStatus('running')
+
+			const deadline = Date.now() + POLL_TIMEOUT_MS
+			let finalStatus = null
+
+			while (!abortRef.current && Date.now() < deadline) {
+				await new Promise((r) => setTimeout(r, POLL_INTERVAL_MS))
+				if (abortRef.current) break
+				const statusData = await getPipelineStatus(run_id)
+				setRunStatus(statusData.status)
+				if (
+					statusData.status === 'completed' ||
+					statusData.status === 'failed'
+				) {
+					finalStatus = statusData
+					break
+				}
+			}
+
+			const isSuccess = finalStatus?.status === 'completed'
+			const versionNumber = finalStatus?.result?.version_number
+			const finalContent = isSuccess
+				? `✅ Done! Your app has been updated to Version ${versionNumber || '?'} and redeployed.\n\n_Run ID: ${run_id}_`
+				: `❌ Modification failed: ${finalStatus?.error ?? 'Unknown error'}\n\n_Run ID: ${run_id}_`
+
+			setLiveMessages((prev) =>
+				prev.map((m) =>
+					m.id === placeholderId
+						? {
+								...m,
+								content: finalContent,
+								isPlaceholder: false,
+								version_number: versionNumber,
+							}
+						: m
+				)
+			)
+			setRunStatus(finalStatus?.status ?? 'failed')
+
+			if (appId) {
+				const messageToSave = {
+					role: 'assistant',
+					content: finalContent,
+					adapt_id: run_id,
+				}
+				if (isSuccess && versionNumber) {
+					messageToSave.version_number = versionNumber
+				}
+				saveMessage(appId, messageToSave).catch((e) =>
+					console.warn(
+						'[useAmtaModify] save assistant msg failed:',
+						e
+					)
+				)
+			}
+
+			if (isSuccess && typeof onSuccess === 'function') {
+				onSuccess()
+			}
+		} catch (err) {
+			console.error('[useAmtaModify] pipeline error:', err)
+			const errContent = `❌ Error: ${err.message}`
+			setLiveMessages((prev) =>
+				prev.map((m) =>
+					m.id === placeholderId
+						? { ...m, content: errContent, isPlaceholder: false }
+						: m
+				)
+			)
+			setRunStatus('failed')
+		} finally {
+			setIsRunning(false)
+		}
+	}, [
+		chatInput,
+		isRunning,
+		liveMessages,
+		appId,
+		instanceId,
+		modelId,
+		taskType,
+		metadata,
+		projectId,
+		name,
+		onSuccess,
+	])
+
+	const cancelRun = useCallback(() => {
+		abortRef.current = true
+		setIsRunning(false)
+	}, [])
 
 	return {
 		chatInput,
 		setChatInput,
-		isStreaming,
-		streamingContent,
+		isRunning,
+		get isStreaming() {
+			return isRunning
+		},
+		runStatus,
+		currentRunId,
 		liveMessages,
 		sendMessage,
+		cancelRun,
 	}
 }
+
+/** @deprecated Use useAmtaModify */
+export const useAmtaChat = useAmtaModify
 
 export default useAmtaMessages
