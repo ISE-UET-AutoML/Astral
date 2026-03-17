@@ -53,6 +53,7 @@ const ChatPanel = ({ appId, input, onInputChange, onSendMessage, isStreaming, st
 							liveMessages={liveMessages}
 							streamingContent={streamingContent}
 							isStreaming={isStreaming}
+							onDeployVersion={onDeployVersion}
 						/>
 					</div>
 				</>
