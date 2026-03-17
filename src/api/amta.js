@@ -169,7 +169,9 @@ export async function getMessages(appId, limit = 200) {
 	const response = await fetch(url, { headers: getAuthHeaders() })
 
 	if (!response.ok) {
-		throw new Error(`getMessages failed: ${response.status} ${response.statusText}`)
+		throw new Error(
+			`getMessages failed: ${response.status} ${response.statusText}`
+		)
 	}
 
 	return response.json() // { items, total }
@@ -192,7 +194,9 @@ export async function saveMessage(appId, msg) {
 	})
 
 	if (!response.ok) {
-		throw new Error(`saveMessage failed: ${response.status} ${response.statusText}`)
+		throw new Error(
+			`saveMessage failed: ${response.status} ${response.statusText}`
+		)
 	}
 
 	return response.json()
@@ -231,7 +235,13 @@ export async function triageMessage(appId, message, history = []) {
  * @param {AbortSignal} [signal]
  * @returns {Promise<string>} full accumulated text
  */
-export async function streamChatReply(appId, message, history = [], onToken, signal) {
+export async function streamChatReply(
+	appId,
+	message,
+	history = [],
+	onToken,
+	signal
+) {
 	const url = `${ADAPTIVE_URL}/workspace/${appId}/chat/stream`
 
 	const response = await fetch(url, {
@@ -277,5 +287,3 @@ export async function streamChatReply(appId, message, history = [], onToken, sig
 
 	return accumulated
 }
-
-

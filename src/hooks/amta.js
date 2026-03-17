@@ -1,5 +1,12 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { runModify, getPipelineStatus, getMessages, saveMessage, triageMessage, streamChatReply } from 'src/api/amta'
+import {
+	runModify,
+	getPipelineStatus,
+	getMessages,
+	saveMessage,
+	triageMessage,
+	streamChatReply,
+} from 'src/api/amta'
 
 // ---------------------------------------------------------------------------
 // Real messages hook — fetches from GET /workspace/{appId}/messages
@@ -12,7 +19,11 @@ export const useAmtaMessages = (appId) => {
 	const [error, setError] = useState(null)
 
 	const fetchMessages = useCallback(async () => {
-		if (!appId) { setItems([]); setTotal(0); return }
+		if (!appId) {
+			setItems([])
+			setTotal(0)
+			return
+		}
 		setLoading(true)
 		setError(null)
 		try {
@@ -26,7 +37,9 @@ export const useAmtaMessages = (appId) => {
 		}
 	}, [appId])
 
-	useEffect(() => { fetchMessages() }, [fetchMessages])
+	useEffect(() => {
+		fetchMessages()
+	}, [fetchMessages])
 
 	return { items, total, loading, error, refetch: fetchMessages }
 }
@@ -57,7 +70,6 @@ export function useAmtaModify({
 	name,
 	onSuccess,
 }) {
-
 	const [chatInput, setChatInput] = useState('')
 	const [isRunning, setIsRunning] = useState(false)
 	const [runStatus, setRunStatus] = useState(null)
@@ -100,7 +112,10 @@ export function useAmtaModify({
 			try {
 				triageResult = await triageMessage(appId, text, recentHistory)
 			} catch (e) {
-				console.warn('[useAmtaModify] triage failed, defaulting to modify:', e)
+				console.warn(
+					'[useAmtaModify] triage failed, defaulting to modify:',
+					e
+				)
 			}
 		}
 
@@ -109,7 +124,12 @@ export function useAmtaModify({
 			const placeholderId = `chat-${Date.now()}`
 			setLiveMessages((prev) => [
 				...prev,
-				{ role: 'assistant', content: '', id: placeholderId, created_at: new Date().toISOString() },
+				{
+					role: 'assistant',
+					content: '',
+					id: placeholderId,
+					created_at: new Date().toISOString(),
+				},
 			])
 
 			let fullReply = ''
@@ -134,7 +154,9 @@ export function useAmtaModify({
 				fullReply = '(Error generating reply)'
 				setLiveMessages((prev) =>
 					prev.map((m) =>
-						m.id === placeholderId ? { ...m, content: fullReply } : m
+						m.id === placeholderId
+							? { ...m, content: fullReply }
+							: m
 					)
 				)
 			}
@@ -144,7 +166,10 @@ export function useAmtaModify({
 
 			// Persist assistant reply
 			if (appId && fullReply) {
-				saveMessage(appId, { role: 'assistant', content: fullReply }).catch((e) =>
+				saveMessage(appId, {
+					role: 'assistant',
+					content: fullReply,
+				}).catch((e) =>
 					console.warn('[useAmtaModify] save chat reply failed:', e)
 				)
 			}
@@ -157,7 +182,8 @@ export function useAmtaModify({
 				...prev,
 				{
 					role: 'assistant',
-					content: '❌ Cannot modify: this app has no deployed instance yet. Please generate the app first.',
+					content:
+						'❌ Cannot modify: this app has no deployed instance yet. Please generate the app first.',
 					id: `err-${Date.now()}`,
 					created_at: new Date().toISOString(),
 				},
@@ -181,7 +207,14 @@ export function useAmtaModify({
 
 		try {
 			const { run_id } = await runModify({
-				instanceId, modelId, taskType, requirements: text, projectId, name, metadata, appId
+				instanceId,
+				modelId,
+				taskType,
+				requirements: text,
+				projectId,
+				name,
+				metadata,
+				appId,
 			})
 
 			setCurrentRunId(run_id)
@@ -195,7 +228,10 @@ export function useAmtaModify({
 				if (abortRef.current) break
 				const statusData = await getPipelineStatus(run_id)
 				setRunStatus(statusData.status)
-				if (statusData.status === 'completed' || statusData.status === 'failed') {
+				if (
+					statusData.status === 'completed' ||
+					statusData.status === 'failed'
+				) {
 					finalStatus = statusData
 					break
 				}
@@ -215,7 +251,7 @@ export function useAmtaModify({
 								content: finalContent,
 								isPlaceholder: false,
 								version_number: versionNumber,
-						  }
+							}
 						: m
 				)
 			)
@@ -231,7 +267,10 @@ export function useAmtaModify({
 					messageToSave.version_number = versionNumber
 				}
 				saveMessage(appId, messageToSave).catch((e) =>
-					console.warn('[useAmtaModify] save assistant msg failed:', e)
+					console.warn(
+						'[useAmtaModify] save assistant msg failed:',
+						e
+					)
 				)
 			}
 
@@ -243,14 +282,28 @@ export function useAmtaModify({
 			const errContent = `❌ Error: ${err.message}`
 			setLiveMessages((prev) =>
 				prev.map((m) =>
-					m.id === placeholderId ? { ...m, content: errContent, isPlaceholder: false } : m
+					m.id === placeholderId
+						? { ...m, content: errContent, isPlaceholder: false }
+						: m
 				)
 			)
 			setRunStatus('failed')
 		} finally {
 			setIsRunning(false)
 		}
-	}, [chatInput, isRunning, liveMessages, appId, instanceId, modelId, taskType, metadata, projectId, name, onSuccess])
+	}, [
+		chatInput,
+		isRunning,
+		liveMessages,
+		appId,
+		instanceId,
+		modelId,
+		taskType,
+		metadata,
+		projectId,
+		name,
+		onSuccess,
+	])
 
 	const cancelRun = useCallback(() => {
 		abortRef.current = true
@@ -261,7 +314,9 @@ export function useAmtaModify({
 		chatInput,
 		setChatInput,
 		isRunning,
-		get isStreaming() { return isRunning },
+		get isStreaming() {
+			return isRunning
+		},
 		runStatus,
 		currentRunId,
 		liveMessages,

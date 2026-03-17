@@ -114,7 +114,13 @@ const ChatBubble = ({ msg, streaming }) => {
 // ---------------------------------------------------------------------------
 const MessageCard = ({ msg, isOldVersion, streaming, onDeployVersion }) => {
 	if (msg.role === 'assistant' && msg.version_number && !streaming) {
-		return <VersionCard msg={msg} isOldVersion={isOldVersion} onDeployVersion={onDeployVersion} />
+		return (
+			<VersionCard
+				msg={msg}
+				isOldVersion={isOldVersion}
+				onDeployVersion={onDeployVersion}
+			/>
+		)
 	}
 	return <ChatBubble msg={msg} streaming={streaming} />
 }
@@ -192,7 +198,11 @@ const MessagesPanel = ({
 
 				{/* Optimistic live messages from this session */}
 				{liveMessages.map((msg) => (
-					<MessageCard key={msg.id} msg={msg} onDeployVersion={onDeployVersion} />
+					<MessageCard
+						key={msg.id}
+						msg={msg}
+						onDeployVersion={onDeployVersion}
+					/>
 				))}
 
 				{/* Streaming bubble */}

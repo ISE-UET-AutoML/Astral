@@ -257,8 +257,6 @@ const EditAppPage = () => {
 		}
 	}, [appId, addError])
 
-
-
 	const handleDeploy = useCallback(
 		async (versionNumber) => {
 			if (!appId) {
@@ -331,7 +329,14 @@ const EditAppPage = () => {
 				setIsDeploying(false)
 			}
 		},
-		[appId, addError, currentFile, refetchTree, loadFile, refreshCurrentVersion]
+		[
+			appId,
+			addError,
+			currentFile,
+			refetchTree,
+			loadFile,
+			refreshCurrentVersion,
+		]
 	)
 
 	useSaveShortcut(currentFile, code, handleSaveFile)
@@ -343,7 +348,6 @@ const EditAppPage = () => {
 			console.warn('[EditAppPage] initDraft failed:', err)
 		})
 	}, [appId])
-
 
 	useEffect(() => {
 		if (!tree || currentFile || hasAutoLoadedRef.current) return
@@ -420,7 +424,9 @@ const EditAppPage = () => {
 								{/* Sliding pill */}
 								<div
 									className={`absolute top-0.5 bottom-0.5 rounded-full bg-white dark:bg-[#404040] shadow-sm ring-1 ring-gray-200/60 dark:ring-[#555] transition-all duration-200 ease-out ${
-										activeMainView === 'app' ? 'left-0.5 right-[calc(50%+0.5px)]' : 'left-[calc(50%+0.5px)] right-0.5'
+										activeMainView === 'app'
+											? 'left-0.5 right-[calc(50%+0.5px)]'
+											: 'left-[calc(50%+0.5px)] right-0.5'
 									}`}
 									aria-hidden
 								/>
@@ -473,7 +479,9 @@ const EditAppPage = () => {
 									<div className="w-full flex items-center rounded-full bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-[#444] hover:border-gray-300 dark:hover:border-[#555] hover:shadow-sm transition-all">
 										<button
 											type="button"
-											onClick={() => setPreviewKey((k) => k + 1)}
+											onClick={() =>
+												setPreviewKey((k) => k + 1)
+											}
 											className="shrink-0 ml-1 p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-[#2f2f2f] text-gray-500 dark:text-[#888] transition-colors"
 											title="Reload Preview"
 										>
