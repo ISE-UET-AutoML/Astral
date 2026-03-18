@@ -26,7 +26,7 @@ export function AutomaticInstancePanel({
 		>
 			<Row gutter={[24, 24]}>
 				<Col span={16}>
-					<Card className="dark-build-card rounded-lg shadow-sm">
+					<Card className="dark-build-card !rounded-xl shadow-sm">
 						<Space
 							direction="vertical"
 							size="large"

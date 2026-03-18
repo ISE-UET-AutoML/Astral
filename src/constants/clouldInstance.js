@@ -141,7 +141,7 @@ export const InstanceSizeCard = ({ size, details, selected, onClick }) => (
 		tabIndex={0}
 		onKeyDown={(e) => e.key === 'Enter' && onClick()}
 		onClick={onClick}
-		className={`cursor-pointer rounded-2xl transition-all duration-300 overflow-hidden ${
+		className={`cursor-pointer !rounded-xl transition-all duration-300 overflow-hidden ${
 			selected
 				? 'border-2 border-blue-300 dark:border-blue-600 bg-blue-100 dark:bg-blue-900/40 shadow-[0_4px_12px_rgba(59,130,246,0.15)]'
 				: 'border border-[var(--border)] bg-[var(--card-gradient)] hover:border-blue-200 hover:bg-blue-50 dark:hover:bg-blue-950/30'
@@ -149,7 +149,7 @@ export const InstanceSizeCard = ({ size, details, selected, onClick }) => (
 	>
 	<Card
 		hoverable={false}
-		className="!border-0 !bg-transparent !shadow-none pointer-events-none"
+		className="!border-0 !bg-transparent !shadow-none !rounded-xl pointer-events-none"
 		bodyStyle={{ padding: '16px 24px' }}
 		styles={{ body: { background: 'transparent' } }}
 	>
