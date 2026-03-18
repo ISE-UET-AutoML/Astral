@@ -13,6 +13,7 @@ const CreateDatasetModal = ({ visible, onCancel, onCreate }) => {
     const [currentStep, setCurrentStep] = useState(0);
     const [datasetFormValues, setDatasetFormValues] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [canSubmitLabelForm, setCanSubmitLabelForm] = useState(false);
     const [labelProjectData, setLabelProjectData] = useState(null);
     const [toast, setToast] = useState({ show: false, message: '', type: 'error' });
 
@@ -25,6 +26,7 @@ const CreateDatasetModal = ({ visible, onCancel, onCreate }) => {
 
     const handleBack = () => {
         setCurrentStep(0);
+        setCanSubmitLabelForm(false);
     };
 
     const isImageFolder = (files) => {
@@ -190,14 +192,28 @@ const CreateDatasetModal = ({ visible, onCancel, onCreate }) => {
         setDatasetFormValues(null);
         setLabelProjectData(null);
         setIsLoading(false);
+        setCanSubmitLabelForm(false);
         onCancel();
     };
 
     useEffect(() => {
         if (visible) {
-            const prev = document.body.style.overflow;
-            document.body.style.overflow = 'hidden';
-            return () => { document.body.style.overflow = prev; };
+            const scrollY = window.scrollY;
+            const prevPosition = document.body.style.position;
+            const prevTop = document.body.style.top;
+            const prevWidth = document.body.style.width;
+            const prevLeft = document.body.style.left;
+            document.body.style.position = 'fixed';
+            document.body.style.top = `-${scrollY}px`;
+            document.body.style.width = '100%';
+            document.body.style.left = '0';
+            return () => {
+                document.body.style.position = prevPosition;
+                document.body.style.top = prevTop;
+                document.body.style.width = prevWidth;
+                document.body.style.left = prevLeft;
+                window.scrollTo(0, scrollY);
+            };
         }
     }, [visible]);
 
@@ -211,10 +227,10 @@ const CreateDatasetModal = ({ visible, onCancel, onCreate }) => {
                 type={toast.type}
                 onClose={() => setToast(prev => ({ ...prev, show: false }))}
             />
-            <div className="fixed inset-0 z-[1000] flex items-center justify-center">
-                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={handleCancel} />
+            <div className="fixed inset-0 z-[1000] flex items-center justify-center overflow-hidden overscroll-contain">
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm overflow-hidden touch-none" onClick={handleCancel} aria-hidden="true" />
                 <div
-                    className="relative z-[1001] w-full mx-4 sm:mx-6 lg:mx-8 flex flex-col max-w-[90vw] sm:max-w-[600px] lg:max-w-[800px] max-h-[90vh] [background:var(--modal-bg)] border border-[var(--modal-border)] rounded-2xl shadow-[0_25px_50px_rgba(0,0,0,0.4)]"
+                    className={`relative z-[1001] w-full mx-4 sm:mx-6 lg:mx-8 flex flex-col max-h-[85dvh] sm:max-h-[90vh] [background:var(--modal-bg)] border border-[var(--modal-border)] rounded-2xl shadow-[0_25px_50px_rgba(0,0,0,0.4)] ${datasetFormValues?.dataset_type === 'TABULAR' ? 'max-w-[95vw] sm:max-w-[640px] lg:max-w-[900px]' : 'max-w-[90vw] sm:max-w-[600px] lg:max-w-[800px]'}`}
                     onClick={e => e.stopPropagation()}
                 >
                     {/* Header */}
@@ -231,8 +247,8 @@ const CreateDatasetModal = ({ visible, onCancel, onCreate }) => {
                         </button>
                     </div>
 
-                    {/* Body */}
-                    <div className="overflow-y-auto overflow-x-hidden p-6" style={{ scrollbarWidth: 'thin' }}>
+                    {/* Body - flex-1 min-h-0 để phần này scroll được */}
+                    <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden overscroll-contain p-6" style={{ scrollbarWidth: 'thin' }}>
                         {isLoading ? (
                             <SpinnerOverlay text="Processing dataset, please wait..." />
                         ) : (
@@ -251,6 +267,7 @@ const CreateDatasetModal = ({ visible, onCancel, onCreate }) => {
                                         onSubmit={handleSubmit}
                                         onBack={handleBack}
                                         onCancel={handleCancel}
+                                        onValidityChange={setCanSubmitLabelForm}
                                         loading={isLoading}
                                         datasetType={datasetFormValues?.dataset_type}
                                         taskType={datasetFormValues?.taskType}
@@ -263,6 +280,43 @@ const CreateDatasetModal = ({ visible, onCancel, onCreate }) => {
                             </>
                         )}
                     </div>
+
+                    {!isLoading && (
+                        <div className="shrink-0 flex justify-end gap-2 sm:gap-3 px-6 py-4 border-t border-[var(--modal-header-border)] bg-[var(--modal-header-bg)] rounded-b-2xl">
+                          
+                            {currentStep === 0 ? (
+                                <button
+                                    type="submit"
+                                    form="create-dataset-form-step0"
+                                    className="px-4 sm:px-6 py-2 rounded-xl text-sm font-medium text-white border-none bg-gradient-to-r from-blue-700 to-blue-600 hover:-translate-y-[1px] transition-all shadow-sm"
+                                >
+                                    Next
+                                </button>
+                            ) : (
+                                <>
+                                    <button
+                                        type="button"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            handleBack();
+                                        }}
+                                        className="px-4 sm:px-6 py-2 rounded-xl text-sm font-medium bg-[var(--button-default-bg)] text-[var(--button-default-color)] border border-[var(--button-default-border)] hover:bg-[var(--hover-bg)] transition-colors"
+                                    >
+                                        Back
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        form="create-label-project-form-step1"
+                                        disabled={!canSubmitLabelForm}
+                                        className={`px-6 sm:px-8 py-2 rounded-xl text-sm font-medium border border-blue-500 text-white bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 transition-colors shadow-lg font-poppins ${!canSubmitLabelForm ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}`}
+                                    >
+                                        Create
+                                    </button>
+                                </>
+                            )}
+                        </div>
+                    )}
                 </div>
             </div>
         </>

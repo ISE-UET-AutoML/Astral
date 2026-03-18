@@ -1,5 +1,6 @@
 // CreateLabelProjectForm.jsx
 import React, { useState, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { PlusIcon, XMarkIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
 import { Select } from 'src/components/shared/ui/Select'
 import { Alert, AlertDescription } from 'src/components/shared/ui/alert'
@@ -31,7 +32,7 @@ const FormField = ({ label, required, children }) => (
 	</div>
 )
 
-/* ── MultiSelect – multi-value dropdown ───────────────────────────────── */
+/* ── MultiSelect – multi-value dropdown (portal để tránh nested scroll) ─── */
 const MultiSelect = ({
 	options = [],
 	value = [],
@@ -42,17 +43,49 @@ const MultiSelect = ({
 }) => {
 	const [isOpen, setIsOpen] = useState(false)
 	const [search, setSearch] = useState('')
-	const containerRef = useRef(null)
+	const [dropdownStyle, setDropdownStyle] = useState({})
+	const triggerRef = useRef(null)
+	const dropdownRef = useRef(null)
 
 	useEffect(() => {
 		const handleOutside = (e) => {
-			if (containerRef.current && !containerRef.current.contains(e.target)) {
+			if (
+				dropdownRef.current && !dropdownRef.current.contains(e.target) &&
+				triggerRef.current && !triggerRef.current.contains(e.target)
+			) {
 				setIsOpen(false)
 			}
 		}
-		document.addEventListener('mousedown', handleOutside)
+		if (isOpen) {
+			document.addEventListener('mousedown', handleOutside)
+		}
 		return () => document.removeEventListener('mousedown', handleOutside)
-	}, [])
+	}, [isOpen])
+
+	useEffect(() => {
+		if (isOpen && triggerRef.current) {
+			const rect = triggerRef.current.getBoundingClientRect()
+			const spaceBelow = window.innerHeight - rect.bottom
+			const spaceAbove = rect.top
+			const preferredHeight = 320
+
+			const shouldOpenUpward = spaceBelow < preferredHeight && spaceAbove > spaceBelow
+			const maxH = shouldOpenUpward
+				? Math.min(preferredHeight, spaceAbove - 8)
+				: Math.min(preferredHeight, spaceBelow - 8)
+
+			setDropdownStyle({
+				position: 'fixed',
+				[shouldOpenUpward ? 'bottom' : 'top']: shouldOpenUpward
+					? window.innerHeight - rect.top + 4
+					: rect.bottom + 4,
+				left: rect.left,
+				width: Math.max(rect.width, 200),
+				zIndex: 999999,
+				maxHeight: maxH,
+			})
+		}
+	}, [isOpen])
 
 	const toggle = (optValue) => {
 		const newValue = value.includes(optValue)
@@ -65,9 +98,60 @@ const MultiSelect = ({
 		? options.filter(o => o.label.toLowerCase().includes(search.toLowerCase()))
 		: options
 
+	const dropdownContent = isOpen && createPortal(
+		<div
+			ref={dropdownRef}
+			className="rounded-xl shadow-lg overflow-hidden [background:var(--modal-bg)] border border-[var(--input-border)]"
+			style={dropdownStyle}
+		>
+			{showSearch && (
+				<div className="p-2 shrink-0">
+					<input
+						type="text"
+						value={search}
+						onChange={e => setSearch(e.target.value)}
+						placeholder="Search..."
+						className="w-full px-2 py-1 rounded-[6px] border border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--input-color)] outline-none text-[13px] box-border"
+						onClick={e => e.stopPropagation()}
+					/>
+				</div>
+			)}
+			{filteredOptions.length === 0 ? (
+				<div className="px-4 py-3 text-sm text-center text-[var(--secondary-text)]">
+					No options available
+				</div>
+			) : (
+				<div
+					className="overflow-y-auto overscroll-contain"
+					style={{ maxHeight: (dropdownStyle.maxHeight || 280) - (showSearch ? 48 : 0) }}
+				>
+					{filteredOptions.map(opt => (
+						<div
+							key={opt.value}
+							className={`px-4 py-2.5 text-sm cursor-pointer transition-colors text-[var(--input-color)] ${value.includes(opt.value) ? 'bg-[var(--hover-bg)]' : ''}`}
+							onClick={() => toggle(opt.value)}
+						>
+							<div className="flex items-center gap-2">
+								<input
+									type="checkbox"
+									readOnly
+									checked={value.includes(opt.value)}
+									style={{ accentColor: 'var(--button-primary-bg)', cursor: 'pointer' }}
+								/>
+								<span>{opt.label}</span>
+							</div>
+						</div>
+					))}
+				</div>
+			)}
+		</div>,
+		document.body
+	)
+
 	return (
-		<div ref={containerRef} className="relative w-full">
+		<div className="relative w-full">
 			<div
+				ref={triggerRef}
 				className={`flex items-center justify-between rounded-xl cursor-pointer transition-all duration-200 min-h-[40px] px-3 py-2 bg-[var(--input-bg)] text-[var(--input-color)] border ${isOpen ? 'border-[var(--input-focus-border)]' : 'border-[var(--input-border)]'}`}
 				onClick={() => setIsOpen(o => !o)}
 			>
@@ -110,48 +194,7 @@ const MultiSelect = ({
 					/>
 				</div>
 			</div>
-
-			{isOpen && (
-				<div
-					className="absolute z-[9999] w-full mt-1 rounded-xl border shadow-lg max-h-60 overflow-y-auto [background:var(--modal-bg)] border-[var(--input-border)]"
-				>
-					{showSearch && (
-						<div className="p-2">
-							<input
-								type="text"
-								value={search}
-								onChange={e => setSearch(e.target.value)}
-								placeholder="Search..."
-								className="w-full px-2 py-1 rounded-[6px] border border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--input-color)] outline-none text-[13px] box-border"
-								onClick={e => e.stopPropagation()}
-							/>
-						</div>
-					)}
-					{filteredOptions.length === 0 ? (
-						<div className="px-4 py-3 text-sm text-center text-[var(--secondary-text)]">
-							No options available
-						</div>
-					) : (
-						filteredOptions.map(opt => (
-							<div
-								key={opt.value}
-								className={`px-4 py-2.5 text-sm cursor-pointer transition-colors text-[var(--input-color)] ${value.includes(opt.value) ? 'bg-[var(--hover-bg)]' : ''}`}
-								onClick={() => toggle(opt.value)}
-							>
-								<div className="flex items-center gap-2">
-									<input
-										type="checkbox"
-										readOnly
-										checked={value.includes(opt.value)}
-										style={{ accentColor: 'var(--button-primary-bg)', cursor: 'pointer' }}
-									/>
-									<span>{opt.label}</span>
-								</div>
-							</div>
-						))
-					)}
-				</div>
-			)}
+			{dropdownContent}
 		</div>
 	)
 }
@@ -161,6 +204,7 @@ export default function CreateLabelProjectForm({
 	onSubmit,
 	onCancel,
 	onBack,
+	onValidityChange,
 	initialValues = {},
 	loading,
 	detectedLabels = [],
@@ -192,6 +236,10 @@ export default function CreateLabelProjectForm({
 			setLabels(detectedLabels)
 		}
 	}, [detectedLabels, selectedTaskType])
+
+	useEffect(() => {
+		onValidityChange?.(expectedLabels.length > 0)
+	}, [expectedLabels.length, onValidityChange])
 
 	useEffect(() => {
 		if (csvMetadata?.columns) {
@@ -262,7 +310,7 @@ export default function CreateLabelProjectForm({
 	const isClusteringOrAnomaly = selectedTaskType === 'CLUSTERING' || selectedTaskType === 'ANOMALY_DETECTION'
 
 	return (
-		<form onSubmit={handleSubmit}>
+		<form id="create-label-project-form-step1" onSubmit={handleSubmit}>
 			{/* Project Name (disabled) */}
 			<FormField label="Project Name" required>
 				<input
@@ -448,24 +496,6 @@ export default function CreateLabelProjectForm({
 
 			{/* Divider */}
 			<hr className="my-4 border-t border-[var(--divider-color)]" />
-
-			{/* Actions */}
-			<div className="flex justify-end gap-2">
-				<button
-					type="button"
-					onClick={onBack}
-					className={defaultButtonClass}
-				>
-					Back
-				</button>
-				<button
-					type="submit"
-					disabled={loading || expectedLabels.length === 0}
-					className={`px-8 py-2 rounded-xl border border-blue-500 text-white text-sm bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 transition-colors shadow-lg font-poppins ${loading || expectedLabels.length === 0 ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}`}
-				>
-					{loading ? 'Creating...' : 'Create'}
-				</button>
-			</div>
 		</form>
 	)
 }

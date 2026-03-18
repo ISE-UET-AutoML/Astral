@@ -109,7 +109,7 @@ export default function DatasetCard({ dataset, onDelete, isDeleting }) {
     return (
         <div
             key={dataset.id}
-            className={`group rounded-2xl shadow-lg w-full min-h-[360px] overflow-hidden font-poppins transition-all duration-300 flex flex-col relative ${isProcessing ? 'bg-blue-50/80 dark:bg-blue-900/20' : 'bg-white dark:[background:var(--card-gradient)]'} ${borderClass} ${isCompleted ? 'cursor-pointer hover:-translate-y-1 hover:shadow-xl' : 'cursor-default'}`}
+            className={`group rounded-2xl shadow-lg w-full min-h-[360px] overflow-hidden font-poppins transition-all duration-300 flex flex-col relative ${isProcessing ? 'bg-blue-50/80 dark:bg-blue-900/30' : 'bg-white dark:bg-[#1a1a1a]'} ${borderClass} ${isCompleted ? 'cursor-pointer hover:-translate-y-1 hover:shadow-xl' : 'cursor-default'}`}
             onClick={handleCardClick}
         >
             {/* Content - blurred when processing */}
@@ -131,11 +131,11 @@ export default function DatasetCard({ dataset, onDelete, isDeleting }) {
                             {statusConfig.text}
                         </div>
                         <div className="flex gap-1.5">
-                            <button className="w-7 h-7 rounded-full flex items-center justify-center transition-all duration-200 bg-white dark:bg-white/10 border border-gray-200 dark:border-white/20 hover:bg-gray-100 dark:hover:bg-white/20">
+                            <button className="w-7 h-7 rounded-full flex items-center justify-center transition-all duration-200 bg-white dark:bg-white/15 border border-gray-200 dark:border-white/25 hover:bg-gray-100 dark:hover:bg-white/25">
                                 <StarIcon className="h-3.5 w-3.5 text-yellow-500" />
                             </button>
                             <button
-                                className="w-7 h-7 rounded-full flex items-center justify-center transition-all duration-200 bg-white dark:bg-white/10 border border-gray-200 dark:border-white/20 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                className="w-7 h-7 rounded-full flex items-center justify-center transition-all duration-200 bg-white dark:bg-white/15 border border-gray-200 dark:border-white/25 hover:bg-red-50 dark:hover:bg-red-900/30"
                                 onClick={(e) => handleDelete(e, dataset.id)}
                             >
                                 <TrashIcon className="h-3.5 w-3.5 text-red-500" />
@@ -145,13 +145,13 @@ export default function DatasetCard({ dataset, onDelete, isDeleting }) {
 
                     {/* Icon */}
                     <div className="flex justify-left mb-3">
-                        <div className="w-14 h-14 rounded-xl shadow-md flex items-center justify-center bg-white dark:bg-white/10 border border-gray-200 dark:border-white/20">
+                        <div className="w-14 h-14 rounded-xl shadow-md flex items-center justify-center bg-white dark:bg-white/15 border border-gray-200 dark:border-white/25">
                             <TypeIcon className="h-7 w-7 transition-transform duration-500 ease-out" style={{ color: accentColor }} aria-hidden="true" />
                         </div>
                     </div>
 
                     {/* Data Type Tag */}
-                    <span className="px-2.5 py-1 text-xs font-medium rounded-full shadow-sm bg-gray-100 dark:bg-white/10 border border-gray-200 dark:border-white/20 text-gray-700 dark:text-gray-300">
+                    <span className="px-2.5 py-1 text-xs font-medium rounded-full shadow-sm bg-gray-100 dark:bg-white/15 border border-gray-200 dark:border-white/25 text-gray-700 dark:text-gray-200">
                         {dataType.replace(/_/g, ' ')}
                     </span>
                 </div>
@@ -167,15 +167,15 @@ export default function DatasetCard({ dataset, onDelete, isDeleting }) {
 
                 <div className="grid grid-cols-3 gap-4 text-sm mb-3">
                     <div className="flex flex-col">
-                        <span className="text-gray-500 dark:text-gray-400">Created</span>
+                        <span className="text-gray-500 dark:text-gray-300">Created</span>
                         <span className="font-semibold truncate mt-0.5 text-gray-900 dark:text-white">{createdAtDisplay}</span>
                     </div>
                     <div className="flex flex-col">
-                        <span className="text-gray-500 dark:text-gray-400">Files</span>
+                        <span className="text-gray-500 dark:text-gray-300">Files</span>
                         <span className="font-semibold truncate mt-0.5 text-gray-900 dark:text-white">{totalFiles.toLocaleString()}</span>
                     </div>
                     <div className="flex flex-col">
-                        <span className="text-gray-500 dark:text-gray-400">Size</span>
+                        <span className="text-gray-500 dark:text-gray-300">Size</span>
                         <span className="font-semibold mt-0.5 text-gray-900 dark:text-white">
                             {totalSizeKb ? (totalSizeKb / 1024).toFixed(1) + ' MB' : 'N/A'}
                         </span>
@@ -185,7 +185,7 @@ export default function DatasetCard({ dataset, onDelete, isDeleting }) {
                 {totalAnnotations > 0 && (
                     <div className="mt-2">
                         <div className="flex justify-between items-center mb-2">
-                            <span className="text-sm text-gray-500 dark:text-gray-400">Progress</span>
+                            <span className="text-sm text-gray-500 dark:text-gray-300">Progress</span>
                             <span className="text-sm font-bold text-gray-900 dark:text-white">
                                 {annotatedCount.toLocaleString()} / {totalAnnotations.toLocaleString()}
                             </span>
@@ -210,10 +210,10 @@ export default function DatasetCard({ dataset, onDelete, isDeleting }) {
             {isProcessing && (
                 <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
                     <div className="flex flex-col items-center gap-2">
-                        <div className="w-14 h-14 rounded-full bg-white/90 dark:bg-black/30 flex items-center justify-center shadow-lg border border-blue-200/50 dark:border-blue-500/30">
-                            <ArrowPathIcon className="h-7 w-7 text-blue-500 animate-spin" aria-hidden="true" />
+                        <div className="w-14 h-14 rounded-full bg-white/90 dark:bg-white/10 flex items-center justify-center shadow-lg border border-blue-200/50 dark:border-white/20">
+                            <ArrowPathIcon className="h-7 w-7 text-blue-500 dark:text-gray-300 animate-spin" aria-hidden="true" />
                         </div>
-                        <span className="text-xs font-medium text-blue-600 dark:text-blue-400">Processing...</span>
+                        <span className="text-xs font-medium text-blue-600 dark:text-gray-300">Processing...</span>
                     </div>
                 </div>
             )}

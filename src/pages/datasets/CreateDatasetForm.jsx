@@ -61,8 +61,12 @@ export default function CreateDatasetForm({
 
 	useEffect(() => {
 		if (initialFiles.length) {
-			setFiles(initialFiles)
-			setTotalKbytes(calcSizeKB(initialFiles))
+			const filesWithId = initialFiles.map((f, i) => ({
+				...f,
+				fileId: f.fileId ?? `${f.path}::${i}`,
+			}))
+			setFiles(filesWithId)
+			setTotalKbytes(calcSizeKB(filesWithId))
 		}
 		if (initialDetectedLabels.length)
 			setDetectedLabels(initialDetectedLabels)
@@ -136,10 +140,14 @@ export default function CreateDatasetForm({
 		const totalSizeInKB =
 			totalSize > 0 ? (totalSize / 1024).toFixed(2) : '0.00'
 
-		const fileMetadata = validatedFiles.map((file) => ({
-			path: file.webkitRelativePath || file.name,
-			fileObject: file,
-		}))
+		const fileMetadata = validatedFiles.map((file, index) => {
+			const path = file.webkitRelativePath || file.name
+			return {
+				path,
+				fileId: `${path}::${index}`,
+				fileObject: file,
+			}
+		})
 
 		const fileMap = organizeFiles(fileMetadata)
 		const labels = Array.from(fileMap.keys()).filter(
@@ -168,13 +176,34 @@ export default function CreateDatasetForm({
 	}
 
 	const handleDeleteFile = (fileId) => {
-		const updatedFiles = files.filter((file) => file.fileId !== fileId)
+		const updatedFiles = files.filter((file) => (file.fileId ?? file.path) !== fileId)
 		fileRefs.current.delete(fileId)
 		setFiles(updatedFiles)
-		setDetectedLabels([])
-		setCsvMetadata(null)
+
+		// Re-detect labels from remaining files
+		const fileMap = organizeFiles(updatedFiles)
+		const labels = Array.from(fileMap.keys()).filter(
+			(label) => label !== 'unlabeled'
+		)
+		setDetectedLabels(labels)
+
+		// Re-extract CSV metadata if CSV file still exists
+		const csvFile = updatedFiles.find((f) =>
+			(f.path || '').toLowerCase().endsWith('.csv')
+		)
+		if (csvFile?.fileObject) {
+			extractCSVMetaData(csvFile.fileObject)
+				.then((metadata) => setCsvMetadata(metadata))
+				.catch((err) => {
+					console.error('Failed to extract CSV metadata:', err)
+					setCsvMetadata(null)
+				})
+		} else {
+			setCsvMetadata(null)
+		}
+
 		const totalSize = updatedFiles.reduce((sum, file) => {
-			const fileObj = fileRefs.current.get(file.fileId)
+			const fileObj = file.fileObject || fileRefs.current.get(file.fileId ?? file.path)
 			return sum + (fileObj?.size || 0)
 		}, 0)
 		setTotalKbytes(totalSize > 0 ? (totalSize / 1024).toFixed(2) : '0.00')
@@ -321,8 +350,9 @@ export default function CreateDatasetForm({
 	const labelClass =
 		'block mb-2 font-medium text-[var(--form-label-color)] text-sm'
 
-	return (
+		return (
 		<form
+			id="create-dataset-form-step0"
 			onSubmit={handleSubmit}
 			className="flex flex-col gap-5 font-poppins"
 		>
@@ -529,10 +559,10 @@ export default function CreateDatasetForm({
 						</div>
 
 						{files.length > 0 && (
-							<div className="max-h-[200px] overflow-y-auto bg-[var(--upload-bg)] rounded-lg p-2 mt-3 [scrollbar-width:thin]">
+							<div className="max-h-[120px] sm:max-h-[180px] overflow-y-auto bg-[var(--upload-bg)] rounded-lg p-2 mt-3 [scrollbar-width:thin]">
 								{files.map((file) => (
 									<div
-										key={file.path}
+										key={file.fileId ?? file.path}
 										className="flex items-center border-b border-[var(--divider-color)] py-2 text-[var(--text)] text-sm last:border-0"
 									>
 										<FileOutlined className="mr-2 text-[var(--upload-icon)]" />
@@ -550,7 +580,7 @@ export default function CreateDatasetForm({
 										<button
 											type="button"
 											onClick={() =>
-												handleDeleteFile(file.fileId)
+												handleDeleteFile(file.fileId ?? file.path)
 											}
 											className="text-[var(--secondary-text)] hover:text-red-500 transition-colors bg-transparent border-none cursor-pointer px-2"
 										>
@@ -583,23 +613,6 @@ export default function CreateDatasetForm({
 						)}
 					</div>
 				)}
-			</div>
-
-			{/* Buttons */}
-			<div className="mt-4 flex justify-end gap-3">
-				<button
-					type="button"
-					onClick={onCancel}
-					className="px-6 py-2 rounded-xl text-sm font-medium bg-[var(--button-default-bg)] text-[var(--button-default-color)] border border-[var(--button-default-border)] hover:bg-[var(--hover-bg)] hover:border-[var(--border-hover)] hover:text-[var(--text)] transition-colors"
-				>
-					Cancel
-				</button>
-				<button
-					type="submit"
-					className="px-6 py-2 rounded-xl text-sm font-medium bg-[var(--button-primary-bg)] text-[var(--button-primary-color)] border border-[var(--button-primary-border)] hover:border-[var(--modal-close-hover)] hover:-translate-y-[1px] transition-all text-white border-none bg-gradient-to-r from-blue-700 to-blue-600"
-				>
-					Next
-				</button>
 			</div>
 		</form>
 	)
