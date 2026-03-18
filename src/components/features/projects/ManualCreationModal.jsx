@@ -405,11 +405,11 @@ const ManualCreationModal = ({
 			onSubmit={handleSubmit}
 			className="theme-form theme-manual-form flex-1 min-h-0 flex flex-col overflow-hidden [scrollbar-width:thin] [scrollbar-color:#94a3b8_transparent]"
 		>
-			{/* Two-column overall layout */}
-			<div className="grid grid-cols-[1.1fr_0.9fr] grid-rows-[minmax(0,1fr)] gap-5 items-stretch min-h-0 flex-1 overflow-hidden">
+			{/* Two-column layout - mỗi cột scroll độc lập */}
+			<div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] grid-rows-[minmax(0,1fr)] gap-4 lg:gap-5 items-stretch min-h-0 flex-1 overflow-hidden">
 				
-				{/* Left column */}
-				<div className="border-r-2 border-sky-500 pr-3 flex flex-col overflow-hidden min-h-0">
+				{/* Left column - scroll riêng */}
+				<div className="border-r-0 lg:border-r-2 border-sky-500 pr-0 lg:pr-3 flex flex-col overflow-hidden min-h-0">
 					
 					{/* Project Name */}
 					<div className="mb-4">
@@ -452,16 +452,16 @@ const ManualCreationModal = ({
 						/>
 					</div>
 
-					{/* Task list box */}
-					<div className="task-selection-container rounded-2xl bg-[var(--filter-bg)] border border-[var(--filter-border)] overflow-hidden mt-2 flex-1 flex flex-col min-h-0 [scrollbar-width:thin] [scrollbar-color:#94a3b8_transparent]">
+					{/* Task list box - scroll độc lập bên trái */}
+					<div className="task-selection-container rounded-2xl bg-[var(--filter-bg)] border border-[var(--filter-border)] overflow-hidden mt-2 flex-1 flex flex-col min-h-0">
 						<Title
 							level={4}
 							className="text-center my-3 text-[var(--title-project)] font-bold shrink-0"
 						>
 							Choose Your Task
 						</Title>
-						<div className="task-list-column pl-5 pr-4 pb-4 border-t border-[var(--border)] flex-1 overflow-y-auto min-h-0 [scrollbar-width:thin] [scrollbar-color:#94a3b8_transparent]">
-							<div className="grid grid-cols-3 gap-3 pt-3">
+						<div className="task-list-column pl-3 lg:pl-5 pr-3 lg:pr-4 pb-4 border-t border-[var(--border)] flex-1 overflow-y-auto min-h-0 [scrollbar-width:thin] [scrollbar-color:#94a3b8_transparent]">
+							<div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 pt-3">
 								{taskCards.map((task, idx) => {
 									const projTypeIndex = projType.findIndex(
 										(type) => type === task.id
@@ -515,10 +515,10 @@ const ManualCreationModal = ({
 					</div>
 				</div>
 
-				{/* Right column - task details */}
-				<div className="task-details-column px-5 pb-5 overflow-y-auto overflow-x-hidden flex flex-col min-h-0 [scrollbar-width:thin] [scrollbar-color:#94a3b8_transparent]">
+				{/* Right column - scroll độc lập bên phải */}
+				<div className="task-details-column px-3 lg:px-5 pb-5 overflow-y-auto overflow-x-hidden min-h-0 [scrollbar-width:thin] [scrollbar-color:#94a3b8_transparent]">
 					{displayTask ? (
-						<div className="task-details w-full min-w-[300px]">
+						<div className="task-details w-full min-w-0">
 							<div className="text-center mb-6">
 								<Title
 									level={3}
@@ -531,7 +531,7 @@ const ManualCreationModal = ({
 								</Text>
 							</div>
 
-							<div className="w-[95%] h-[320px] mx-auto rounded-2xl overflow-hidden mb-5 shadow-[0_8px_24px_rgba(0,0,0,0.15)] border-2 border-[var(--border-hover)]">
+							<div className="w-[95%] h-[320px] mx-auto rounded-2xl overflow-hidden mb-5 shadow-[0_8px_24px_rgba(0,0,0,0.15)] border-2 border-[var(--border-hover)] flex items-center justify-center bg-[var(--filter-bg)]">
 								<img
 									src={displayTask.image}
 									alt={displayTask.title}
@@ -614,7 +614,7 @@ const ManualCreationModal = ({
 			</div>
 
 			{/* Submit - fixed at bottom */}
-			<div className="mt-auto sticky bottom-0 bg-transparent z-10 flex justify-end gap-2 pt-2">
+			<div className="shrink-0 flex justify-end gap-2 pt-4 pb-2 border-t border-[var(--border)] mt-4">
 				<button
 					type="button"
 					onClick={onCancel}
