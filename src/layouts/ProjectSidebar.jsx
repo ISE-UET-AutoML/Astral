@@ -20,12 +20,42 @@ const ProjectSidebar = ({ projectID, className }) => {
 	}, [location.pathname])
 
 	const navigation = [
-		{ name: 'Info', href: PATHS.PROJECT_INFO(projectID), icon: InfoIcon },
-		{ name: 'Build', href: PATHS.PROJECT_BUILD(projectID), icon: BuildIcon },
-		{ name: 'Experiment', href: PATHS.PROJECT_EXPERIMENT(projectID), icon: TasksIcon },
-		{ name: 'Model', href: PATHS.PROJECT_MODEL(projectID), icon: ModelIcon },
-		{ name: 'Deploy', href: PATHS.PROJECT_DEPLOY(projectID), icon: DeployIcon },
-		{ name: 'My Apps', href: PATHS.PROJECT_MY_APPS(projectID), icon: MyAppIcon },
+		{ 
+			name: 'Info', 
+			href: PATHS.PROJECT_INFO(projectID), 
+			icon: InfoIcon,
+			isActive: location.pathname.endsWith('/build/info')
+		},
+		{ 
+			name: 'Build', 
+			href: PATHS.PROJECT_BUILD(projectID), 
+			icon: BuildIcon,
+			isActive: location.pathname.includes('/build') && !location.pathname.endsWith('/build/info')
+		},
+		{ 
+			name: 'Experiment', 
+			href: PATHS.PROJECT_EXPERIMENT(projectID), 
+			icon: TasksIcon,
+			isActive: location.pathname.includes('/experiments')
+		},
+		{ 
+			name: 'Model', 
+			href: PATHS.PROJECT_MODEL(projectID), 
+			icon: ModelIcon,
+			isActive: location.pathname.includes('/model')
+		},
+		{ 
+			name: 'Deploy', 
+			href: PATHS.PROJECT_DEPLOY(projectID), 
+			icon: DeployIcon,
+			isActive: location.pathname.includes('/deploy')
+		},
+		{ 
+			name: 'My Apps', 
+			href: PATHS.PROJECT_MY_APPS(projectID), 
+			icon: MyAppIcon,
+			isActive: location.pathname.includes('/my-apps')
+		},
 	]
 
 	return (
@@ -45,23 +75,23 @@ const ProjectSidebar = ({ projectID, className }) => {
 							<NavLink
 								key={item.name}
 								to={item.href}
-								className={({ isActive }) =>
+								className={() =>
 									clsx(
 										'group flex flex-col items-center justify-center text-xs font-medium w-full',
 										'relative rounded-2xl py-3 transition-all duration-300',
-										isActive
+										item.isActive
 											? 'bg-blue-50 dark:bg-white/15 border border-blue-200 dark:border-white/40 shadow-sm dark:shadow-[0_0_12px_rgba(255,255,255,0.08)]'
 											: 'hover:bg-gray-100/50 dark:hover:bg-white/5 border border-transparent'
 									)
 								}
 							>
-								{({ isActive }) => (
+								{() => (
 									<>
 										<div className="flex justify-center w-full">
 											<item.icon
 												className={clsx(
 													'flex-shrink-0 w-7 h-7 mb-2 transition-all duration-300',
-												isActive
+												item.isActive
 													? 'text-blue-600 dark:text-white'
 													: 'text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-200 group-hover:scale-110'
 											)}
@@ -70,7 +100,7 @@ const ProjectSidebar = ({ projectID, className }) => {
 										<span
 											className={clsx(
 												'text-[11px] text-center font-medium transition-all duration-300 leading-tight block w-full',
-												isActive
+												item.isActive
 													? 'text-blue-600 dark:text-white font-semibold'
 													: 'text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-200'
 											)}

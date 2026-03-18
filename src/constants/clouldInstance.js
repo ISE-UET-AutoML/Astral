@@ -136,49 +136,75 @@ export const generateRandomKey = () => {
 }
 
 export const InstanceSizeCard = ({ size, details, selected, onClick }) => (
-	<Card
-		hoverable
-		className={`instance-size-card border rounded-2xl bg-[var(--card-gradient)] text-[var(--text)] transition-all duration-300 backdrop-blur-xl ${
-			selected
-				? 'border-[var(--accent-text)] bg-[var(--active-bg)] shadow-[0_8px_24px_var(--input-shadow)]'
-				: 'border-[var(--border)] hover:border-[var(--accent-text)] hover:bg-[var(--hover-bg)] hover:shadow-[0_8px_24px_var(--input-shadow)]'
-		}`}
+	<div
+		role="button"
+		tabIndex={0}
+		onKeyDown={(e) => e.key === 'Enter' && onClick()}
 		onClick={onClick}
+		className={`cursor-pointer rounded-2xl transition-all duration-300 overflow-hidden ${
+			selected
+				? 'border-2 border-blue-300 dark:border-blue-600 bg-blue-100 dark:bg-blue-900/40 shadow-[0_4px_12px_rgba(59,130,246,0.15)]'
+				: 'border border-[var(--border)] bg-[var(--card-gradient)] hover:border-blue-200 hover:bg-blue-50 dark:hover:bg-blue-950/30'
+		}`}
 	>
-		<div className="flex items-center">
-			<Title
-				level={5}
-				className="mr-10 !text-[var(--text)] !font-semibold"
+	<Card
+		hoverable={false}
+		className="!border-0 !bg-transparent !shadow-none pointer-events-none"
+		bodyStyle={{ padding: '16px 24px' }}
+		styles={{ body: { background: 'transparent' } }}
+	>
+		<div className="flex flex-col">
+			<div className="flex items-center justify-between">
+				<Title
+					level={5}
+				className={`!m-0 !font-semibold flex items-center gap-2 ${
+					selected ? '!text-blue-600 dark:!text-blue-400' : '!text-[var(--text)]'
+				}`}
+				>
+					{details.title}
+				</Title>
+				{selected && (
+					<div className="h-2 w-2 rounded-full bg-blue-400 dark:bg-blue-500 shadow-[0_0_6px_rgba(59,130,246,0.4)]"></div>
+				)}
+			</div>
+			
+			<div 
+				className={`grid grid-cols-2 gap-x-4 gap-y-3 transition-all duration-300 ease-in-out overflow-hidden ${
+					selected ? 'max-h-[200px] opacity-100 mt-4' : 'max-h-0 opacity-0 mt-0'
+				}`}
 			>
-				{details.title}
-			</Title>
-			{selected && (
-				<Collapse ghost>
-					<Panel header="Detail" key="1">
-						<Space direction="vertical" size="small">
-							<Text className="text-[var(--secondary-text)]">
-								Suitable for: {details.suitable}
-							</Text>
-							<Text className="text-[var(--secondary-text)]">
-								GPU Range: {details.gpuRange}
-							</Text>
-							<Text className="text-[var(--secondary-text)]">
-								Memory: {details.memory}
-							</Text>
-							<Badge
-								color="var(--accent-text)"
-								text={
-									<span className="text-[var(--secondary-text)]">
-										Recommended for: {details.recommended}
-									</span>
-								}
-							/>
-						</Space>
-					</Panel>
-				</Collapse>
-			)}
+				<div className="flex items-start gap-2">
+					<span className="text-blue-400 dark:text-blue-500 mt-0.5">🎯</span>
+					<div className="flex flex-col">
+						<span className="text-xs text-blue-600/80 dark:text-blue-400/80 font-medium uppercase tracking-wider">Suitable for</span>
+						<span className="text-sm text-blue-900/90 dark:text-blue-100">{details.suitable}</span>
+					</div>
+				</div>
+				<div className="flex items-start gap-2">
+					<span className="text-blue-400 dark:text-blue-500 mt-0.5">⚡</span>
+					<div className="flex flex-col">
+						<span className="text-xs text-blue-600/80 dark:text-blue-400/80 font-medium uppercase tracking-wider">GPU Range</span>
+						<span className="text-sm text-blue-900/90 dark:text-blue-100 font-medium">{details.gpuRange}</span>
+					</div>
+				</div>
+				<div className="flex items-start gap-2">
+					<span className="text-blue-400 dark:text-blue-500 mt-0.5">🧠</span>
+					<div className="flex flex-col">
+						<span className="text-xs text-blue-600/80 dark:text-blue-400/80 font-medium uppercase tracking-wider">Memory</span>
+						<span className="text-sm text-blue-900/90 dark:text-blue-100">{details.memory}</span>
+					</div>
+				</div>
+				<div className="flex items-start gap-2">
+					<span className="text-blue-400 dark:text-blue-500 mt-0.5">💡</span>
+					<div className="flex flex-col">
+						<span className="text-xs text-blue-600/80 dark:text-blue-400/80 font-medium uppercase tracking-wider">Recommended</span>
+						<span className="text-sm text-blue-900/90 dark:text-blue-100">{details.recommended}</span>
+					</div>
+				</div>
+			</div>
 		</div>
 	</Card>
+	</div>
 )
 
 export const CostEstimator = ({

@@ -88,7 +88,7 @@ const SelectInstance = () => {
 
     return (
         <div className="min-h-screen bg-[var(--surface)] px-6 py-6 font-poppins">
-            <div className="rounded-2xl border border-[var(--border)] bg-[var(--card-gradient)] p-4 shadow-[0_8px_32px_var(--input-shadow)] backdrop-blur-2xl">
+            <div className="rounded-2xl bg-[var(--card-gradient)] p-4 shadow-[0_8px_32px_var(--input-shadow)] backdrop-blur-2xl">
                 <Tabs items={items} onChange={(key) => setActiveTab(key)} />
             </div>
         </div>
