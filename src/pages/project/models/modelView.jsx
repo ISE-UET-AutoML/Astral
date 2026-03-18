@@ -179,9 +179,8 @@ const ModelView = () => {
     }, [modelId])
 
     return (
-        <div className="min-h-screen relative w-full bg-[var(--surface)] font-poppins text-[var(--text)]">
-            {/* Chỉnh lại padding và giới hạn chiều rộng để cân đối với Sidebar */}
-            <div className="relative z-10 w-full p-6 lg:p-8 flex flex-col gap-6">
+        <div className="h-full overflow-y-auto w-full bg-[var(--surface)] font-poppins text-[var(--text)]">
+            <div className="relative z-10 w-full px-3 py-6 sm:px-4 lg:px-6 lg:py-8 flex flex-col gap-6">
                 
                 {/* Version Selector */}
                 {versions.length > 0 && (

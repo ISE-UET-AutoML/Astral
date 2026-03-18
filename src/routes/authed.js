@@ -83,6 +83,12 @@ const routes = {
                                         {
                                             path: 'uploadData',
                                             element: <UploadData />,
+                                            handle: {
+                                                projectLayout: {
+                                                    overflow: 'hidden',
+                                                    height: 'full',
+                                                },
+                                            },
                                         },
                                         {
                                             path: 'selectTargetColMulti',
@@ -99,32 +105,74 @@ const routes = {
                                         {
                                             path: 'training',
                                             element: <Training />,
+                                            handle: {
+                                                projectLayout: {
+                                                    overflow: 'hidden',
+                                                    height: 'full',
+                                                },
+                                            },
                                         },
                                         {
                                             path: 'trainResult',
                                             element: <TrainResult />,
+                                            handle: {
+                                                projectLayout: {
+                                                    overflow: 'hidden',
+                                                    height: 'full',
+                                                },
+                                            },
                                         },
                                         {
                                             path: 'deployView',
                                             element: <DeployView />,
+                                            handle: {
+                                                projectLayout: {
+                                                    overflow: 'hidden',
+                                                    height: 'full',
+                                                },
+                                            },
                                         },
                                         {
                                             path: 'deploySettingUp',
-                                            element: <DeploySettingUpView />
+                                            element: <DeploySettingUpView />,
+                                            handle: {
+                                                projectLayout: {
+                                                    overflow: 'hidden',
+                                                    height: 'full',
+                                                },
+                                            },
                                         }
                                     ],
                                 },
                                 {
                                     path: 'experiments',
                                     element: <ProjectExperiments />,
+                                    handle: {
+                                        projectLayout: {
+                                            overflow: 'hidden',
+                                            height: 'full',
+                                        },
+                                    },
                                 },
                                 {
                                     path: 'model',
                                     element: <ProjectModels />,
+                                    handle: {
+                                        projectLayout: {
+                                            overflow: 'hidden',
+                                            height: 'full',
+                                        },
+                                    },
                                 },
                                 {
                                     path: 'model/:modelId',
-                                    element: <ModelView />
+                                    element: <ModelView />,
+                                    handle: {
+                                        projectLayout: {
+                                            overflow: 'hidden',
+                                            height: 'full',
+                                        },
+                                    },
                                 },
                                 {
                                     path: 'model/:modelId/retrain',
@@ -133,6 +181,12 @@ const routes = {
                                 {
                                     path: 'deploy',
                                     element: <ProjectDeploy />,
+                                    handle: {
+                                        projectLayout: {
+                                            overflow: 'hidden',
+                                            height: 'full',
+                                        },
+                                    },
                                 },
                                 {
                                     path: 'deploy/:deployId',
@@ -141,6 +195,12 @@ const routes = {
                                 {
                                     path: 'my-apps',
                                     element: <ProjectGenApp />,
+                                    handle: {
+                                        projectLayout: {
+                                            overflow: 'hidden',
+                                            height: 'full',
+                                        },
+                                    },
                                 },
                                 {
                                     path: 'my-apps/:appId/edit',

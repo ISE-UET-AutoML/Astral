@@ -35,8 +35,8 @@ const TrainResult = () => {
 
 
 	return (
-		<div className="relative min-h-screen bg-[var(--surface)] mt-4">
-			<div className="relative z-10 p-6">
+		<div className="h-full overflow-y-auto bg-[var(--surface)]">
+			<div className="relative z-10 w-full px-3 py-6 sm:px-4 lg:px-6 lg:py-8">
 				<div className="mb-6 flex items-center gap-2">
 				    <ChartBarSquareIcon className="w-12 h-12 text-blue-200 dark:text-white"/>
 					<h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Training Result</h1>

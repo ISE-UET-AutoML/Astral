@@ -77,8 +77,8 @@ export default function ProjectModels() {
     }, [getListModels])
 
     return (
-        <div className="relative min-h-screen bg-[var(--surface)]">
-            <div className="relative z-10 p-6">
+        <div className="h-full overflow-y-auto bg-[var(--surface)]">
+            <div className="relative z-10 w-full px-3 py-6 sm:px-4 lg:px-6 lg:py-8">
                 {/* Header Section */}
                 <div className="mb-8">
                     <div className="mb-4 flex items-center gap-3">

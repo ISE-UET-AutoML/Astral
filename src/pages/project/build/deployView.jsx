@@ -161,8 +161,8 @@ const DeployView = () => {
     }
 
     return (
-        <div className="min-h-screen bg-[var(--surface)] px-6 py-6">
-            <div className="mx-auto px-8 mt-16 space-y-6">
+        <div className="h-full overflow-y-auto bg-[var(--surface)]">
+            <div className="relative z-10 w-full px-3 py-6 sm:px-4 lg:px-6 lg:py-8 mx-auto space-y-6">
                 <div className="rounded-2xl border border-[var(--border)] bg-white dark:bg-[#282828] py-10 px-16 shadow-[0_8px_32px_rgba(0,0,0,0.3)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] backdrop-blur-xl">
                     <div className="flex flex-col gap-4">
                         <div className="flex items-center gap-3">

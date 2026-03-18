@@ -60,10 +60,10 @@ const UploadData = () => {
 				}
 			`}</style>
 			<div
-				className="min-h-screen"
+				className="h-full overflow-y-auto"
 				style={{ background: 'var(--surface)' }}
 			>
-				<div className="relative pt-20 px-6 pb-20">
+				<div className="relative w-full px-3 py-6 sm:px-4 lg:px-6 lg:py-8">
 
 					<div className="relative z-10">
 						{/* Header Section */}

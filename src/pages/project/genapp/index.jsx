@@ -258,8 +258,8 @@ export default function ProjectGenApp() {
 
 
 	return (
-		<div className="flex flex-col h-[calc(100dvh-100px)] bg-gray-50 dark:bg-[var(--surface)] overflow-hidden -m-px">
-			<div className="flex-1 overflow-y-auto p-6">
+		<div className="h-full overflow-y-auto bg-gray-50 dark:bg-[var(--surface)]">
+			<div className="relative z-10 w-full px-3 py-6 sm:px-4 lg:px-6 lg:py-8">
 				{/* Header */}
 				<div className="mb-8 max-w-full mx-auto">
 					<div className="flex items-center gap-3 mb-4">

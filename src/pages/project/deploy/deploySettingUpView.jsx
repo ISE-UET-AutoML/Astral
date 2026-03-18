@@ -232,10 +232,9 @@ export default function DeploySettingUpView() {
                 }
             `}</style>
             <div
-                className="relative min-h-screen bg-[var(--surface)]"
+                className="h-full overflow-y-auto bg-[var(--surface)]"
             >
-                {/* BackgroundShapes removed */}
-                <div className="relative z-10 p-6">
+                <div className="relative z-10 w-full px-3 py-6 sm:px-4 lg:px-6 lg:py-8">
                     <animated.div
                         style={useSpring({
                             from: { opacity: 0, transform: 'translateY(20px)' },

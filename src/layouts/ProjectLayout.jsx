@@ -20,7 +20,7 @@ export default function ProjectLayout() {
 			? 'h-[calc(100dvh-100px)]'
 			: layoutConfig.height === 'auto'
 				? ''
-			: 'min-h-[calc(100dvh-100px)]'
+			: 'min-h-0'
 	const contentOverflowClass =
 		layoutConfig.overflow === 'hidden'
 			? 'overflow-hidden'
@@ -53,7 +53,7 @@ export default function ProjectLayout() {
 				projectID={params.id}
 				className="fixed h-[calc(100vh)] w-[120px] top-[60px] z-50 shadow-[4px_0_24px_rgba(0,0,0,0.02)] dark:shadow-[4px_0_24px_rgba(0,0,0,0.2)]"
 			/>
-			<div className={`mx-auto w-[calc(100%)] pl-[120px] lg:pl-[140px] pt-14 pr-4 lg:pr-6 flex-grow lg:flex h-[calc(100vh)] ${shellOverflowClass} transition-all duration-300`}>
+			<div className={`mx-auto w-[calc(100%)] pl-[120px] lg:pl-[140px] pt-14 pr-4 lg:pr-6 pb-4 flex-grow lg:flex h-[calc(100vh)] ${shellOverflowClass} transition-all duration-300`}>
 				
 				<div className="ml-0 min-w-0 flex-1 w-full py-4 mt-2">
 					
