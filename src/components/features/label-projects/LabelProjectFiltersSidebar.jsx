@@ -30,7 +30,7 @@ export function LabelProjectFiltersSidebar({
 	onContinue,
 }) {
 	return (
-		<Card className="rounded-2xl shadow-2xl sticky top-4 border [border-color:var(--border)] [background:var(--card-gradient)]">
+		<Card className="rounded-2xl shadow-2xl border [border-color:var(--border)] [background:var(--card-gradient)] h-full w-full flex flex-col">
 			<CardHeader>
 				<CardTitle className="flex items-center gap-3 text-lg text-[var(--text)]">
 					<MixerHorizontalIcon className="h-5 w-5 text-[var(--accent-text)]" />

@@ -30,9 +30,8 @@ export function LabelProjectsTable({
 	onShowCreateDatasetModal,
 }) {
 	return (
-		<>
-			<Card className="rounded-2xl shadow-2xl border [border-color:var(--border)] [background:var(--card-gradient)]">
-				<CardContent className="p-8">
+		<Card className="rounded-2xl shadow-2xl border [border-color:var(--border)] [background:var(--card-gradient)] h-full w-full flex flex-col">
+			<CardContent className="p-8 flex-1">
 					<Alert className="mb-8 border text-[var(--text)] [border-color:var(--alert-info-border)] [background:var(--alert-info-bg)]">
 						<InfoCircledIcon className="h-4 w-4 text-[var(--accent-text)]" />
 						<AlertTitle className="font-medium text-[var(--text)]">
@@ -176,9 +175,7 @@ export function LabelProjectsTable({
 						</div>
 					)}
 				</CardContent>
-			</Card>
-
-			<div className="mt-6">
+			<div className="px-8 pb-6 pt-0 shrink-0">
 				<BuildPager
 					currentPage={currentPage}
 					totalItems={totalItems}
@@ -186,7 +183,7 @@ export function LabelProjectsTable({
 					onPageChange={onPageChange}
 				/>
 			</div>
-		</>
+		</Card>
 	)
 }
 
