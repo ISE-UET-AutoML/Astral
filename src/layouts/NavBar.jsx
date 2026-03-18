@@ -146,7 +146,7 @@ const NavBar = () => {
 									leaveFrom="transform opacity-100 scale-100"
 									leaveTo="transform opacity-0 scale-95"
 								>
-									<Menu.Items className="absolute right-0 z-10 mt-2 w-56 min-w-[14rem] bg-white dark:bg-[#222222] bg-opacity-95 backdrop-blur-sm rounded-xl shadow-xl border border-gray-200 dark:border-white/10 overflow-hidden focus:outline-none">
+									<Menu.Items className="absolute right-0 z-10 mt-2 w-56 min-w-[14rem] bg-white dark:bg-[#222222] backdrop-blur-sm rounded-xl shadow-xl border border-gray-200 dark:border-white/10 overflow-hidden focus:outline-none">
 										<Menu.Item>
 											{({ active }) => (
 												<button

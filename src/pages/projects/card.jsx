@@ -9,8 +9,6 @@ import {
     PuzzlePieceIcon,
     ArrowTrendingUpIcon,
     ArrowPathIcon,
-    CheckCircleIcon,
-    ClockIcon,
 } from '@heroicons/react/24/outline'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -100,102 +98,136 @@ export default function ProjectCard({ project, getProjects }) {
 
     const runningCount = (project?.training_experiments || 0) + (project?.setting_experiments || 0)
     const doneCount = project?.done_experiments || 0
+    const totalExperiments = runningCount + doneCount
     let projectStatus = 'Pending'
-    let statusIcon = <ClockIcon className="h-4 w-4 text-gray-500" />
-    let statusColor = 'text-gray-500'
 
     if (runningCount > 0) {
         projectStatus = 'Training'
-        statusIcon = <ArrowPathIcon className="h-4 w-4 animate-spin text-blue-500" />
-        statusColor = 'text-blue-500'
     } else if (doneCount > 0) {
         projectStatus = 'Completed'
-        statusIcon = <CheckCircleIcon className="h-4 w-4 text-green-500" />
-        statusColor = 'text-green-500'
     }
+
+    const statusConfig = {
+        Pending: {
+            badge: 'bg-amber-50 text-amber-800 border-amber-200 dark:bg-amber-500/15 dark:text-amber-300 dark:border-amber-500/30',
+            border: 'border-amber-400/60 shadow-amber-500/10',
+        },
+        Training: {
+            badge: 'bg-blue-50 text-blue-800 border-blue-200 dark:bg-blue-500/15 dark:text-blue-300 dark:border-blue-500/30',
+            border: 'border-blue-400/60 shadow-blue-500/10',
+        },
+        Completed: {
+            badge: 'bg-emerald-50 text-emerald-800 border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-500/30',
+            border: 'border-emerald-400/60 shadow-emerald-500/10',
+        },
+    }
+
+    const accentConfig = {
+        IMAGE: { bg: 'bg-violet-100 dark:bg-violet-500/20', icon: 'text-violet-600 dark:text-violet-300' },
+        TEXT: { bg: 'bg-indigo-100 dark:bg-indigo-500/20', icon: 'text-indigo-600 dark:text-indigo-300' },
+        TABULAR: { bg: 'bg-sky-100 dark:bg-sky-500/20', icon: 'text-sky-600 dark:text-sky-300' },
+        SEGMENTATION: { bg: 'bg-fuchsia-100 dark:bg-fuchsia-500/20', icon: 'text-fuchsia-600 dark:text-fuchsia-300' },
+        TIME_SERIES: { bg: 'bg-cyan-100 dark:bg-cyan-500/20', icon: 'text-cyan-600 dark:text-cyan-300' },
+    }
+
+    const accentKey = Object.keys(accentConfig).find((key) => taskType?.includes(key))
+    const accent = accentConfig[accentKey] || { bg: 'bg-blue-100 dark:bg-blue-500/20', icon: 'text-blue-600 dark:text-blue-300' }
+    const currentStatus = statusConfig[projectStatus]
+    const taskImage = getTaskBackgroundImage(taskType)
 
     return (
         <Spin spinning={isDeleting} tip="Deleting..." size="large">
             <div
                 key={project.id}
-                className="group rounded-2xl shadow-lg w-full h-[320px] overflow-hidden font-poppins cursor-pointer transition-all duration-300 border-2 hover:-translate-y-1 hover:shadow-xl flex flex-col relative bg-white dark:[background:var(--card-gradient)] border-gray-300 dark:border-[var(--border)]"
+                className={`group rounded-2xl shadow-lg w-full min-h-[360px] overflow-hidden font-poppins cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col relative bg-white dark:[background:var(--card-gradient)] border-2 ${currentStatus.border}`}
                 onClick={handleCardClick}
             >
-                {/* Background Image Section */}
-                <div className="relative h-32 overflow-hidden">
-                    <div
-                        className="w-full h-full opacity-20 group-hover:opacity-30 transition-opacity duration-300 bg-cover bg-center bg-no-repeat"
-                        style={{
-                            backgroundImage: `url(${getTaskBackgroundImage(taskType)})`,
-                        }}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white/10 dark:to-[var(--surface)]/30" />
-
-                    {/* Header with Avatar and Actions */}
-                    <div className="absolute top-4 left-4 right-4 flex justify-between items-start">
-                        <div className="w-16 h-16 rounded-xl shadow-lg flex items-center justify-center bg-gray-100 dark:bg-white/10 border-2 border-white/30">
-                            <IconComponent
-                                className="h-8 w-8 transition-transform duration-500 ease-out text-blue-500 dark:text-blue-400"
-                                aria-hidden="true"
-                            />
-                        </div>
-                        <div className="flex gap-2">
-                            <button
-                                className="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 bg-gray-100 dark:bg-white/10 border border-white/30 hover:bg-gray-200 dark:hover:bg-white/20"
-                                onClick={handleStarClick}
-                            >
-                                <StarIcon
-                                    className={`h-4 w-4 transition-all duration-200 ${isStarred ? 'fill-current text-yellow-400' : 'text-yellow-400'}`}
-                                />
-                            </button>
-                            <button
-                                className="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 bg-gray-100 dark:bg-white/10 border border-white/30 hover:bg-red-100 dark:hover:bg-red-900/20"
-                                onClick={(e) => handleDelete(e, project.id)}
-                                disabled={isDeleting}
-                            >
-                                <TrashIcon className="h-4 w-4 text-red-500" />
-                            </button>
-                        </div>
+                <div className="relative px-4 pt-4 pb-2">
+                    <div className="absolute inset-0">
+                        <img
+                            src={taskImage}
+                            alt={project?.task_type || 'project type'}
+                            className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-black/20 dark:bg-black/45" />
                     </div>
 
-                    {/* Task Type Badge */}
-                    <div className="absolute bottom-4 left-4">
-                        <span className="px-3 py-1 text-sm font-semibold rounded-full shadow-md bg-gray-100 dark:bg-white/10 border border-white/30 text-gray-700 dark:text-white">
-                            {project?.task_type.replace(/_/g, ' ')}
+                    <div className="relative z-10">
+                        <div className="flex justify-between items-center mb-4">
+                            <div className={`px-2.5 py-1 rounded-full text-xs font-medium border ${currentStatus.badge}`}>
+                                {projectStatus === 'Training' && (
+                                    <span className="inline-block w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse mr-1.5" />
+                                )}
+                                {projectStatus}
+                            </div>
+                            <div className="flex gap-1.5">
+                                <button
+                                    className="w-7 h-7 rounded-full flex items-center justify-center transition-all duration-200 bg-white/95 dark:bg-slate-900/75 backdrop-blur-md border border-gray-200 dark:border-white/15 hover:bg-gray-100 dark:hover:bg-slate-800/90"
+                                    onClick={handleStarClick}
+                                >
+                                    <StarIcon
+                                        className={`h-3.5 w-3.5 ${isStarred ? 'fill-yellow-400 text-yellow-500' : 'text-yellow-500 dark:text-yellow-300'}`}
+                                    />
+                                </button>
+                                <button
+                                    className="w-7 h-7 rounded-full flex items-center justify-center transition-all duration-200 bg-white/95 dark:bg-slate-900/75 backdrop-blur-md border border-gray-200 dark:border-white/15 hover:bg-red-50 dark:hover:bg-red-900/35"
+                                    onClick={(e) => handleDelete(e, project.id)}
+                                    disabled={isDeleting}
+                                >
+                                    <TrashIcon className="h-3.5 w-3.5 text-red-500" />
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="flex justify-left mb-3">
+                            <div className="w-14 h-14 rounded-xl shadow-md flex items-center justify-center bg-white/95 dark:bg-slate-900/80 backdrop-blur-md border border-gray-200 dark:border-white/15">
+                                <IconComponent
+                                    className={`h-7 w-7 transition-transform duration-500 ease-out ${accent.icon}`}
+                                    aria-hidden="true"
+                                />
+                            </div>
+                        </div>
+
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-full shadow-sm border bg-white/95 dark:bg-slate-900/80 backdrop-blur-md border-gray-200 dark:border-white/15 text-gray-800 dark:text-white">
+                            <IconComponent className={`h-3.5 w-3.5 ${accent.icon}`} aria-hidden="true" />
+                            {project?.task_type?.replace(/_/g, ' ')}
                         </span>
                     </div>
                 </div>
 
-                {/* Content Section */}
-                <div className="flex-1 p-6 flex flex-col">
+                <div className="flex-1 px-5 py-4 flex flex-col">
                     <div className="flex-1">
-                        <h2 className="text-xl font-bold mb-2 truncate text-gray-900 dark:text-white">
+                        <h2 className="text-lg font-bold mb-1 truncate leading-tight text-gray-900 dark:text-white">
                             {project?.name}
                         </h2>
-                    <p className="text-base leading-relaxed mb-4 text-gray-500 dark:text-gray-400 line-clamp-2">
-                            {project?.description}
+                        <p className="text-sm leading-relaxed mb-4 text-gray-500 dark:text-gray-400 line-clamp-2 min-h-[40px]">
+                            {project?.description || 'No description'}
                         </p>
                     </div>
 
-                    {/* Divider */}
-                    <div className="w-full h-px bg-gray-200 dark:bg-white/10 mb-4 rounded" />
+                    <div className="w-full h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-white/10 to-transparent mb-3" />
 
-                    {/* Meta Info */}
-                    <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div className="grid grid-cols-3 gap-4 text-sm mb-3">
                         <div className="flex flex-col">
                             <span className="text-gray-500 dark:text-gray-400">Created</span>
-                            <span className="font-semibold truncate text-gray-900 dark:text-white">
+                            <span className="font-semibold truncate mt-0.5 text-gray-900 dark:text-white">
                                 {dayjs(project?.created_at).format('MMM DD, YYYY')}
                             </span>
                         </div>
                         <div className="flex flex-col">
-                            <span className="text-gray-500 dark:text-gray-400">Status</span>
-                            <div className="flex items-center gap-1.5">
-                                {statusIcon}
-                                <span className={`font-semibold ${statusColor}`}>{projectStatus}</span>
-                            </div>
+                            <span className="text-gray-500 dark:text-gray-400">Runs</span>
+                            <span className="font-semibold truncate mt-0.5 text-gray-900 dark:text-white">
+                                {totalExperiments}
+                            </span>
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="text-gray-500 dark:text-gray-400">Done</span>
+                            <span className="font-semibold truncate mt-0.5 text-gray-900 dark:text-white">
+                                {doneCount}
+                            </span>
                         </div>
                     </div>
+
                 </div>
             </div>
         </Spin>
