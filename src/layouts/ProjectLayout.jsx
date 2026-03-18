@@ -30,7 +30,7 @@ export default function ProjectLayout() {
 	const contentPaddingClass =
 		layoutConfig.padding === 'none' ? 'p-0' : 'p-4 lg:p-6'
 	const shellOverflowClass =
-		layoutConfig.overflow === 'visible' ? 'overflow-visible' : 'overflow-hidden'
+		layoutConfig.overflow === 'hidden' ? 'overflow-hidden' : 'overflow-hidden'
 
 	return (
 		<div className="relative min-h-screen bg-gray-50 dark:bg-[#111111]">

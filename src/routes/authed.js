@@ -75,7 +75,7 @@ const routes = {
                                             element: <ProjectInfo />,
                                             handle: {
                                                 projectLayout: {
-                                                    overflow: 'auto',
+                                                    overflow: 'hidden',
                                                     height: 'full',
                                                 },
                                             },
