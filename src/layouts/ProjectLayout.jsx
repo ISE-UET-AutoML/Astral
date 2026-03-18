@@ -29,11 +29,11 @@ export default function ProjectLayout() {
 				: 'overflow-y-auto overflow-x-hidden'
 	const contentPaddingClass =
 		layoutConfig.padding === 'none' ? 'p-0' : 'p-4 lg:p-6'
-	const shellOverflowClass =
-		layoutConfig.overflow === 'hidden' ? 'overflow-hidden' : 'overflow-hidden'
+
+	const shellOverflowClass = 'overflow-hidden'
 
 	return (
-		<div className="relative min-h-screen bg-gray-50 dark:bg-[#111111]">
+		<div className="relative h-screen overflow-hidden bg-gray-50 dark:bg-[#111111]">
 			{/* Full-viewport background fill */}
 			<div className="fixed inset-0 bg-gray-50 dark:bg-[#111111] -z-50" />
 
@@ -53,12 +53,12 @@ export default function ProjectLayout() {
 				projectID={params.id}
 				className="fixed h-[calc(100vh)] w-[120px] top-[60px] z-50 shadow-[4px_0_24px_rgba(0,0,0,0.02)] dark:shadow-[4px_0_24px_rgba(0,0,0,0.2)]"
 			/>
-			<div className={`mx-auto w-[calc(100%)] pl-[120px] lg:pl-[140px] pt-12 pr-4 lg:pr-6 flex-grow lg:flex mt-4 min-h-[calc(100dvh)] ${shellOverflowClass} transition-all duration-300`}>
-				{/* Thêm margin-left để content không bị khuất bởi sidebar */}
-				<div className="ml-0 min-w-0 flex-1 w-full py-4">
-					{/* Card với padding để con không bị border đè */}
+			<div className={`mx-auto w-[calc(100%)] pl-[120px] lg:pl-[140px] pt-14 pr-4 lg:pr-6 flex-grow lg:flex h-[calc(100vh)] ${shellOverflowClass} transition-all duration-300`}>
+				
+				<div className="ml-0 min-w-0 flex-1 w-full py-4 mt-2">
+					
 					<div
-						className={`border border-gray-200 dark:border-white/5 rounded-2xl shadow-sm bg-white dark:bg-[var(--surface)] lg:min-w-0 lg:flex-1 ${contentHeightClass} ${contentOverflowClass} ${contentPaddingClass}`}
+						className={`border border-gray-200 dark:border-white/10 rounded-2xl shadow-xl dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] bg-white dark:bg-[var(--surface)] lg:min-w-0 lg:flex-1 ${contentHeightClass} ${contentOverflowClass} ${contentPaddingClass}`}
 					>
 						<Outlet className="outlet h-max" />
 					</div>

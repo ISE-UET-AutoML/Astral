@@ -73,7 +73,7 @@ const ProjectInfo = () => {
 
 	return (
 		<>
-			<div className="h-full flex items-center" style={{ background: 'var(--surface)' }}>
+			<div className="h-full overflow-y-auto flex items-center" style={{ background: 'var(--surface)' }}>
 				<div className="relative w-full px-3 py-6 sm:px-4 lg:px-6 lg:py-8">
 					<div className="relative z-10 max-w-7xl mx-auto w-full">
 						<div className="mb-6 lg:mb-8 text-center">
