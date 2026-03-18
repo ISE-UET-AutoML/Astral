@@ -37,9 +37,10 @@ const ProjectSidebar = ({ projectID, className }) => {
 				className
 			)}
 		>
-			<div className="h-full flex flex-grow flex-col">
-				<div className="py-6 flex flex-grow flex-col justify-between items-center">
-					<nav className="flex flex-col gap-2 px-3 pb-4 w-full">
+			<div className="h-full flex flex-col">
+				<div className="flex-1 min-h-0" />
+				<div className="px-2 flex flex-col items-center w-full shrink-0">
+					<nav className="flex flex-col gap-5 w-full">
 						{navigation.map((item) => (
 							<NavLink
 								key={item.name}
@@ -56,17 +57,19 @@ const ProjectSidebar = ({ projectID, className }) => {
 							>
 								{({ isActive }) => (
 									<>
-										<item.icon
-											className={clsx(
-												'mx-auto flex-shrink-0 w-7 h-7 mb-2 transition-all duration-300',
+										<div className="flex justify-center w-full">
+											<item.icon
+												className={clsx(
+													'flex-shrink-0 w-7 h-7 mb-2 transition-all duration-300',
 												isActive
 													? 'text-blue-600 dark:text-white'
 													: 'text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-200 group-hover:scale-110'
 											)}
-										/>
+											/>
+										</div>
 										<span
 											className={clsx(
-												'text-[11px] text-center font-medium transition-all duration-300 leading-tight',
+												'text-[11px] text-center font-medium transition-all duration-300 leading-tight block w-full',
 												isActive
 													? 'text-blue-600 dark:text-white font-semibold'
 													: 'text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-200'
@@ -79,13 +82,14 @@ const ProjectSidebar = ({ projectID, className }) => {
 							</NavLink>
 						))}
 					</nav>
-
+				</div>
+				<div className="flex-1 min-h-0" />
+				<div className="px-2 pb-6 shrink-0">
 					<NavLink
 						to={PATHS.PROJECT_SETTINGS(projectID)}
 						className={({ isActive }) =>
 							clsx(
-								'group flex flex-col items-center justify-center text-xs font-medium w-[calc(100%-24px)] py-3 rounded-2xl transition-all duration-300',
-								'mt-auto',
+								'group flex flex-col items-center justify-center text-xs font-medium w-full py-3 rounded-2xl transition-all duration-300',
 								isActive
 									? 'bg-blue-50 dark:bg-white/15 border border-blue-200 dark:border-white/40 shadow-sm dark:shadow-[0_0_12px_rgba(255,255,255,0.08)] text-blue-600 dark:text-white'
 									: 'hover:bg-gray-100/50 dark:hover:bg-white/5 border border-transparent text-gray-500 dark:text-gray-400'
@@ -94,20 +98,22 @@ const ProjectSidebar = ({ projectID, className }) => {
 					>
 						{({ isActive }) => (
 							<>
-								<SettingIcon
-									className={clsx(
-										"flex-shrink-0 w-7 h-7 mb-2 transition-transform duration-300 group-hover:scale-110",
-										isActive
-											? "text-blue-600 dark:text-white"
-											: "text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-200"
-									)}
-								/>
-								<span className="text-[11px] leading-tight">Settings</span>
+								<div className="flex justify-center w-full">
+									<SettingIcon
+										className={clsx(
+											"flex-shrink-0 w-7 h-7 mb-2 transition-transform duration-300 group-hover:scale-110",
+											isActive
+												? "text-blue-600 dark:text-white"
+												: "text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-200"
+										)}
+									/>
+								</div>
+								<span className="text-[11px] text-center leading-tight block w-full">Settings</span>
 							</>
 						)}
 					</NavLink>
 				</div>
-			</div >
+			</div>
 		</div >
 	)
 }

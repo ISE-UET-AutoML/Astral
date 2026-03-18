@@ -10,7 +10,7 @@
     /* Core surfaces */
     --surface: #ffffff;
     --text: #1f2937;
-    --secondary-text: #6b7280;
+    --secondary-text: #4b5563;
     --accent-text: #3b82f6;
 
     /* Card & container gradients */
@@ -175,7 +175,7 @@
     /* Core surfaces */
     --surface: #161616;
     --text: #ffffff;
-    --secondary-text: #d1d5db;
+    --secondary-text: #e5e7eb;
     --accent-text: #60a5fa;
 
     /* Card & container gradients – lighter gray for visibility in dark mode */

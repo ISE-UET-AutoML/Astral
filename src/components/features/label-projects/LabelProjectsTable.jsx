@@ -32,7 +32,7 @@ export function LabelProjectsTable({
 	return (
 		<Card className="rounded-2xl shadow-2xl border [border-color:var(--border)] [background:var(--card-gradient)] h-full w-full flex flex-col">
 			<CardContent className="p-8 flex-1">
-					<Alert className="mb-8 border text-[var(--text)] [border-color:var(--alert-info-border)] [background:var(--alert-info-bg)]">
+					<Alert className="mb-8 border rounded-xl text-[var(--text)] [border-color:var(--alert-info-border)] [background:var(--alert-info-bg)]">
 						<InfoCircledIcon className="h-4 w-4 text-[var(--accent-text)]" />
 						<AlertTitle className="font-medium text-[var(--text)]">
 							Need help choosing a label project?

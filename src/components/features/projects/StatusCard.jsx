@@ -18,7 +18,7 @@ const StatusCard = ({ label, value, Icon }) => (
 			</div>
 			<div className="min-w-0 flex-1">
 				<p
-					className="mb-1 text-xs lg:text-sm font-medium opacity-70"
+					className="mb-1 text-xs lg:text-sm font-medium"
 					style={{ color: 'var(--secondary-text)' }}
 				>
 					{label}

@@ -168,7 +168,7 @@ const ProjectInfo = () => {
 												Experiments
 											</h3>
 											<p
-												className="text-sm opacity-70"
+												className="text-sm"
 												style={{ color: 'var(--secondary-text)' }}
 											>
 												Training and validation status
@@ -248,7 +248,7 @@ const ProjectInfo = () => {
 												Models
 											</h3>
 											<p
-												className="text-sm opacity-70"
+												className="text-sm"
 												style={{ color: 'var(--secondary-text)' }}
 											>
 												Available trained models
@@ -291,7 +291,7 @@ const ProjectInfo = () => {
 												Deployed Models
 											</h3>
 											<p
-												className="text-sm opacity-70"
+												className="text-sm"
 												style={{ color: 'var(--secondary-text)' }}
 											>
 												Production deployment status
