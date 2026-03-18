@@ -15,7 +15,7 @@ const primaryButtonClass =
 	"inline-flex items-center justify-center px-5 py-2 rounded-lg border border-[var(--button-primary-border)] bg-[var(--button-primary-bg)] text-[var(--button-primary-color)] font-poppins font-medium text-sm cursor-pointer"
 
 const defaultButtonClass =
-	"inline-flex items-center justify-center px-5 py-2 rounded-lg border border-[var(--button-default-border)] bg-[var(--button-default-bg)] text-[var(--button-default-color)] font-poppins text-sm cursor-pointer"
+	"inline-flex items-center justify-center px-5 py-2 rounded-xl border border-[var(--button-default-border)] bg-[var(--button-default-bg)] text-[var(--button-default-color)] font-poppins text-sm cursor-pointer"
 
 const dashedButtonClass =
 	"inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-dashed border-[var(--button-dashed-border)] bg-[var(--button-dashed-bg)] text-[var(--button-dashed-color)] font-poppins text-sm"

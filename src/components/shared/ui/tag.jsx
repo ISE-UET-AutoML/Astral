@@ -2,7 +2,7 @@ import * as React from 'react'
 import { cn } from 'src/lib/utils'
 const variantMap = {
     default: 'bg-gray-700 text-gray-200 border-gray-600',
-    primary: 'bg-blue-500/20 text-blue-300 border-blue-500/40',
+    primary: 'bg-blue-100 text-blue-800 border-blue-400 dark:bg-blue-500/30 dark:text-blue-200 dark:border-blue-400/70',
     success: 'bg-green-500/20 text-green-300 border-green-500/40',
     danger: 'bg-red-500/20 text-red-300 border-red-500/40',
     warning: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/40',

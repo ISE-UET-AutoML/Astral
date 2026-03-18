@@ -7,6 +7,7 @@ import {
     TableCellsIcon,
     Squares2X2Icon,
     ChartBarIcon,
+    ArrowPathIcon,
 } from '@heroicons/react/24/outline'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -108,9 +109,11 @@ export default function DatasetCard({ dataset, onDelete, isDeleting }) {
     return (
         <div
             key={dataset.id}
-            className={`group rounded-2xl shadow-lg w-full min-h-[360px] overflow-hidden font-poppins transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col relative bg-white dark:[background:var(--card-gradient)] ${borderClass} ${isCompleted ? 'cursor-pointer' : 'cursor-default'} ${isProcessing ? 'opacity-25' : ''}`}
+            className={`group rounded-2xl shadow-lg w-full min-h-[360px] overflow-hidden font-poppins transition-all duration-300 flex flex-col relative ${isProcessing ? 'bg-blue-50/80 dark:bg-blue-900/20' : 'bg-white dark:[background:var(--card-gradient)]'} ${borderClass} ${isCompleted ? 'cursor-pointer hover:-translate-y-1 hover:shadow-xl' : 'cursor-default'}`}
             onClick={handleCardClick}
         >
+            {/* Content - blurred when processing */}
+            <div className={`flex-1 flex flex-col min-h-0 ${isProcessing ? 'blur-sm' : ''}`}>
             {/* Header Section */}
             <div className="relative px-4 pt-4 pb-2">
                 {thumbnail && (
@@ -201,6 +204,19 @@ export default function DatasetCard({ dataset, onDelete, isDeleting }) {
                     </div>
                 )}
             </div>
+            </div>
+
+            {/* Loading overlay - centered when processing */}
+            {isProcessing && (
+                <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
+                    <div className="flex flex-col items-center gap-2">
+                        <div className="w-14 h-14 rounded-full bg-white/90 dark:bg-black/30 flex items-center justify-center shadow-lg border border-blue-200/50 dark:border-blue-500/30">
+                            <ArrowPathIcon className="h-7 w-7 text-blue-500 animate-spin" aria-hidden="true" />
+                        </div>
+                        <span className="text-xs font-medium text-blue-600 dark:text-blue-400">Processing...</span>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
