@@ -39,45 +39,72 @@ const Select = React.forwardRef(
 	) => {
 		const [isOpen, setIsOpen] = useState(false)
 		const [selectedValue, setSelectedValue] = useState(value)
-		const [dropdownStyle, setDropdownStyle] = useState({})
-		const triggerRef = useRef(null)
-		const dropdownRef = useRef(null)
+	const [dropdownStyle, setDropdownStyle] = useState({})
+	const triggerRef = useRef(null)
+	const dropdownRef = useRef(null)
 
 		useEffect(() => {
 			setSelectedValue(value)
 		}, [value])
 
-		useEffect(() => {
-			if (isOpen && triggerRef.current) {
-				const rect = triggerRef.current.getBoundingClientRect()
-				setDropdownStyle({
-					position: 'fixed',
-					top: rect.bottom + 4,
-					left: rect.left,
-					width: rect.width,
-					zIndex: 99999,
-				})
-			}
-		}, [isOpen])
+	useEffect(() => {
+		if (isOpen && triggerRef.current) {
+			const rect = triggerRef.current.getBoundingClientRect()
+			const spaceBelow = window.innerHeight - rect.bottom
+			const spaceAbove = rect.top
+			const dropdownHeight = 240
+			
+			// Quyết định dropdown nên mở lên trên hay xuống dưới
+			const shouldOpenUpward = spaceBelow < dropdownHeight && spaceAbove > spaceBelow
+			
+			setDropdownStyle({
+				position: 'fixed',
+				[shouldOpenUpward ? 'bottom' : 'top']: shouldOpenUpward 
+					? window.innerHeight - rect.top + 4
+					: rect.bottom + 4,
+				left: rect.left,
+				width: rect.width,
+				zIndex: 999999,
+				maxHeight: shouldOpenUpward 
+					? Math.min(240, spaceAbove - 8)
+					: Math.min(240, spaceBelow - 8),
+			})
+		}
+	}, [isOpen])
 
-		useEffect(() => {
-			const handleClickOutside = (event) => {
-				if (
-					dropdownRef.current && !dropdownRef.current.contains(event.target) &&
-					triggerRef.current && !triggerRef.current.contains(event.target)
-				) {
-					setIsOpen(false)
+	useEffect(() => {
+		const handleClickOutside = (event) => {
+			if (
+				dropdownRef.current && !dropdownRef.current.contains(event.target) &&
+				triggerRef.current && !triggerRef.current.contains(event.target)
+			) {
+				setIsOpen(false)
+			}
+		}
+
+		if (isOpen) {
+			document.addEventListener('mousedown', handleClickOutside)
+		}
+
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside)
+		}
+	}, [isOpen])
+
+	// Thêm effect để lock body scroll khi dropdown mở trong modal
+	useEffect(() => {
+		if (isOpen) {
+			// Chỉ lock nếu đang trong modal context
+			const isInModal = triggerRef.current?.closest('[role="dialog"], .fixed.inset-0')
+			if (isInModal) {
+				const originalOverflow = document.body.style.overflow
+				document.body.style.overflow = 'hidden'
+				return () => {
+					document.body.style.overflow = originalOverflow
 				}
 			}
-
-			if (isOpen) {
-				document.addEventListener('mousedown', handleClickOutside)
-			}
-
-			return () => {
-				document.removeEventListener('mousedown', handleClickOutside)
-			}
-		}, [isOpen])
+		}
+	}, [isOpen])
 
 		const handleSelect = (optionValue) => {
 			setSelectedValue(optionValue)
@@ -113,17 +140,15 @@ const Select = React.forwardRef(
 		const hasValue = selectedValue !== null && selectedValue !== undefined
 		const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark')
 
-		const dropdownMenu = isOpen && createPortal(
+	const dropdownMenu = isOpen && createPortal(
+		<>
 			<div
 				ref={dropdownRef}
-				className={cn(
-					'rounded-xl border shadow-lg max-h-60 overflow-y-auto',
-					'border-gray-200 dark:border-white/20',
-					'scrollbar-theme'
-				)}
+				className="rounded-xl shadow-lg overflow-hidden"
 				style={{
 					...dropdownStyle,
-					backgroundColor: isDark ? '#111827' : '#ffffff',
+					backgroundColor: isDark ? '#1f1f1f' : '#ffffff',
+					border: isDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgb(229, 231, 235)',
 				}}
 			>
 				{options.length === 0 ? (
@@ -131,29 +156,34 @@ const Select = React.forwardRef(
 						No options available
 					</div>
 				) : (
-					options.map((option) => {
-						const isSelected = selectedValue === option.value
-						return (
-							<div
-								key={option.value}
-								className={cn(
-									'px-4 py-2.5 text-sm cursor-pointer transition-colors duration-150',
-									'hover:bg-blue-50 dark:hover:bg-blue-500/10',
-									'first:rounded-t-lg last:rounded-b-lg',
-									isSelected && 'bg-blue-100 dark:bg-blue-500/20 text-black dark:text-white font-medium',
-									!isSelected && 'text-gray-900 dark:text-white'
-								)}
-								onMouseDown={(e) => e.preventDefault()}
-								onClick={() => handleSelect(option.value)}
-							>
-								{option.label}
-							</div>
-						)
-					})
+					<div 
+						className="overflow-y-auto custom-dropdown-scroll" 
+						style={{ maxHeight: dropdownStyle.maxHeight || '240px' }}
+					>
+						{options.map((option) => {
+							const isSelected = selectedValue === option.value
+							return (
+								<div
+									key={option.value}
+									className={cn(
+										'px-4 py-2.5 text-sm cursor-pointer transition-colors duration-150',
+										'hover:bg-blue-50 dark:hover:bg-white/10',
+										isSelected && 'bg-blue-100 dark:bg-white/15 text-black dark:text-white font-medium',
+										!isSelected && 'text-gray-900 dark:text-white'
+									)}
+									onMouseDown={(e) => e.preventDefault()}
+									onClick={() => handleSelect(option.value)}
+								>
+									{option.label}
+								</div>
+							)
+						})}
+					</div>
 				)}
-			</div>,
-			document.body
-		)
+			</div>
+		</>,
+		document.body
+	)
 
 		return (
 			<div className={cn('relative w-full', className)}>

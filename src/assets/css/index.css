@@ -760,3 +760,43 @@ html.dark #root {
     background: var(--bg-gradient);
     background-size: 200% 200%;
 }
+
+/* Select dropdown - custom scrollbar (gray, matches UI) */
+.custom-dropdown-scroll::-webkit-scrollbar {
+    width: 8px;
+}
+
+.custom-dropdown-scroll::-webkit-scrollbar-track {
+    background: rgb(243, 244, 246);
+    border-radius: 4px;
+}
+
+.custom-dropdown-scroll::-webkit-scrollbar-thumb {
+    background: rgb(156, 163, 175);
+    border-radius: 4px;
+}
+
+.custom-dropdown-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgb(107, 114, 128);
+}
+
+.dark .custom-dropdown-scroll::-webkit-scrollbar-track {
+    background: rgb(55, 65, 81);
+}
+
+.dark .custom-dropdown-scroll::-webkit-scrollbar-thumb {
+    background: rgb(107, 114, 128);
+}
+
+.dark .custom-dropdown-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgb(156, 163, 175);
+}
+
+.custom-dropdown-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(156, 163, 175) rgb(243, 244, 246);
+}
+
+.dark .custom-dropdown-scroll {
+    scrollbar-color: rgb(107, 114, 128) rgb(55, 65, 81);
+}

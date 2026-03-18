@@ -346,7 +346,7 @@ export default function CreateDatasetForm({
 			</div>
 
 			{/* Hàng 2: Data Type và Task Type */}
-			<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+			<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 				<div>
 					<label className={labelClass}>
 						Data Type <span className="text-red-500">*</span>
@@ -424,7 +424,7 @@ export default function CreateDatasetForm({
 			</div>
 
 			{/* Hàng 4: Provider & Bucket */}
-			<div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-4">
+			<div className="grid grid-cols-1 sm:grid-cols-[1fr_2fr] gap-4">
 				<div>
 					<label className={labelClass}>Storage Provider</label>
 					<div className="flex gap-4 mt-2">

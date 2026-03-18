@@ -203,10 +203,10 @@ const CreateDatasetModal = ({ visible, onCancel, onCreate }) => {
                 type={toast.type}
                 onClose={() => setToast(prev => ({ ...prev, show: false }))}
             />
-            <div className="fixed inset-0 z-50 flex items-center justify-center">
+            <div className="fixed inset-0 z-[1000] flex items-center justify-center">
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={handleCancel} />
                 <div
-                    className="relative z-50 w-full mx-4 flex flex-col max-w-[800px] max-h-[90vh] [background:var(--modal-bg)] border border-[var(--modal-border)] rounded-2xl shadow-[0_25px_50px_rgba(0,0,0,0.4)]"
+                    className="relative z-[1001] w-full mx-4 sm:mx-6 lg:mx-8 flex flex-col max-w-[90vw] sm:max-w-[600px] lg:max-w-[800px] max-h-[90vh] [background:var(--modal-bg)] border border-[var(--modal-border)] rounded-2xl shadow-[0_25px_50px_rgba(0,0,0,0.4)]"
                     onClick={e => e.stopPropagation()}
                 >
                     {/* Header */}
@@ -224,7 +224,7 @@ const CreateDatasetModal = ({ visible, onCancel, onCreate }) => {
                     </div>
 
                     {/* Body */}
-                    <div className="overflow-y-auto p-6" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                    <div className="overflow-y-auto overflow-x-hidden p-6" style={{ scrollbarWidth: 'thin' }}>
                         {isLoading ? (
                             <SpinnerOverlay text="Processing dataset, please wait..." />
                         ) : (
