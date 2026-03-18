@@ -9,22 +9,22 @@ const StatusCard = ({ label, value, Icon }) => (
 		}}
 	>
 		<div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-		<div className="relative flex items-center space-x-4 p-6">
-			<div className="flex-shrink-0 rounded-xl bg-gradient-to-br from-white/10 to-white/5 p-3 backdrop-blur-sm">
+		<div className="relative flex items-center space-x-3 p-4 lg:p-5">
+			<div className="flex-shrink-0 rounded-xl bg-gradient-to-br from-white/10 to-white/5 p-2.5 backdrop-blur-sm">
 				<Icon
-					className="text-2xl transition-transform duration-300 group-hover:scale-110"
+					className="text-xl transition-transform duration-300 group-hover:scale-110"
 					style={{ color: 'var(--accent-text)' }}
 				/>
 			</div>
 			<div className="min-w-0 flex-1">
 				<p
-					className="mb-1 text-sm font-medium opacity-70"
+					className="mb-1 text-xs lg:text-sm font-medium opacity-70"
 					style={{ color: 'var(--secondary-text)' }}
 				>
 					{label}
 				</p>
 				<p
-					className="text-2xl font-bold tracking-tight"
+					className="text-xl lg:text-2xl font-bold tracking-tight"
 					style={{ color: 'var(--text)' }}
 				>
 					{value}

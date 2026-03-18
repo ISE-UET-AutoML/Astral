@@ -1,15 +1,15 @@
 import React from 'react'
 
 const MetaDataItem = ({ label, value }) => (
-	<div className="flex flex-col space-y-1 rounded-xl border border-white/10 bg-gradient-to-r from-white/5 to-transparent p-4 transition-all duration-200 hover:bg-white/10">
+	<div className="flex flex-col space-y-1 rounded-xl border border-white/10 bg-gradient-to-r from-white/5 to-transparent p-3 lg:p-3.5 transition-all duration-200 hover:bg-white/10">
 		<span
-			className="text-xs font-medium uppercase tracking-wider opacity-60"
+			className="text-[11px] font-medium uppercase tracking-wider opacity-60"
 			style={{ color: 'var(--secondary-text)' }}
 		>
 			{label}
 		</span>
 		<span
-			className="text-sm font-semibold"
+			className="text-sm font-semibold leading-snug"
 			style={{ color: 'var(--text)' }}
 		>
 			{value}

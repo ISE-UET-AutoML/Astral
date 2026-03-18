@@ -1,13 +1,36 @@
-import { Outlet, useLocation, useParams } from 'react-router-dom'
+import { Outlet, useMatches, useParams } from 'react-router-dom'
 import ProjectSidebar from 'src/layouts/ProjectSidebar'
 import { useTheme } from 'src/theme/ThemeProvider'
 
 export default function ProjectLayout() {
 	const params = useParams()
-	const location = useLocation()
+	const matches = useMatches()
 	const { theme } = useTheme()
-	const isEditAppPage =
-		location.pathname.includes('/my-apps/') && location.pathname.includes('/edit')
+	const defaultLayoutConfig = {
+		overflow: 'auto',
+		padding: 'default',
+		height: 'min',
+	}
+	const layoutConfig = matches.reduce((config, match) => {
+		if (!match.handle?.projectLayout) return config
+		return { ...config, ...match.handle.projectLayout }
+	}, defaultLayoutConfig)
+	const contentHeightClass =
+		layoutConfig.height === 'full'
+			? 'h-[calc(100dvh-100px)]'
+			: layoutConfig.height === 'auto'
+				? ''
+			: 'min-h-[calc(100dvh-100px)]'
+	const contentOverflowClass =
+		layoutConfig.overflow === 'hidden'
+			? 'overflow-hidden'
+			: layoutConfig.overflow === 'visible'
+				? 'overflow-visible'
+				: 'overflow-y-auto overflow-x-hidden'
+	const contentPaddingClass =
+		layoutConfig.padding === 'none' ? 'p-0' : 'p-4 lg:p-6'
+	const shellOverflowClass =
+		layoutConfig.overflow === 'visible' ? 'overflow-visible' : 'overflow-hidden'
 
 	return (
 		<div className="relative min-h-screen bg-gray-50 dark:bg-[#111111]">
@@ -30,16 +53,12 @@ export default function ProjectLayout() {
 				projectID={params.id}
 				className="fixed h-[calc(100vh)] w-[120px] top-[60px] z-50 shadow-[4px_0_24px_rgba(0,0,0,0.02)] dark:shadow-[4px_0_24px_rgba(0,0,0,0.2)]"
 			/>
-			<div className="mx-auto w-[calc(100%)] pl-[120px] lg:pl-[140px] pt-12 pr-4 lg:pr-6 flex-grow lg:flex mt-4 min-h-[calc(100dvh)] overflow-hidden transition-all duration-300">
+			<div className={`mx-auto w-[calc(100%)] pl-[120px] lg:pl-[140px] pt-12 pr-4 lg:pr-6 flex-grow lg:flex mt-4 min-h-[calc(100dvh)] ${shellOverflowClass} transition-all duration-300`}>
 				{/* Thêm margin-left để content không bị khuất bởi sidebar */}
 				<div className="ml-0 min-w-0 flex-1 w-full py-4">
 					{/* Card với padding để con không bị border đè */}
 					<div
-						className={`border border-gray-200 dark:border-white/5 rounded-2xl shadow-sm bg-white dark:bg-[var(--surface)] lg:min-w-0 lg:flex-1 ${
-							isEditAppPage
-								? 'h-[calc(100dvh-100px)] overflow-hidden p-0'
-								: 'min-h-[calc(100dvh-100px)] overflow-y-auto overflow-x-hidden p-4 lg:p-6'
-						}`}
+						className={`border border-gray-200 dark:border-white/5 rounded-2xl shadow-sm bg-white dark:bg-[var(--surface)] lg:min-w-0 lg:flex-1 ${contentHeightClass} ${contentOverflowClass} ${contentPaddingClass}`}
 					>
 						<Outlet className="outlet h-max" />
 					</div>

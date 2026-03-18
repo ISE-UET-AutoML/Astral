@@ -72,7 +72,13 @@ const routes = {
                                     children: [
                                         {
                                             path: 'info',
-                                            element: <ProjectInfo />
+                                            element: <ProjectInfo />,
+                                            handle: {
+                                                projectLayout: {
+                                                    overflow: 'auto',
+                                                    height: 'full',
+                                                },
+                                            },
                                         },
                                         {
                                             path: 'uploadData',
@@ -139,6 +145,13 @@ const routes = {
                                 {
                                     path: 'my-apps/:appId/edit',
                                     element: <EditAppPage />,
+                                    handle: {
+                                        projectLayout: {
+                                            overflow: 'hidden',
+                                            padding: 'none',
+                                            height: 'full',
+                                        },
+                                    },
                                 },
                                 {
                                     path: 'tasks',

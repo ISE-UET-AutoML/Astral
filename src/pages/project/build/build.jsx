@@ -37,12 +37,9 @@ export default function ProjectBuild() {
                     font-family: 'Poppins', sans-serif !important;
                 }
             `}</style>
-            <div className="min-h-screen relative font-poppins p-4 lg:p-6" style={{ background: 'var(--surface)' }}>
-            {/* BackgroundShapes removed */}
+            <div className="relative h-full min-h-0 font-poppins" style={{ background: 'var(--surface)' }}>
             {projectInfo && (
-                <div className="relative z-10 m-2 lg:m-3">
-                    <Outlet context={{ ...data, updateFields, projectInfo }} />
-                </div>
+                <Outlet context={{ ...data, updateFields, projectInfo }} />
             )}
             </div>
         </>

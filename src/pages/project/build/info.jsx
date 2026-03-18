@@ -73,18 +73,18 @@ const ProjectInfo = () => {
 
 	return (
 		<>
-			<div className="min-h-screen" style={{ background: 'var(--surface)' }}>
-				<div className="relative pt-16 px-4 sm:px-6 lg:px-8 pb-20">
-					<div className="relative z-10 max-w-7xl mx-auto">
-						<div className="mb-16 text-center">
+			<div className="h-full flex items-center" style={{ background: 'var(--surface)' }}>
+				<div className="relative w-full px-3 py-6 sm:px-4 lg:px-6 lg:py-8">
+					<div className="relative z-10 max-w-7xl mx-auto w-full">
+						<div className="mb-6 lg:mb-8 text-center">
 							<h1
-								className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight"
+								className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 lg:mb-4 leading-tight"
 								style={{ color: 'var(--title-project)' }}
 							>
 								Project Overview
 							</h1>
 							<p
-								className="mx-auto max-w-3xl text-lg sm:text-xl leading-relaxed"
+								className="mx-auto max-w-3xl text-base sm:text-lg leading-relaxed"
 								style={{ color: 'var(--secondary-text)' }}
 							>
 								{projectInfo?.description ||
@@ -92,32 +92,32 @@ const ProjectInfo = () => {
 							</p>
 						</div>
 
-						<div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
+						<div className="grid grid-cols-1 xl:grid-cols-12 gap-5 lg:gap-6 items-start">
 							<div className="xl:col-span-4">
-								<div className="sticky top-8">
+								<div>
 									<div
-										className="p-8 rounded-3xl border backdrop-blur-xl shadow-2xl"
+										className="p-5 lg:p-6 rounded-3xl border backdrop-blur-xl shadow-xl flex flex-col"
 										style={{
 											borderColor: 'var(--border)',
 											background: 'var(--card-gradient)',
 										}}
 									>
-										<div className="flex items-center space-x-3 mb-8">
+										<div className="flex items-center space-x-3 mb-5">
 											<div className="p-2 rounded-xl bg-gradient-to-br from-white/20 to-white/10">
 												<SettingOutlined
-													className="text-xl"
+													className="text-lg"
 													style={{ color: 'var(--accent-text)' }}
 												/>
 											</div>
 											<h2
-												className="text-xl font-bold"
+												className="text-lg lg:text-xl font-bold"
 												style={{ color: 'var(--text)' }}
 											>
 												Project Details
 											</h2>
 										</div>
 
-										<div className="space-y-4">
+										<div className="space-y-3">
 											<MetaDataItem
 												label="Project name"
 												value={projectInfo?.name}
@@ -145,24 +145,24 @@ const ProjectInfo = () => {
 								</div>
 							</div>
 
-							<div className="xl:col-span-8 space-y-8">
+							<div className="xl:col-span-8 flex flex-col gap-5 lg:gap-6">
 								<div
-									className="p-8 rounded-3xl border backdrop-blur-xl shadow-2xl"
+									className="p-5 lg:p-6 rounded-3xl border backdrop-blur-xl shadow-xl flex flex-col"
 									style={{
 										borderColor: 'var(--border)',
 										background: 'var(--card-gradient)',
 									}}
 								>
-									<div className="flex items-center space-x-3 mb-8">
-										<div className="p-3 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-600/10">
+									<div className="flex items-center space-x-3 mb-5">
+										<div className="p-2.5 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-600/10">
 											<ExperimentOutlined
-												className="text-2xl"
+												className="text-xl"
 												style={{ color: 'var(--accent-text)' }}
 											/>
 										</div>
 										<div>
 											<h3
-												className="text-2xl font-bold"
+												className="text-xl lg:text-2xl font-bold"
 												style={{ color: 'var(--text)' }}
 											>
 												Experiments
@@ -175,7 +175,7 @@ const ProjectInfo = () => {
 											</p>
 										</div>
 									</div>
-									<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+									<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 										<StatusCard
 											label="Completed"
 											value={
@@ -227,22 +227,22 @@ const ProjectInfo = () => {
 								</div>
 
 								<div
-									className="p-8 rounded-3xl border backdrop-blur-xl shadow-2xl"
+									className="p-5 lg:p-6 rounded-3xl border backdrop-blur-xl shadow-xl flex flex-col"
 									style={{
 										borderColor: 'var(--border)',
 										background: 'var(--card-gradient)',
 									}}
 								>
-									<div className="flex items-center space-x-3 mb-8">
-										<div className="p-3 rounded-xl bg-gradient-to-br from-purple-500/20 to-purple-600/10">
+									<div className="flex items-center space-x-3 mb-5">
+										<div className="p-2.5 rounded-xl bg-gradient-to-br from-purple-500/20 to-purple-600/10">
 											<DatabaseOutlined
-												className="text-2xl"
+												className="text-xl"
 												style={{ color: 'var(--accent-text)' }}
 											/>
 										</div>
 										<div>
 											<h3
-												className="text-2xl font-bold"
+												className="text-xl lg:text-2xl font-bold"
 												style={{ color: 'var(--text)' }}
 											>
 												Models
@@ -255,7 +255,7 @@ const ProjectInfo = () => {
 											</p>
 										</div>
 									</div>
-									<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+									<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 										<StatusCard
 											label="Ready"
 											value={models.length}
@@ -270,22 +270,22 @@ const ProjectInfo = () => {
 								</div>
 
 								<div
-									className="p-8 rounded-3xl border backdrop-blur-xl shadow-2xl"
+									className="p-5 lg:p-6 rounded-3xl border backdrop-blur-xl shadow-xl flex flex-col"
 									style={{
 										borderColor: 'var(--border)',
 										background: 'var(--card-gradient)',
 									}}
 								>
-									<div className="flex items-center space-x-3 mb-8">
-										<div className="p-3 rounded-xl bg-gradient-to-br from-cyan-500/20 to-cyan-600/10">
+									<div className="flex items-center space-x-3 mb-5">
+										<div className="p-2.5 rounded-xl bg-gradient-to-br from-cyan-500/20 to-cyan-600/10">
 											<CloudOutlined
-												className="text-2xl"
+												className="text-xl"
 												style={{ color: 'var(--accent-text)' }}
 											/>
 										</div>
 										<div>
 											<h3
-												className="text-2xl font-bold"
+												className="text-xl lg:text-2xl font-bold"
 												style={{ color: 'var(--text)' }}
 											>
 												Deployed Models
@@ -298,7 +298,7 @@ const ProjectInfo = () => {
 											</p>
 										</div>
 									</div>
-									<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+									<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 										<StatusCard
 											label="Online"
 											value={
