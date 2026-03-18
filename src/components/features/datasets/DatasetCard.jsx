@@ -118,7 +118,7 @@ export default function DatasetCard({ dataset, onDelete, isDeleting }) {
             <div className="relative px-4 pt-4 pb-2">
                 {thumbnail && (
                     <div className="absolute inset-0">
-                        <img src={thumbnail} alt="dataset thumbnail" className="w-full h-full object-cover" />
+                        <img src={thumbnail} alt="dataset thumbnail" className="w-full h-full object-cover" loading="lazy" />
                         <div className="absolute inset-0 bg-black/10" />
                     </div>
                 )}

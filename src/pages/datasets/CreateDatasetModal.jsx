@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import JSZip from 'jszip';
 import { createChunks, organizeFiles, extractCSVMetaData } from 'src/utils/file';
 import { uploadToS3 } from 'src/utils/s3';
@@ -192,6 +192,14 @@ const CreateDatasetModal = ({ visible, onCancel, onCreate }) => {
         setIsLoading(false);
         onCancel();
     };
+
+    useEffect(() => {
+        if (visible) {
+            const prev = document.body.style.overflow;
+            document.body.style.overflow = 'hidden';
+            return () => { document.body.style.overflow = prev; };
+        }
+    }, [visible]);
 
     if (!visible) return null;
 
