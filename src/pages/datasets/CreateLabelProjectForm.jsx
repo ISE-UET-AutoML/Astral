@@ -161,6 +161,7 @@ export default function CreateLabelProjectForm({
 	onSubmit,
 	onCancel,
 	onBack,
+	onValidityChange,
 	initialValues = {},
 	loading,
 	detectedLabels = [],
@@ -187,7 +188,9 @@ export default function CreateLabelProjectForm({
 			detectedLabels?.length > 0 &&
 			(selectedTaskType === 'IMAGE_CLASSIFICATION' ||
 				selectedTaskType === 'AUDIO_CLASSIFICATION' ||
-				selectedTaskType === 'VIDEO_CLASSIFICATION')
+				selectedTaskType === 'VIDEO_CLASSIFICATION' ||
+				selectedTaskType === 'SEMANTIC_SEGMENTATION' ||
+				selectedTaskType === 'OBJECT_DETECTION')
 		) {
 			setLabels(detectedLabels)
 		}
@@ -208,6 +211,38 @@ export default function CreateLabelProjectForm({
 			setColumnOptions([])
 		}
 	}, [csvMetadata])
+
+	useEffect(() => {
+		const hasLabels = expectedLabels.length > 0
+		const hasTextColumn = !!selectedTextColumn
+		const hasImageColumn = !!selectedImageColumn
+		const hasSeriesColumn = !!selectedSeriesColumn
+		const hasFeaturesColumn = (selectedFeaturesColumn?.length ?? 0) > 0
+		const isClusteringOrAnomaly = taskType === 'CLUSTERING' || taskType === 'ANOMALY_DETECTION'
+
+		let isValid = false
+		if (datasetType === 'TEXT') {
+			isValid = hasTextColumn && hasLabels
+		} else if (datasetType === 'MULTIMODAL') {
+			isValid = hasImageColumn && hasLabels
+		} else if (datasetType === 'TIME_SERIES') {
+			isValid = hasSeriesColumn && hasLabels
+		} else if (datasetType === 'TABULAR' && isClusteringOrAnomaly) {
+			isValid = hasFeaturesColumn
+		} else {
+			isValid = hasLabels
+		}
+		onValidityChange?.(isValid)
+	}, [
+		expectedLabels.length,
+		selectedTextColumn,
+		selectedImageColumn,
+		selectedSeriesColumn,
+		selectedFeaturesColumn,
+		datasetType,
+		taskType,
+		onValidityChange,
+	])
 
 	const handleAddLabel = () => {
 		const v = newLabel.trim()
@@ -262,7 +297,7 @@ export default function CreateLabelProjectForm({
 	const isClusteringOrAnomaly = selectedTaskType === 'CLUSTERING' || selectedTaskType === 'ANOMALY_DETECTION'
 
 	return (
-		<form onSubmit={handleSubmit}>
+		<form id="create-label-project-form-step1" onSubmit={handleSubmit}>
 			{/* Project Name (disabled) */}
 			<FormField label="Project Name" required>
 				<input
@@ -302,7 +337,7 @@ export default function CreateLabelProjectForm({
 						options={columnOptions}
 					/>
 					{!selectedTextColumn && (
-						<Alert variant="warning" className="mt-2">
+						<Alert variant="warning" className="mt-2 rounded-xl">
 							<AlertDescription>Please select a text column for TEXT datasets.</AlertDescription>
 						</Alert>
 					)}
