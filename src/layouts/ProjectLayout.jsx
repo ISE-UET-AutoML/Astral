@@ -61,9 +61,9 @@ export default function ProjectLayout() {
 				projectID={params.id}
 				className="fixed h-[calc(100vh)] w-[120px] top-[60px] z-50 shadow-[4px_0_24px_rgba(0,0,0,0.02)] dark:shadow-[4px_0_24px_rgba(0,0,0,0.2)]"
 			/>
-			<div className={`mx-auto w-[calc(100%)] pl-[120px] lg:pl-[140px] pt-14 pr-4 lg:pr-6 pb-6 lg:pb-8 flex-grow lg:flex h-[calc(100vh)] ${shellOverflowClass} transition-all duration-300`}>
+			<div className={`mx-auto w-[calc(100%)] pl-[120px] lg:pl-[140px] pt-14 pr-4 lg:pr-6 pb-10 lg:pb-12 flex-grow lg:flex h-[calc(100vh)] ${shellOverflowClass} transition-all duration-300`}>
 				
-				<div className="ml-0 min-w-0 flex-1 w-full pt-4 pb-6 lg:pb-8 mt-2">
+				<div className="ml-0 min-w-0 flex-1 w-full pt-4 pb-8 lg:pb-10 mt-2">
 					
 					<div
 						className={`border border-gray-200 dark:border-white/10 rounded-2xl shadow-xl dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] bg-white dark:bg-[var(--surface)] lg:min-w-0 lg:flex-1 ${contentHeightClass} ${contentOverflowClass} ${contentPaddingClass}`}

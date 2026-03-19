@@ -172,8 +172,8 @@ const ModelView = () => {
     }, [modelId])
 
     return (
-        <div className="w-full min-h-0 bg-white dark:bg-[var(--surface)] font-poppins text-gray-900 dark:text-white">
-            <div className="w-full px-4 py-6 lg:px-6 lg:py-8 flex flex-col gap-6">
+        <div className="w-full min-h-0 bg-white dark:bg-[var(--surface)] font-poppins text-gray-900 dark:text-white mb-5">
+            <div className="w-full px-4 pt-6 pb-10 lg:px-6 lg:pt-8 lg:pb-12 flex flex-col gap-6">
 
                 {/* Version Selector */}
                 {versions.length > 0 && (
