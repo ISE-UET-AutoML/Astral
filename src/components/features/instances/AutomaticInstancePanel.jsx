@@ -26,7 +26,7 @@ export function AutomaticInstancePanel({
 		>
 			<Row gutter={[24, 24]}>
 				<Col span={16}>
-					<Card className="dark-build-card !rounded-xl shadow-sm">
+					<Card className="dark-build-card !rounded-xl !border-0 shadow-md bg-[var(--card-gradient)]">
 						<Space
 							direction="vertical"
 							size="large"
@@ -40,7 +40,7 @@ export function AutomaticInstancePanel({
 										Training Duration
 									</span>
 								}
-								className="rounded-xl border border-[var(--border)] bg-[var(--hover-bg)]"
+								className="rounded-xl !border-0 bg-[var(--hover-bg)]"
 							>
 								<div className="flex flex-col gap-4">
 									<div className="flex items-center gap-4">

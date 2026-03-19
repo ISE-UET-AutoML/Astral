@@ -143,8 +143,8 @@ export const InstanceSizeCard = ({ size, details, selected, onClick }) => (
 		onClick={onClick}
 		className={`cursor-pointer !rounded-xl transition-all duration-300 overflow-hidden ${
 			selected
-				? 'border-2 border-blue-300 dark:border-blue-600 bg-blue-100 dark:bg-blue-900/40 shadow-[0_4px_12px_rgba(59,130,246,0.15)]'
-				: 'border border-[var(--border)] bg-[var(--card-gradient)] hover:border-blue-200 hover:bg-blue-50 dark:hover:bg-blue-950/30'
+				? 'border-2 border-blue-400 dark:border-blue-500 bg-blue-100 dark:bg-blue-900/40 shadow-[0_4px_12px_rgba(59,130,246,0.15)]'
+				: 'border border-gray-200 dark:border-white/20 bg-[var(--card-gradient)] hover:border-blue-300 hover:bg-blue-50/50 dark:hover:border-blue-700 dark:hover:bg-blue-950/30 shadow-sm'
 		}`}
 	>
 	<Card
@@ -220,7 +220,7 @@ export const CostEstimator = ({
 	return (
 		<Card
 			title={<span className="font-semibold text-[var(--text)]">Cost Estimation</span>}
-			className="rounded-2xl border border-[var(--border)] bg-[var(--hover-bg)]"
+			className="rounded-2xl !border-0 bg-[var(--hover-bg)] shadow-sm"
 		>
 			<Space
 				direction="vertical"
@@ -308,7 +308,7 @@ export const InstanceInfo = ({ formData }) => {
 					className="text-2xl text-[var(--accent-text)]"
 				/>
 			}
-			className="rounded-2xl border border-[var(--border)] bg-[var(--card-gradient)] backdrop-blur-2xl"
+			className="rounded-2xl !border-0 bg-[var(--card-gradient)] backdrop-blur-2xl shadow-sm"
 		>
 			<Space
 				direction="vertical"
@@ -326,7 +326,7 @@ export const InstanceInfo = ({ formData }) => {
 									Hardware Specs
 								</span>
 							}
-							className="rounded-xl border border-[var(--border)] bg-[var(--hover-bg)] h-full"
+							className="rounded-xl !border-0 bg-[var(--hover-bg)] h-full"
 						>
 							<Space direction="vertical">
 								<Text
@@ -367,7 +367,7 @@ export const InstanceInfo = ({ formData }) => {
 									Training Details
 								</span>
 							}
-							className="rounded-xl border border-[var(--border)] bg-[var(--hover-bg)] h-full"
+							className="rounded-xl !border-0 bg-[var(--hover-bg)] h-full"
 						>
 							<Space direction="vertical">
 								<Text

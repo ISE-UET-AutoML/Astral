@@ -93,14 +93,32 @@ const routes = {
                                         {
                                             path: 'selectTargetColMulti',
                                             element: <SelectTargetColMulti />,
+                                            handle: {
+                                                projectLayout: {
+                                                    overflow: 'hidden',
+                                                    height: 'full',
+                                                },
+                                            },
                                         },
                                         {
                                             path: 'selectTargetCol',
                                             element: <SelectTargetCol />,
+                                            handle: {
+                                                projectLayout: {
+                                                    overflow: 'hidden',
+                                                    height: 'full',
+                                                },
+                                            },
                                         },
                                         {
                                             path: 'selectInstance',
                                             element: <SelectInstance />,
+                                            handle: {
+                                                projectLayout: {
+                                                    overflow: 'auto',
+                                                    height: 'full',
+                                                },
+                                            },
                                         },
                                         {
                                             path: 'training',
@@ -169,8 +187,9 @@ const routes = {
                                     element: <ModelView />,
                                     handle: {
                                         projectLayout: {
-                                            overflow: 'hidden',
-                                            height: 'full',
+                                            scrollAt: 'shell',
+                                            overflow: 'visible',
+                                            height: 'auto',
                                         },
                                     },
                                 },
