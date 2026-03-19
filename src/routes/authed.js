@@ -125,8 +125,9 @@ const routes = {
                                             element: <Training />,
                                             handle: {
                                                 projectLayout: {
-                                                    overflow: 'hidden',
-                                                    height: 'full',
+                                                    scrollAt: 'shell',
+                                                    overflow: 'visible',
+                                                    height: 'auto',
                                                 },
                                             },
                                         },
@@ -135,7 +136,7 @@ const routes = {
                                             element: <TrainResult />,
                                             handle: {
                                                 projectLayout: {
-                                                    overflow: 'hidden',
+                                                    overflow: 'auto',
                                                     height: 'full',
                                                 },
                                             },
