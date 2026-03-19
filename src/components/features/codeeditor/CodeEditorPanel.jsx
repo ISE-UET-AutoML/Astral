@@ -58,6 +58,7 @@ const CodeEditorPanel = ({ currentFile, code, originalCode, isSaving, isDeployin
 			<div className="flex-1 min-h-0 overflow-hidden">
 				<Editor
 					height="100%"
+					path={currentFile || 'untitled'}
 					language={getLanguageFromFile(currentFile)}
 					theme={isDark ? 'vs-dark' : 'vs-light'}
 					value={code}
@@ -67,6 +68,25 @@ const CodeEditorPanel = ({ currentFile, code, originalCode, isSaving, isDeployin
 						minimap: { enabled: true },
 						automaticLayout: true,
 						fontSize: 14,
+						renderValidationDecorations: 'off',
+						tabCompletion: 'on',
+						quickSuggestionsDelay: 50,
+						suggestOnTriggerCharacters: true,
+						suggest: {
+							showWords: true,
+							showSnippets: true,
+						},
+						quickSuggestions: {
+							other: true,
+							comments: false,
+							strings: true,
+						},
+						parameterHints: { enabled: true },
+						acceptSuggestionOnCommitCharacter: true,
+						acceptSuggestionOnEnter: 'on',
+						inlineSuggest: { enabled: true },
+						wordBasedSuggestions: 'allDocuments',
+						snippetSuggestions: 'inline',
 					}}
 				/>
 			</div>
