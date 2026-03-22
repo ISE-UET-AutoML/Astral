@@ -5,6 +5,36 @@
 /* Import universal typography */
 @import './styles/typography.css';
 
+/* ── Responsive scaling ──────────────────────────────────────────────
+   Tất cả giá trị rem (Tailwind, Ant Design, padding, font) tự scale.
+   Máy ≥ 1440px + DPR = 1 giữ nguyên 100% (16px).
+
+   Windows Display Scale 125%: DPR = 1.25 → viewport bị thu nhỏ.
+   Ví dụ màn 1920×1080 ở 125% scale → CSS viewport = ~1536×864.
+   Cần scale ngược lại ~80% để bù đắp việc browser tự zoom 125%.    */
+
+/* Màn hình nhỏ bình thường (không có DPI scaling) */
+@media (max-width: 1439px) and (max-resolution: 110dpi) {
+  html { font-size: 93.75%; }   /* 15px */
+}
+@media (max-width: 1279px) and (max-resolution: 110dpi) {
+  html { font-size: 87.5%; }    /* 14px — 1366×768, 1280×800... */
+}
+@media (max-width: 1023px) and (max-resolution: 110dpi) {
+  html { font-size: 81.25%; }   /* 13px */
+}
+
+/* Windows Display Scale 125% (DPR ≈ 1.25 → ~120dpi) — bù ngược lại */
+@media (-webkit-min-device-pixel-ratio: 1.2) and (max-width: 1600px),
+       (min-resolution: 115dpi) and (max-width: 1600px) {
+  html { font-size: 80%; }      /* 12.8px — scale 1/1.25 để neutralize 125% zoom */
+}
+/* Màn nhỏ + 125% scale (ví dụ 1366×768 ở 125% → ~1093px viewport) */
+@media (-webkit-min-device-pixel-ratio: 1.2) and (max-width: 1100px),
+       (min-resolution: 115dpi) and (max-width: 1100px) {
+  html { font-size: 75%; }      /* 12px */
+}
+
 /* Ensure full-page background */
 html,
 body,

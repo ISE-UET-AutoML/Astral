@@ -47,7 +47,7 @@ const LandingPage = () => {
 			<DecorativeBlocks />
 			
 			{/* Navigation / orbital logo layer (positioned below fixed global NavBar) */}
-			<div className="pt-24">
+			<div className="pt-16">
 				<LandingNavbar 
 					scrolled={scrolled}
 					navbarOpen={navbarOpen}
