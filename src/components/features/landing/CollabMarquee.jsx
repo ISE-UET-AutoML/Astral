@@ -1,28 +1,17 @@
 import { useRef, useEffect } from 'react'
-import autogluon from 'src/assets/collab/autogluon.png'
-import google from 'src/assets/collab/google.png'
-import mobifone from "src/assets/collab/mobifone.jpeg"
-import scopus from 'src/assets/collab/scopus.png'
-import snsLink from 'src/assets/collab/sns_link.png'
-import vast from 'src/assets/collab/vast.png'
-import viettel from 'src/assets/collab/Viettel-without_slogan-01_34bf1bf614.png'
-import pytorch from 'src/assets/collab/pytorch_logo.png'
-import vnulict from 'src/assets/collab/vnulic.png'
-import h2o from 'src/assets/collab/h2o.png'
-import ise from "src/assets/collab/ise.jpg"
 
 const logos = [
-	{ src: google, alt: 'Google' },
-	{ src: autogluon, alt: 'AutoGluon' },
-	{ src: mobifone, alt: 'Mobifone' },
-	{ src: scopus, alt: 'Scopus' },
-	{ src: snsLink, alt: 'SNS Link' },
-	{ src: vast, alt: 'VAST' },
-	{ src: viettel, alt: 'Viettel' },
-	{ src: pytorch, alt: 'PyTorch' },
-	{ src: h2o, alt: 'H2O' },
-	{ src: vnulict, alt: 'VNULICT' },
-	{ src: ise, alt: 'ISE' },
+	{ src: 'https://placehold.co/220x80?text=Google', alt: 'Google' },
+	{ src: 'https://placehold.co/220x80?text=AutoGluon', alt: 'AutoGluon' },
+	{ src: 'https://placehold.co/220x80?text=Mobifone', alt: 'Mobifone' },
+	{ src: 'https://placehold.co/220x80?text=Scopus', alt: 'Scopus' },
+	{ src: 'https://placehold.co/220x80?text=SNS+Link', alt: 'SNS Link' },
+	{ src: 'https://placehold.co/220x80?text=VAST', alt: 'VAST' },
+	{ src: 'https://placehold.co/220x80?text=Viettel', alt: 'Viettel' },
+	{ src: 'https://placehold.co/220x80?text=PyTorch', alt: 'PyTorch' },
+	{ src: 'https://placehold.co/220x80?text=H2O', alt: 'H2O' },
+	{ src: 'https://placehold.co/220x80?text=VNULICT', alt: 'VNULICT' },
+	{ src: 'https://placehold.co/220x80?text=ISE', alt: 'ISE' },
 ]
 
 const CollabMarquee = () => {
