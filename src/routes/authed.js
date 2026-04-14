@@ -96,7 +96,7 @@ const routes = {
                                             element: <ChooseTrainingMode />,
                                             handle: {
                                                 projectLayout: {
-                                                    overflow: 'hidden',
+                                                    overflow: 'auto',
                                                     height: 'full',
                                                 },
                                             },
