@@ -26,6 +26,7 @@ import LabelProjects from 'src/pages/labels'
 import LabelView from 'src/pages/label/LabelView'
 
 import UploadData from 'src/pages/project/build/uploadData'
+import ChooseTrainingMode from 'src/pages/project/build/chooseTrainingMode'
 import SelectInstance from 'src/pages/project/build/selectInstance'
 import SelectTargetColMulti from 'src/pages/project/build/selectTargetColMulti'
 import SelectTargetCol from 'src/pages/project/build/selectTargetCol'
@@ -83,6 +84,16 @@ const routes = {
                                         {
                                             path: 'uploadData',
                                             element: <UploadData />,
+                                            handle: {
+                                                projectLayout: {
+                                                    overflow: 'hidden',
+                                                    height: 'full',
+                                                },
+                                            },
+                                        },
+                                        {
+                                            path: 'chooseTrainingMode',
+                                            element: <ChooseTrainingMode />,
                                             handle: {
                                                 projectLayout: {
                                                     overflow: 'hidden',

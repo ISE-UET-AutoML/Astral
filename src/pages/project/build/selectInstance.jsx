@@ -7,7 +7,7 @@ import { UserInfrastructurePanel } from 'src/components/features/instances/UserI
 import { useSelectInstance } from 'src/hooks/useSelectInstance'
 
 const SelectInstance = () => {
-    const { projectInfo, updateFields, selectedProject } = useOutletContext()
+    const { projectInfo, updateFields, selectedProject, trainingTag } = useOutletContext()
     const navigate = useNavigate()
     const {
         activeTab,
@@ -37,6 +37,7 @@ const SelectInstance = () => {
         selectedProject,
         updateFields,
         navigate,
+        trainingTag,
     })
 
     const items = [
