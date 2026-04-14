@@ -126,7 +126,7 @@ const routes = {
                                             element: <SelectInstance />,
                                             handle: {
                                                 projectLayout: {
-                                                    overflow: 'auto',
+                                                    overflow: 'hidden',
                                                     height: 'full',
                                                 },
                                             },
