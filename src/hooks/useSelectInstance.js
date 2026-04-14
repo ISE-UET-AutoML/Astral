@@ -209,6 +209,14 @@ export const useSelectInstance = ({
 				trainResult.experimentName &&
 				trainResult.experimentId
 			) {
+				const pid = projectInfo.id ?? projectInfo._id
+				if (pid) {
+					try {
+						sessionStorage.removeItem(`astral:build:draft:${pid}`)
+					} catch (_) {
+						/* ignore */
+					}
+				}
 				navigate(
 					`/app/project/${projectInfo.id}/build/training?experimentName=${trainResult.experimentName}&experimentId=${trainResult.experimentId}`,
 					{ replace: true }

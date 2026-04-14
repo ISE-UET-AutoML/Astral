@@ -3,6 +3,8 @@ import { Outlet, useParams } from 'react-router-dom'
 import * as projectAPI from 'src/api/project'
 import { useTheme } from 'src/theme/ThemeProvider'
 
+const buildDraftKey = (projectId) => `astral:build:draft:${projectId}`
+
 export default function ProjectBuild() {
     const { id: projectID } = useParams()
     const { theme } = useTheme()
@@ -21,6 +23,46 @@ export default function ProjectBuild() {
 
         fetchProjectInfo()
     }, [projectID])
+
+    // Restore label-project + training mode draft after full page refresh (session only).
+    useEffect(() => {
+        if (!projectID) return
+        try {
+            const raw = sessionStorage.getItem(buildDraftKey(projectID))
+            if (!raw) return
+            const draft = JSON.parse(raw)
+            if (!draft?.selectedProject?.dataset_id) return
+            setData((prev) => {
+                if (prev.selectedProject?.dataset_id) return prev
+                return {
+                    ...prev,
+                    selectedProject: draft.selectedProject,
+                    ...(draft.trainingTag != null
+                        ? { trainingTag: draft.trainingTag }
+                        : {}),
+                }
+            })
+        } catch (e) {
+            console.warn('build draft restore failed', e)
+        }
+    }, [projectID])
+
+    useEffect(() => {
+        if (!projectID || !data.selectedProject?.dataset_id) return
+        try {
+            sessionStorage.setItem(
+                buildDraftKey(projectID),
+                JSON.stringify({
+                    selectedProject: data.selectedProject,
+                    ...(data.trainingTag != null
+                        ? { trainingTag: data.trainingTag }
+                        : {}),
+                })
+            )
+        } catch (e) {
+            console.warn('build draft persist failed', e)
+        }
+    }, [projectID, data.selectedProject, data.trainingTag])
 
     // Function to update data state
     function updateFields(fields) {
