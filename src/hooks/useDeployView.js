@@ -141,25 +141,27 @@ export const useDeployView = ({ deployId, projectId, theme }) => {
 
 	// Fetch recent predictions
 	useEffect(() => {
-		if (!projectInfo?.id || !model?.id) return
+		const modelIdForDeploy = deployData?.model_id
+		if (!projectInfo?.id || modelIdForDeploy == null) return
 
 		const fetchRecentPredictions = async () => {
 			setIsLoadingPredictions(true)
 			try {
-				const response = await dataServiceAPI.getAllDeployData(model.id)
-				if (response.status === 200) {
-					setRecentPredictions(response.data.deploy_data)
-				}
+				const response = await dataServiceAPI.getAllDeployData(
+					modelIdForDeploy
+				)
+				setRecentPredictions(response.data?.deploy_data ?? [])
 			} catch (error) {
 				// eslint-disable-next-line no-console
 				console.error("Can't fetch recent predictions:", error)
+				setRecentPredictions([])
 			} finally {
 				setIsLoadingPredictions(false)
 			}
 		}
 
 		fetchRecentPredictions()
-	}, [model, predictResult, projectInfo?.id])
+	}, [deployData?.model_id, predictResult, projectInfo?.id])
 
 	// Live predict file upload handler
 	const handleUploadFiles = async (files, s3_url) => {
@@ -192,9 +194,10 @@ export const useDeployView = ({ deployId, projectId, theme }) => {
 		formData.append('file_name', fileName)
 
 		try {
+			// Use deployData.model_id (models.id) — NOT model.id which is model_versions.id
 			const predictRequest = await modelAPI.modelPredict(
 				formData,
-				model.id
+				deployData?.model_id
 			)
 			const data = predictRequest.data
 			if (data.status === 'failed') {
