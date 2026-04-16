@@ -11,6 +11,12 @@ import {
 
 const { Title, Text } = Typography
 const { Panel } = Collapse
+/** Sent as `tag` on generic-cloud-training: balance → astral, max → iml */
+export const TRAINING_MODE_TAGS = {
+	balance: 'astral',
+	max: 'iml',
+}
+
 export const SERVICES = [
 	{
 		name: 'VastAI',

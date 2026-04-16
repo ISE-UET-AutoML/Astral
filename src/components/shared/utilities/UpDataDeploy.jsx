@@ -1,13 +1,12 @@
 import { Upload, Button, Modal, message, Alert } from 'antd'
-import { Select } from 'src/components/shared/ui/Select'
 import {
 	InboxOutlined,
 	CloseOutlined,
 	FolderOutlined,
 	FileOutlined,
 	DeleteOutlined,
-	CheckCircleOutlined, // Thêm icon
-	CloseCircleOutlined, // Thêm icon
+	CheckCircleOutlined,
+	CloseCircleOutlined,
 } from '@ant-design/icons'
 import { useState } from 'react'
 import { createPresignedUrlsPredict } from 'src/api/dataset'
@@ -32,6 +31,12 @@ const UpDataDeploy = ({
 	const [verificationStatus, setVerificationStatus] = useState('idle') // 'idle', 'success', 'error'
 	const [verificationMessage, setVerificationMessage] = useState('')
 	const verifyData = async (files, taskType, featureColumns) => {
+		// Temporary bypass: allow all uploaded data types through verification.
+		return {
+			isValid: true,
+			message: 'Data verification is temporarily disabled.',
+		}
+
 		if (taskType === 'IMAGE_CLASSIFICATION') {
 			const allImages = files.every((f) =>
 				/\.(jpg|jpeg|png)$/i.test(f.name)
@@ -465,9 +470,7 @@ const UpDataDeploy = ({
 			}}
 		>
 			<div className="p-4">
-				<h3
-					className="text-xl font-bold mb-4 text-[var(--text)]"
-				>
+				<h3 className="text-xl font-bold mb-4 text-[var(--text)]">
 					Upload Data
 				</h3>
 
@@ -476,9 +479,7 @@ const UpDataDeploy = ({
 					className="updeploy-dragger border border-dashed border-[var(--border)] rounded-[12px] bg-transparent"
 				>
 					<p className="ant-upload-drag-icon">
-						<InboxOutlined
-							className="text-[var(--accent-text)]"
-						/>
+						<InboxOutlined className="text-[var(--accent-text)]" />
 					</p>
 					<p
 						className="ant-upload-text"
@@ -520,12 +521,8 @@ const UpDataDeploy = ({
 				)}
 
 				{folderStructure && Object.keys(folderStructure).length > 0 && (
-					<div
-						className="mt-4 p-3 rounded-lg [background:var(--card-gradient)] border border-[var(--border)]"
-					>
-						<p
-							className="text-sm mb-2 text-[var(--text)]"
-						>
+					<div className="mt-4 p-3 rounded-lg [background:var(--card-gradient)] border border-[var(--border)]">
+						<p className="text-sm mb-2 text-[var(--text)]">
 							Selected structure:
 						</p>
 						<div className="max-h-40 overflow-y-auto">

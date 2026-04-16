@@ -16,6 +16,7 @@ export const useSelectInstance = ({
 	selectedProject,
 	updateFields,
 	navigate,
+	trainingTag = 'astral',
 }) => {
 	const [activeTab, setActiveTab] = useState('automatic')
 	const [isLoading, setIsLoading] = useState(false)
@@ -173,6 +174,7 @@ export const useSelectInstance = ({
 				: 'MULTICLASS',
 			framework: 'autogluon',
 			datasetMetadata: selectedProject.meta_data,
+			tag: trainingTag || 'astral',
 		}
 		console.log('Train payload: ', payload)
 		const res1 = await trainCloudModel(projectInfo.id, payload)
@@ -207,6 +209,14 @@ export const useSelectInstance = ({
 				trainResult.experimentName &&
 				trainResult.experimentId
 			) {
+				const pid = projectInfo.id ?? projectInfo._id
+				if (pid) {
+					try {
+						sessionStorage.removeItem(`astral:build:draft:${pid}`)
+					} catch (_) {
+						/* ignore */
+					}
+				}
 				navigate(
 					`/app/project/${projectInfo.id}/build/training?experimentName=${trainResult.experimentName}&experimentId=${trainResult.experimentId}`,
 					{ replace: true }

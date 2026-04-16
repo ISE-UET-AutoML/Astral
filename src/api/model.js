@@ -26,6 +26,7 @@ const deployModel = (modelId, modelVersionId) => {
 	return instance.post(`${AGGREGATE_URL}/model/${modelId}/deploy/${modelVersionId}`)
 }
 
+
 const modelPredict = (formData, modelId) => {
 	return instance.post(`${AGGREGATE_URL}/model/${modelId}/predict`, formData)
 }
