@@ -196,7 +196,10 @@ const SelectInstance = () => {
                 ? 'BINARY'
                 : 'MULTICLASS',
             framework: 'autogluon',
-            datasetMetadata: selectedProject.meta_data,
+            datasetMetadata: {
+                ...(selectedProject.meta_data || {}),
+                detected_labels: selectedProject.detected_labels || [],
+            },
         }
         console.log('Train payload: ', payload)
         const res1 = await trainCloudModel(projectInfo.id, payload)
