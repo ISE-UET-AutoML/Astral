@@ -30,23 +30,49 @@ const getCurrentStep = (status) => {
 	}
 }
 
-export const useTrainingPage = ({ experimentId, initialExperimentName }) => {
-	const [trainingInfo, setTrainingInfo] = useState({
-		latestEpoch: 0,
-		accuracy: 0,
-	})
-	const [valMetric, setValMetric] = useState('Accuracy')
-	const [chartData, setChartData] = useState([])
-	const [elapsedTime, setElapsedTime] = useState(0)
-	const [status, setStatus] = useState('PENDING')
+const buildExperimentCard = (item, responseData, configData) => {
+	const status = responseData?.status || 'PENDING'
+	const maxTrainingTime = responseData?.expected_training_time
+		? responseData.expected_training_time / 60
+		: null
+	const chartData = configData?.metrics?.training_history || []
+	const latestTrainingInfo =
+		chartData.length > 0 ? chartData[chartData.length - 1] : null
+	const elapsedTime = calculateElapsedTime(responseData?.start_time)
+	const trainProgress =
+		status === 'DONE'
+			? 100
+			: responseData?.expected_training_time
+				? Math.min(
+						(elapsedTime /
+							(responseData.expected_training_time / 60)) *
+							100,
+						100
+					)
+				: 0
+
+	return {
+		tag: item.tag,
+		experimentId: item.experimentId,
+		experimentName: responseData?.name || item.experimentName || 'loading',
+		status,
+		maxTrainingTime,
+		chartData,
+		valMetric: configData?.metrics?.val_metric || 'Accuracy',
+		trainingInfo: {
+			latestEpoch: latestTrainingInfo?.step || 0,
+			accuracy: latestTrainingInfo?.score || 0,
+		},
+		elapsedTime,
+		trainProgress,
+		currentStep: getCurrentStep(status),
+		currentSettingUpStep: 0,
+	}
+}
+
+export const useTrainingPage = ({ experiments = [] }) => {
+	const [experimentCards, setExperimentCards] = useState([])
 	const [loading, setLoading] = useState(true)
-	const [maxTrainingTime, setMaxTrainingTime] = useState(null)
-	const [trainProgress, setTrainProgress] = useState(0)
-	const [currentStep, setCurrentStep] = useState(0)
-	const [currentSettingUpStep, setCurrentSettingUpStep] = useState(0)
-	const [experimentName, setExperimentName] = useState(
-		initialExperimentName || 'loading'
-	)
 
 	const settingUpProgress = [
 		{
@@ -70,19 +96,17 @@ export const useTrainingPage = ({ experimentId, initialExperimentName }) => {
 			),
 			description: (
 				<span className="text-slate-400">
-					Update system packages and apply the latest patches to ensure
-					compatibility and security.
+					Update system packages and apply the latest patches to
+					ensure compatibility and security.
 				</span>
 			),
 		},
 		{
-			title: (
-				<span className="text-[var(--text)]">Installing Tools</span>
-			),
+			title: <span className="text-[var(--text)]">Installing Tools</span>,
 			description: (
 				<span className="text-slate-400">
-					Install essential development tools such as compilers, package
-					managers, and utilities.
+					Install essential development tools such as compilers,
+					package managers, and utilities.
 				</span>
 			),
 		},
@@ -94,8 +118,8 @@ export const useTrainingPage = ({ experimentId, initialExperimentName }) => {
 			),
 			description: (
 				<span className="text-slate-400">
-					Download and configure required libraries and frameworks from the
-					requirements list.
+					Download and configure required libraries and frameworks
+					from the requirements list.
 				</span>
 			),
 		},
@@ -107,153 +131,97 @@ export const useTrainingPage = ({ experimentId, initialExperimentName }) => {
 			),
 			description: (
 				<span className="text-slate-400">
-					Uninstall or adjust conflicting packages to ensure smooth execution
-					of the environment.
+					Uninstall or adjust conflicting packages to ensure smooth
+					execution of the environment.
 				</span>
 			),
 		},
 	]
 
-	// Fake "setting up" step progression
 	useEffect(() => {
-		if (currentStep !== 1) return
-		const stepCount = settingUpProgress.length
+		if (!Array.isArray(experiments) || experiments.length === 0) {
+			setExperimentCards([])
+			setLoading(false)
+			return
+		}
 
-		const interval = setInterval(() => {
-			setCurrentSettingUpStep((prev) => {
-				if (prev < stepCount - 1) {
-					return prev + 1
-				}
-				clearInterval(interval)
-				return prev
-			})
-		}, 60000)
-
-		return () => clearInterval(interval)
-	}, [currentStep])
-
-	// Poll experiment status & config
-	useEffect(() => {
 		let timeoutId
+		let isActive = true
 
-		const fetchExperiment = async () => {
-			if (!experimentId || experimentId === 'loading') {
-				setStatus('SELECTING_INSTANCE')
-				setCurrentStep(0)
-				setLoading(false)
-				return
-			}
-
+		const fetchExperiments = async () => {
 			try {
-				const response = await getExperimentById(experimentId)
-				if (
-					response.data.name &&
-					response.data.name !== experimentName
-				) {
-					setExperimentName(response.data.name)
-				}
+				const results = await Promise.all(
+					experiments.map(async (item) => {
+						if (
+							!item?.experimentId ||
+							item.experimentId === 'loading'
+						) {
+							return buildExperimentCard(item, null, null)
+						}
 
-				const configResponse = await getExperimentConfig(experimentId)
-				const config = configResponse.data[0]
+						const [experimentResponse, configResponse] =
+							await Promise.all([
+								getExperimentById(item.experimentId),
+								getExperimentConfig(item.experimentId),
+							])
 
-				setStatus(response.data.status)
-				setCurrentStep(getCurrentStep(response.data.status))
-				setMaxTrainingTime(
-					response.data.expected_training_time
-						? response.data.expected_training_time / 60
-						: null
-				)
-				setChartData(
-					config.metrics?.training_history
-						? config.metrics.training_history
-						: []
-				)
-
-				const latestTrainingInfo =
-					config.metrics?.training_history?.[
-						config.metrics.training_history.length - 1
-					]
-				setTrainingInfo({
-					latestEpoch: latestTrainingInfo?.step || 0,
-					accuracy: latestTrainingInfo?.score || 0,
-				})
-
-				setValMetric(
-					config.metrics?.val_metric
-						? config.metrics.val_metric
-						: 'Accuracy'
-				)
-
-				const elapsed = calculateElapsedTime(response.data.start_time)
-				const progress = response.data.expected_training_time
-					? Math.min(
-							(elapsed /
-								(response.data.expected_training_time / 60)) *
-								100,
-							100
+						return buildExperimentCard(
+							item,
+							experimentResponse.data,
+							configResponse.data?.[0]
 						)
-					: 0
-
-				setElapsedTime(elapsed)
-				setTrainProgress(
-					response.data.status === 'DONE' ? 100 : progress
+					})
 				)
 
-				if (response.data.status !== 'DONE') {
-					timeoutId = setTimeout(fetchExperiment, 30000)
-				} else {
-					setLoading(false)
+				if (!isActive) return
+
+				setExperimentCards(results)
+				setLoading(false)
+
+				if (results.some((item) => item.status !== 'DONE')) {
+					timeoutId = setTimeout(fetchExperiments, 30000)
 				}
 			} catch (err) {
-				console.error('Failed to fetch experiment:', err)
+				if (!isActive) return
+				console.error('Failed to fetch experiments:', err)
 				message.error('Failed to fetch experiment status.')
-				timeoutId = setTimeout(fetchExperiment, 30000)
+				timeoutId = setTimeout(fetchExperiments, 30000)
 			}
 		}
 
-		fetchExperiment()
+		setLoading(true)
+		fetchExperiments()
 
 		return () => {
+			isActive = false
 			if (timeoutId) clearTimeout(timeoutId)
 		}
-	}, [experimentId, experimentName])
+	}, [experiments])
 
-	// Chart data with threshold reference
-	const enhancedChartData = useMemo(() => {
-		if (!maxTrainingTime || chartData?.length === 0) return chartData
+	const normalizedExperimentCards = useMemo(
+		() =>
+			experimentCards.map((item) => ({
+				...item,
+				enhancedChartData:
+					!item.maxTrainingTime || item.chartData?.length === 0
+						? item.chartData
+						: item.chartData.map((point) => ({
+								...point,
+								threshold:
+									point.time <= item.maxTrainingTime
+										? null
+										: 0,
+							})),
+			})),
+		[experimentCards]
+	)
 
-		return chartData.map((point) => ({
-			...point,
-			threshold: point.time <= maxTrainingTime ? null : 0,
-		}))
-	}, [chartData, maxTrainingTime])
+	const primaryExperiment = normalizedExperimentCards[0] || null
 
 	return {
-		// state
-		trainingInfo,
-		valMetric,
-		chartData,
-		enhancedChartData,
-		elapsedTime,
-		status,
+		experimentCards: normalizedExperimentCards,
+		primaryExperiment,
 		loading,
-		maxTrainingTime,
-		trainProgress,
-		currentStep,
-		currentSettingUpStep,
-		experimentName,
-		setExperimentName,
-		setStatus,
-		setCurrentStep,
-		setLoading,
-		setMaxTrainingTime,
-		setChartData,
-		setTrainingInfo,
-		setValMetric,
-		setElapsedTime,
-		setTrainProgress,
-		setCurrentSettingUpStep,
 		settingUpProgress,
 	}
 }
-

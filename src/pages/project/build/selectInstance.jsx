@@ -1,6 +1,6 @@
 import React from 'react'
 import { useOutletContext, useNavigate } from 'react-router-dom'
-import { Tabs, Button } from 'antd'
+import { Tabs } from 'antd'
 import { ArrowLeftOutlined } from '@ant-design/icons'
 import { AutomaticInstancePanel } from 'src/components/features/instances/AutomaticInstancePanel'
 import { ManualInstancePanel } from 'src/components/features/instances/ManualInstancePanel'
@@ -8,9 +8,14 @@ import { UserInfrastructurePanel } from 'src/components/features/instances/UserI
 import { useSelectInstance } from 'src/hooks/useSelectInstance'
 
 const SelectInstance = () => {
-	const { projectInfo, updateFields, selectedProject, trainingTag } =
-		useOutletContext()
+	const {
+		projectInfo,
+		updateFields,
+		selectedProject,
+		trainingTags = [],
+	} = useOutletContext()
 	const navigate = useNavigate()
+	const selectedTrainingTags = Array.isArray(trainingTags) ? trainingTags : []
 	const {
 		activeTab,
 		setActiveTab,
@@ -39,7 +44,7 @@ const SelectInstance = () => {
 		selectedProject,
 		updateFields,
 		navigate,
-		trainingTag,
+		trainingTags: selectedTrainingTags,
 	})
 
 	const projectId = projectInfo?.id ?? projectInfo?._id

@@ -1,127 +1,160 @@
 import React from 'react'
 import { useLocation, useOutletContext, useNavigate } from 'react-router-dom'
-import { Card, Alert, Typography, Tag, Spin, Skeleton, Button, Tooltip } from 'antd'
-import {
-	ExperimentOutlined,
-	LineChartOutlined,
-	CheckCircleOutlined,
-	DatabaseOutlined,
-	BarChartOutlined,
-	DashboardOutlined,
-	CalendarOutlined,
-	HourglassOutlined,
-	RadarChartOutlined,
-	SettingOutlined,
-	CloudDownloadOutlined,
-	LoadingOutlined,
-	CloseCircleOutlined,
-} from '@ant-design/icons'
+import { Card, Tag } from 'antd'
 import { useSpring, animated } from '@react-spring/web'
 import { PATHS } from 'src/constants/paths'
 import { useTrainingPage } from 'src/hooks/useTrainingPage'
 import { TrainingProgressSteps } from 'src/components/features/training/TrainingProgressSteps'
 import { TrainingCharts } from 'src/components/features/training/TrainingCharts'
 
-// import { calcGeneratorDuration } from 'framer-motion'
+const parseExperiments = (searchParams) => {
+	const experimentId = searchParams.get('experimentId')
+	const experimentName = searchParams.get('experimentName') || 'loading'
+	const rawExperiments = searchParams.get('experiments')
 
-const { Text, Paragraph } = Typography
+	if (rawExperiments) {
+		try {
+			const parsed = JSON.parse(rawExperiments)
+			if (Array.isArray(parsed) && parsed.length > 0) {
+				return parsed
+			}
+		} catch (error) {
+			console.warn('Failed to parse experiments query param', error)
+		}
+	}
 
-// Main Component
+	if (experimentId) {
+		return [{ experimentId, experimentName }]
+	}
+
+	return []
+}
+
 const Training = () => {
 	const { projectInfo } = useOutletContext()
 	const navigate = useNavigate()
 	const location = useLocation()
-	const searchParams = new URLSearchParams(location.search)
-	const experimentId = searchParams.get('experimentId')
-	const initialExperimentName =
-		searchParams.get('experimentName') || 'loading'
-
-	const {
-		trainingInfo,
-		valMetric,
-		chartData,
-		enhancedChartData,
-		elapsedTime,
-		status,
-		loading,
-		maxTrainingTime,
-		trainProgress,
-		currentStep,
-		currentSettingUpStep,
-		experimentName,
-		setExperimentName,
-		setStatus,
-		setCurrentStep,
-		setLoading,
-		setMaxTrainingTime,
-		setChartData,
-		setTrainingInfo,
-		setValMetric,
-		setElapsedTime,
-		setTrainProgress,
-		setCurrentSettingUpStep,
-		settingUpProgress,
-	} = useTrainingPage({ experimentId, initialExperimentName })
-
+	const experiments = React.useMemo(
+		() => parseExperiments(new URLSearchParams(location.search)),
+		[location.search]
+	)
+	const { experimentCards, primaryExperiment, loading, settingUpProgress } =
+		useTrainingPage({ experiments })
 	const metricExplain = projectInfo.metrics_explain
+	const isSingleExperiment = experimentCards.length <= 1
 
-	// Handle view results button click
-	const handleViewResults = () => {
+	const handleViewResults = (experiment) => {
 		navigate(
 			PATHS.PROJECT_TRAININGRESULT(
 				projectInfo.id,
-				experimentId,
-				experimentName
+				experiment.experimentId,
+				experiment.experimentName
 			)
 		)
 	}
 
-
 	return (
-		<>
-			<div className="min-h-0 bg-[var(--surface)] font-poppins">
-				<div className="relative z-10 w-full px-3 py-6 sm:px-4 lg:px-6 lg:py-8">
-					<animated.div
-						style={useSpring({
-							from: { opacity: 0, transform: 'translateY(20px)' },
-							to: { opacity: 1, transform: 'translateY(0)' },
-							config: { tension: 280, friction: 20 },
-						})}
-					>
-						<div className="flex w-full flex-col gap-6">
-							<TrainingProgressSteps
-								currentStep={currentStep}
-								status={status}
-								experimentName={experimentName}
-								maxTrainingTime={maxTrainingTime}
-								elapsedTime={elapsedTime}
-								onViewResults={handleViewResults}
-								currentSettingUpStep={currentSettingUpStep}
-								settingUpProgress={settingUpProgress}
-							/>
-							{currentStep >= 3 && (
+		<div className="min-h-0 bg-[var(--surface)] font-poppins">
+			<div className="relative z-10 w-full px-3 py-6 sm:px-4 lg:px-6 lg:py-8">
+				<animated.div
+					style={useSpring({
+						from: { opacity: 0, transform: 'translateY(20px)' },
+						to: { opacity: 1, transform: 'translateY(0)' },
+						config: { tension: 280, friction: 20 },
+					})}
+				>
+					<div className="flex w-full flex-col gap-6">
+						{experimentCards.map((experiment) => (
+							<Card
+								key={`${experiment.tag || 'default'}-${experiment.experimentId}`}
+								className="border border-[var(--border)] rounded-xl backdrop-blur-md shadow-lg bg-[var(--card-gradient)] font-poppins"
+								title={
+									<div className="flex items-center justify-between gap-3">
+										<span className="text-lg font-semibold text-[var(--text)]">
+											{experiment.experimentName ===
+											'loading'
+												? `Preparing ${String(
+														experiment.tag ||
+															'training'
+													).toUpperCase()}`
+												: experiment.experimentName}
+										</span>
+										{experiment.tag && (
+											<Tag
+												color="blue"
+												className="uppercase"
+											>
+												{experiment.tag}
+											</Tag>
+										)}
+									</div>
+								}
+							>
+								<TrainingProgressSteps
+									currentStep={experiment.currentStep}
+									status={experiment.status}
+									experimentName={experiment.experimentName}
+									maxTrainingTime={experiment.maxTrainingTime}
+									elapsedTime={experiment.elapsedTime}
+									onViewResults={() =>
+										handleViewResults(experiment)
+									}
+									currentSettingUpStep={
+										experiment.currentSettingUpStep
+									}
+									settingUpProgress={settingUpProgress}
+								/>
+							</Card>
+						))}
+
+						{loading && experimentCards.length === 0 && (
+							<Card className="border border-[var(--border)] rounded-xl bg-[var(--card-gradient)]">
+								<p className="m-0 text-[var(--secondary-text)]">
+									Preparing training status...
+								</p>
+							</Card>
+						)}
+
+						{isSingleExperiment &&
+							primaryExperiment &&
+							primaryExperiment.currentStep >= 3 && (
 								<TrainingCharts
-									currentStep={currentStep}
-									valMetric={valMetric}
-									maxTrainingTime={maxTrainingTime}
-									enhancedChartData={enhancedChartData}
+									currentStep={primaryExperiment.currentStep}
+									valMetric={primaryExperiment.valMetric}
+									maxTrainingTime={
+										primaryExperiment.maxTrainingTime
+									}
+									enhancedChartData={
+										primaryExperiment.enhancedChartData
+									}
 									loading={loading}
-									hasChartData={chartData?.length > 0}
-									experimentId={experimentId}
-									experimentName={experimentName}
-									trainingInfo={trainingInfo}
-									elapsedTime={elapsedTime}
-									status={status}
-									onViewResults={handleViewResults}
-									trainProgress={trainProgress}
+									hasChartData={
+										primaryExperiment.chartData?.length > 0
+									}
+									experimentId={
+										primaryExperiment.experimentId
+									}
+									experimentName={
+										primaryExperiment.experimentName
+									}
+									trainingInfo={
+										primaryExperiment.trainingInfo
+									}
+									elapsedTime={primaryExperiment.elapsedTime}
+									status={primaryExperiment.status}
+									onViewResults={() =>
+										handleViewResults(primaryExperiment)
+									}
+									trainProgress={
+										primaryExperiment.trainProgress
+									}
 									metricExplain={metricExplain}
 								/>
 							)}
-						</div>
-					</animated.div>
-				</div>
+					</div>
+				</animated.div>
 			</div>
-		</>
+		</div>
 	)
 }
 

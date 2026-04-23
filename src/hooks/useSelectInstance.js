@@ -2,7 +2,6 @@ import * as React from 'react'
 import { message } from 'antd'
 import { trainCloudModel } from 'src/api/mlService'
 import { createDownZipPU } from 'src/api/dataset'
-import { createInstance, deleteInstance } from 'src/api/resource'
 import {
 	SERVICES,
 	GPU_LEVELS,
@@ -16,8 +15,12 @@ export const useSelectInstance = ({
 	selectedProject,
 	updateFields,
 	navigate,
-	trainingTag = 'astral',
+	trainingTags = ['astral'],
 }) => {
+	const selectedTrainingTags =
+		Array.isArray(trainingTags) && trainingTags.length > 0
+			? trainingTags
+			: ['astral']
 	const [activeTab, setActiveTab] = useState('automatic')
 	const [isLoading, setIsLoading] = useState(false)
 	const [isCreatingInstance, setIsCreatingInstance] = useState(false)
@@ -57,14 +60,12 @@ export const useSelectInstance = ({
 		message.success('SSH Key copied to clipboard')
 	}
 
-	const handleInfrastructureChange =
-		(field) =>
-		(value) => {
-			setInfrastructureData((prev) => ({
-				...prev,
-				[field]: value,
-			}))
-		}
+	const handleInfrastructureChange = (field) => (value) => {
+		setInfrastructureData((prev) => ({
+			...prev,
+			[field]: value,
+		}))
+	}
 
 	const handleTrainingTimeChange = (value) => {
 		if (value >= 0 && value <= 24) {
@@ -93,40 +94,34 @@ export const useSelectInstance = ({
 		}
 	}
 
-	const handleManualConfigChange =
-		(field) =>
-		(value) => {
-			setFormData((prev) => {
-				const next = {
-					...prev,
-					[field]: value,
+	const handleManualConfigChange = (field) => (value) => {
+		setFormData((prev) => {
+			const next = {
+				...prev,
+				[field]: value,
+			}
+
+			if (field === 'gpuName' || field === 'trainingTime') {
+				const gpuName = field === 'gpuName' ? value : prev.gpuName
+				const trainingTime =
+					field === 'trainingTime' ? value : prev.trainingTime
+				const selectedGPU = GPU_LEVELS.find(
+					(gpu) => gpu.name === gpuName
+				)
+
+				if (selectedGPU && trainingTime) {
+					next.budget = (selectedGPU.cost * trainingTime).toFixed(2)
 				}
+			}
 
-				if (field === 'gpuName' || field === 'trainingTime') {
-					const gpuName =
-						field === 'gpuName' ? value : prev.gpuName
-					const trainingTime =
-						field === 'trainingTime' ? value : prev.trainingTime
-					const selectedGPU = GPU_LEVELS.find(
-						(gpu) => gpu.name === gpuName
-					)
+			return next
+		})
+	}
 
-					if (selectedGPU && trainingTime) {
-						next.budget = (
-							selectedGPU.cost * trainingTime
-						).toFixed(2)
-					}
-				}
-
-				return next
-			})
-		}
-
-	// Train model
-	const trainModel = async () => {
-		// For instance
-		let instanceSize = formData.instanceSize
+	const getAutomaticGpuConfig = () => {
+		const instanceSize = formData.instanceSize
 		let selectedGPU
+
 		switch (instanceSize) {
 			case 'Weak':
 				selectedGPU = GPU_LEVELS.find((gpu) => gpu.gpuNumber === 1)
@@ -147,6 +142,13 @@ export const useSelectInstance = ({
 				selectedGPU = GPU_LEVELS[0]
 				break
 		}
+
+		return selectedGPU
+	}
+
+	const buildSharedTrainingPayload = async () => {
+		const selectedGPU = getAutomaticGpuConfig()
+
 		await new Promise((resolve) => setTimeout(resolve, 1500))
 		setFormData((prev) => ({
 			...prev,
@@ -157,14 +159,11 @@ export const useSelectInstance = ({
 			budget: (selectedGPU.cost * formData.trainingTime).toFixed(2),
 			cost: selectedGPU.cost,
 		}))
-		const time = formData.trainingTime
-		const cost = formData.cost * formData.trainingTime
-		console.log('Cost: ', cost)
 
 		const presignUrl = await createDownZipPU(selectedProject.dataset_id)
-		const payload = {
-			cost: cost,
-			trainingTime: time * 3600,
+		return {
+			cost: selectedGPU.cost * formData.trainingTime,
+			trainingTime: formData.trainingTime * 3600,
 			presets: 'medium_quality',
 			trainDataId: selectedProject.dataset_id,
 			datasetUrl: presignUrl.data,
@@ -174,17 +173,60 @@ export const useSelectInstance = ({
 				: 'MULTICLASS',
 			framework: 'autogluon',
 			datasetMetadata: selectedProject.meta_data,
-			tag: trainingTag || 'astral',
 		}
-		console.log('Train payload: ', payload)
-		const res1 = await trainCloudModel(projectInfo.id, payload)
-		return res1.data
+	}
+
+	const launchAutomaticTrainingRuns = async () => {
+		const sharedPayload = await buildSharedTrainingPayload()
+
+		// TODO: replace this shared automatic-config fan-out with per-method instance configuration.
+		const pendingRuns = selectedTrainingTags.map(async (tag) => {
+			const response = await trainCloudModel(projectInfo.id, {
+				...sharedPayload,
+				tag,
+			})
+			return { tag, ...response.data }
+		})
+
+		const results = await Promise.allSettled(pendingRuns)
+
+		return results.reduce(
+			(acc, result, index) => {
+				if (result.status === 'fulfilled') {
+					acc.successes.push(result.value)
+				} else {
+					acc.failures.push({
+						tag: selectedTrainingTags[index],
+						error: result.reason,
+					})
+				}
+				return acc
+			},
+			{ successes: [], failures: [] }
+		)
+	}
+
+	const buildTrainingQuery = (experiments) => {
+		const params = new URLSearchParams()
+		params.set('experiments', JSON.stringify(experiments))
+
+		if (experiments.length === 1) {
+			params.set('experimentId', experiments[0].experimentId)
+			params.set('experimentName', experiments[0].experimentName)
+		}
+
+		return params.toString()
 	}
 
 	// Find instance and train model sequentially
 	const handleStartTraining = async () => {
 		if (!formData.trainingTime) {
 			message.error('Please input training time')
+			return
+		}
+
+		if (selectedTrainingTags.length === 0) {
+			message.error('Please choose at least one training method.')
 			return
 		}
 
@@ -196,19 +238,39 @@ export const useSelectInstance = ({
 		}
 		setIsProcessing(true)
 
+		const loadingExperiments = selectedTrainingTags.map((tag) => ({
+			tag,
+			experimentId: 'loading',
+			experimentName: 'loading',
+		}))
+
 		navigate(
-			`/app/project/${projectInfo.id}/build/training?experimentName=loading&experimentId=loading`,
+			`/app/project/${projectInfo.id}/build/training?${buildTrainingQuery(loadingExperiments)}`,
 			{ replace: true }
 		)
 
 		try {
-			const trainResult = await trainModel()
+			const launchResult = await launchAutomaticTrainingRuns()
 
-			if (
-				trainResult &&
-				trainResult.experimentName &&
-				trainResult.experimentId
-			) {
+			if (launchResult.failures.length > 0) {
+				message.warning(
+					`Some runs failed to start: ${launchResult.failures
+						.map((item) => String(item.tag).toUpperCase())
+						.join(', ')}`
+				)
+			}
+
+			const experiments = launchResult.successes
+				.filter(
+					(item) => item && item.experimentName && item.experimentId
+				)
+				.map((item) => ({
+					tag: item.tag,
+					experimentId: item.experimentId,
+					experimentName: item.experimentName,
+				}))
+
+			if (experiments.length > 0) {
 				const pid = projectInfo.id ?? projectInfo._id
 				if (pid) {
 					try {
@@ -217,8 +279,9 @@ export const useSelectInstance = ({
 						/* ignore */
 					}
 				}
+
 				navigate(
-					`/app/project/${projectInfo.id}/build/training?experimentName=${trainResult.experimentName}&experimentId=${trainResult.experimentId}`,
+					`/app/project/${projectInfo.id}/build/training?${buildTrainingQuery(experiments)}`,
 					{ replace: true }
 				)
 			} else {
@@ -266,4 +329,3 @@ export const useSelectInstance = ({
 		handleStartTraining,
 	}
 }
-

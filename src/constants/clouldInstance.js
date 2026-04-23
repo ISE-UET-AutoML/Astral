@@ -1,5 +1,15 @@
 import React from 'react'
-import { Card, Space, Typography, Badge, Row, Col, Divider, Collapse, Button } from 'antd'
+import {
+	Card,
+	Space,
+	Typography,
+	Badge,
+	Row,
+	Col,
+	Divider,
+	Collapse,
+	Button,
+} from 'antd'
 import {
 	ClockCircleOutlined,
 	CloudServerOutlined,
@@ -10,11 +20,15 @@ import {
 } from '@ant-design/icons'
 
 const { Title, Text } = Typography
-const { Panel } = Collapse
-/** Sent as `tag` on generic-cloud-training: balance → astral, max → iml */
+export const TRAINING_METHODS = [
+	{ key: 'astral', tag: 'astral', label: 'Astral' },
+	{ key: 'iml', tag: 'iml', label: 'iML' },
+]
+
+/** Internal UI keys mapped to the training tags sent on generic-cloud-training. */
 export const TRAINING_MODE_TAGS = {
-	balance: 'astral',
-	max: 'iml',
+	astral: 'astral',
+	iml: 'iml',
 }
 
 export const SERVICES = [
@@ -153,63 +167,91 @@ export const InstanceSizeCard = ({ size, details, selected, onClick }) => (
 				: 'border border-gray-200 dark:border-white/20 bg-[var(--card-gradient)] hover:border-blue-300 hover:bg-blue-50/50 dark:hover:border-blue-700 dark:hover:bg-blue-950/30 shadow-sm'
 		}`}
 	>
-	<Card
-		hoverable={false}
-		className="!border-0 !bg-transparent !shadow-none !rounded-xl pointer-events-none"
-		bodyStyle={{ padding: '16px 24px' }}
-		styles={{ body: { background: 'transparent' } }}
-	>
-		<div className="flex flex-col">
-			<div className="flex items-center justify-between">
-				<Title
-					level={5}
-				className={`!m-0 !font-semibold flex items-center gap-2 ${
-					selected ? '!text-blue-600 dark:!text-blue-400' : '!text-[var(--text)]'
-				}`}
+		<Card
+			hoverable={false}
+			className="!border-0 !bg-transparent !shadow-none !rounded-xl pointer-events-none"
+			bodyStyle={{ padding: '16px 24px' }}
+			styles={{ body: { background: 'transparent' } }}
+		>
+			<div className="flex flex-col">
+				<div className="flex items-center justify-between">
+					<Title
+						level={5}
+						className={`!m-0 !font-semibold flex items-center gap-2 ${
+							selected
+								? '!text-blue-600 dark:!text-blue-400'
+								: '!text-[var(--text)]'
+						}`}
+					>
+						{details.title}
+					</Title>
+					{selected && (
+						<div className="h-2 w-2 rounded-full bg-blue-400 dark:bg-blue-500 shadow-[0_0_6px_rgba(59,130,246,0.4)]"></div>
+					)}
+				</div>
+
+				<div
+					className={`grid grid-cols-2 gap-x-4 gap-y-3 transition-all duration-300 ease-in-out overflow-hidden ${
+						selected
+							? 'max-h-[200px] opacity-100 mt-4'
+							: 'max-h-0 opacity-0 mt-0'
+					}`}
 				>
-					{details.title}
-				</Title>
-				{selected && (
-					<div className="h-2 w-2 rounded-full bg-blue-400 dark:bg-blue-500 shadow-[0_0_6px_rgba(59,130,246,0.4)]"></div>
-				)}
+					<div className="flex items-start gap-2">
+						<span className="text-blue-400 dark:text-blue-500 mt-0.5">
+							🎯
+						</span>
+						<div className="flex flex-col">
+							<span className="text-xs text-blue-600/80 dark:text-blue-400/80 font-medium uppercase tracking-wider">
+								Suitable for
+							</span>
+							<span className="text-sm text-blue-900/90 dark:text-blue-100">
+								{details.suitable}
+							</span>
+						</div>
+					</div>
+					<div className="flex items-start gap-2">
+						<span className="text-blue-400 dark:text-blue-500 mt-0.5">
+							⚡
+						</span>
+						<div className="flex flex-col">
+							<span className="text-xs text-blue-600/80 dark:text-blue-400/80 font-medium uppercase tracking-wider">
+								GPU Range
+							</span>
+							<span className="text-sm text-blue-900/90 dark:text-blue-100 font-medium">
+								{details.gpuRange}
+							</span>
+						</div>
+					</div>
+					<div className="flex items-start gap-2">
+						<span className="text-blue-400 dark:text-blue-500 mt-0.5">
+							🧠
+						</span>
+						<div className="flex flex-col">
+							<span className="text-xs text-blue-600/80 dark:text-blue-400/80 font-medium uppercase tracking-wider">
+								Memory
+							</span>
+							<span className="text-sm text-blue-900/90 dark:text-blue-100">
+								{details.memory}
+							</span>
+						</div>
+					</div>
+					<div className="flex items-start gap-2">
+						<span className="text-blue-400 dark:text-blue-500 mt-0.5">
+							💡
+						</span>
+						<div className="flex flex-col">
+							<span className="text-xs text-blue-600/80 dark:text-blue-400/80 font-medium uppercase tracking-wider">
+								Recommended
+							</span>
+							<span className="text-sm text-blue-900/90 dark:text-blue-100">
+								{details.recommended}
+							</span>
+						</div>
+					</div>
+				</div>
 			</div>
-			
-			<div 
-				className={`grid grid-cols-2 gap-x-4 gap-y-3 transition-all duration-300 ease-in-out overflow-hidden ${
-					selected ? 'max-h-[200px] opacity-100 mt-4' : 'max-h-0 opacity-0 mt-0'
-				}`}
-			>
-				<div className="flex items-start gap-2">
-					<span className="text-blue-400 dark:text-blue-500 mt-0.5">🎯</span>
-					<div className="flex flex-col">
-						<span className="text-xs text-blue-600/80 dark:text-blue-400/80 font-medium uppercase tracking-wider">Suitable for</span>
-						<span className="text-sm text-blue-900/90 dark:text-blue-100">{details.suitable}</span>
-					</div>
-				</div>
-				<div className="flex items-start gap-2">
-					<span className="text-blue-400 dark:text-blue-500 mt-0.5">⚡</span>
-					<div className="flex flex-col">
-						<span className="text-xs text-blue-600/80 dark:text-blue-400/80 font-medium uppercase tracking-wider">GPU Range</span>
-						<span className="text-sm text-blue-900/90 dark:text-blue-100 font-medium">{details.gpuRange}</span>
-					</div>
-				</div>
-				<div className="flex items-start gap-2">
-					<span className="text-blue-400 dark:text-blue-500 mt-0.5">🧠</span>
-					<div className="flex flex-col">
-						<span className="text-xs text-blue-600/80 dark:text-blue-400/80 font-medium uppercase tracking-wider">Memory</span>
-						<span className="text-sm text-blue-900/90 dark:text-blue-100">{details.memory}</span>
-					</div>
-				</div>
-				<div className="flex items-start gap-2">
-					<span className="text-blue-400 dark:text-blue-500 mt-0.5">💡</span>
-					<div className="flex flex-col">
-						<span className="text-xs text-blue-600/80 dark:text-blue-400/80 font-medium uppercase tracking-wider">Recommended</span>
-						<span className="text-sm text-blue-900/90 dark:text-blue-100">{details.recommended}</span>
-					</div>
-				</div>
-			</div>
-		</div>
-	</Card>
+		</Card>
 	</div>
 )
 
@@ -225,14 +267,14 @@ export const CostEstimator = ({
 
 	return (
 		<Card
-			title={<span className="font-semibold text-[var(--text)]">Cost Estimation</span>}
+			title={
+				<span className="font-semibold text-[var(--text)]">
+					Cost Estimation
+				</span>
+			}
 			className="rounded-2xl !border-0 bg-[var(--hover-bg)] shadow-sm"
 		>
-			<Space
-				direction="vertical"
-				size="large"
-				className="w-full"
-			>
+			<Space direction="vertical" size="large" className="w-full">
 				<Row justify="space-between">
 					<Col>
 						<Text className="text-[var(--secondary-text)]">
@@ -265,9 +307,7 @@ export const CostEstimator = ({
 						</Text>
 					</Col>
 					<Col>
-						<Text
-							className="text-lg font-semibold text-[var(--accent-text)]"
-						>
+						<Text className="text-lg font-semibold text-[var(--accent-text)]">
 							${totalCost.toFixed(2)}
 						</Text>
 					</Col>
@@ -282,9 +322,26 @@ export const CostEstimator = ({
 						>
 							{isProcessing ? (
 								<span className="inline-flex items-center justify-center gap-2">
-									<svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
-										<circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-										<path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+									<svg
+										className="animate-spin h-4 w-4"
+										xmlns="http://www.w3.org/2000/svg"
+										fill="none"
+										viewBox="0 0 24 24"
+										aria-hidden="true"
+									>
+										<circle
+											className="opacity-25"
+											cx="12"
+											cy="12"
+											r="10"
+											stroke="currentColor"
+											strokeWidth="4"
+										/>
+										<path
+											className="opacity-75"
+											fill="currentColor"
+											d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+										/>
 									</svg>
 									Finding instance...
 								</span>
@@ -310,54 +367,34 @@ export const InstanceInfo = ({ formData }) => {
 				</Title>
 			}
 			extra={
-				<SafetyCertificateOutlined
-					className="text-2xl text-[var(--accent-text)]"
-				/>
+				<SafetyCertificateOutlined className="text-2xl text-[var(--accent-text)]" />
 			}
 			className="rounded-2xl !border-0 bg-[var(--card-gradient)] backdrop-blur-2xl shadow-sm"
 		>
-			<Space
-				direction="vertical"
-				size="large"
-				className="w-full"
-			>
+			<Space direction="vertical" size="large" className="w-full">
 				<div className="flex w-full gap-4">
 					<div className="flex-1 min-w-0">
 						<Card
 							size="small"
 							title={
-								<span
-									className="font-semibold text-[var(--text)]"
-								>
+								<span className="font-semibold text-[var(--text)]">
 									Hardware Specs
 								</span>
 							}
 							className="rounded-xl !border-0 bg-[var(--hover-bg)] h-full"
 						>
 							<Space direction="vertical">
-								<Text
-									className="text-[var(--secondary-text)]"
-								>
-									<ThunderboltOutlined
-										className="text-[var(--accent-text)]"
-									/>{' '}
+								<Text className="text-[var(--secondary-text)]">
+									<ThunderboltOutlined className="text-[var(--accent-text)]" />{' '}
 									GPUs: {formData.gpuNumber}x{' '}
 									{formData.gpuName}
 								</Text>
-								<Text
-									className="text-[var(--secondary-text)]"
-								>
-									<HddOutlined
-										className="text-[var(--accent-text)]"
-									/>{' '}
+								<Text className="text-[var(--secondary-text)]">
+									<HddOutlined className="text-[var(--accent-text)]" />{' '}
 									Storage: {formData.disk} GB
 								</Text>
-								<Text
-									className="text-[var(--secondary-text)]"
-								>
-									<CloudServerOutlined
-										className="text-[var(--accent-text)]"
-									/>{' '}
+								<Text className="text-[var(--secondary-text)]">
+									<CloudServerOutlined className="text-[var(--accent-text)]" />{' '}
 									Provider: {formData.service}
 								</Text>
 							</Space>
@@ -367,29 +404,19 @@ export const InstanceInfo = ({ formData }) => {
 						<Card
 							size="small"
 							title={
-								<span
-									className="font-semibold text-[var(--text)]"
-								>
+								<span className="font-semibold text-[var(--text)]">
 									Training Details
 								</span>
 							}
 							className="rounded-xl !border-0 bg-[var(--hover-bg)] h-full"
 						>
 							<Space direction="vertical">
-								<Text
-									className="text-[var(--secondary-text)]"
-								>
-									<ClockCircleOutlined
-										className="text-[var(--accent-text)]"
-									/>{' '}
+								<Text className="text-[var(--secondary-text)]">
+									<ClockCircleOutlined className="text-[var(--accent-text)]" />{' '}
 									Duration: {formData.trainingTime} hours
 								</Text>
-								<Text
-									className="text-[var(--secondary-text)]"
-								>
-									<DollarOutlined
-										className="text-[var(--accent-text)]"
-									/>{' '}
+								<Text className="text-[var(--secondary-text)]">
+									<DollarOutlined className="text-[var(--accent-text)]" />{' '}
 									Cost: ${formData.cost}
 									/hour
 								</Text>
