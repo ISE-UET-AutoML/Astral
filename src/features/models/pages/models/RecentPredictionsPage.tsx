@@ -1,0 +1,552 @@
+import React, { useEffect, useState, useRef, useCallback } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+import { useTheme } from 'src/theme/ThemeProvider'
+import { Button as UiButton } from 'src/components/ui/button'
+import { Card as UiCard, CardContent as UiCardContent, CardHeader as UiCardHeader, CardTitle as UiCardTitle } from 'src/components/ui/card'
+import { Spinner as UiSpinner } from 'src/components/ui/spinner'
+import { Tooltip as UiTooltip, TooltipContent as UiTooltipContent, TooltipProvider as UiTooltipProvider, TooltipTrigger as UiTooltipTrigger } from 'src/components/ui/tooltip'
+import { toast } from 'sonner'
+import { Download as DownloadOutlined, Settings as SettingOutlined, ArrowLeft as ArrowLeftOutlined, Rocket as RocketOutlined } from 'lucide-react'
+import { getProjectById } from 'src/features/projects/api/project'
+import { getModelById } from 'src/features/models/api/model'
+import { getLbProjByTask, startExport, getExportStatus } from 'src/features/labels/api/labelProject'
+import * as dataServiceAPI from 'src/features/datasets/api/dataset'
+import { formatDistanceToNow, format } from 'date-fns'
+import axios from 'axios'
+import Papa from 'papaparse'
+import ImageHistoryViewer from 'src/features/models/components/ImageHistoryViewer'
+import TextHistoryViewer from 'src/features/models/components/TextHistoryViewer'
+import MultilabelHistoryViewer from 'src/features/models/components/MultilabelHistoryViewer'
+const cx = (...classes) => classes.filter(Boolean).join(' ')
+const getToastContent = (value) => typeof value === 'object' && value?.content ? value.content : value
+const message = { success: (value) => toast.success(getToastContent(value)), error: (value) => toast.error(getToastContent(value)), warning: (value) => toast.warning(getToastContent(value)), info: (value) => toast.info(getToastContent(value)), loading: (value) => toast.loading(getToastContent(value)) }
+const Spin = ({ tip, children, className = '', ...props }) => (<div className={cx('inline-flex items-center gap-2', className)} {...props}><UiSpinner />{tip && <span>{tip}</span>}{children}</div>)
+const Button = ({ children, icon, loading, disabled, htmlType, type, className = '', ...props }) => (<UiButton type={htmlType || 'button'} disabled={disabled || loading} className={className} {...props}>{loading && <UiSpinner className="mr-2" />}{icon && <span className="inline-flex">{icon}</span>}{children}</UiButton>)
+const Card = ({ title, children, className = '', style, ...props }) => (<UiCard className={className} style={style} {...props}>{title && <UiCardHeader><UiCardTitle>{title}</UiCardTitle></UiCardHeader>}<UiCardContent>{children}</UiCardContent></UiCard>)
+Card.Meta = ({ title, description, avatar, className = '' }) => (<div className={cx('flex items-start gap-3', className)}>{avatar}<div>{title && <div className="font-medium">{title}</div>}{description && <div className="text-sm text-muted-foreground">{description}</div>}</div></div>)
+const Tooltip = ({ title, children, ...props }) => (<UiTooltipProvider><UiTooltip><UiTooltipTrigger asChild>{children || <span />}</UiTooltipTrigger>{title && <UiTooltipContent {...props}>{title}</UiTooltipContent>}</UiTooltip></UiTooltipProvider>)
+const getCellValue = (record, dataIndex) => Array.isArray(dataIndex) ? dataIndex.reduce((value, key) => value?.[key], record) : record?.[dataIndex]
+const Table = ({ columns = [], dataSource = [], rowKey = 'id', rowSelection, onRow, className = '', ...props }) => <div className={cx('w-full overflow-x-auto', className)}><table className="w-full border-collapse text-sm" {...props}><thead><tr>{rowSelection && <th className="border-b p-2" />}{columns.map((column, index) => <th key={column.key || column.dataIndex || index} className="border-b p-2 text-left font-medium">{column.title}</th>)}</tr></thead><tbody>{dataSource.map((record, rowIndex) => { const key = typeof rowKey === 'function' ? rowKey(record) : record?.[rowKey] ?? rowIndex; const rowProps = onRow?.(record, rowIndex) || {}; return <tr key={key} className="hover:bg-muted/50" {...rowProps}>{rowSelection && <td className="border-b p-2"><input type={rowSelection.type === 'radio' ? 'radio' : 'checkbox'} checked={rowSelection.selectedRowKeys?.includes(key)} onChange={() => rowSelection.onChange?.([key], [record])} /></td>}{columns.map((column, colIndex) => { const value = getCellValue(record, column.dataIndex); return <td key={column.key || column.dataIndex || colIndex} className="border-b p-2">{column.render ? column.render(value, record, rowIndex) : value}</td> })}</tr> })}</tbody></table></div>
+const Modal = ({ open, visible, onCancel, onClose, title, footer, children, width, className = '', centered, ...props }) => { const isOpen = open ?? visible; if (!isOpen) return null; return <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={onCancel || onClose}><div className={cx('max-h-[90vh] overflow-auto rounded-xl border bg-background p-4 shadow-xl', className)} style={{ width: typeof width === 'number' ? width : width || undefined, ...props.style }} onClick={(event) => event.stopPropagation()}>{title && <div className="mb-4 text-lg font-semibold">{title}</div>}{children}{footer !== null && footer !== undefined && <div className="mt-4 flex justify-end gap-2">{footer}</div>}</div></div> }
+// BackgroundShapes removed
+
+export default function RecentPredictionsPage() {
+    const { theme } = useTheme()
+    const navigate = useNavigate()
+    const { id, modelId } = useParams()
+    const [recentPredictions, setRecentPredictions] = useState([])
+    const [projectInfo, setProjectInfo] = useState({})
+    const [model, setModel] = useState(null)
+    const [isLoadingPredictions, setIsLoadingPredictions] = useState(false)
+    const [isRetraining, setIsRetraining] = useState(false)
+    const [selectedRowKeys, setSelectedRowKeys] = useState([])
+    const [selectedPredictions, setSelectedPredictions] = useState([])
+    const [isDatasetModalVisible, setIsDatasetModalVisible] = useState(false)
+    const [availableDatasets, setAvailableDatasets] = useState([])
+    const [isLoadingDatasets, setIsLoadingDatasets] = useState(false)
+    const [selectedDatasetKeys, setSelectedDatasetKeys] = useState([])
+
+    // Modal states
+    const [isModalVisible, setIsModalVisible] = useState(false)
+    const [isJsonLoading, setIsJsonLoading] = useState(false)
+    const [selectedPredictionContent, setSelectedPredictionContent] = useState(null)
+
+    const simpleDataModalRef = useRef(null)
+    const multilabelModalRef = useRef(null)
+
+    const fetchModelData = useCallback(async () => {
+        if (!modelId) return;
+        try {
+            const res = await getModelById(modelId)
+            setModel(res.data)
+        } catch (error) {
+            console.error("Error fetching model data:", error)
+        }
+    }, [modelId])
+
+    const fetchProjectData = useCallback(async () => {
+        if (!id) return;
+        try {
+            const { data } = await getProjectById(id)
+            setProjectInfo(data.project)
+        } catch (error) {
+            console.error("Error fetching project data:", error)
+        }
+    }, [id])
+
+    useEffect(() => {
+        fetchModelData()
+        fetchProjectData()
+    }, [fetchModelData, fetchProjectData])
+
+    useEffect(() => {
+        if (!model?.id) return
+
+        const fetchRecentPredictions = async () => {
+            setIsLoadingPredictions(true)
+            try {
+                const response = await dataServiceAPI.getAllDeployData(model.id)
+                if (response.status === 200) {
+                    setRecentPredictions(response.data.deploy_data)
+                }
+            } catch (error) {
+                console.error("Can't fetch recent predictions:", error)
+            } finally {
+                setIsLoadingPredictions(false)
+            }
+        }
+
+        fetchRecentPredictions()
+    }, [model])
+
+    const handleViewPrediction = async (prediction) => {
+        setIsModalVisible(true)
+        setIsJsonLoading(true)
+        setSelectedPredictionContent(null)
+
+        try {
+            const s3_key = prediction.predict_data_url
+            const downloadJsonContentPresignedUrl =
+                await dataServiceAPI.createDownPresignedUrls(s3_key)
+
+            if (!downloadJsonContentPresignedUrl) {
+                throw new Error('Không nhận được Presigned URL.')
+            }
+
+            const predictUrl = downloadJsonContentPresignedUrl.data.url
+            // console.logs("Predict URL:", predictUrl)
+
+            const jsonResponse = await axios.get(predictUrl)
+            const predictContent = jsonResponse.data
+
+            try {
+                const feedback_s3_key = prediction.predict_data_url.split("predict.")[0] + "feedback.json";
+                const downloadFeedbackJsonContentPresignedUrl = await dataServiceAPI.createDownPresignedUrls(feedback_s3_key);
+
+                const feedbackUrl = downloadFeedbackJsonContentPresignedUrl.data.url;
+                const feedbackJsonResponse = await axios.get(feedbackUrl);
+                console.log("Feedback Content:", feedbackJsonResponse.data)
+            } catch (error) {
+                console.warn("Could not load feedback data, it might not exist yet.", error.message);
+            }
+
+            if (projectInfo.task_type.includes('IMAGE')) {
+                const imageUrlResponse =
+                    await dataServiceAPI.getPresignedUrlsForImages(
+                        prediction.data_url
+                    )
+                const imageUrl = imageUrlResponse.data.data
+                const combinedImageData = predictContent.map((item, index) => ({
+                    ...item,
+                    imageUrl: imageUrl[index],
+                }))
+                setSelectedPredictionContent(combinedImageData)
+            } else {
+                const dataUrl = prediction.data_url + prediction.file_name
+                const fileUrl =
+                    await dataServiceAPI.createDownPresignedUrls(dataUrl)
+                const fileDownloadUrl = fileUrl.data.url
+                const fileContentResponse = await axios.get(fileDownloadUrl)
+                const fileContent = fileContentResponse.data
+                const parsedCsv = Papa.parse(fileContent, { header: true })
+
+                const inputData = parsedCsv.data.filter((row) =>
+                    Object.values(row).some(
+                        (value) => value !== '' && value !== null
+                    )
+                )
+                const combinedData = inputData.map((row, index) => ({
+                    ...row,
+                    ...(predictContent[index] || {}),
+                }))
+                setSelectedPredictionContent(combinedData)
+            }
+        } catch (error) {
+            console.error('Error fetching prediction content:', error)
+            message.error(
+                'Failed to load prediction content. Please try again.'
+            )
+            setSelectedPredictionContent({
+                error: 'Download failed.',
+                details: error.message,
+            })
+        } finally {
+            setIsJsonLoading(false)
+        }
+    }
+
+    const handleCloseModal = () => {
+        setIsModalVisible(false)
+        setSelectedPredictionContent(null)
+    }
+
+    const handleDownloadHistory = () => {
+        if (projectInfo.task_type.includes('MULTILABEL')) {
+            multilabelModalRef.current?.downloadCsv()
+        } else {
+            simpleDataModalRef.current?.downloadCsv()
+        }
+    }
+
+    const onSelectChange = (newSelectedRowKeys, newSelectedRows) => {
+        setSelectedRowKeys(newSelectedRowKeys)
+        setSelectedPredictions(newSelectedRows)
+    }
+
+    const rowSelection = {
+        selectedRowKeys,
+        onChange: onSelectChange,
+    }
+
+    const datasetRowSelection = {
+        type: 'radio',
+        selectedRowKeys: selectedDatasetKeys,
+        onChange: (keys) => setSelectedDatasetKeys(keys),
+    }
+
+    const handleRetrain = async () => {
+        if (selectedRowKeys.length === 0) {
+            message.warning("Please select at least one prediction history to retrain.");
+            return;
+        }
+
+        setIsDatasetModalVisible(true);
+        setIsLoadingDatasets(true);
+        setSelectedDatasetKeys([]); // Reset selection
+
+        try {
+            const lbProjectsRes = await getLbProjByTask(projectInfo.task_type)
+            setAvailableDatasets(lbProjectsRes.data || [])
+        } catch (error) {
+            console.error("Failed to fetch datasets:", error);
+            message.error("Failed to load available datasets.");
+        } finally {
+            setIsLoadingDatasets(false);
+        }
+    }
+
+    const pollExportStatus = (taskId) => {
+        return new Promise((resolve, reject) => {
+            const intervalId = setInterval(async () => {
+                try {
+                    const response = await getExportStatus(taskId)
+                    // Kiểm tra cấu trúc response dựa trên UploadData.jsx
+                    const { status, result, error } = response.data
+
+                    console.log(`[pollExportStatus] Task ${taskId} → status: ${status}`)
+
+                    if (status === 'SUCCESS') {
+                        clearInterval(intervalId)
+                        resolve(result)
+                    } else if (status === 'FAILURE') {
+                        clearInterval(intervalId)
+                        reject(new Error(error || 'Export task failed.'))
+                    }
+                    // Nếu status là PENDING hoặc khác thì tiếp tục chờ
+                } catch (err) {
+                    clearInterval(intervalId)
+                    console.error(`[pollExportStatus] Error checking task ${taskId}:`, err?.message || err)
+                    reject(err)
+                }
+            }, 2000) // Kiểm tra mỗi 2 giây
+        })
+    }
+
+    const confirmRetrain = async () => {
+        if (selectedDatasetKeys.length === 0) {
+            message.warning("Please select a base dataset.");
+            return;
+        }
+
+        const selectedDatasetId = selectedDatasetKeys[0];
+        const selectedProject = availableDatasets.find(p => p.id === selectedDatasetId);
+
+        if (!selectedProject) {
+            message.error("Selected project not found.");
+            return;
+        }
+
+        setIsRetraining(true);
+        message.loading({ content: 'Initiating retraining process...', key: 'retrain' });
+
+        try {
+            const payload = {
+                project_id: id,
+                task_type: projectInfo.task_type,
+                model_id: modelId,
+                original_dataset_id: selectedProject.dataset_id,
+                predictions: selectedPredictions,
+            }
+
+            console.log("Recent prediction: ", selectedPredictions)
+
+            const retrainingDataset = await dataServiceAPI.createRetrainingDataset(payload)
+            console.log("Retraining dataset response:", retrainingDataset)
+            const lsProject = retrainingDataset.data.ls_project
+            const lsProjectId = retrainingDataset.data.ls_project.label_studio_id
+            const newDatasetId = retrainingDataset.data.dataset.id
+
+            // start export data
+            if (!lsProjectId) {
+                throw new Error("Could not retrieve Label Studio Project ID from response.");
+            }
+
+            message.loading({ content: 'Exporting dataset for training...', key: 'retrain' });
+            const startResponse = await startExport(lsProjectId);
+            const { task_id } = startResponse.data;
+
+            if (!task_id) {
+                throw new Error("Failed to start export task.");
+            }
+
+            console.log('Export started, task ID:', task_id);
+
+            // 3. Polling kiểm tra trạng thái Export
+            await pollExportStatus(task_id);
+            message.success({ content: 'Dataset prepared successfully!', key: 'retrain', duration: 3 });
+            setIsDatasetModalVisible(false);
+            navigate(`/app/project/${id}/build/selectInstance`, {
+                state: {
+                    isRetraining: true,
+                    previousModelId: modelId,
+                    metadata: lsProject.meta_data,
+                    datasetId: newDatasetId,
+                    retrainDatasetId: newDatasetId
+                }
+            });
+
+            message.success({ content: 'Dataset prepared successfully!', key: 'retrain', duration: 3 });
+            setIsDatasetModalVisible(false);
+
+            message.success({ content: 'Retraining dataset created successfully!', key: 'retrain', duration: 3 });
+            setIsDatasetModalVisible(false);
+        } catch (error) {
+            console.error("Retraining failed:", error);
+            message.error({ content: error.response?.data?.error || error.message || 'Failed to start retraining.', key: 'retrain', duration: 5 });
+        } finally {
+            setIsRetraining(false);
+        }
+    }
+
+    const columns = [
+        {
+            title: 'File Name',
+            dataIndex: 'file_name',
+            key: 'file_name',
+            render: (text) => <span style={{ color: 'var(--text)', fontWeight: 500 }}>{text}</span>,
+        },
+        {
+            title: 'Predicted At',
+            dataIndex: 'created_at',
+            key: 'created_at',
+            render: (date) => {
+                const dateObject = new Date(date);
+                const timeAgo = formatDistanceToNow(dateObject, { addSuffix: true });
+                const exactTime = format(dateObject, 'HH:mm:ss, dd/MM/yyyy');
+                return (
+                    <Tooltip title={`Exact time: ${exactTime}`}>
+                        <span className="cursor-help text-[var(--secondary-text)]">
+                            {timeAgo}
+                        </span>
+                    </Tooltip>
+                );
+            }
+        },
+        {
+            title: 'Action',
+            key: 'action',
+            render: (_, record) => (
+                <Button
+                    type="primary"
+                    onClick={() => handleViewPrediction(record)}
+                >
+                    View
+                </Button>
+            ),
+        },
+    ];
+
+    const datasetColumns = [
+        {
+            title: 'Project Name',
+            dataIndex: 'name',
+            key: 'name',
+            render: (text) => <span style={{ color: 'var(--text)', fontWeight: 500 }}>{text}</span>,
+        },
+        {
+            title: 'Created At',
+            dataIndex: 'created_at',
+            key: 'created_at',
+            render: (date) => date ? format(new Date(date), 'HH:mm:ss, dd/MM/yyyy') : '-',
+        },
+        {
+            title: 'Service',
+            dataIndex: 'service',
+            key: 'service',
+        }
+    ];
+
+    return (
+        <>
+            <style>
+                {`
+                body, html {
+                    background-color: var(--surface) !important;
+                    font-family: 'Poppins', sans-serif !important;
+                }
+                .ant-table {
+                    background: transparent !important;
+                    color: var(--text) !important;
+                }
+                .ant-table-thead > tr > th {
+                    background: var(--hover-bg) !important;
+                    color: var(--text) !important;
+                    border-bottom: 1px solid var(--border) !important;
+                }
+                .ant-table-tbody > tr > td {
+                    border-bottom: 1px solid var(--border) !important;
+                }
+                .ant-table-tbody > tr:hover > td {
+                    background: var(--hover-bg) !important;
+                }
+            `}
+            </style>
+            <div className="p-6 min-h-screen bg-[var(--surface)]">
+                <div className="relative z-10 flex w-full flex-col gap-6">
+                    <div className="flex items-center gap-4">
+                        <Button
+                            icon={<ArrowLeftOutlined />}
+                            onClick={() => navigate(-1)}
+                            className="bg-white/10 border-white/20 text-[var(--text)]"
+                        >
+                            Back
+                        </Button>
+                        <h3 className="m-0 text-lg font-semibold text-[var(--text)]">
+                            Retrain Model - Recent Predictions
+                        </h3>
+                    </div>
+
+                    <Card
+                        className="border border-white/10 bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-xl shadow-2xl"
+                        style={{
+                            background: theme === 'dark'
+                                ? 'linear-gradient(135deg, rgba(51, 65, 85, 0.4) 0%, rgba(15, 23, 42, 0.4) 100%)'
+                                : 'rgb(249 250 251 / var(--tw-bg-opacity, 1)',
+                            borderRadius: '12px',
+                        }}
+                    >
+                        <div className="flex justify-end mb-4">
+                            <Button
+                                type="primary"
+                                icon={<RocketOutlined />}
+                                onClick={handleRetrain}
+                                disabled={selectedRowKeys.length === 0 || isRetraining}
+                                loading={isRetraining}
+                            >
+                                Retrain with Selected ({selectedRowKeys.length})
+                            </Button>
+                        </div>
+                        <Table
+                            rowSelection={rowSelection}
+                            columns={columns}
+                            dataSource={recentPredictions}
+                            rowKey="id"
+                            pagination={{
+                                pageSize: 10,
+                            }}
+                            loading={isLoadingPredictions}
+                        />
+                    </Card>
+                </div>
+
+                {projectInfo?.id && (
+                    <Modal
+                        title="Prediction Details"
+                        open={isModalVisible}
+                        onCancel={handleCloseModal}
+                        width="90%"
+                        className="top-5"
+                        footer={[
+                            !projectInfo.task_type.includes('IMAGE') && (
+                                <Button
+                                    key="settings"
+                                    icon={<SettingOutlined />}
+                                    onClick={() =>
+                                        simpleDataModalRef.current?.openDrawer()
+                                    }
+                                >
+                                    Columns Settings
+                                </Button>
+                            ),
+                            !projectInfo.task_type.includes('IMAGE') && (
+                                <Button
+                                    key="download"
+                                    icon={<DownloadOutlined />}
+                                    onClick={handleDownloadHistory}
+                                    disabled={!selectedPredictionContent}
+                                >
+                                    Download as CSV
+                                </Button>
+                            ),
+                            <Button
+                                key="close"
+                                type="primary"
+                                onClick={handleCloseModal}
+                            >
+                                Close
+                            </Button>,
+                        ]}
+                    >
+                        {isJsonLoading ? (
+                            <div className="text-center p-[50px]">
+                                <Spin size="large" />
+                            </div>
+                        ) : (
+                            (() => {
+                                if (projectInfo.task_type.includes('IMAGE')) {
+                                    return (
+                                        <ImageHistoryViewer
+                                            data={selectedPredictionContent}
+                                        />
+                                    )
+                                }
+                                if (projectInfo.task_type.includes('MULTILABEL')) {
+                                    return (
+                                        <MultilabelHistoryViewer
+                                            data={selectedPredictionContent}
+                                            ref={multilabelModalRef}
+                                        />
+                                    )
+                                }
+                                return (
+                                    <TextHistoryViewer
+                                        data={selectedPredictionContent}
+                                        ref={simpleDataModalRef}
+                                    />
+                                )
+                            })()
+                        )}
+                    </Modal>
+                )}
+
+                <Modal
+                    title="Select Base Dataset for Retraining"
+                    open={isDatasetModalVisible}
+                    onCancel={() => setIsDatasetModalVisible(false)}
+                    onOk={confirmRetrain}
+                    confirmLoading={isRetraining}
+                    width={800}
+                >
+                    <Table
+                        rowSelection={datasetRowSelection}
+                        columns={datasetColumns}
+                        dataSource={availableDatasets}
+                        rowKey="id"
+                        loading={isLoadingDatasets}
+                        pagination={{ pageSize: 5 }}
+                    />
+                </Modal>
+            </div>
+        </>
+    )
+}
