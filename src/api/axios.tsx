@@ -1,11 +1,11 @@
 import axios from "axios";
-import { API_URL } from "src/constants/api";
+import { API_BASE_URL, API_URL } from "src/constants/api";
 import Cookies from "universal-cookie";
 
 const cookies = new Cookies();
 
 const instance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: API_BASE_URL,
   // withCredentials: true,
 });
 

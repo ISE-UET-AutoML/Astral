@@ -39,7 +39,7 @@ const LandingPage = () => {
 
 	return (
 		<div 
-			className={`min-h-screen relative ${bgClass} ${textClass}`}
+			className={`min-h-screen relative overflow-x-hidden ${bgClass} ${textClass}`}
 		>
 			{/* Full-viewport background fill following app theme */}
 			<div className={`absolute inset-0 ${bgClass} -z-[100]`} />

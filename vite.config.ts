@@ -5,6 +5,19 @@ import path from "path";
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  server: {
+    proxy: {
+      "/api": {
+        target: "http://localhost:3005",
+        changeOrigin: true,
+        configure: (proxy) => {
+          proxy.on("proxyReq", (proxyReq) => {
+            proxyReq.removeHeader("origin");
+          });
+        },
+      },
+    },
+  },
   resolve: {
     alias: {
       src: path.resolve(__dirname, "src"),
