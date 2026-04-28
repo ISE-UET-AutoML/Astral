@@ -8,11 +8,11 @@ const ManualCreationFields = ({
   onDescriptionChange,
 }) => {
   return (
-    <div className="grid gap-4 sm:grid-cols-2">
+    <div className="grid gap-4 md:grid-cols-2">
       <div>
         <label
           htmlFor="project-name"
-          className="mb-2 block text-sm font-semibold text-[var(--form-label-color)]"
+          className="mb-2 block text-sm font-medium text-slate-800 dark:text-slate-200"
         >
           Project name
         </label>
@@ -22,10 +22,10 @@ const ManualCreationFields = ({
           value={name}
           onChange={(event) => onNameChange(event.target.value)}
           placeholder="Customer Churn Predictor"
-          className="h-11 w-full rounded-xl border border-[var(--input-border)] bg-white/70 px-3 text-sm text-[var(--text)] outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-500/30 dark:bg-white/5"
+          className="h-11 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-500/30 dark:border-white/10 dark:bg-slate-950/70 dark:text-white dark:placeholder:text-slate-500"
         />
         {errors.name && (
-          <p className="mt-1.5 text-xs font-medium text-red-500">
+          <p className="mt-1.5 text-xs font-medium text-red-500 dark:text-red-300">
             {errors.name}
           </p>
         )}
@@ -34,7 +34,7 @@ const ManualCreationFields = ({
       <div>
         <label
           htmlFor="project-description"
-          className="mb-2 block text-sm font-semibold text-[var(--form-label-color)]"
+          className="mb-2 block text-sm font-medium text-slate-800 dark:text-slate-200"
         >
           Description
         </label>
@@ -44,7 +44,7 @@ const ManualCreationFields = ({
           value={description}
           onChange={(event) => onDescriptionChange(event.target.value)}
           placeholder="What should this model solve?"
-          className="h-11 w-full rounded-xl border border-[var(--input-border)] bg-white/70 px-3 text-sm text-[var(--text)] outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-500/30 dark:bg-white/5"
+          className="h-11 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-500/30 dark:border-white/10 dark:bg-slate-950/70 dark:text-white dark:placeholder:text-slate-500"
         />
       </div>
     </div>

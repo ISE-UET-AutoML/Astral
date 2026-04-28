@@ -74,38 +74,28 @@ const ManualCreationModal = ({
   };
 
   return (
-    <ProjectBaseModal
-      open={open}
-      onCancel={onCancel}
-      maxWidth="max-w-[1180px]"
-      className="theme-manual-modal max-w-[1120px]"
-    >
+    <ProjectBaseModal open={open} onCancel={onCancel} className="max-h-[84vh]">
       <form
         onSubmit={handleSubmit}
-        className="flex max-h-[calc(90vh-80px)] min-h-0 flex-col overflow-hidden font-['Poppins',sans-serif]"
+        className="flex min-h-0 max-h-[84vh] flex-col overflow-x-hidden"
       >
-        <div className="mb-5 flex shrink-0 items-start justify-between gap-4">
-          <div>
-            <h2 className="text-xl font-bold text-[var(--modal-title-color)]">
-              Create project
-            </h2>
-            <p className="mt-1 text-sm text-[var(--secondary-text)]">
-              Name the project and choose the machine learning task.
-            </p>
+        <div className="shrink-0 border-b border-slate-200/80 px-6 py-5 dark:border-white/10">
+          <div className="flex-1 items-start justify-between gap-4">
+            <div className="space-y-2">
+              <h2 className="text-2xl font-bold text-slate-950 dark:text-white">
+                Create project
+              </h2>
+              <p className="text-sm text-slate-500 dark:text-slate-400">
+                Name the project, choose the machine learning task, and review
+                the workflow before you create it.
+              </p>
+            </div>
           </div>
-          <button
-            type="button"
-            onClick={onCancel}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-500 transition hover:bg-gray-100 hover:text-gray-900 dark:border-white/15 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white"
-            aria-label="Close modal"
-          >
-            <X className="h-4 w-4" />
-          </button>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto pr-1 [scrollbar-color:#94a3b8_transparent] [scrollbar-width:thin]">
-          <div className="grid gap-5 lg:grid-cols-[minmax(360px,0.82fr)_minmax(0,1.18fr)]">
-            <div className="flex min-h-0 flex-col gap-4">
+        <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-hidden bg-slate-50/70 px-4 py-4 sm:px-6 sm:py-6 dark:bg-slate-950/40">
+          <div className="grid gap-6 xl:grid-cols-[minmax(360px,0.82fr)_minmax(0,1.18fr)]">
+            <div className="flex min-h-0 min-w-0 flex-col gap-5">
               <ManualCreationFields
                 name={name}
                 description={description}
@@ -113,7 +103,8 @@ const ManualCreationModal = ({
                 onNameChange={setName}
                 onDescriptionChange={setDescription}
               />
-              <div className="min-h-[360px] lg:max-h-[520px]">
+
+              <div className="min-h-[360px] xl:max-h-[500px]">
                 <ProjectTaskList
                   tasks={taskCards}
                   selectedFlags={isSelected}
@@ -123,24 +114,24 @@ const ManualCreationModal = ({
               </div>
             </div>
 
-            <ProjectTaskPreview task={displayTask} />
+            <div className="min-w-0">
+              <ProjectTaskPreview task={displayTask} />
+            </div>
           </div>
         </div>
 
-        <div className="mt-5 flex shrink-0 items-center justify-end gap-3 border-t border-[var(--border)] pt-4">
+        <div className="flex shrink-0 items-center justify-end gap-3 border-t border-slate-200/80 bg-white px-6 py-4 dark:border-white/10 dark:bg-slate-950">
           <button
             type="button"
             onClick={onCancel}
-            className="inline-flex h-10 items-center gap-2 rounded-xl border border-gray-300 bg-white px-5 text-sm font-medium text-gray-700 transition hover:bg-gray-100 dark:border-white/15 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
+            className="inline-flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 text-sm font-medium text-slate-700 transition hover:bg-slate-100 dark:border-white/15 dark:bg-slate-950/70 dark:text-white dark:hover:bg-white/10"
           >
-            <X className="h-4 w-4" />
             Cancel
           </button>
           <button
             type="submit"
-            className="inline-flex h-10 items-center gap-2 rounded-xl bg-blue-600 px-5 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700"
+            className="inline-flex h-10 items-center gap-2 rounded-xl bg-blue-600 px-5 text-sm font-semibold text-white transition hover:bg-blue-700"
           >
-            <Check className="h-4 w-4" />
             Create Project
           </button>
         </div>
