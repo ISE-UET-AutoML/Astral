@@ -3,15 +3,9 @@ import { toast } from 'sonner'
 import * as datasetAPI from 'src/features/datasets/api/dataset'
 import { POLL_DATASET_PROCESSING_STATUS_TIME } from 'src/constants/time'
 import { usePollingStore } from 'src/store/pollingStore'
+import type { Dataset } from 'src/features/datasets/types'
 
 const pageSize = 9
-
-type Dataset = {
-    id: string;
-    title?: string;
-    processingStatus?: string;
-    [key: string]: unknown;
-};
 
 type DatasetState = {
     datasets: Dataset[];

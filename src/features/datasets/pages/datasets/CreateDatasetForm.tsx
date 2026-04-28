@@ -18,6 +18,13 @@ import {
   TASK_TYPE_INFO,
 } from "src/constants/dataset_task_mapping";
 
+type DatasetFormErrors = Record<string, string>;
+type UploadInputProps = React.InputHTMLAttributes<HTMLInputElement> &
+  React.RefAttributes<HTMLInputElement> & {
+    webkitdirectory?: string;
+    directory?: string;
+  };
+
 const Select = ({ options = [], ...props }) => (
   <CustomSelect {...props}>
     {options.map((option) => (
@@ -53,14 +60,14 @@ export default function CreateDatasetForm({
 
   // UI States
   const [activeTab, setActiveTab] = useState("file"); // 'file' or 'url'
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<DatasetFormErrors>({});
   const [isDragging, setIsDragging] = useState(false);
 
   // File States
   const [files, setFiles] = useState(initialFiles);
   const [detectedLabels, setDetectedLabels] = useState(initialDetectedLabels);
   const [csvMetadata, setCsvMetadata] = useState(initialCsvMetadata);
-  const fileInputRef = useRef(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const fileRefs = useRef(new Map());
 
   const calcSizeKB = (fileArr) => {
@@ -225,7 +232,7 @@ export default function CreateDatasetForm({
   const handleReset = () => {
     if (fileInputRef.current) fileInputRef.current.value = null;
     setFiles([]);
-    setTotalKbytes(0);
+    setTotalKbytes("0.00");
     setDetectedLabels([]);
     setCsvMetadata(null);
   };
@@ -273,7 +280,7 @@ export default function CreateDatasetForm({
   };
 
   const validateForm = () => {
-    const newErrors = {};
+    const newErrors: DatasetFormErrors = {};
     if (!title.trim()) newErrors.title = "Please enter a title";
     if (!datasetType) newErrors.datasetType = "Please select a type";
     if (!taskType) newErrors.taskType = "Please select a task type";
@@ -312,7 +319,7 @@ export default function CreateDatasetForm({
   const isFolderUpload = ["IMAGE", "MULTIMODAL", "AUDIO", "VIDEO"].includes(
     datasetType,
   );
-  const fileInputProps = {
+  const fileInputProps: UploadInputProps = {
     ref: fileInputRef,
     type: "file",
     name: "file",
