@@ -2,7 +2,7 @@
 
 Use this guide when generating or refactoring UI for the Astral frontend. The goal is consistency with the current product: a practical automated ML platform for project, dataset, training, model, and deployment workflows.
 
-Astral should feel like a focused SaaS operations tool: clear, structured, responsive, and polished without becoming a marketing page. Build usable screens first. Avoid decorative layouts that make repeated work slower.
+Astral should feel like a modern SaaS product for ML operations: clear, structured, responsive, and polished, with a strong blue-led identity across both light and dark mode. Build usable screens first, but make them feel intentionally designed rather than purely utilitarian.
 
 ## Product Feel
 
@@ -11,19 +11,19 @@ Astral is an ML workspace, not a portfolio site. Screens should prioritize scann
 Use this tone:
 
 - Work-focused and calm.
-- Dense enough for real workflows.
-- Modern, but not flashy.
-- Clear hierarchy over visual spectacle.
+- Modern and polished.
+- Dense enough for real workflows, but never cramped.
+- Premium product UI rather than plain internal tooling.
+- Clear hierarchy, clean spacing, and deliberate visual rhythm.
 - Subtle motion and hover states only where they improve feedback.
 
 Avoid:
 
 - Oversized landing-page hero patterns for app screens.
 - Decorative cards inside cards.
-- One-note dark blue, purple, beige, or brown palettes.
+- Muddy or off-brand palettes that drift away from blue as the primary identity.
 - Gradient blobs, bokeh, or floating orbs.
 - Large blocks of text explaining how to use the UI.
-- Styling through React `style={{}}`.
 
 ## Stack And Ownership
 
@@ -32,10 +32,11 @@ Follow the project structure in `docs/project-structure.md`.
 Use:
 
 - React + TypeScript.
-- Tailwind utility classes.
+- Tailwind utility classes as the default styling tool.
 - shadcn components from `src/components/ui` for new reusable UI.
 - Native browser controls directly when they are simpler and more appropriate, such as a basic `<select>`.
 - lucide-react icons for icon buttons and workflow affordances.
+- Custom classes, scoped CSS, CSS variables, and selective inline styling when they materially improve the UI or help express the theme more clearly.
 
 Do not:
 
@@ -54,24 +55,23 @@ Keep component-private prop types in the component file. Move types only when th
 
 ## Styling Rules
 
-Use Tailwind classes only. Do not use React inline style objects.
+Tailwind is the default, but it is not a hard limit.
 
-```tsx
-// Avoid
-<div style={{ color: "var(--text)" }} />
+You may use:
 
-// Prefer
-<div className="text-[var(--text)]" />
-```
+- Tailwind utility classes for most layout, spacing, typography, and state styling.
+- Existing theme variables where they help maintain consistency.
+- Custom classes or scoped CSS for more intentional component styling.
+- Carefully used inline styles when they solve a real theming or visual problem cleanly.
 
-Use Tailwind arbitrary values for existing CSS variables and one-off values:
+The goal is not strict adherence to one styling mechanism. The goal is a strong result.
 
-```tsx
-<div className="border-[var(--border)] [background:var(--card-gradient)]" />
-<div className="[background:linear-gradient(135deg,var(--hover-bg)_0%,rgba(255,255,255,0.02)_100%)]" />
-```
+Rules:
 
-Keep class strings readable. Prefer direct classes over extra abstraction until there is real duplication.
+- Prefer the styling approach that produces the best UI with the least confusion.
+- Keep styles readable and localized to the feature when possible.
+- Do not introduce messy one-off styling patterns when a reusable pattern is clearer.
+- Do not create feature-specific global CSS unless there is a strong reason.
 
 ## Visual Language
 
@@ -91,20 +91,20 @@ For operational pages, prefer:
 - Bordered panels for tool areas.
 - Individual cards only for repeated items such as projects, datasets, models, deployments, and status summaries.
 - Tables, grids, filters, tabs, and modals where they match the workflow.
+- Balanced whitespace so dense screens still feel modern.
 
 Do not place UI cards inside other cards unless it is a modal or a repeated item inside a clear panel.
 
 ### Surfaces
 
-Current Astral pages use:
+Astral should support both light and dark mode intentionally. Neither theme should feel like an afterthought.
 
-- Light mode canvas: `bg-gray-100`.
-- Dark mode canvas: `dark:bg-[#161616]`.
-- Light panels: `bg-gray-50/80`, `bg-white`, or `bg-white/95`.
-- Dark panels: `dark:bg-white/5`, `dark:bg-white/10`, or `dark:[background:var(--card-gradient)]`.
-- Borders: `border-gray-200`, `dark:border-white/10`, or `border-[var(--border)]`.
-- Subtle shadows: `shadow-lg`, `shadow-xl` when a surface is elevated.
-- Backdrop blur sparingly: `backdrop-blur-sm`, `backdrop-blur-md`, `backdrop-blur-xl`.
+Target feel:
+
+- Light mode should feel crisp, airy, and product-grade, with clean blue accents and clear surface separation.
+- Dark mode should feel refined and high-contrast, with deep neutral surfaces and blue highlights that stay vivid without glowing excessively.
+- Panels should feel layered through contrast, borders, tint, and spacing rather than relying on heavy shadows.
+- Glass, blur, and gradients are allowed when restrained and purposeful.
 
 Use rounded corners consistently:
 
@@ -114,7 +114,7 @@ Use rounded corners consistently:
 
 ### Color
 
-Use restrained neutrals with blue as the primary action accent.
+Use a modern blue-led palette with clean neutrals and explicit support for light and dark themes.
 
 Common choices:
 
@@ -125,23 +125,30 @@ Common choices:
 - Warning: amber only for pending states.
 - Error: red only for failed or destructive states.
 
-Use gradients only when already established in the local screen, such as:
+Blue should carry the product identity across buttons, links, active states, selected tabs, icons, charts, badges, and key highlights.
+
+Use gradients in a controlled modern product way, such as:
 
 - `bg-gradient-to-br from-blue-500/20 to-blue-600/10`
 - `bg-gradient-to-r from-transparent via-gray-200 dark:via-white/10 to-transparent`
 
-Do not add decorative background gradients, gradient blobs, or large atmospheric glows.
+Avoid:
+
+- Purple-led styling.
+- Washed out grays with no accent structure.
+- Heavy-handed neon glow effects.
+- Random multicolor accents that break the blue identity.
 
 ### Typography
 
-Use the existing app typography. The current app uses Poppins-loaded UI text in many screens and utility classes for hierarchy.
+Use the existing app typography, but apply it with more polish and contrast.
 
 Use:
 
 - Page title: `text-3xl font-bold` or `text-2xl font-bold` depending on density.
 - Section title: `text-xl lg:text-2xl font-bold`.
 - Card title: `text-lg font-bold`.
-- Body/help text: `text-sm text-gray-500 dark:text-gray-400`.
+- Body/help text: `text-sm text-gray-500 dark:text-gray-400`, or an equivalent that preserves good contrast in both themes.
 - Labels: `text-sm font-medium`.
 - Metadata: `text-xs` or `text-sm`.
 
@@ -184,12 +191,14 @@ For icon buttons, use lucide icons:
 
 ### Page Header
 
-Use a compact header with title, supporting text, and a primary action aligned to the right on desktop.
+Use a compact but polished header with title, supporting text, and a primary action aligned to the right on desktop.
 
 ```tsx
 <div className="mb-5 flex flex-wrap items-start justify-between gap-4">
   <div>
-    <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Projects</h1>
+    <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+      Projects
+    </h1>
     <p className="mt-1 max-w-xl text-sm text-gray-500 dark:text-gray-400">
       Create and manage your AI projects.
     </p>
@@ -202,10 +211,10 @@ Use a compact header with title, supporting text, and a primary action aligned t
 
 ### Filter Toolbar
 
-Use one panel with search, filters, sort, and reset action. Keep it compact.
+Use one panel with search, filters, sort, and reset action. Keep it compact, clean, and visually aligned with the rest of the screen.
 
 ```tsx
-<div className="mb-6 rounded-xl border border-gray-200 bg-gray-50/80 p-4 shadow-lg backdrop-blur-sm dark:border-white/10 dark:bg-white/5">
+<div className="mb-6 rounded-xl border border-gray-200 bg-gray-50/80 p-4 backdrop-blur-sm dark:border-white/10 dark:bg-white/5">
   <div className="flex flex-wrap items-end gap-3">
     <input className="h-10 min-w-64 flex-1 rounded-xl border border-gray-200 bg-white px-4 text-sm text-gray-900 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-500/30 dark:border-white/20 dark:bg-white/10 dark:text-white" />
     <select className="h-10 rounded-xl border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-500/30 dark:border-white/20 dark:bg-white/10 dark:text-white" />
@@ -213,9 +222,36 @@ Use one panel with search, filters, sort, and reset action. Keep it compact.
 </div>
 ```
 
+### Pages with Sidebar Filters
+
+For pages with a sidebar filter panel and main content area, use a two-column layout:
+
+- Header: Compact and left-aligned (not centered).
+- Grid: `grid-cols-1 lg:grid-cols-4` or similar ratio, with sidebar on left and content spanning remaining columns.
+- Sidebar: Light borders, clean spacing, matching card styling with borders and minimal shadows.
+- Content area: Tables, cards, or expanded views that adapt responsively.
+- Gap between columns: `gap-6` for breathing room.
+
+```tsx
+<div className="max-w-7xl mx-auto">
+  <div className="mb-8">
+    <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+      Page Title
+    </h1>
+    <p className="text-sm text-gray-500 dark:text-gray-400">
+      Supporting description.
+    </p>
+  </div>
+  <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-stretch">
+    <div className="lg:col-span-1 flex">{/* Sidebar filters */}</div>
+    <div className="lg:col-span-3 flex">{/* Main content */}</div>
+  </div>
+</div>
+```
+
 ### Repeated Cards
 
-Cards should show the real object state, not generic marketing content:
+Cards should show the real object state, not generic marketing content. They should feel modern and product-grade, with strong spacing, clear hierarchy, and blue-led interaction states.
 
 - Name.
 - Description or metadata.
@@ -228,7 +264,7 @@ Cards should show the real object state, not generic marketing content:
 Use stable dimensions to avoid layout shift:
 
 ```tsx
-<div className="group flex min-h-[360px] w-full cursor-pointer flex-col overflow-hidden rounded-2xl border-2 bg-white shadow-lg transition duration-300 hover:-translate-y-1 hover:shadow-xl dark:[background:var(--card-gradient)]">
+<div className="group flex min-h-[360px] w-full cursor-pointer flex-col overflow-hidden rounded-2xl border-2 bg-white transition duration-300 hover:-translate-y-1 dark:[background:var(--card-gradient)]">
   ...
 </div>
 ```
@@ -303,3 +339,4 @@ Before finishing generated UI, check:
 - Text fits on mobile and desktop.
 - Loading, empty, error, and success states are covered when relevant.
 - Build passes.
+- No shadow

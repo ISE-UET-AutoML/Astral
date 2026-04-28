@@ -40,47 +40,47 @@ export function LabelProjectFiltersSidebar({
   onContinue,
 }) {
   return (
-    <Card className="rounded-2xl shadow-2xl border [border-color:var(--border)] [background:var(--card-gradient)] h-full w-full flex flex-col">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-3 text-lg text-[var(--text)]">
-          <MixerHorizontalIcon className="h-5 w-5 text-[var(--accent-text)]" />
+    <Card className="rounded-2xl border border-gray-200 bg-white dark:border-white/10 dark:bg-slate-900/50 h-full w-full flex flex-col">
+      <CardHeader className="pb-4">
+        <CardTitle className="flex items-center gap-3 text-lg font-bold text-gray-900 dark:text-white">
+          <MixerHorizontalIcon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
           Filter Options
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Search Input */}
         <div>
-          <label className="flex items-center gap-2 font-medium mb-3 text-[var(--text)]">
+          <label className="flex items-center gap-2 text-sm font-medium mb-3 text-gray-900 dark:text-white">
             Search by Name
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <InfoCircledIcon className="h-4 w-4 cursor-help text-[var(--secondary-text)]" />
+                  <InfoCircledIcon className="h-4 w-4 cursor-help text-gray-400 dark:text-gray-500" />
                 </TooltipTrigger>
                 <TooltipContent>Search for projects by name</TooltipContent>
               </Tooltip>
             </TooltipProvider>
           </label>
           <div className="relative">
-            <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--secondary-text)]" />
+            <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
             <input
               type="text"
               placeholder="Search projects..."
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-[var(--input-bg)] border-[var(--border)] text-[var(--text)]"
+              className="w-full pl-10 pr-4 py-2 rounded-xl border border-gray-200 bg-white text-sm text-gray-900 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-500/30 dark:border-white/20 dark:bg-white/10 dark:text-white"
             />
           </div>
         </div>
 
         {/* Sort Options */}
         <div>
-          <label className="flex items-center gap-2 font-medium mb-3 text-[var(--text)]">
+          <label className="flex items-center gap-2 text-sm font-medium mb-3 text-gray-900 dark:text-white">
             Sort by
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <InfoCircledIcon className="h-4 w-4 cursor-help text-[var(--secondary-text)]" />
+                  <InfoCircledIcon className="h-4 w-4 cursor-help text-gray-400 dark:text-gray-500" />
                 </TooltipTrigger>
                 <TooltipContent>Choose how to sort the projects</TooltipContent>
               </Tooltip>
@@ -110,7 +110,7 @@ export function LabelProjectFiltersSidebar({
                         sortDirection === "asc" ? "desc" : "asc",
                       )
                     }
-                    className="p-2 h-8 w-8 flex-shrink-0 border bg-[var(--input-bg)] border-[var(--border)] text-[var(--text)]"
+                    className="p-2 h-8 w-8 flex-shrink-0 border border-gray-200 bg-white text-gray-900 hover:bg-gray-50 dark:border-white/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
                   >
                     {sortDirection === "asc" ? (
                       <SortAscIcon className="h-4 w-4" />
@@ -129,12 +129,12 @@ export function LabelProjectFiltersSidebar({
 
         {/* Cloud Service Filter */}
         <div>
-          <label className="flex items-center gap-2 font-medium mb-3 text-[var(--text)]">
+          <label className="flex items-center gap-2 text-sm font-medium mb-3 text-gray-900 dark:text-white">
             Cloud Service
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <InfoCircledIcon className="h-4 w-4 cursor-help text-[var(--secondary-text)]" />
+                  <InfoCircledIcon className="h-4 w-4 cursor-help text-gray-400 dark:text-gray-500" />
                 </TooltipTrigger>
                 <TooltipContent>
                   Choose the cloud storage service where your label project is
@@ -157,12 +157,12 @@ export function LabelProjectFiltersSidebar({
 
         {/* Storage Bucket Filter */}
         <div>
-          <label className="flex items-center gap-2 font-medium mb-3 text-[var(--text)]">
+          <label className="flex items-center gap-2 text-sm font-medium mb-3 text-gray-900 dark:text-white">
             Storage Bucket
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <InfoCircledIcon className="h-4 w-4 cursor-help text-[var(--secondary-text)]" />
+                  <InfoCircledIcon className="h-4 w-4 cursor-help text-gray-400 dark:text-gray-500" />
                 </TooltipTrigger>
                 <TooltipContent>
                   Select the specific storage bucket containing your label
@@ -185,12 +185,12 @@ export function LabelProjectFiltersSidebar({
 
         {/* Project Status Filter */}
         <div>
-          <label className="flex items-center gap-2 font-medium mb-3 text-[var(--text)]">
+          <label className="flex items-center gap-2 text-sm font-medium mb-3 text-gray-900 dark:text-white">
             Project Status
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <InfoCircledIcon className="h-4 w-4 cursor-help text-[var(--secondary-text)]" />
+                  <InfoCircledIcon className="h-4 w-4 cursor-help text-gray-400 dark:text-gray-500" />
                 </TooltipTrigger>
                 <TooltipContent>
                   Filter projects based on whether they're already labeled
@@ -210,7 +210,7 @@ export function LabelProjectFiltersSidebar({
               <RadioGroupItem value="" id="all" />
               <label
                 htmlFor="all"
-                className="cursor-pointer text-[var(--secondary-text)]"
+                className="cursor-pointer text-sm text-gray-700 dark:text-gray-300"
               >
                 All Projects
               </label>
@@ -222,7 +222,7 @@ export function LabelProjectFiltersSidebar({
               <RadioGroupItem value="yes" id="labeled" />
               <label
                 htmlFor="labeled"
-                className="cursor-pointer text-[var(--secondary-text)]"
+                className="cursor-pointer text-sm text-gray-700 dark:text-gray-300"
               >
                 Labeled Projects
               </label>
@@ -234,7 +234,7 @@ export function LabelProjectFiltersSidebar({
               <RadioGroupItem value="no" id="unlabeled" />
               <label
                 htmlFor="unlabeled"
-                className="cursor-pointer text-[var(--secondary-text)]"
+                className="cursor-pointer text-sm text-gray-700 dark:text-gray-300"
               >
                 Unlabeled Projects
               </label>
@@ -246,7 +246,7 @@ export function LabelProjectFiltersSidebar({
         {selectedRowKey && (
           <Button
             onClick={onContinue}
-            className="w-full font-semibold py-3 rounded-xl transition-all duration-200 text-white border [border-color:var(--border)] [background:var(--button-gradient)]"
+            className="w-full font-semibold py-5 px-4 rounded-xl transition bg-blue-600 hover:bg-blue-700 text-white"
           >
             <span className="flex items-center justify-center gap-2">
               Go to Training
