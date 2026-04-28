@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Card,
   CardContent,
@@ -15,13 +14,13 @@ import {
   TooltipTrigger,
 } from "src/components/ui/tooltip";
 import {
-  ArrowRightIcon,
-  InfoCircledIcon,
-  MixerHorizontalIcon,
-  SearchIcon,
-  SortAscIcon,
-  SortDescIcon,
-} from "src/assets/svgicon";
+  ArrowRight,
+  Info,
+  Sliders,
+  Search,
+  ArrowUp,
+  ArrowDown,
+} from "lucide-react";
 
 export function LabelProjectFiltersSidebar({
   searchQuery,
@@ -43,7 +42,7 @@ export function LabelProjectFiltersSidebar({
     <Card className="rounded-2xl border border-gray-200 bg-white dark:border-white/10 dark:bg-slate-900/50 h-full w-full flex flex-col">
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center gap-3 text-lg font-bold text-gray-900 dark:text-white">
-          <MixerHorizontalIcon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+          <Sliders className="h-5 w-5 text-blue-600 dark:text-blue-400" />
           Filter Options
         </CardTitle>
       </CardHeader>
@@ -55,14 +54,14 @@ export function LabelProjectFiltersSidebar({
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <InfoCircledIcon className="h-4 w-4 cursor-help text-gray-400 dark:text-gray-500" />
+                  <Info className="h-4 w-4 cursor-help text-gray-400 dark:text-gray-500" />
                 </TooltipTrigger>
                 <TooltipContent>Search for projects by name</TooltipContent>
               </Tooltip>
             </TooltipProvider>
           </label>
           <div className="relative">
-            <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
             <input
               type="text"
               placeholder="Search projects..."
@@ -80,7 +79,7 @@ export function LabelProjectFiltersSidebar({
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <InfoCircledIcon className="h-4 w-4 cursor-help text-gray-400 dark:text-gray-500" />
+                  <Info className="h-4 w-4 cursor-help text-gray-400 dark:text-gray-500" />
                 </TooltipTrigger>
                 <TooltipContent>Choose how to sort the projects</TooltipContent>
               </Tooltip>
@@ -113,9 +112,9 @@ export function LabelProjectFiltersSidebar({
                     className="p-2 h-8 w-8 flex-shrink-0 border border-gray-200 bg-white text-gray-900 hover:bg-gray-50 dark:border-white/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
                   >
                     {sortDirection === "asc" ? (
-                      <SortAscIcon className="h-4 w-4" />
+                      <ArrowUp className="h-4 w-4" />
                     ) : (
-                      <SortDescIcon className="h-4 w-4" />
+                      <ArrowDown className="h-4 w-4" />
                     )}
                   </Button>
                 </TooltipTrigger>
@@ -134,7 +133,7 @@ export function LabelProjectFiltersSidebar({
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <InfoCircledIcon className="h-4 w-4 cursor-help text-gray-400 dark:text-gray-500" />
+                  <Info className="h-4 w-4 cursor-help text-gray-400 dark:text-gray-500" />
                 </TooltipTrigger>
                 <TooltipContent>
                   Choose the cloud storage service where your label project is
@@ -162,7 +161,7 @@ export function LabelProjectFiltersSidebar({
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <InfoCircledIcon className="h-4 w-4 cursor-help text-gray-400 dark:text-gray-500" />
+                  <Info className="h-4 w-4 cursor-help text-gray-400 dark:text-gray-500" />
                 </TooltipTrigger>
                 <TooltipContent>
                   Select the specific storage bucket containing your label
@@ -190,7 +189,7 @@ export function LabelProjectFiltersSidebar({
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <InfoCircledIcon className="h-4 w-4 cursor-help text-gray-400 dark:text-gray-500" />
+                  <Info className="h-4 w-4 cursor-help text-gray-400 dark:text-gray-500" />
                 </TooltipTrigger>
                 <TooltipContent>
                   Filter projects based on whether they're already labeled
@@ -250,7 +249,7 @@ export function LabelProjectFiltersSidebar({
           >
             <span className="flex items-center justify-center gap-2">
               Go to Training
-              <ArrowRightIcon className="h-4 w-4" />
+              <ArrowRight className="h-4 w-4" />
             </span>
           </Button>
         )}

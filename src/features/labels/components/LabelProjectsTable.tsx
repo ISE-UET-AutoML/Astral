@@ -1,4 +1,3 @@
-import React from "react";
 import { Alert, AlertDescription, AlertTitle } from "src/components/ui/alert";
 import {
   Tooltip,
@@ -7,7 +6,7 @@ import {
   TooltipTrigger,
 } from "src/components/ui/tooltip";
 import { Card, CardContent } from "src/components/ui/card";
-import { CloudUploadIcon, InfoCircledIcon } from "src/assets/svgicon";
+import { Cloud, Info } from "lucide-react";
 import create_project from "src/assets/images/create_project.png";
 import BuildPager from "src/features/project-build/pages/build/BuildPager";
 import {
@@ -38,7 +37,7 @@ export function LabelProjectsTable({
     <Card className="rounded-2xl border border-gray-200 bg-white dark:border-white/10 dark:bg-slate-900/50 h-full w-full flex flex-col">
       <CardContent className="p-6 flex-1">
         <Alert className="mb-6 border border-blue-200 bg-blue-50 dark:border-blue-900/30 dark:bg-blue-900/10 rounded-xl">
-          <InfoCircledIcon className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+          <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
           <AlertTitle className="font-medium text-gray-900 dark:text-white">
             Need help choosing a label project?
           </AlertTitle>
@@ -81,7 +80,7 @@ export function LabelProjectsTable({
                   <TableRow className="border-b border-gray-200 dark:border-white/10">
                     <TableCell colSpan={5} className="text-center py-16">
                       <div className="text-gray-500 dark:text-gray-400">
-                        <CloudUploadIcon className="h-16 w-16 mx-auto mb-4 opacity-30" />
+                        <Cloud className="h-16 w-16 mx-auto mb-4 opacity-30" />
                         <p className="text-sm">
                           No label projects match your current filters
                         </p>
