@@ -5,12 +5,12 @@ import { Badge } from "src/components/ui/badge";
 import { TRAINING_MODE_TAGS } from "src/constants/clouldInstance";
 
 const MODES = {
-  astral: {
-    title: "Astral",
-    badge: "ASTRAL",
+  autogluon: {
+    title: "AutoGluon",
+    badge: "AUTOGLUON",
     badgeVariant: "outline",
     description:
-      "Train with the core Astral pipeline. This keeps the standard single-experiment flow and uses Astral defaults for cloud training.",
+      "Train with the core AutoGluon pipeline. This keeps the standard single-experiment flow and uses AutoGluon defaults for cloud training.",
     iconBoxClass:
       "bg-gray-100 text-gray-600 border-gray-200 dark:bg-white/10 dark:text-white dark:border-white/20",
     buttonClass:
@@ -119,9 +119,9 @@ const ChooseTrainingMode = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 items-stretch mb-8">
             <ModeCardLarge
-              spec={MODES.astral}
-              selected={selectedTags.includes(TRAINING_MODE_TAGS.astral)}
-              onToggle={() => toggleTag(TRAINING_MODE_TAGS.astral)}
+              spec={MODES.autogluon}
+              selected={selectedTags.includes(TRAINING_MODE_TAGS.autogluon)}
+              onToggle={() => toggleTag(TRAINING_MODE_TAGS.autogluon)}
             />
             <ModeCardLarge
               spec={MODES.iml}

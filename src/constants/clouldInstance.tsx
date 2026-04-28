@@ -12,13 +12,13 @@ import { Badge } from "src/components/ui/badge";
 import { Separator } from "src/components/ui/separator";
 import { Spinner } from "src/components/ui/spinner";
 export const TRAINING_METHODS = [
-  { key: "astral", tag: "astral", label: "Astral" },
+  { key: "autogluon", tag: "autogluon", label: "AutoGluon" },
   { key: "iml", tag: "iml", label: "iML" },
 ];
 
 /** Internal UI keys mapped to the training tags sent on generic-cloud-training. */
 export const TRAINING_MODE_TAGS = {
-  astral: "astral",
+  autogluon: "autogluon",
   iml: "iml",
 };
 
