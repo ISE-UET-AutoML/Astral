@@ -1,366 +1,354 @@
-import React, { useState, useEffect } from 'react'
-import { useParams, useNavigate, useLocation } from 'react-router-dom'
-import { useTheme } from 'src/theme/ThemeProvider'
-import { Card as UiCard, CardContent as UiCardContent, CardHeader as UiCardHeader, CardTitle as UiCardTitle } from 'src/components/ui/card'
-import { Spinner as UiSpinner } from 'src/components/ui/spinner'
-import { Server as CloudServerOutlined, Database as DatabaseOutlined, Settings as SettingOutlined, CloudDownload as CloudDownloadOutlined, LoaderCircle as LoadingOutlined, Rocket as RocketOutlined } from 'lucide-react'
-import * as deployAPI from 'src/features/deploy/api/deploy'
-import { PATHS } from 'src/constants/paths'
-import { useSpring, animated } from '@react-spring/web'
-const cx = (...classes) => classes.filter(Boolean).join(' ')
-const Spin = ({ tip, children, className = '', ...props }) => (<div className={cx('inline-flex items-center gap-2', className)} {...props}><UiSpinner />{tip && <span>{tip}</span>}{children}</div>)
-const Card = ({ title, children, className = '', style, ...props }) => (<UiCard className={className} style={style} {...props}>{title && <UiCardHeader><UiCardTitle>{title}</UiCardTitle></UiCardHeader>}<UiCardContent>{children}</UiCardContent></UiCard>)
-Card.Meta = ({ title, description, avatar, className = '' }) => (<div className={cx('flex items-start gap-3', className)}>{avatar}<div>{title && <div className="font-medium">{title}</div>}{description && <div className="text-sm text-muted-foreground">{description}</div>}</div></div>)
-const Steps = ({ items = [], current = 0, className = '', ...props }) => <div className={cx('flex flex-col gap-2', className)} {...props}>{items.map((item, index) => <div key={item.key || item.title || index} className={cx('flex items-center gap-2', index <= current && 'font-medium')}><span className="flex size-6 items-center justify-center rounded-full border text-xs">{index + 1}</span><span>{item.title}</span>{item.description && <span className="text-sm text-muted-foreground">{item.description}</span>}</div>)}</div>
-// BackgroundShapes removed
-const settingUpProgress = [
-    {
-        title: (
-            <span className="text-[var(--text)]">
-                Initialize Virtual Environment
-            </span>
-        ),
-        description: (
-            <span className="text-slate-400">
-                Set up a clean Python virtual environment to isolate project
-                dependencies and prevent conflicts.
-            </span>
-        ),
-    },
-    {
-        title: (
-            <span className="text-[var(--text)]">
-                Updating Operating System
-            </span>
-        ),
-        description: (
-            <span className="text-slate-400">
-                Update system packages and apply the latest patches to
-                ensure compatibility and security.
-            </span>
-        ),
-    },
-    {
-        title: (
-            <span className="text-[var(--text)]">Installing Tools</span>
-        ),
-        description: (
-            <span className="text-slate-400">
-                Install essential development tools such as compilers,
-                package managers, and utilities.
-            </span>
-        ),
-    },
-    {
-        title: (
-            <span className="text-[var(--text)]">
-                Installing Dependencies
-            </span>
-        ),
-        description: (
-            <span className="text-slate-400">
-                Download and configure required libraries and frameworks
-                from the requirements list.
-            </span>
-        ),
-    },
-    {
-        title: (
-            <span className="text-[var(--text)]">
-                Cleaning up conflicting packages
-            </span>
-        ),
-        description: (
-            <span className="text-slate-400">
-                Uninstall or adjust conflicting packages to ensure smooth
-                execution of the environment.
-            </span>
-        ),
-    },
-]
+import { ReactNode, useEffect, useMemo, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "src/components/ui/card";
+import {
+  CloudDownload,
+  Database,
+  LoaderCircle,
+  Rocket,
+  Server,
+  Settings,
+} from "lucide-react";
+import * as deployAPI from "src/features/deploy/api/deploy";
+import { PATHS } from "src/constants/paths";
 
-const selectingInstanceProgress = [
-    {
-        title: (
-            <span className="text-[var(--text)]">
-                Querying Machine
-            </span>
-        ),
-        description: (
-            <span className="text-slate-400">
-                Searching for a suitable machine to deploy your application efficiently.
-            </span>
-        ),
-    },
-    {
-        title: (
-            <span className="text-[var(--text)]">
-                Initialize SSH Protocol
-            </span>
-        ),
-        description: (
-            <span className="text-slate-400">
-                Set up a secure SSH connection to access and manage the remote machine.
-            </span>
-        ),
-    },
-    {
-        title: (
-            <span className="text-[var(--text)]">Installing Tools</span>
-        ),
-        description: (
-            <span className="text-slate-400">
-                Install necessary development tools and utilities required for deployment.
-            </span>
-        ),
-    }
+type DeployStatus =
+  | "CREATING_INSTANCE"
+  | "SELECTING_INSTANCE"
+  | "SETTING_UP"
+  | "DOWNLOADING_MODEL"
+  | "OFFLINE"
+  | "ONLINE";
+
+type StepItem = {
+  key: string;
+  title: ReactNode;
+  description: ReactNode;
+  icon?: ReactNode;
+};
+
+const cx = (...classes: Array<string | false | null | undefined>) =>
+  classes.filter(Boolean).join(" ");
+
+const settingUpProgress: StepItem[] = [
+  {
+    key: "virtual-environment",
+    title: "Initialize Virtual Environment",
+    description:
+      "Set up a clean Python virtual environment to isolate project dependencies.",
+  },
+  {
+    key: "update-os",
+    title: "Updating Operating System",
+    description: "Update system packages and apply compatibility patches.",
+  },
+  {
+    key: "install-tools",
+    title: "Installing Tools",
+    description:
+      "Install development tools and utilities required for deployment.",
+  },
+  {
+    key: "install-dependencies",
+    title: "Installing Dependencies",
+    description:
+      "Download and configure required libraries from the model runtime.",
+  },
+  {
+    key: "cleanup",
+    title: "Cleaning up conflicting packages",
+    description: "Resolve package conflicts before starting the model service.",
+  },
 ];
 
-
-const downloadModelProgress = [
-    {
-        title: (
-            <span className="text-[var(--text)]">
-                Downloading Model from Cloud Storage
-            </span>
-        ),
-        description: (
-            <span className="text-slate-400">
-                Retrieving the required model files from cloud storage to your local or remote environment.
-            </span>
-        ),
-    }
+const selectingInstanceProgress: StepItem[] = [
+  {
+    key: "query-machine",
+    title: "Querying Machine",
+    description:
+      "Searching for a suitable machine to deploy your application efficiently.",
+  },
+  {
+    key: "ssh-protocol",
+    title: "Initialize SSH Protocol",
+    description: "Set up a secure SSH connection to access the remote machine.",
+  },
+  {
+    key: "install-tools",
+    title: "Installing Tools",
+    description: "Install necessary deployment tools and utilities.",
+  },
 ];
 
-const initServerProgress = [
-    {
-        title: (
-            <span className="text-[var(--text)]">
-                Setting up your server
-            </span>
-        ),
-        description: (
-            <span className="text-slate-400">
-                Starting model prediction server on port 8680
-            </span>
-        ),
-    }
-]
+const downloadModelProgress: StepItem[] = [
+  {
+    key: "download-model",
+    title: "Downloading Model from Cloud Storage",
+    description: "Retrieving the required model files from cloud storage.",
+  },
+];
 
+const initServerProgress: StepItem[] = [
+  {
+    key: "start-server",
+    title: "Setting up your server",
+    description: "Starting the model prediction server on port 8680.",
+  },
+];
+
+function getCurrentStep(status?: string) {
+  switch (status) {
+    case "SETTING_UP":
+      return 1;
+    case "DOWNLOADING_MODEL":
+      return 2;
+    case "OFFLINE":
+      return 3;
+    case "CREATING_INSTANCE":
+    case "SELECTING_INSTANCE":
+    default:
+      return 0;
+  }
+}
+
+function getProgressSteps(status?: string) {
+  switch (status) {
+    case "SETTING_UP":
+      return settingUpProgress;
+    case "DOWNLOADING_MODEL":
+      return downloadModelProgress;
+    case "OFFLINE":
+      return initServerProgress;
+    case "CREATING_INSTANCE":
+    case "SELECTING_INSTANCE":
+    default:
+      return selectingInstanceProgress;
+  }
+}
+
+function StepIcon({
+  active,
+  completed,
+  children,
+}: {
+  active: boolean;
+  completed: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <span
+      className={cx(
+        "mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full border bg-white text-gray-600 transition-colors dark:bg-white/5 dark:text-gray-300",
+        active &&
+          "border-blue-300 bg-blue-50 text-blue-600 dark:border-blue-400/40 dark:bg-blue-500/10 dark:text-blue-300",
+        completed &&
+          "border-emerald-200 bg-emerald-50 text-emerald-600 dark:border-emerald-400/30 dark:bg-emerald-500/10 dark:text-emerald-300",
+      )}
+    >
+      {children}
+    </span>
+  );
+}
+
+function PreparationSteps({
+  steps,
+  currentStep,
+}: {
+  steps: StepItem[];
+  currentStep: number;
+}) {
+  return (
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
+      {steps.map((step, index) => {
+        const active = index === currentStep;
+        const completed = index < currentStep;
+
+        return (
+          <div key={step.key} className="flex min-w-0 items-start gap-3">
+            <StepIcon active={active} completed={completed}>
+              {active ? (
+                <LoaderCircle className="size-4 animate-spin" />
+              ) : (
+                step.icon
+              )}
+            </StepIcon>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-3">
+                <h3 className="whitespace-nowrap text-[15px] font-medium text-gray-900 dark:text-white">
+                  {step.title}
+                </h3>
+                {index < steps.length - 1 && (
+                  <div className="hidden h-px flex-1 bg-gray-200 dark:bg-white/10 xl:block" />
+                )}
+              </div>
+              <p className="mt-1 max-w-44 text-sm leading-6 text-slate-500 dark:text-slate-400">
+                {step.description}
+              </p>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function ProgressSteps({
+  steps,
+  currentStep,
+}: {
+  steps: StepItem[];
+  currentStep: number;
+}) {
+  return (
+    <div className="flex flex-col gap-5">
+      {steps.map((step, index) => {
+        const active = index === currentStep;
+        const completed = index < currentStep;
+
+        return (
+          <div key={step.key} className="relative flex gap-3">
+            {index < steps.length - 1 && (
+              <div
+                className={cx(
+                  "absolute left-[13px] top-8 h-[calc(100%-1rem)] w-px bg-gray-200 dark:bg-white/10",
+                  (active || completed) && "bg-blue-400 dark:bg-blue-400/60",
+                )}
+              />
+            )}
+            <StepIcon active={active} completed={completed}>
+              {active ? (
+                <LoaderCircle className="size-4 animate-spin" />
+              ) : (
+                <span className="size-2 rounded-full bg-current" />
+              )}
+            </StepIcon>
+            <div className="min-w-0 pb-0.5">
+              <div className="text-[15px] font-medium text-gray-900 dark:text-white">
+                {step.title}
+              </div>
+              <p className="mt-1 text-sm leading-6 text-slate-500 dark:text-slate-400">
+                {step.description}
+              </p>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
 export default function DeploySettingUpView() {
-    const getCurrentStep = (status) => {
-        switch (status) {
-            case 'CREATING_INSTANCE':
-                return 0
-            case 'SETTING_UP':
-                return 1
-            case 'DOWNLOADING_MODEL':
-                return 2
-            case 'OFFLINE':
-                return 3
-            default:
-                return 0
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const deployId = searchParams.get("deployId");
+  const { id: projectId } = useParams();
+  const navigate = useNavigate();
+  const [deployStatus, setDeployStatus] =
+    useState<DeployStatus>("CREATING_INSTANCE");
+  const [currentStep, setCurrentStep] = useState(getCurrentStep(deployStatus));
+  const [currentSettingUpStep, setCurrentSettingUpStep] = useState(0);
+
+  useEffect(() => {
+    if (!deployId) return;
+
+    const fetchDeployData = async () => {
+      try {
+        const deployModelRes = await deployAPI.getDeployData(deployId);
+        const nextStatus =
+          (deployModelRes.data?.status as DeployStatus | undefined) ||
+          "CREATING_INSTANCE";
+
+        setCurrentSettingUpStep((previousStep) =>
+          nextStatus !== deployStatus ? 0 : previousStep + 1,
+        );
+        setDeployStatus(nextStatus);
+        setCurrentStep(getCurrentStep(nextStatus));
+
+        if (nextStatus === "ONLINE") {
+          navigate(PATHS.MODEL_DEPLOY_VIEW(projectId, deployId));
         }
-    }
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
-    const getProgressSteps = (status) => {
-        switch (status) {
-            case 'CREATING_INSTANCE':
-                return selectingInstanceProgress
-            case 'SETTING_UP':
-                return settingUpProgress
-            case 'DOWNLOADING_MODEL':
-                return downloadModelProgress
-            case 'OFFLINE':
-                return initServerProgress
-            default:
-                return []
-        }
-    }
-    const { theme } = useTheme()
-    const location = useLocation()
-    const searchParams = new URLSearchParams(location.search)
-    const deployId = searchParams.get('deployId')
-    const { id: projectId } = useParams()
-    const navigate = useNavigate()
-    const [deployStatus, setDeployStatus] = useState("CREATING_INSTANCE")
-    const [currentStep, setCurrentStep] = useState(getCurrentStep(deployStatus))
-    const [currentSettingUpStep, setCurrentSettingUpStep] = useState(-1)
+    fetchDeployData();
+    const interval = setInterval(fetchDeployData, 30000);
+    return () => clearInterval(interval);
+  }, [deployId, deployStatus, navigate, projectId]);
 
-    useEffect(() => {
-        if (!deployId) return;
+  const progressSteps = useMemo(
+    () => getProgressSteps(deployStatus),
+    [deployStatus],
+  );
+  const boundedProgressStep = Math.min(
+    Math.max(currentSettingUpStep, 0),
+    Math.max(progressSteps.length - 1, 0),
+  );
+  const preparationSteps: StepItem[] = [
+    {
+      key: "creating-instance",
+      title: "Creating Instance",
+      icon: <Database className="size-4" />,
+      description: "Selecting suitable machine for you",
+    },
+    {
+      key: "downloading-dependencies",
+      title: "Downloading Dependencies",
+      icon: <Settings className="size-4" />,
+      description: "Setting up your machine",
+    },
+    {
+      key: "downloading-model",
+      title: "Downloading Model",
+      icon: <CloudDownload className="size-4" />,
+      description: "Fetching model from cloud storage",
+    },
+    {
+      key: "initializing-server",
+      title: "Initializing Server",
+      icon: <Server className="size-4" />,
+      description: "Serving your model",
+    },
+  ];
 
-        const fetchDeployData = async () => {
-            try {
-                const deployModelRes = await deployAPI.getDeployData(deployId)
-                console.log("Current status:", deployModelRes.data)
-                if (deployModelRes.data?.status !== deployStatus) {
-                    setCurrentSettingUpStep(prev => 0);
-                }
-                else {
-                    setCurrentSettingUpStep(prev => prev + 1);
-                }
-                setDeployStatus(deployModelRes.data?.status || 'CREATING_INSTANCE')
-                setCurrentStep(getCurrentStep(deployModelRes.data?.status || 0))
-                if (deployModelRes.data.status === 'ONLINE') {
-                    navigate(PATHS.MODEL_DEPLOY_VIEW(projectId, deployId))
-                    return
-                }
-            } catch (error) {
-                console.error(error);
-            }
-        };
+  return (
+    <div className="h-full overflow-y-auto bg-[var(--surface)] px-3 py-6 sm:px-4 lg:px-6 lg:py-8">
+      <Card className="mx-auto w-full rounded-2xl border border-gray-200 bg-white/95 shadow-xl dark:border-white/10 dark:bg-white/5">
+        <CardContent className="p-7 lg:p-10">
+          <div className="mb-7 flex items-center gap-2">
+            <Rocket className="size-5 text-gray-700 dark:text-gray-200" />
+            <h2 className="m-0 text-xl font-bold text-gray-900 dark:text-white">
+              Deployment Preparation
+            </h2>
+          </div>
 
-        fetchDeployData();
-        const interval = setInterval(fetchDeployData, 30000);
-        return () => clearInterval(interval);
-    }, [deployId, deployStatus, navigate, projectId]);
+          <PreparationSteps
+            currentStep={currentStep}
+            steps={preparationSteps}
+          />
 
-
-    return (
-        <>
-            <style>{`
-                body, html {
-                    background-color: var(--surface) !important;
-                    font-family: 'Poppins', sans-serif !important;
-                }
-            `}</style>
-            <div
-                className="h-full overflow-y-auto bg-[var(--surface)]"
-            >
-                <div className="relative z-10 w-full px-3 py-6 sm:px-4 lg:px-6 lg:py-8">
-                    <animated.div
-                        style={useSpring({
-                            from: { opacity: 0, transform: 'translateY(20px)' },
-                            to: { opacity: 1, transform: 'translateY(0)' },
-                            config: { tension: 280, friction: 20 },
-                        })}
-                    >
-                        <div className="flex flex-col w-full gap-6">
-                            <h2 className="m-0 flex items-center text-xl font-semibold font-poppins text-[var(--text)]">
-                                <RocketOutlined
-                                    className="mr-2 text-[20px] text-[var(--secondary-text)]"
-                                />
-                                Deployment Preparation
-                            </h2>
-                            <Steps
-                                current={currentStep}
-                                items={[
-                                    {
-                                        title: (
-                                            <span className="text-[var(--text)]">
-                                                Creating Instance
-                                            </span>
-                                        ),
-                                        icon:
-                                            currentStep !== 0 ? (
-                                                <DatabaseOutlined className="text-[var(--secondary-text)]" />
-                                            ) : (
-                                                <LoadingOutlined className="animate-spin text-[var(--secondary-text)]" />
-                                            ),
-                                        description: (
-                                            <span className="text-slate-400">
-                                                Selecting suitable machine for
-                                                you
-                                            </span>
-                                        ),
-                                    },
-                                    {
-                                        title: (
-                                            <span className="text-[var(--text)]">
-                                                Downloading Dependencies
-                                            </span>
-                                        ),
-                                        icon:
-                                            currentStep !== 1 ? (
-                                                <SettingOutlined className="text-[var(--secondary-text)]" />
-                                            ) : (
-                                                <LoadingOutlined className="animate-spin text-[var(--secondary-text)]" />
-                                            ),
-                                        description: (
-                                            <span className="text-slate-400">
-                                                Setting up your machine
-                                            </span>
-                                        ),
-                                    },
-                                    {
-                                        title: (
-                                            <span className="text-[var(--text)]">
-                                                Downloading Model
-                                            </span>
-                                        ),
-                                        icon:
-                                            currentStep !== 2 ? (
-                                                <CloudDownloadOutlined className="text-[var(--secondary-text)]" />
-                                            ) : (
-                                                <LoadingOutlined className="animate-spin text-[var(--secondary-text)]" />
-                                            ),
-                                        description: (
-                                            <span className="text-slate-400">
-                                                Fetching model from cloud storage
-                                            </span>
-                                        ),
-                                    },
-                                    {
-                                        title: (
-                                            <span className="text-[var(--text)]">
-                                                Initializing Server
-                                            </span>
-                                        ),
-                                        icon:
-                                            currentStep !== 3 ? (
-                                                <CloudServerOutlined className="text-[var(--secondary-text)]" />
-                                            ) : (
-                                                <LoadingOutlined className="animate-spin text-[var(--secondary-text)]" />
-                                            ),
-                                        description: (
-                                            <span className="text-slate-400">
-                                                Serving your model
-                                            </span>
-                                        ),
-                                    }
-                                ]}
-                            />
-                            <Card
-                                title={
-                                    <h2 className="m-0 flex items-center text-xl font-semibold font-poppins text-[var(--text)]">
-                                        <SettingOutlined
-                                            className="mr-2 text-[var(--secondary-text)]"
-                                        />
-                                        Current Step Progress
-                                    </h2>
-                                }
-                                className="border-0 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300"
-                                style={{
-                                    background: 'var(--card-gradient)',
-                                    backdropFilter: 'blur(10px)',
-                                    border: '1px solid var(--border)',
-                                    borderRadius: '12px',
-                                    fontFamily: 'Poppins, sans-serif',
-                                }}
-                            >
-                                <Steps
-                                    progressDot={(
-                                        dot,
-                                        { status, index }
-                                    ) => {
-                                        if (
-                                            index === currentSettingUpStep
-                                        ) {
-                                            return <Spin size="small" />
-                                        }
-                                        return dot
-                                    }}
-                                    current={currentSettingUpStep}
-                                    direction="vertical"
-                                    items={getProgressSteps(deployStatus)}
-                                />
-                            </Card>
-                        </div>
-                    </animated.div>
-                </div>
-            </div>
-        </>
-    )
+          <Card className="mt-7 overflow-hidden rounded-xl border border-gray-200 bg-gray-50/80 shadow-lg dark:border-white/10 dark:bg-white/5">
+            <CardHeader className="border-b border-gray-200 px-5 py-4 dark:border-white/10">
+              <CardTitle className="m-0 flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white">
+                <Settings className="size-5 text-gray-600 dark:text-gray-300" />
+                Current Step Progress
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="px-5 py-5">
+              <ProgressSteps
+                currentStep={boundedProgressStep}
+                steps={progressSteps}
+              />
+            </CardContent>
+          </Card>
+        </CardContent>
+      </Card>
+    </div>
+  );
 }
