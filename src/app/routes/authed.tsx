@@ -34,268 +34,275 @@ import ProjectInfo from "src/features/project-build/pages/build/info";
 import RecentPredictionsPage from "src/features/models/pages/models/RecentPredictionsPage";
 
 const routes = {
-    element: <DefaultLayout />,
-    children: [
+  element: <DefaultLayout />,
+  children: [
+    {
+      path: PATHS.PROFILE,
+      element: <Profile />,
+    },
+    {
+      path: PATHS.SETTINGS,
+      element: <Settings />,
+    },
+    {
+      path: PATHS.DEFAULT,
+      element: <RequireAuth />,
+      children: [
+        /*-----------------PROJECTS' PATH---------------*/
+
         {
-            path: PATHS.PROFILE,
-            element: <Profile />,
+          path: PATHS.PROJECTS,
+          element: <Projects />,
         },
         {
-            path: PATHS.SETTINGS,
-            element: <Settings />,
+          path: "/app/",
+          children: [
+            {
+              path: "project/:id",
+              element: <ProjectLayout />,
+              children: [
+                {
+                  path: "build",
+                  element: <ProjectBuild />,
+                  children: [
+                    {
+                      path: "info",
+                      element: <ProjectInfo />,
+                      handle: {
+                        projectLayout: {
+                          overflow: "hidden",
+                          height: "full",
+                        },
+                      },
+                    },
+                    {
+                      path: "uploadData",
+                      element: <UploadData />,
+                      handle: {
+                        projectLayout: {
+                          overflow: "hidden",
+                          height: "full",
+                        },
+                      },
+                    },
+                    {
+                      path: "chooseTrainingMode",
+                      element: <ChooseTrainingMode />,
+                      handle: {
+                        projectLayout: {
+                          overflow: "auto",
+                          height: "full",
+                        },
+                      },
+                    },
+                    {
+                      path: "selectTargetColMulti",
+                      element: <SelectTargetColMulti />,
+                      handle: {
+                        projectLayout: {
+                          overflow: "hidden",
+                          height: "full",
+                        },
+                      },
+                    },
+                    {
+                      path: "selectTargetCol",
+                      element: <SelectTargetCol />,
+                      handle: {
+                        projectLayout: {
+                          overflow: "hidden",
+                          height: "full",
+                        },
+                      },
+                    },
+                    {
+                      path: "selectInstance",
+                      element: <SelectInstance />,
+                      handle: {
+                        projectLayout: {
+                          overflow: "hidden",
+                          height: "full",
+                        },
+                      },
+                    },
+                    {
+                      path: "training",
+                      element: <Training />,
+                      handle: {
+                        projectLayout: {
+                          scrollAt: "shell",
+                          overflow: "visible",
+                          height: "auto",
+                        },
+                      },
+                    },
+                    {
+                      path: "trainResult",
+                      element: <TrainResult />,
+                      handle: {
+                        projectLayout: {
+                          overflow: "auto",
+                          height: "full",
+                        },
+                      },
+                    },
+                    {
+                      path: "deployView",
+                      element: <DeployView />,
+                      handle: {
+                        projectLayout: {
+                          overflow: "hidden",
+                          height: "full",
+                        },
+                      },
+                    },
+                    {
+                      path: "deploySettingUp",
+                      element: <DeploySettingUpView />,
+                      handle: {
+                        projectLayout: {
+                          overflow: "hidden",
+                          height: "full",
+                        },
+                      },
+                    },
+                  ],
+                },
+                {
+                  path: "experiments",
+                  element: <ProjectExperiments />,
+                  handle: {
+                    projectLayout: {
+                      overflow: "hidden",
+                      height: "full",
+                    },
+                  },
+                },
+                {
+                  path: "model",
+                  element: <ProjectModels />,
+                  handle: {
+                    projectLayout: {
+                      overflow: "hidden",
+                      height: "full",
+                    },
+                  },
+                },
+                {
+                  path: "model/:modelId",
+                  element: <ModelView />,
+                  handle: {
+                    projectLayout: {
+                      scrollAt: "shell",
+                      overflow: "visible",
+                      height: "auto",
+                    },
+                  },
+                },
+                {
+                  path: "model/:modelId/retrain",
+                  element: <RecentPredictionsPage />,
+                },
+                {
+                  path: "deploy",
+                  element: <ProjectDeploy />,
+                  handle: {
+                    projectLayout: {
+                      overflow: "hidden",
+                      height: "full",
+                    },
+                  },
+                },
+                {
+                  path: "deploy/:deployId",
+                  element: <DeployedModelView />,
+                  handle: {
+                    projectLayout: {
+                      scrollAt: "shell",
+                      overflow: "visible",
+                      height: "auto",
+                    },
+                  },
+                },
+                {
+                  path: "my-apps",
+                  element: <ProjectGenApp />,
+                  handle: {
+                    projectLayout: {
+                      overflow: "hidden",
+                      height: "full",
+                    },
+                  },
+                },
+                {
+                  path: "my-apps/:appId/edit",
+                  element: <EditAppPage />,
+                  handle: {
+                    projectLayout: {
+                      overflow: "hidden",
+                      padding: "none",
+                      height: "full",
+                    },
+                  },
+                },
+                {
+                  path: "tasks",
+                  element: <ProjectTasks />,
+                },
+                {
+                  path: "settings",
+                  element: <ProjectSettings />,
+                },
+              ],
+            },
+          ],
+        },
+
+        /*-----------------BUCKETS' PATH---------------*/
+
+        {
+          path: PATHS.BUCKETS,
+          element: <Buckets />,
+        },
+
+        /*-----------------DATASETS' PATH---------------*/
+        {
+          path: PATHS.DATASETS,
+          element: <Datasets />,
         },
         {
-            path: PATHS.DEFAULT,
-            element: <RequireAuth />,
-            children: [
-                /*-----------------PROJECTS' PATH---------------*/
-
+          path: "/app/",
+          children: [
+            {
+              path: "dataset/:id",
+              element: <DatasetLayout />,
+              children: [
                 {
-                    path: PATHS.PROJECTS,
-                    element: <Projects />,
+                  path: "view",
+                  element: <DatasetView />,
                 },
-                {
-                    path: '/app/',
-                    children: [
-                        {
-                            path: 'project/:id',
-                            element: <ProjectLayout />,
-                            children: [
-                                {
-                                    path: 'build',
-                                    element: <ProjectBuild />,
-                                    children: [
-                                        {
-                                            path: 'info',
-                                            element: <ProjectInfo />,
-                                            handle: {
-                                                projectLayout: {
-                                                    overflow: 'hidden',
-                                                    height: 'full',
-                                                },
-                                            },
-                                        },
-                                        {
-                                            path: 'uploadData',
-                                            element: <UploadData />,
-                                            handle: {
-                                                projectLayout: {
-                                                    overflow: 'hidden',
-                                                    height: 'full',
-                                                },
-                                            },
-                                        },
-                                        {
-                                            path: 'chooseTrainingMode',
-                                            element: <ChooseTrainingMode />,
-                                            handle: {
-                                                projectLayout: {
-                                                    overflow: 'auto',
-                                                    height: 'full',
-                                                },
-                                            },
-                                        },
-                                        {
-                                            path: 'selectTargetColMulti',
-                                            element: <SelectTargetColMulti />,
-                                            handle: {
-                                                projectLayout: {
-                                                    overflow: 'hidden',
-                                                    height: 'full',
-                                                },
-                                            },
-                                        },
-                                        {
-                                            path: 'selectTargetCol',
-                                            element: <SelectTargetCol />,
-                                            handle: {
-                                                projectLayout: {
-                                                    overflow: 'hidden',
-                                                    height: 'full',
-                                                },
-                                            },
-                                        },
-                                        {
-                                            path: 'selectInstance',
-                                            element: <SelectInstance />,
-                                            handle: {
-                                                projectLayout: {
-                                                    overflow: 'hidden',
-                                                    height: 'full',
-                                                },
-                                            },
-                                        },
-                                        {
-                                            path: 'training',
-                                            element: <Training />,
-                                            handle: {
-                                                projectLayout: {
-                                                    scrollAt: 'shell',
-                                                    overflow: 'visible',
-                                                    height: 'auto',
-                                                },
-                                            },
-                                        },
-                                        {
-                                            path: 'trainResult',
-                                            element: <TrainResult />,
-                                            handle: {
-                                                projectLayout: {
-                                                    overflow: 'auto',
-                                                    height: 'full',
-                                                },
-                                            },
-                                        },
-                                        {
-                                            path: 'deployView',
-                                            element: <DeployView />,
-                                            handle: {
-                                                projectLayout: {
-                                                    overflow: 'hidden',
-                                                    height: 'full',
-                                                },
-                                            },
-                                        },
-                                        {
-                                            path: 'deploySettingUp',
-                                            element: <DeploySettingUpView />,
-                                            handle: {
-                                                projectLayout: {
-                                                    overflow: 'hidden',
-                                                    height: 'full',
-                                                },
-                                            },
-                                        }
-                                    ],
-                                },
-                                {
-                                    path: 'experiments',
-                                    element: <ProjectExperiments />,
-                                    handle: {
-                                        projectLayout: {
-                                            overflow: 'hidden',
-                                            height: 'full',
-                                        },
-                                    },
-                                },
-                                {
-                                    path: 'model',
-                                    element: <ProjectModels />,
-                                    handle: {
-                                        projectLayout: {
-                                            overflow: 'hidden',
-                                            height: 'full',
-                                        },
-                                    },
-                                },
-                                {
-                                    path: 'model/:modelId',
-                                    element: <ModelView />,
-                                    handle: {
-                                        projectLayout: {
-                                            scrollAt: 'shell',
-                                            overflow: 'visible',
-                                            height: 'auto',
-                                        },
-                                    },
-                                },
-                                {
-                                    path: 'model/:modelId/retrain',
-                                    element: <RecentPredictionsPage />
-                                },
-                                {
-                                    path: 'deploy',
-                                    element: <ProjectDeploy />,
-                                    handle: {
-                                        projectLayout: {
-                                            overflow: 'hidden',
-                                            height: 'full',
-                                        },
-                                    },
-                                },
-                                {
-                                    path: 'deploy/:deployId',
-                                    element: <DeployedModelView />
-                                },
-                                {
-                                    path: 'my-apps',
-                                    element: <ProjectGenApp />,
-                                    handle: {
-                                        projectLayout: {
-                                            overflow: 'hidden',
-                                            height: 'full',
-                                        },
-                                    },
-                                },
-                                {
-                                    path: 'my-apps/:appId/edit',
-                                    element: <EditAppPage />,
-                                    handle: {
-                                        projectLayout: {
-                                            overflow: 'hidden',
-                                            padding: 'none',
-                                            height: 'full',
-                                        },
-                                    },
-                                },
-                                {
-                                    path: 'tasks',
-                                    element: <ProjectTasks />,
-                                },
-                                {
-                                    path: 'settings',
-                                    element: <ProjectSettings />,
-                                },
-                            ],
-                        },
-                    ],
-                },
-
-                /*-----------------BUCKETS' PATH---------------*/
-
-                {
-                    path: PATHS.BUCKETS,
-                    element: <Buckets />,
-                },
-
-                /*-----------------DATASETS' PATH---------------*/
-                {
-                    path: PATHS.DATASETS,
-                    element: <Datasets />,
-                },
-                {
-                    path: '/app/',
-                    children: [
-                        {
-                            path: 'dataset/:id',
-                            element: <DatasetLayout />,
-                            children: [
-                                {
-                                    path: 'view',
-                                    element: <DatasetView />,
-                                },
-                            ],
-                        },
-                    ],
-                },
-
-                /*-----------------LABELS' PATH---------------*/
-                {
-                    path: PATHS.LABELS,
-                    element: <LabelProjects />,
-                },
-                {
-                    path: '/app/',
-                    children: [
-                        {
-                            path: 'label-projects/:id',
-                            element: <LabelView />,
-                        },
-                    ],
-                },
-            ],
+              ],
+            },
+          ],
         },
-    ],
-}
 
-export default routes
+        /*-----------------LABELS' PATH---------------*/
+        {
+          path: PATHS.LABELS,
+          element: <LabelProjects />,
+        },
+        {
+          path: "/app/",
+          children: [
+            {
+              path: "label-projects/:id",
+              element: <LabelView />,
+            },
+          ],
+        },
+      ],
+    },
+  ],
+};
+
+export default routes;
