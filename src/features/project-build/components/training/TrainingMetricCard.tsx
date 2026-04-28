@@ -10,7 +10,7 @@ export function TrainingMetricCard({
   icon,
 }) {
   return (
-    <Card className="h-max w-full border border-[var(--border)] rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 bg-[var(--card-gradient)] backdrop-blur-md font-poppins">
+    <Card className="h-max w-full border border-gray-300 dark:border-gray-700 rounded-xl transition-all duration-300 bg-white dark:bg-slate-900">
       {loading ? (
         <div className="h-8 w-full animate-pulse rounded-md bg-muted" />
       ) : (

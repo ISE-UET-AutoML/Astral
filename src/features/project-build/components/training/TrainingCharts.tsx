@@ -37,15 +37,15 @@ export function TrainingCharts({
 
   return (
     <TooltipProvider>
-      <Card className="rounded-xl border border-[var(--border)] bg-[var(--card-gradient)] font-poppins shadow-lg backdrop-blur-md transition-all duration-300 hover:shadow-xl">
+      <Card className="rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-slate-900 transition-all duration-300">
         <CardHeader>
           <div className="flex items-center justify-between gap-3">
-            <CardTitle className="m-0 flex items-center text-xl font-semibold text-[var(--text)]">
-              <LineChartOutlined className="mr-2 text-[var(--accent-text)]" />
+            <CardTitle className="m-0 flex items-center text-xl font-semibold text-gray-900 dark:text-white">
+              <LineChartOutlined className="mr-2 text-blue-600 dark:text-blue-400" />
               {`${valMetric ? valMetric : "Accuracy"} Trend`}
             </CardTitle>
             {maxTrainingTime ? (
-              <Badge className="border-none bg-gradient-to-br from-[#f59e0b] to-[#f97316] font-poppins text-white">
+              <Badge className="border-none bg-amber-500 text-white">
                 <HourglassOutlined className="h-3 w-3" />
                 Time Limit: {maxTrainingTime.toFixed(2)} min
               </Badge>
@@ -75,26 +75,26 @@ export function TrainingCharts({
             />
           </div>
 
-          <Alert className="rounded-xl border border-[rgba(59,130,246,0.3)] bg-[linear-gradient(135deg,rgba(59,130,246,0.1),rgba(34,211,238,0.1))] font-poppins">
+          <Alert className="rounded-xl border border-blue-300 dark:border-blue-700 bg-blue-50 dark:bg-slate-800">
             <AlertDescription>
               <div>
-                <p className="!m-0 font-poppins">
-                  <RadarChartOutlined className="mr-2 inline h-4 w-4 text-[#60a5fa]" />
-                  <strong className="font-poppins text-[var(--text)]">
+                <p className="!m-0">
+                  <RadarChartOutlined className="mr-2 inline h-4 w-4 text-blue-600 dark:text-blue-400" />
+                  <strong className="text-gray-900 dark:text-white">
                     Understand Metrics:
                   </strong>{" "}
-                  <span className="font-poppins text-[var(--text)]">
+                  <span className="text-gray-700 dark:text-gray-300">
                     {metricExplain}
                   </span>
                 </p>
 
                 {maxTrainingTime && (
-                  <p className="mt-3 font-poppins">
+                  <p className="mt-3">
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <span className="inline-flex items-center">
-                          <HourglassOutlined className="mr-2 h-4 w-4 text-[#f59e0b]" />
-                          <strong className="font-poppins text-[var(--text)]">
+                          <HourglassOutlined className="mr-2 h-4 w-4 text-amber-500" />
+                          <strong className="text-gray-900 dark:text-white">
                             Training Time Limit:
                           </strong>
                         </span>
@@ -103,7 +103,7 @@ export function TrainingCharts({
                         Time constraints can affect model performance
                       </TooltipContent>
                     </Tooltip>{" "}
-                    <span className="font-poppins text-[var(--text)]">
+                    <span className="text-gray-700 dark:text-gray-300">
                       This experiment has a maximum training time of{" "}
                       {maxTrainingTime.toFixed(2)} minutes. If the training
                       doesn't converge within this time, consider adjusting

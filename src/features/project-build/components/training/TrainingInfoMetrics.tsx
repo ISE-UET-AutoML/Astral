@@ -14,19 +14,19 @@ export function TrainingInfoMetrics({
 	return (
 		<Card
 			title={
-				<h2 className="m-0 flex items-center text-xl font-semibold font-poppins text-[var(--text)]">
-					<DashboardOutlined className="mr-2 text-[#60a5fa]" />
+				<h2 className="m-0 flex items-center text-xl font-semibold text-gray-900 dark:text-white\">
+					<DashboardOutlined className=\"mr-2 text-blue-500\" />
 					<span>Experiment Information:</span>
 					<Tag
-						color="blue"
+						color=\"blue\"
 						icon={<ExperimentOutlined />}
-						className="ml-[10px] bg-gradient-to-br from-[#3b82f6] to-[#22d3ee] border-none text-white font-poppins"
+						className=\"ml-[10px] bg-blue-600 border-none text-white\"
 					>
 						{experimentName}
 					</Tag>
 				</h2>
 			}
-			className="border border-[var(--border)] rounded-xl backdrop-blur-md shadow-lg hover:shadow-xl transition-all duration-300 bg-[var(--card-gradient)] font-poppins"
+			className=\"border border-gray-300 dark:border-gray-700 rounded-xl transition-all duration-300 bg-white dark:bg-slate-900\"
 		>
 			<div className="flex w-full flex-col py-4">
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-8">

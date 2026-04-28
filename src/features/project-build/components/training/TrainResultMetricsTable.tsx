@@ -13,30 +13,16 @@ import { Info as InfoCircleOutlined } from "lucide-react";
 const getAccuracyStatus = (score) => {
   if (score >= 0.9) {
     return (
-      <Tag className="border-none bg-gradient-to-br from-[#10b981] to-[#34d399] font-poppins text-white">
-        Excellent
-      </Tag>
+      <Tag className="border-none bg-emerald-500 text-white">Excellent</Tag>
     );
   }
   if (score >= 0.7) {
-    return (
-      <Tag className="border-none bg-gradient-to-br from-[#3b82f6] to-[#60a5fa] font-poppins text-white">
-        Good
-      </Tag>
-    );
+    return <Tag className="border-none bg-blue-500 text-white">Good</Tag>;
   }
   if (score >= 0.6) {
-    return (
-      <Tag className="border-none bg-gradient-to-br from-[#f59e0b] to-[#fbbf24] font-poppins text-white">
-        Medium
-      </Tag>
-    );
+    return <Tag className="border-none bg-amber-500 text-white">Medium</Tag>;
   }
-  return (
-    <Tag className="border-none bg-gradient-to-br from-[#ef4444] to-[#f87171] font-poppins text-white">
-      Bad
-    </Tag>
-  );
+  return <Tag className="border-none bg-red-500 text-white">Bad</Tag>;
 };
 
 const columns = [
@@ -49,10 +35,8 @@ const columns = [
         <Tooltip>
           <TooltipTrigger asChild>
             <span className="inline-flex items-center">
-              <span className="font-poppins text-gray-900 dark:text-[#e2e8f0]">
-                {text}
-              </span>{" "}
-              <InfoCircleOutlined className="ml-1 text-[#60a5fa]" />
+              <span className="text-gray-900 dark:text-gray-100">{text}</span>{" "}
+              <InfoCircleOutlined className="ml-1 text-blue-500 dark:text-blue-400" />
             </span>
           </TooltipTrigger>
           <TooltipContent>{record.description}</TooltipContent>
@@ -67,11 +51,7 @@ const columns = [
     render: (text) => {
       const isNumeric = typeof text === "number" || isFinite(Number(text));
       const value = isNumeric ? Number(text).toFixed(2) : text;
-      return (
-        <span className="font-poppins text-gray-700 dark:text-slate-200">
-          {value}
-        </span>
-      );
+      return <span className="text-gray-700 dark:text-gray-300">{value}</span>;
     },
   },
   {
@@ -86,17 +66,17 @@ export function TrainResultMetricsTable({ metrics }) {
   return (
     <Card
       title={
-        <span className="font-poppins text-gray-900 dark:text-[#e2e8f0]">
+        <span className="text-gray-900 dark:text-gray-100">
           Comprehensive Metrics
         </span>
       }
-      className="theme-table rounded-xl border border-[var(--border)] [background:var(--card-gradient)] shadow-lg backdrop-blur-md"
+      className="theme-table rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-slate-900"
     >
       <Table
         columns={columns}
         dataSource={metrics}
         pagination={false}
-        className="bg-transparent font-poppins"
+        className="bg-transparent"
         rowKey={(record) => record.key || record.metric}
       />
     </Card>
