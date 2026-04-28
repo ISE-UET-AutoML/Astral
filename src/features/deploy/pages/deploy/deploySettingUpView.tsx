@@ -257,7 +257,7 @@ export default function DeploySettingUpView() {
                                             currentStep !== 0 ? (
                                                 <DatabaseOutlined className="text-[var(--secondary-text)]" />
                                             ) : (
-                                                <LoadingOutlined className="text-[var(--secondary-text)]" />
+                                                <LoadingOutlined className="animate-spin text-[var(--secondary-text)]" />
                                             ),
                                         description: (
                                             <span className="text-slate-400">
@@ -276,7 +276,7 @@ export default function DeploySettingUpView() {
                                             currentStep !== 1 ? (
                                                 <SettingOutlined className="text-[var(--secondary-text)]" />
                                             ) : (
-                                                <LoadingOutlined className="text-[var(--secondary-text)]" />
+                                                <LoadingOutlined className="animate-spin text-[var(--secondary-text)]" />
                                             ),
                                         description: (
                                             <span className="text-slate-400">
@@ -294,7 +294,7 @@ export default function DeploySettingUpView() {
                                             currentStep !== 2 ? (
                                                 <CloudDownloadOutlined className="text-[var(--secondary-text)]" />
                                             ) : (
-                                                <LoadingOutlined className="text-[var(--secondary-text)]" />
+                                                <LoadingOutlined className="animate-spin text-[var(--secondary-text)]" />
                                             ),
                                         description: (
                                             <span className="text-slate-400">
@@ -312,7 +312,7 @@ export default function DeploySettingUpView() {
                                             currentStep !== 3 ? (
                                                 <CloudServerOutlined className="text-[var(--secondary-text)]" />
                                             ) : (
-                                                <LoadingOutlined className="text-[var(--secondary-text)]" />
+                                                <LoadingOutlined className="animate-spin text-[var(--secondary-text)]" />
                                             ),
                                         description: (
                                             <span className="text-slate-400">

@@ -1,6 +1,11 @@
 import React from 'react'
 import { useLocation, useOutletContext, useNavigate } from 'react-router-dom'
-import { Card } from 'src/components/ui/card'
+import {
+	Card,
+	CardContent,
+	CardHeader,
+	CardTitle,
+} from 'src/components/ui/card'
 import { Badge as Tag } from 'src/components/ui/badge'
 import { useSpring, animated } from '@react-spring/web'
 import { PATHS } from 'src/constants/paths'
@@ -68,43 +73,46 @@ const Training = () => {
 						{experimentCards.map((experiment) => (
 							<Card
 								key={`${experiment.tag || 'default'}-${experiment.experimentId}`}
-								className="border border-[var(--border)] rounded-xl backdrop-blur-md shadow-lg bg-[var(--card-gradient)] font-poppins"
-								title={
-									<div className="flex items-center justify-between gap-3">
-										<span className="text-lg font-semibold text-[var(--text)]">
-											{experiment.experimentName ===
-											'loading'
-												? `Preparing ${String(
-														experiment.tag ||
-															'training'
-													).toUpperCase()}`
-												: experiment.experimentName}
-										</span>
-										{experiment.tag && (
-											<Tag
-												color="blue"
-												className="uppercase"
-											>
+								className="rounded-xl border border-gray-200 bg-white py-0 font-poppins shadow-lg backdrop-blur-md dark:border-white/10 dark:bg-white/5"
+							>
+								{experiment.tag && (
+									<CardHeader className="border-b border-[var(--border)] py-4">
+										<div className="flex items-center justify-between gap-3">
+											<CardTitle className="text-lg font-semibold text-[var(--text)]">
+												{experiment.experimentName ===
+												'loading'
+													? `Preparing ${String(
+															experiment.tag ||
+																'training'
+														).toUpperCase()}`
+													: experiment.experimentName}
+											</CardTitle>
+											<Tag className="uppercase">
 												{experiment.tag}
 											</Tag>
-										)}
-									</div>
-								}
-							>
-								<TrainingProgressSteps
-									currentStep={experiment.currentStep}
-									status={experiment.status}
-									experimentName={experiment.experimentName}
-									maxTrainingTime={experiment.maxTrainingTime}
-									elapsedTime={experiment.elapsedTime}
-									onViewResults={() =>
-										handleViewResults(experiment)
-									}
-									currentSettingUpStep={
-										experiment.currentSettingUpStep
-									}
-									settingUpProgress={settingUpProgress}
-								/>
+										</div>
+									</CardHeader>
+								)}
+								<CardContent className="px-10 py-12">
+									<TrainingProgressSteps
+										currentStep={experiment.currentStep}
+										status={experiment.status}
+										experimentName={
+											experiment.experimentName
+										}
+										maxTrainingTime={
+											experiment.maxTrainingTime
+										}
+										elapsedTime={experiment.elapsedTime}
+										onViewResults={() =>
+											handleViewResults(experiment)
+										}
+										currentSettingUpStep={
+											experiment.currentSettingUpStep
+										}
+										settingUpProgress={settingUpProgress}
+									/>
+								</CardContent>
 							</Card>
 						))}
 

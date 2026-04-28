@@ -1,12 +1,6 @@
 import { ReactNode } from "react";
-import { Alert, AlertDescription, AlertTitle } from "src/components/ui/alert";
+import { Alert, AlertDescription } from "src/components/ui/alert";
 import { Button } from "src/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "src/components/ui/card";
 import { Spinner } from "src/components/ui/spinner";
 import {
   ChartLine as LineChartOutlined,
@@ -15,6 +9,7 @@ import {
   CloudDownload as CloudDownloadOutlined,
   Database as DatabaseOutlined,
   LoaderCircle as LoadingOutlined,
+  Rocket,
   Settings as SettingOutlined,
 } from "lucide-react";
 
@@ -42,29 +37,93 @@ const cx = (...classes: Array<string | false | null | undefined>) =>
 function StepList({
   steps,
   current = 0,
+  compact = false,
+}: {
+  steps: TrainingStep[];
+  current?: number;
+  compact?: boolean;
+}) {
+  return (
+    <div className={cx("flex flex-col", compact ? "gap-3" : "gap-4")}>
+      {steps.map((step, index) => (
+        <div
+          key={step.key}
+          className={cx(
+            "group flex items-start gap-3 transition-colors",
+            compact ? "px-0 py-0" : "px-1 py-0.5",
+          )}
+        >
+          <span
+            className={cx(
+              "mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full border text-xs",
+              index < current &&
+                "border-emerald-200 bg-emerald-50 text-emerald-600 dark:border-emerald-400/30 dark:bg-emerald-500/10 dark:text-emerald-300",
+              index === current &&
+                "border-blue-300 bg-white text-blue-600 shadow-sm dark:border-blue-400/40 dark:bg-white/10 dark:text-blue-300",
+              index > current &&
+                "border-gray-200 bg-white text-gray-500 dark:border-white/10 dark:bg-white/5 dark:text-gray-400",
+            )}
+          >
+            {step.icon || index + 1}
+          </span>
+          <div
+            className={cx(
+              "min-w-0",
+              compact
+                ? "flex flex-wrap items-baseline gap-x-2 gap-y-0.5"
+                : "space-y-1",
+            )}
+          >
+            <span className="text-[15px] font-medium text-gray-900 dark:text-white">
+              {step.title}
+            </span>
+            {step.description && (
+              <span className="text-[15px] text-slate-500 dark:text-slate-400">
+                {step.description}
+              </span>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function HorizontalStepList({
+  steps,
+  current = 0,
 }: {
   steps: TrainingStep[];
   current?: number;
 }) {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="grid grid-cols-1 gap-5 md:grid-cols-5">
       {steps.map((step, index) => (
-        <div
-          key={step.key}
-          className={cx(
-            "flex items-center gap-2 rounded-xl px-2 py-1.5",
-            index <= current && "font-medium",
-          )}
-        >
-          <span className="flex size-6 shrink-0 items-center justify-center rounded-full border border-[var(--border)] text-xs text-[var(--secondary-text)]">
+        <div key={step.key} className="flex min-w-0 items-start gap-3">
+          <span
+            className={cx(
+              "mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full text-gray-600 dark:text-gray-300",
+              index === current && "text-blue-600 dark:text-blue-300",
+              index < current && "text-emerald-600 dark:text-emerald-300",
+            )}
+          >
             {step.icon || index + 1}
           </span>
-          <span className="min-w-0 text-sm">{step.title}</span>
-          {step.description && (
-            <span className="hidden min-w-0 text-sm text-slate-400 sm:inline">
-              {step.description}
-            </span>
-          )}
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-3">
+              <h3 className="whitespace-nowrap text-[15px] font-medium text-gray-900 dark:text-white">
+                {step.title}
+              </h3>
+              {index < steps.length - 1 && (
+                <div className="hidden h-px flex-1 bg-gray-200 dark:bg-white/10 lg:block" />
+              )}
+            </div>
+            {step.description && (
+              <p className="mt-1 max-w-40 text-sm leading-6 text-slate-500 dark:text-slate-400">
+                {step.description}
+              </p>
+            )}
+          </div>
         </div>
       ))}
     </div>
@@ -92,7 +151,7 @@ export function TrainingProgressSteps({
         currentStep !== 0 ? (
           <DatabaseOutlined className="size-4 text-[var(--secondary-text)]" />
         ) : (
-          <LoadingOutlined className="size-4 text-[var(--secondary-text)]" />
+          <LoadingOutlined className="size-4 animate-spin text-[var(--secondary-text)]" />
         ),
       description: "Selecting suitable machine for you",
     },
@@ -105,7 +164,7 @@ export function TrainingProgressSteps({
         currentStep !== 1 ? (
           <SettingOutlined className="size-4 text-[var(--secondary-text)]" />
         ) : (
-          <LoadingOutlined className="size-4 text-[var(--secondary-text)]" />
+          <LoadingOutlined className="size-4 animate-spin text-[var(--secondary-text)]" />
         ),
       description: "Setting up your machine",
     },
@@ -116,7 +175,7 @@ export function TrainingProgressSteps({
         currentStep !== 2 ? (
           <CloudDownloadOutlined className="size-4 text-[var(--secondary-text)]" />
         ) : (
-          <LoadingOutlined className="size-4 text-[var(--secondary-text)]" />
+          <LoadingOutlined className="size-4 animate-spin text-[var(--secondary-text)]" />
         ),
       description: "Fetching data from cloud storage",
     },
@@ -129,7 +188,7 @@ export function TrainingProgressSteps({
         ) : hasReachedTimeLimit ? (
           <CloseCircleOutlined className="size-4 text-red-500" />
         ) : (
-          <LoadingOutlined className="size-4 text-[var(--secondary-text)]" />
+          <LoadingOutlined className="size-4 animate-spin text-[var(--secondary-text)]" />
         ),
       description: "Preparing your model",
     },
@@ -154,50 +213,54 @@ export function TrainingProgressSteps({
       ),
   }));
 
+  const alertText =
+    experimentName === "loading"
+      ? "Finding the best instance for your project. This may take a few moments..."
+      : hasReachedTimeLimit
+        ? "Training Time Limit Reached"
+        : "This experiment may take a while. You can safely leave the page at any time, and we will automatically create your model once it is finished.";
+
   return (
-    <div className="flex w-full flex-col gap-6">
-      <StepList current={currentStep} steps={trainingSteps} />
+    <div className="font-poppins">
+      <div className="mb-7 flex items-center gap-2">
+        <Rocket className="size-5 text-gray-700 dark:text-gray-200" />
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+          Training Preparation
+        </h2>
+      </div>
+
+      <div className="mb-7">
+        <HorizontalStepList current={currentStep} steps={trainingSteps} />
+      </div>
 
       {status === "DONE" ? (
-        <div className="py-8 text-center">
-          <div className="mb-4">
-            <CheckCircleOutlined className="mb-4 text-[64px] text-[#10b981]" />
-          </div>
-          <h2 className="mb-2 font-poppins text-2xl font-semibold text-[var(--text)]">
-            Training Completed Successfully!
-          </h2>
-          <p className="mb-6 font-poppins text-base text-[#94a3b8]">
-            Your model has been trained and is ready for use. Click below to
-            view the results and performance metrics.
-          </p>
-          <Button
-            type="button"
-            onClick={onViewResults}
-            className="h-auto rounded-xl border-none bg-gradient-to-br from-[#3b82f6] to-[#22d3ee] px-8 py-3 font-poppins text-lg font-semibold shadow-[0_8px_32px_rgba(59,130,246,0.3)] transition-all duration-300 hover:scale-105 hover:shadow-2xl"
-          >
-            <CheckCircleOutlined className="mr-2 size-5" />
-            View Training Results
-          </Button>
-        </div>
+        <Alert className="rounded-xl border-emerald-200 bg-emerald-50 px-3 py-2 text-emerald-900 dark:border-emerald-400/30 dark:bg-emerald-500/10 dark:text-emerald-100">
+          <AlertDescription className="flex flex-wrap items-center justify-between gap-3 text-sm">
+            <span>Your model has been trained and is ready for review.</span>
+            <Button
+              type="button"
+              size="sm"
+              onClick={onViewResults}
+              className="bg-blue-600 text-white hover:bg-blue-700"
+            >
+              <CheckCircleOutlined className="size-4" />
+              View Training Results
+            </Button>
+          </AlertDescription>
+        </Alert>
       ) : (
         <Alert
           variant="default"
           className={cx(
-            "rounded-xl border font-poppins",
+            "mt-6 rounded-xl border px-3 py-2 font-poppins",
             hasReachedTimeLimit
-              ? "border-[rgba(251,191,36,0.3)] bg-[linear-gradient(135deg,rgba(251,191,36,0.1),rgba(245,158,11,0.1))]"
-              : "border-[rgba(59,130,246,0.3)] bg-[linear-gradient(135deg,rgba(59,130,246,0.1),rgba(34,211,238,0.1))]",
+              ? "border-amber-300 bg-amber-50 text-amber-900 dark:border-amber-400/30 dark:bg-amber-500/10 dark:text-amber-100"
+              : "border-blue-300 bg-blue-50 text-gray-900 dark:border-blue-400/30 dark:bg-blue-500/10 dark:text-blue-100",
           )}
         >
-          <AlertTitle className="text-[var(--text)]">
-            {experimentName === "loading"
-              ? "Finding the best instance for your project. This may take a few moments..."
-              : hasReachedTimeLimit
-                ? "Training Time Limit Reached"
-                : "This experiment may take a while. You can safely leave the page at any time, and we will automatically create your model once it is finished."}
-          </AlertTitle>
+          <AlertDescription className="text-sm">{alertText}</AlertDescription>
           {hasReachedTimeLimit && (
-            <AlertDescription className="text-[var(--text)]">
+            <AlertDescription className="mt-1 text-sm">
               The training has reached its maximum allocated time. It may
               automatically stop soon.
             </AlertDescription>
@@ -206,17 +269,17 @@ export function TrainingProgressSteps({
       )}
 
       {currentStep === 1 && (
-        <Card className="rounded-xl border border-[var(--border)] bg-[var(--card-gradient)] font-poppins shadow-lg backdrop-blur-md transition-all duration-300 hover:shadow-xl">
-          <CardHeader>
-            <CardTitle className="m-0 flex items-center text-xl font-semibold text-[var(--text)]">
-              <SettingOutlined className="mr-2 size-5 text-[var(--secondary-text)]" />
-              Setting Up Progress
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+        <div className="mt-7 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg dark:border-white/10 dark:bg-white/5">
+          <div className="border-b border-gray-200 px-5 py-4 dark:border-white/10">
+            <h3 className="m-0 flex items-center text-lg font-semibold text-gray-900 dark:text-white">
+              <SettingOutlined className="mr-2 size-5 text-gray-600 dark:text-gray-300" />
+              Current Step Progress
+            </h3>
+          </div>
+          <div className="px-5 py-5">
             <StepList current={currentSettingUpStep} steps={setupSteps} />
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
     </div>
   );
