@@ -1,93 +1,91 @@
-import React from 'react'
-import { Button as UiButton } from 'src/components/ui/button'
-import { Card as UiCard, CardContent as UiCardContent, CardHeader as UiCardHeader, CardTitle as UiCardTitle } from 'src/components/ui/card'
-import { Spinner as UiSpinner } from 'src/components/ui/spinner'
-import { Tooltip as UiTooltip, TooltipContent as UiTooltipContent, TooltipProvider as UiTooltipProvider, TooltipTrigger as UiTooltipTrigger } from 'src/components/ui/tooltip'
-import { Clock as ClockCircleOutlined, CircleCheck as CheckCircleOutlined } from 'lucide-react'
-import { formatDistanceToNow, format } from 'date-fns'
-const cx = (...classes) => classes.filter(Boolean).join(' ')
-const Button = ({ children, icon, loading, disabled, htmlType, type, className = '', ...props }) => (<UiButton type={htmlType || 'button'} disabled={disabled || loading} className={className} {...props}>{loading && <UiSpinner className="mr-2" />}{icon && <span className="inline-flex">{icon}</span>}{children}</UiButton>)
-const Card = ({ title, children, className = '', style, ...props }) => (<UiCard className={className} style={style} {...props}>{title && <UiCardHeader><UiCardTitle>{title}</UiCardTitle></UiCardHeader>}<UiCardContent>{children}</UiCardContent></UiCard>)
-Card.Meta = ({ title, description, avatar, className = '' }) => (<div className={cx('flex items-start gap-3', className)}>{avatar}<div>{title && <div className="font-medium">{title}</div>}{description && <div className="text-sm text-muted-foreground">{description}</div>}</div></div>)
-const Tooltip = ({ title, children, ...props }) => (<UiTooltipProvider><UiTooltip><UiTooltipTrigger asChild>{children || <span />}</UiTooltipTrigger>{title && <UiTooltipContent {...props}>{title}</UiTooltipContent>}</UiTooltip></UiTooltipProvider>)
-const List = ({ dataSource = [], renderItem, className = '', ...props }) => <div className={className} {...props}>{dataSource.map((item, index) => renderItem ? renderItem(item, index) : <div key={index}>{item}</div>)}</div>
-List.Item = ({ children, className = '', ...props }) => <div className={cx('border-b py-2', className)} {...props}>{children}</div>
+import { Button } from "src/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "src/components/ui/card";
+import { Spinner } from "src/components/ui/spinner";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "src/components/ui/tooltip";
+import { CheckCircle, Clock } from "lucide-react";
+import { format, formatDistanceToNow } from "date-fns";
 
 export function DeployHistorySection({
-	recentPredictions,
-	isLoadingPredictions,
-	onViewPrediction,
+  recentPredictions,
+  isLoadingPredictions,
+  onViewPrediction,
 }) {
-	return (
-		<div className="mt-8">
-			<Card
-				title={
-					<div className="flex items-center gap-2">
-						<ClockCircleOutlined className="text-[var(--accent-text)]" />
-						<span className="text-lg font-semibold text-[var(--text)]">
-							Recent Predictions
-						</span>
-					</div>
-				}
-				className="border border-[var(--border)] rounded-xl [background:var(--card-gradient)] backdrop-blur-xl shadow-lg"
-			>
-				{!isLoadingPredictions && (
-					<List
-						dataSource={recentPredictions}
-						renderItem={(prediction) => {
-							const filename = prediction.file_name
-							const dateObject = new Date(
-								prediction.created_at
-							)
-							const timeAgo = formatDistanceToNow(dateObject, {
-								addSuffix: true,
-							})
-							const exactTime = format(
-								dateObject,
-								'HH:mm:ss, dd/MM/yyyy'
-							)
+  return (
+    <Card className="rounded-2xl border border-gray-200 bg-white/95 shadow-lg dark:border-white/10 dark:bg-white/5">
+      <CardHeader className="border-b border-gray-200 px-5 py-4 dark:border-white/10">
+        <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white">
+          <Clock className="size-5 text-blue-600 dark:text-blue-300" />
+          Recent Predictions
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="px-5 py-5">
+        {isLoadingPredictions ? (
+          <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+            <Spinner className="size-4" />
+            Loading predictions...
+          </div>
+        ) : recentPredictions?.length ? (
+          <div className="divide-y divide-gray-200 dark:divide-white/10">
+            {recentPredictions.map((prediction) => {
+              const filename = prediction.file_name || "Prediction file";
+              const dateObject = new Date(prediction.created_at);
+              const timeAgo = formatDistanceToNow(dateObject, {
+                addSuffix: true,
+              });
+              const exactTime = format(dateObject, "HH:mm:ss, dd/MM/yyyy");
 
-							return (
-								<List.Item
-									className="border-b border-[var(--border)]"
-									actions={[
-										<Button
-											type="primary"
-											className="deploy-btn-solid"
-											onClick={() =>
-												onViewPrediction(prediction)
-											}
-										>
-											View
-										</Button>,
-									]}
-								>
-									<List.Item.Meta
-										avatar={
-											<CheckCircleOutlined className="text-[var(--accent-text)]" />
-										}
-										title={
-											<span className="text-[var(--text)]">
-												{`File: ${filename}`}
-											</span>
-										}
-										description={
-											<Tooltip
-												title={`Exact time: ${exactTime}`}
-											>
-												<span className="cursor-help text-[var(--secondary-text)]">
-													{`Predicted ${timeAgo}`}
-												</span>
-											</Tooltip>
-										}
-									/>
-								</List.Item>
-							)
-						}}
-					/>
-				)}
-			</Card>
-		</div>
-	)
+              return (
+                <div
+                  key={prediction.id || `${filename}-${prediction.created_at}`}
+                  className="flex flex-col gap-3 py-3 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div className="flex min-w-0 items-start gap-3">
+                    <CheckCircle className="mt-0.5 size-5 shrink-0 text-blue-600 dark:text-blue-300" />
+                    <div className="min-w-0">
+                      <div className="truncate text-sm font-medium text-gray-900 dark:text-white">
+                        {filename}
+                      </div>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span className="inline-flex cursor-help text-xs text-gray-500 dark:text-gray-400">
+                              Predicted {timeAgo}
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent>Exact time: {exactTime}</TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                  </div>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => onViewPrediction(prediction)}
+                    className="w-full sm:w-auto"
+                  >
+                    View
+                  </Button>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50/80 px-4 py-6 text-sm text-gray-500 dark:border-white/10 dark:bg-white/5 dark:text-gray-400">
+            No prediction history yet.
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
 }
-

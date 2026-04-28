@@ -1,131 +1,131 @@
-import React from 'react'
-import { Card } from 'src/components/ui/card'
-import { Separator as Divider } from 'src/components/ui/separator'
-import { Input } from 'src/components/ui/input'
-import { Button } from 'src/components/ui/button'
-import { Link as LinkOutlined, CloudUpload as CloudUploadOutlined, ExternalLink as ExportOutlined, Star as StarOutlined } from 'lucide-react'
-import UpDataDeploy from 'src/components/shared/utilities/UpDataDeploy'
+import { Button } from "src/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "src/components/ui/card";
+import { Input } from "src/components/ui/input";
+import { Spinner } from "src/components/ui/spinner";
+import {
+  CloudUpload,
+  Copy,
+  ExternalLink,
+  Link,
+  Sparkles,
+} from "lucide-react";
+import UpDataDeploy from "src/components/shared/utilities/UpDataDeploy";
 
-export function DeployEndpointPanel({
-	deployData,
-	projectInfo,
-	model,
-	uploading,
-	isShowUpload,
-	isGeneratingUI,
-	isCheckingUIStatus,
-	isUIGenerated,
-	onOpenUpload,
-	onCloseUpload,
-	onUploadComplete,
-	onGenerateUI,
-}) {
-	if (!deployData || !projectInfo) return null
+function copyToClipboard(value: string) {
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(value);
+    return;
+  }
 
-	return (
-		<div className="mt-6">
-			<Card
-				title={
-					<div className="flex items-center gap-2">
-						<LinkOutlined className="text-[var(--accent-text)]" />
-						<span className="font-poppins text-lg font-semibold text-[var(--text)]">
-							Endpoint Information
-						</span>
-					</div>
-				}
-				className="border border-[var(--border)] rounded-xl [background:var(--card-gradient)] shadow-lg"
-				style={{
-					backdropFilter: 'blur(10px)',
-					fontFamily: 'Poppins, sans-serif',
-				}}
-			>
-				<Divider
-					orientation="left"
-					orientationMargin={0}
-					className="!my-4 font-poppins font-semibold !border-[var(--border)] [&_.ant-divider-inner-text]:!text-[var(--text)] [&_.ant-divider-inner-text]:!text-base"
-				>
-					API Endpoint URL
-				</Divider>
-				{/* URL + Copy URL + Upload + Generate UI trên 1 dòng */}
-				<div className="flex items-center gap-2 flex-wrap">
-					<Input
-						className="flex-1 min-w-[180px] [&.ant-input]:!bg-[var(--input-bg)] [&.ant-input]:!border-[var(--input-border)] [&.ant-input]:!text-[var(--input-color)] [&.ant-input]:!text-[15px] [&.ant-input]:!px-4 [&.ant-input]:!py-2.5"
-						value={
-							deployData?.api_base_url ||
-							'https://api.example.com/predict/model-123'
-						}
-						readOnly
-					/>
-					<Button
-						type="primary"
-						size="large"
-						className="deploy-btn-solid shrink-0"
-						onClick={() => {
-							const textToCopy =
-								deployData?.api_base_url ||
-								'https://api.example.com/predict/model-123'
-							try {
-								const textarea =
-									document.createElement('textarea')
-								textarea.value = textToCopy
-								document.body.appendChild(textarea)
-								textarea.select()
-								document.execCommand('copy')
-								document.body.removeChild(textarea)
-							} catch (err) {
-								console.error('Failed to copy', err)
-							}
-						}}
-					>
-						Copy URL
-					</Button>
-					<Button
-						type="primary"
-						size="large"
-						onClick={onOpenUpload}
-						loading={uploading}
-						icon={<CloudUploadOutlined />}
-						className="deploy-btn-solid shrink-0"
-					>
-						{uploading ? 'Predicting...' : 'Upload Files to Predict'}
-					</Button>
-					<UpDataDeploy
-						isOpen={isShowUpload}
-						onClose={onCloseUpload}
-						projectId={model?.id}
-						taskType={projectInfo?.task_type}
-						featureColumns={Object.keys(model?.metadata?.csv || {})}
-						onUploadStart={null}
-						onUploadComplete={onUploadComplete}
-					/>
-					<Button
-						type="primary"
-						size="large"
-						onClick={
-							isGeneratingUI || isCheckingUIStatus
-								? undefined
-								: onGenerateUI
-						}
-						disabled={isGeneratingUI || isCheckingUIStatus}
-						loading={isGeneratingUI}
-						icon={
-							isUIGenerated ? <ExportOutlined /> : <StarOutlined />
-						}
-						className="deploy-btn-solid shrink-0"
-					>
-						{isCheckingUIStatus ? (
-							<span>Checking</span>
-						) : isGeneratingUI ? (
-							<span>Generating</span>
-						) : isUIGenerated ? (
-							<span>Your App is Ready</span>
-						) : (
-							<span>Generate UI</span>
-						)}
-					</Button>
-				</div>
-			</Card>
-		</div>
-	)
+  const textarea = document.createElement("textarea");
+  textarea.value = value;
+  document.body.appendChild(textarea);
+  textarea.select();
+  document.execCommand("copy");
+  document.body.removeChild(textarea);
 }
 
+export function DeployEndpointPanel({
+  deployData,
+  projectInfo,
+  model,
+  uploading,
+  isShowUpload,
+  isGeneratingUI,
+  isCheckingUIStatus,
+  isUIGenerated,
+  onOpenUpload,
+  onCloseUpload,
+  onUploadComplete,
+  onGenerateUI,
+}) {
+  if (!deployData || !projectInfo) return null;
+
+  const apiUrl =
+    deployData?.api_base_url || "https://api.example.com/predict/model-123";
+  const uiActionDisabled = isGeneratingUI || isCheckingUIStatus;
+
+  return (
+    <Card className="rounded-2xl border border-gray-200 bg-white/95 shadow-lg dark:border-white/10 dark:bg-white/5">
+      <CardHeader className="border-b border-gray-200 px-5 py-4 dark:border-white/10">
+        <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white">
+          <Link className="size-5 text-blue-600 dark:text-blue-300" />
+          Endpoint Information
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="px-5 py-5">
+        <div className="mb-2 text-sm font-medium text-gray-900 dark:text-white">
+          API Endpoint URL
+        </div>
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
+          <Input
+            className="h-10 flex-1 rounded-xl border-gray-200 bg-white px-3 text-sm text-gray-900 dark:border-white/10 dark:bg-white/10 dark:text-white"
+            value={apiUrl}
+            readOnly
+          />
+          <div className="flex flex-wrap gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="lg"
+              onClick={() => copyToClipboard(apiUrl)}
+            >
+              <Copy className="size-4" />
+              Copy URL
+            </Button>
+            <Button
+              type="button"
+              size="lg"
+              onClick={onOpenUpload}
+              disabled={uploading}
+              className="bg-blue-600 text-white hover:bg-blue-700"
+            >
+              {uploading ? (
+                <Spinner className="size-4" />
+              ) : (
+                <CloudUpload className="size-4" />
+              )}
+              {uploading ? "Predicting..." : "Upload Files"}
+            </Button>
+            <Button
+              type="button"
+              size="lg"
+              onClick={uiActionDisabled ? undefined : onGenerateUI}
+              disabled={uiActionDisabled}
+              className="bg-blue-600 text-white hover:bg-blue-700"
+            >
+              {isGeneratingUI ? (
+                <Spinner className="size-4" />
+              ) : isUIGenerated ? (
+                <ExternalLink className="size-4" />
+              ) : (
+                <Sparkles className="size-4" />
+              )}
+              {isCheckingUIStatus
+                ? "Checking"
+                : isGeneratingUI
+                  ? "Generating"
+                  : isUIGenerated
+                    ? "Open App"
+                    : "Generate UI"}
+            </Button>
+          </div>
+        </div>
+        <UpDataDeploy
+          isOpen={isShowUpload}
+          onClose={onCloseUpload}
+          projectId={model?.id}
+          taskType={projectInfo?.task_type}
+          featureColumns={Object.keys(model?.metadata?.csv || {})}
+          onUploadStart={null}
+          onUploadComplete={onUploadComplete}
+        />
+      </CardContent>
+    </Card>
+  );
+}

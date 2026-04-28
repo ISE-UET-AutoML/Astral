@@ -1,124 +1,105 @@
-import React from 'react'
-import { Card } from 'src/components/ui/card'
-import { Separator as Divider } from 'src/components/ui/separator'
-import { Input } from 'src/components/ui/input'
-import { Button } from 'src/components/ui/button'
-import { Monitor as MonitorOutlined, ChartLine as LineChartOutlined, Calculator as CalculatorOutlined } from 'lucide-react'
+import { Button } from "src/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "src/components/ui/card";
+import { Input } from "src/components/ui/input";
+import { ChartLine, Copy, Gauge, Monitor } from "lucide-react";
 
-export function DeployMonitoringPanel({ deployData, projectInfo, taskConfig, onUploadFiles }) {
-	if (!deployData || !projectInfo) return null
+function copyToClipboard(value: string) {
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(value);
+    return;
+  }
 
-	return (
-		<div className="mt-6">
-			<Card
-				title={
-					<div className="flex items-center gap-2">
-						<MonitorOutlined className="text-[var(--accent-text)]" />
-						<span className="font-poppins text-lg font-semibold text-[var(--text)]">
-							Monitoring
-						</span>
-					</div>
-				}
-				className="border border-[var(--border)] rounded-xl [background:var(--card-gradient)] shadow-lg"
-				style={{
-					backdropFilter: 'blur(10px)',
-					fontFamily: 'Poppins, sans-serif',
-				}}
-			>
-				<Divider
-					orientation="left"
-					orientationMargin={0}
-					className="!my-4 font-poppins font-semibold !border-[var(--border)] [&_.ant-divider-inner-text]:!text-[var(--text)] [&_.ant-divider-inner-text]:!text-base"
-				>
-					Monitor Endpoint URL
-				</Divider>
-				{/* URL + Copy URL + System Monitoring + GPU Monitoring trên 1 dòng */}
-				<div className="flex items-center gap-2 flex-wrap">
-					<Input
-						className="flex-1 min-w-[180px] [&.ant-input]:!bg-[var(--input-bg)] [&.ant-input]:!border-[var(--input-border)] [&.ant-input]:!text-[var(--input-color)] [&.ant-input]:!text-[15px] [&.ant-input]:!px-4 [&.ant-input]:!py-2.5"
-						value={
-							deployData?.monitor_url ||
-							'https://api.example.com'
-						}
-						readOnly
-					/>
-					<Button
-						type="primary"
-						size="large"
-						className="deploy-btn-solid shrink-0"
-						onClick={() => {
-							const textToCopy =
-								deployData?.monitor_url ||
-								'https://api.example.com'
-							try {
-								const textarea =
-									document.createElement('textarea')
-								textarea.value = textToCopy
-								document.body.appendChild(textarea)
-								textarea.select()
-								document.execCommand('copy')
-								document.body.removeChild(textarea)
-							} catch (err) {
-								console.error('Failed to copy', err)
-							}
-						}}
-					>
-						Copy URL
-					</Button>
-					<Button
-						type="primary"
-						size="large"
-						icon={<LineChartOutlined />}
-						className="deploy-btn-solid shrink-0"
-						disabled={!deployData?.monitor_url}
-						onClick={() => {
-							if (deployData?.monitor_url) {
-								window.open(
-									`${deployData.monitor_url}/d/rYdddlPWk/node-exporter-full`,
-									'_blank',
-									'noopener,noreferrer'
-								)
-							}
-						}}
-					>
-						System Monitoring
-					</Button>
-					<Button
-						type="primary"
-						size="large"
-						icon={<CalculatorOutlined />}
-						className="deploy-btn-solid shrink-0"
-						disabled={!deployData?.monitor_url}
-						onClick={() => {
-							if (deployData?.monitor_url) {
-								window.open(
-									`${deployData.monitor_url}/d/vlvPlrgnk/gpu-metrics`,
-									'_blank',
-									'noopener,noreferrer'
-								)
-							}
-						}}
-					>
-						GPU Monitoring
-					</Button>
-				</div>
-			</Card>
-
-			{/* Live infer view */}
-			{taskConfig?.liveInferView && (
-				<>
-					{(() => {
-						const LiveInferComponent = taskConfig.liveInferView
-						return (
-							<LiveInferComponent
-								projectInfo={projectInfo}
-								handleUploadFiles={onUploadFiles}
-							/>
-						)
-					})()}
-				</>
-			)}
-		</div>
-	)
+  const textarea = document.createElement("textarea");
+  textarea.value = value;
+  document.body.appendChild(textarea);
+  textarea.select();
+  document.execCommand("copy");
+  document.body.removeChild(textarea);
 }
 
+export function DeployMonitoringPanel({
+  deployData,
+  projectInfo,
+  taskConfig,
+  onUploadFiles,
+}) {
+  if (!deployData || !projectInfo) return null;
+
+  const monitorUrl = deployData?.monitor_url || "https://api.example.com";
+  const openMonitoring = (path: string) => {
+    if (!deployData?.monitor_url) return;
+    window.open(`${deployData.monitor_url}${path}`, "_blank", "noopener,noreferrer");
+  };
+
+  return (
+    <>
+      <Card className="rounded-2xl border border-gray-200 bg-white/95 shadow-lg dark:border-white/10 dark:bg-white/5">
+        <CardHeader className="border-b border-gray-200 px-5 py-4 dark:border-white/10">
+          <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white">
+            <Monitor className="size-5 text-blue-600 dark:text-blue-300" />
+            Monitoring
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="px-5 py-5">
+          <div className="mb-2 text-sm font-medium text-gray-900 dark:text-white">
+            Monitor Endpoint URL
+          </div>
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
+            <Input
+              className="h-10 flex-1 rounded-xl border-gray-200 bg-white px-3 text-sm text-gray-900 dark:border-white/10 dark:bg-white/10 dark:text-white"
+              value={monitorUrl}
+              readOnly
+            />
+            <div className="flex flex-wrap gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="lg"
+                onClick={() => copyToClipboard(monitorUrl)}
+              >
+                <Copy className="size-4" />
+                Copy URL
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="lg"
+                disabled={!deployData?.monitor_url}
+                onClick={() => openMonitoring("/d/rYdddlPWk/node-exporter-full")}
+              >
+                <ChartLine className="size-4" />
+                System Monitoring
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="lg"
+                disabled={!deployData?.monitor_url}
+                onClick={() => openMonitoring("/d/vlvPlrgnk/gpu-metrics")}
+              >
+                <Gauge className="size-4" />
+                GPU Monitoring
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {taskConfig?.liveInferView &&
+        (() => {
+          const LiveInferComponent = taskConfig.liveInferView;
+          return (
+            <LiveInferComponent
+              projectInfo={projectInfo}
+              handleUploadFiles={onUploadFiles}
+            />
+          );
+        })()}
+    </>
+  );
+}

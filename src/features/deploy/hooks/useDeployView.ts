@@ -14,7 +14,7 @@ import Papa from 'papaparse'
 
 const { useState, useEffect, useRef, useMemo } = React
 
-export const useDeployView = ({ deployId, projectId, theme }) => {
+export const useDeployView = ({ deployId, projectId }) => {
 	// Core state
 	const [recentPredictions, setRecentPredictions] = useState([])
 	const [projectInfo, setProjectInfo] = useState({})
@@ -423,4 +423,3 @@ export const useDeployView = ({ deployId, projectId, theme }) => {
 }
 
 export default useDeployView
-
