@@ -8,7 +8,7 @@ import { trainModel, autoLabel } from 'src/features/projects/api/project'
 import { toast } from 'sonner'
 import { useLibrary } from 'src/utils/LibProvider'
 import { updateLabel } from 'src/features/project-build/api/images'
-import Loading from 'src/components/shared/data-display/Loading'
+import { Spinner } from 'src/components/ui/spinner'
 import * as projectAPI from 'src/features/projects/api/project'
 import 'src/assets/css/card.css'
 import CreateLabel from 'src/features/project-build/pages/build/labelData/createLabel/index'
@@ -283,8 +283,12 @@ const LabelingImageClassification = ({
 	}
 
 	return (
-		<div className="label-editor-container" id="label-editor-container">
-			{isLoading && <Loading />}
+		<div className="label-editor-container relative" id="label-editor-container">
+			{isLoading && (
+				<div className="absolute inset-0 z-20 flex items-center justify-center bg-gray-500/50">
+					<Spinner className="size-8 text-blue-600" />
+				</div>
+			)}
 			<div
 				className="group-hover/item:block flex 
                 top-full right-0 py-4 px-3 bg-white w-[100%] rounded-md shadow-md "

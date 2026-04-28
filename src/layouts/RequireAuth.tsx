@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import useAuth, { type AuthContextValue } from 'src/features/auth/hooks/useAuth';
 import { useLocation, Navigate } from 'react-router-dom';
-import Loading from 'src/components/shared/data-display/Loading';
+import { Spinner } from 'src/components/ui/spinner';
 import { Outlet } from 'react-router-dom';
 
 export default function RequireAuth() {
@@ -24,7 +24,11 @@ export default function RequireAuth() {
     }, []);
 
 	if (loading) {
-		return <Loading />;
+		return (
+			<div className="flex min-h-screen items-center justify-center bg-background">
+				<Spinner className="size-8 text-blue-600" />
+			</div>
+		);
 	}
 
 	if (!authed) {

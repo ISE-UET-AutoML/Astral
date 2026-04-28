@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from "src/components/ui/card";
 import { ResponsiveContainer } from "recharts";
-import LineGraph from "src/components/shared/charts/LineGraph";
+import LineGraph from "@/src/features/project-build/components/training/LineGraph";
 
 export function TrainResultPerformanceCharts({ valGraphs }) {
   return (

@@ -1,6 +1,6 @@
 import { useState } from "react";
-import Loading from "src/components/shared/data-display/Loading";
 import PaginationNew from "src/components/shared/data-display/PaginationNew";
+import { Spinner } from "src/components/ui/spinner";
 import { PlusIcon, Trash as TrashIcon } from "lucide-react";
 
 const MultimodalClassDataView = ({ dataset, files }) => {
@@ -68,7 +68,11 @@ const MultimodalClassDataView = ({ dataset, files }) => {
 
   return (
     <div className="bg-white h-full w-full pl-2 pr-2 relative overflow-y-hidden overflow-x-auto">
-      {isLoading && <Loading />}
+      {isLoading && (
+        <div className="absolute inset-0 z-20 flex items-center justify-center bg-gray-500/50">
+          <Spinner className="size-8 text-blue-600" />
+        </div>
+      )}
       <div className="w-full h-[4%] flex mb-2 justify-between items-center">
         <div className="text-sm text-gray-600">
           Selected: {selectedRows.length} rows
