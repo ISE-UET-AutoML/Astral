@@ -1,43 +1,37 @@
-import { PATHS } from 'src/constants/paths'
-import Profile from 'src/features/profile/pages/profile'
-import Settings from 'src/features/settings/pages/settings'
-import RequireAuth from 'src/layouts/RequireAuth'
-import DefaultLayout from 'src/layouts/DefaultLayout'
-import Projects from 'src/features/projects/pages/projects'
-import ProjectTasks from 'src/features/projects/pages/tasks'
-import ProjectLayout from 'src/layouts/ProjectLayout'
-import ProjectDeploy from 'src/features/deploy/pages/deploy'
-import ProjectModels from 'src/features/models/pages/models'
-import ProjectBuild from 'src/features/project-build/pages/build/build'
-import ProjectSettings from 'src/features/projects/pages/settings'
-import ProjectExperiments from 'src/features/project-build/pages/experiments'
-import ProjectGenApp from 'src/features/gen-apps/pages/genapp'
-import EditAppPage from 'src/features/gen-apps/pages/editapp'
-import Buckets from 'src/features/buckets/pages/buckets'
-import Datasets from 'src/features/datasets/pages/datasets'
-import DatasetLayout from 'src/layouts/DatasetLayout'
-import DatasetView from 'src/features/datasets/pages/dataset/DatasetView'
-import LabelProjects from 'src/features/labels/pages/labels'
-import LabelView from 'src/features/labels/pages/label/LabelView'
-import UploadData from 'src/features/project-build/pages/build/uploadData'
-import ChooseTrainingMode from 'src/features/project-build/pages/build/chooseTrainingMode'
-import SelectInstance from 'src/features/project-build/pages/build/selectInstance'
-import SelectTargetColMulti from 'src/features/project-build/pages/build/selectTargetColMulti'
-import SelectTargetCol from 'src/features/project-build/pages/build/selectTargetCol'
-import Training from 'src/features/project-build/pages/build/training'
-import TrainResult from 'src/features/project-build/pages/build/trainResult'
-import DeployView from 'src/features/project-build/pages/build/deployView'
-import DeployedModelView from 'src/features/deploy/pages/deploy/deployedModelView'
-import DeploySettingUpView from 'src/features/deploy/pages/deploy/deploySettingUpView'
-import ModelView from 'src/features/models/pages/models/modelView'
-import ProjectInfo from 'src/features/project-build/pages/build/info'
-import RecentPredictionsPage from 'src/features/models/pages/models/RecentPredictionsPage'
-
-
-
-
-
-
+import { PATHS } from "src/constants/paths";
+import Profile from "src/features/profile/pages/profile";
+import Settings from "src/features/settings/pages/settings";
+import RequireAuth from "src/layouts/RequireAuth";
+import DefaultLayout from "src/layouts/DefaultLayout";
+import Projects from "src/features/projects/pages/projects";
+import ProjectTasks from "src/features/projects/pages/tasks";
+import ProjectLayout from "src/layouts/ProjectLayout";
+import ProjectDeploy from "src/features/deploy/pages/deploy";
+import ProjectModels from "src/features/models/pages/models";
+import ProjectBuild from "src/features/project-build/pages/build/build";
+import ProjectSettings from "src/features/projects/pages/settings";
+import ProjectExperiments from "src/features/project-build/pages/experiments";
+import ProjectGenApp from "src/features/gen-apps/pages/genapp";
+import EditAppPage from "src/features/gen-apps/pages/editapp";
+import Buckets from "src/features/buckets/pages/buckets";
+import Datasets from "src/features/datasets/pages/datasets";
+import DatasetLayout from "src/layouts/DatasetLayout";
+import DatasetView from "src/features/datasets/pages/dataset/DatasetView";
+import LabelProjects from "src/features/labels/pages/labels";
+import LabelView from "src/features/labels/pages/label/LabelView";
+import UploadData from "src/features/project-build/pages/build/uploadData";
+import ChooseTrainingMode from "src/features/project-build/pages/build/chooseTrainingMode";
+import SelectInstance from "src/features/project-build/pages/build/selectInstance";
+import SelectTargetColMulti from "src/features/project-build/pages/build/selectTargetColMulti";
+import SelectTargetCol from "src/features/project-build/pages/build/selectTargetCol";
+import Training from "src/features/project-build/pages/build/training";
+import TrainResult from "src/features/project-build/pages/build/trainResult";
+import DeployView from "src/features/project-build/pages/build/deployView";
+import DeployedModelView from "src/features/deploy/pages/deploy/deployedModelView";
+import DeploySettingUpView from "src/features/deploy/pages/deploy/deploySettingUpView";
+import ModelView from "src/features/models/pages/models/modelView";
+import ProjectInfo from "src/features/project-build/pages/build/info";
+import RecentPredictionsPage from "src/features/models/pages/models/RecentPredictionsPage";
 
 const routes = {
     element: <DefaultLayout />,
