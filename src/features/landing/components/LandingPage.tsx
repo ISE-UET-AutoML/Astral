@@ -51,12 +51,7 @@ const LandingPage = () => {
 		>
 			<div
 				data-landing="orb"
-				className="pointer-events-none absolute -top-36 right-[-10%] h-[min(58vw,560px)] w-[min(58vw,560px)] rounded-full -z-[95] opacity-0 mix-blend-screen"
-				style={{
-					background:
-						"radial-gradient(circle at 35% 35%, rgba(101,255,160,0.38), rgba(92,141,255,0.16) 48%, transparent 72%)",
-					filter: "blur(42px)",
-				}}
+				className="pointer-events-none absolute -top-36 right-[-10%] h-[min(58vw,560px)] w-[min(58vw,560px)] rounded-full -z-[95] opacity-0 mix-blend-screen blur-[42px] bg-[radial-gradient(circle_at_35%_35%,rgba(101,255,160,0.38),rgba(92,141,255,0.16)_48%,transparent_72%)]"
 				aria-hidden
 			/>
 			{/* Full-viewport background fill following app theme */}
