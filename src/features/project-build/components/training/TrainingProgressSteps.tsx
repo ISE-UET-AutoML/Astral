@@ -1,16 +1,17 @@
 import { ReactNode } from "react";
 import { Alert, AlertDescription } from "src/components/ui/alert";
-import { Button } from "src/components/ui/button";
 import { Spinner } from "src/components/ui/spinner";
+import { Button } from "src/components/ui/button";
 import {
-  ChartLine as LineChartOutlined,
-  CircleCheck as CheckCircleOutlined,
-  CircleX as CloseCircleOutlined,
-  CloudDownload as CloudDownloadOutlined,
-  Database as DatabaseOutlined,
-  LoaderCircle as LoadingOutlined,
+  ChartLine,
+  CircleCheck,
+  CircleX,
+  CloudDownload,
+  Database,
+  LoaderCircle,
   Rocket,
-  Settings as SettingOutlined,
+  Settings,
+  CheckCircle,
 } from "lucide-react";
 
 type TrainingStep = {
@@ -153,9 +154,9 @@ export function TrainingProgressSteps({
       ),
       icon:
         currentStep !== 0 ? (
-          <DatabaseOutlined className="size-4 text-gray-500 dark:text-gray-400" />
+          <Database className="size-4 text-gray-500 dark:text-gray-400" />
         ) : (
-          <LoadingOutlined className="size-4 animate-spin text-gray-500 dark:text-gray-400" />
+          <LoaderCircle className="size-4 animate-spin text-gray-500 dark:text-gray-400" />
         ),
       description: "Selecting suitable machine for you",
     },
@@ -168,9 +169,9 @@ export function TrainingProgressSteps({
       ),
       icon:
         currentStep !== 1 ? (
-          <SettingOutlined className="size-4 text-gray-500 dark:text-gray-400" />
+          <Settings className="size-4 text-gray-500 dark:text-gray-400" />
         ) : (
-          <LoadingOutlined className="size-4 animate-spin text-gray-500 dark:text-gray-400" />
+          <LoaderCircle className="size-4 animate-spin text-gray-500 dark:text-gray-400" />
         ),
       description: "Setting up your machine",
     },
@@ -181,9 +182,9 @@ export function TrainingProgressSteps({
       ),
       icon:
         currentStep !== 2 ? (
-          <CloudDownloadOutlined className="size-4 text-gray-500 dark:text-gray-400" />
+          <CloudDownload className="size-4 text-gray-500 dark:text-gray-400" />
         ) : (
-          <LoadingOutlined className="size-4 animate-spin text-gray-500 dark:text-gray-400" />
+          <LoaderCircle className="size-4 animate-spin text-gray-500 dark:text-gray-400" />
         ),
       description: "Fetching data from cloud storage",
     },
@@ -192,20 +193,18 @@ export function TrainingProgressSteps({
       title: <span className="text-gray-900 dark:text-white">Training</span>,
       icon:
         currentStep !== 3 ? (
-          <LineChartOutlined className="size-4 text-gray-500 dark:text-gray-400" />
+          <ChartLine className="size-4 text-gray-500 dark:text-gray-400" />
         ) : hasReachedTimeLimit ? (
-          <CloseCircleOutlined className="size-4 text-red-500" />
+          <CircleX className="size-4 text-red-500" />
         ) : (
-          <LoadingOutlined className="size-4 animate-spin text-gray-500 dark:text-gray-400" />
+          <LoaderCircle className="size-4 animate-spin text-gray-500 dark:text-gray-400" />
         ),
       description: "Preparing your model",
     },
     {
       key: "done",
       title: <span className="text-gray-900 dark:text-white">Done</span>,
-      icon: (
-        <CheckCircleOutlined className="size-4 text-gray-500 dark:text-gray-400" />
-      ),
+      icon: <CircleCheck className="size-4 text-gray-500 dark:text-gray-400" />,
       description: "Finished training your model",
     },
   ];
@@ -242,32 +241,39 @@ export function TrainingProgressSteps({
       </div>
 
       {status === "DONE" ? (
-        <Alert className="rounded-xl border-emerald-200 bg-emerald-50 px-4 py-3 dark:border-emerald-700 dark:bg-emerald-950/30">
-          <AlertDescription className="flex flex-wrap items-center justify-between gap-3 text-sm text-emerald-900 dark:text-emerald-200">
-            <span>Your model has been trained and is ready for review.</span>
-            <Button
-              type="button"
-              onClick={onViewResults}
-              className="bg-blue-600 text-white hover:bg-blue-700 text-sm px-3 py-1.5 rounded-lg"
-            >
-              <CheckCircleOutlined className="size-4" />
-              View Training Results
-            </Button>
-          </AlertDescription>
-        </Alert>
+        <div className="text-center py-8">
+          <div className="mb-4 flex justify-center">
+            <CheckCircle className="mb-4 block h-16 w-16 text-[#10b981]" />
+          </div>
+          <h2 className="mb-2 text-2xl font-semibold font-poppins text-[var(--text)]">
+            Training Completed Successfully!
+          </h2>
+          <p className="text-[#94a3b8] font-poppins mb-6 text-base">
+            Your model has been trained and is ready for use. Click below to
+            view the results and performance metrics.
+          </p>
+          <Button
+            type="button"
+            onClick={onViewResults}
+            className="h-auto rounded-xl border-0 bg-gradient-to-br from-[#3b82f6] to-[#22d3ee] px-8 py-3 text-lg font-semibold font-poppins shadow-[0_8px_32px_rgba(59,130,246,0.3)] transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+          >
+            <CheckCircle className="mr-2" />
+            View Training Results
+          </Button>
+        </div>
       ) : (
         <Alert
           variant="default"
           className={cx(
-            "mt-6 rounded-xl border px-4 py-3",
+            "mt-6 rounded-2xl border px-5 py-4",
             hasReachedTimeLimit
-              ? "border-amber-200 bg-amber-50 dark:border-amber-700 dark:bg-amber-950/30"
-              : "border-blue-200 bg-blue-50 dark:border-blue-700 dark:bg-blue-950/30",
+              ? "border-amber-200 bg-amber-50/90 dark:border-amber-700 dark:bg-amber-950/30"
+              : "border-blue-200 bg-blue-50/90 dark:border-blue-700 dark:bg-blue-950/30",
           )}
         >
           <AlertDescription
             className={cx(
-              "text-sm",
+              "text-sm leading-6",
               hasReachedTimeLimit
                 ? "text-amber-900 dark:text-amber-200"
                 : "text-blue-900 dark:text-blue-200",
@@ -293,7 +299,7 @@ export function TrainingProgressSteps({
         <div className="mt-7 overflow-hidden rounded-xl border border-gray-300 bg-white dark:border-gray-700 dark:bg-slate-900">
           <div className="border-b border-gray-200 px-5 py-4 dark:border-gray-700">
             <h3 className="m-0 flex items-center text-lg font-semibold text-gray-900 dark:text-white">
-              <SettingOutlined className="mr-2 size-5 text-gray-600 dark:text-gray-400" />
+              <Settings className="mr-2 size-5 text-gray-600 dark:text-gray-400" />
               Current Step Progress
             </h3>
           </div>
