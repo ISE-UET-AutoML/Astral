@@ -181,7 +181,7 @@ export default function DatasetCard({
   return (
     <div
       key={dataset.id}
-      className={`group rounded-2xl shadow-lg w-full min-h-[360px] overflow-hidden font-poppins transition-all duration-300 flex flex-col relative ${isProcessing ? "bg-blue-50/80 dark:bg-blue-900/30" : "bg-white dark:bg-[#1a1a1a]"} ${borderClass} ${isCompleted ? "cursor-pointer hover:-translate-y-1 hover:shadow-xl" : "cursor-default"}`}
+      className={`group rounded-2xl shadow-lg w-full min-h-[360px] overflow-hidden font-poppins transition-all duration-300 flex flex-col relative ${isProcessing ? "bg-blue-50/80 dark:bg-blue-900/30" : "bg-white dark:bg-slate-950"} ${borderClass} ${isCompleted ? "cursor-pointer hover:-translate-y-1 hover:shadow-xl" : "cursor-default"}`}
       onClick={handleCardClick}
     >
       {/* Content - blurred when processing */}

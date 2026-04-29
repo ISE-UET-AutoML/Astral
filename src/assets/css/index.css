@@ -1,617 +1,635 @@
 /* Light/Dark CSS variables for complex surfaces */
 :root {
-    /* Landing / page background gradient (light) */
-    --bg-gradient: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+  /* Landing / page background gradient (light) */
+  --bg-gradient: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
 
-    /* Core surfaces */
-    --surface: #ffffff;
-    --text: #1f2937;
-    --secondary-text: #4b5563;
-    --accent-text: #3b82f6;
+  /* Core surfaces */
+  --surface: #ffffff;
+  --text: #1f2937;
+  --secondary-text: #4b5563;
+  --accent-text: #3b82f6;
 
-    /* Card & container gradients */
-    --card-gradient: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
-    --tag-gradient: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-    --button-gradient: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-    --button-gradient-dark: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-    --accent-gradient: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  /* Card & container gradients */
+  --card-gradient: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+  --tag-gradient: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  --button-gradient: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  --button-gradient-dark: linear-gradient(
+    135deg,
+    #1a1a2e 0%,
+    #16213e 50%,
+    #0f3460 100%
+  );
+  --accent-gradient: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
 
-    /* Borders & dividers */
-    --border: rgba(31, 41, 55, 0.1);
-    --border-hover: rgba(31, 41, 55, 0.2);
-    --divider: rgba(31, 41, 55, 0.08);
+  /* Borders & dividers */
+  --border: rgba(31, 41, 55, 0.1);
+  --border-hover: rgba(31, 41, 55, 0.2);
+  --divider: rgba(31, 41, 55, 0.08);
 
-    /* Navigation */
-    --nav-bg: rgba(255, 255, 255, 0.95);
-    --nav-text: #1f2937;
-    --nav-hover: rgba(31, 41, 55, 0.06);
+  /* Navigation */
+  --nav-bg: rgba(255, 255, 255, 0.95);
+  --nav-text: #1f2937;
+  --nav-hover: rgba(31, 41, 55, 0.06);
 
-    /* Form elements */
-    --input-bg: #ffffff;
-    --input-border: rgba(31, 41, 55, 0.15);
-    --input-focus-border: #3b82f6;
-    --input-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    --placeholder-text: #9ca3af;
+  /* Form elements */
+  --input-bg: #ffffff;
+  --input-border: rgba(31, 41, 55, 0.15);
+  --input-focus-border: #3b82f6;
+  --input-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  --placeholder-text: #9ca3af;
 
-    /* Interactive states */
-    --hover-bg: rgba(59, 130, 246, 0.05);
-    --active-bg: rgba(59, 130, 246, 0.1);
-    --selection-bg: rgba(59, 130, 246, 0.1);
+  /* Interactive states */
+  --hover-bg: rgba(59, 130, 246, 0.05);
+  --active-bg: rgba(59, 130, 246, 0.1);
+  --selection-bg: rgba(59, 130, 246, 0.1);
 
-    /* Title styling */
-    --title-color: #1f2937;
-    --title-project: #000000;
-    --title-gradient: none;
+  /* Title styling */
+  --title-color: #1f2937;
+  --title-project: #000000;
+  --title-gradient: none;
 
-    /* Filter component styling */
-    --filter-bg: rgba(243, 244, 246, 0.8);
-    --filter-border: rgba(31, 41, 55, 0.2);
-    --filter-input-bg: #ffffff;
-    --filter-input-border: rgba(31, 41, 55, 0.2);
-    --filter-input-hover: rgba(31, 41, 55, 0.3);
-    --filter-input-focus: #3b82f6;
-    --filter-dropdown-bg: rgba(255, 255, 255, 0.95);
-    --filter-dropdown-border: rgba(31, 41, 55, 0.1);
-    --filter-item-hover: rgba(59, 130, 246, 0.1);
+  /* Filter component styling */
+  --filter-bg: rgba(243, 244, 246, 0.8);
+  --filter-border: rgba(31, 41, 55, 0.2);
+  --filter-input-bg: #ffffff;
+  --filter-input-border: rgba(31, 41, 55, 0.2);
+  --filter-input-hover: rgba(31, 41, 55, 0.3);
+  --filter-input-focus: #3b82f6;
+  --filter-dropdown-bg: rgba(255, 255, 255, 0.95);
+  --filter-dropdown-border: rgba(31, 41, 55, 0.1);
+  --filter-item-hover: rgba(59, 130, 246, 0.1);
 
-    /* Modal components */
-    --modal-bg: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
-    --modal-border: rgba(31, 41, 55, 0.15);
-    --modal-header-bg: transparent;
-    --modal-header-border: rgba(31, 41, 55, 0.1);
-    --modal-title-color: #1f2937;
-    --modal-close-color: #6b7280;
-    --modal-close-hover: #3b82f6;
+  /* Modal components */
+  --modal-bg: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+  --modal-border: rgba(31, 41, 55, 0.15);
+  --modal-header-bg: transparent;
+  --modal-header-border: rgba(31, 41, 55, 0.1);
+  --modal-title-color: #1f2937;
+  --modal-close-color: #6b7280;
+  --modal-close-hover: #3b82f6;
 
-    /* Form styling */
-    --form-label-color: #374151;
-    --input-color: #1f2937;
-    --placeholder-color: #9ca3af;
-    --input-hover-border: rgba(31, 41, 55, 0.25);
-    --input-disabled-bg: #f9fafb;
-    --input-disabled-color: #9ca3af;
+  /* Form styling */
+  --form-label-color: #374151;
+  --input-color: #1f2937;
+  --placeholder-color: #9ca3af;
+  --input-hover-border: rgba(31, 41, 55, 0.25);
+  --input-disabled-bg: #f9fafb;
+  --input-disabled-color: #9ca3af;
 
-    /* Select styling */
-    --select-selector-bg: #ffffff;
-    --select-selector-border: rgba(31, 41, 55, 0.15);
-    --select-selector-color: #1f2937;
-    --select-item-color: #1f2937;
-    --select-placeholder-color: #9ca3af;
-    --select-arrow-color: #6b7280;
+  /* Select styling */
+  --select-selector-bg: #ffffff;
+  --select-selector-border: rgba(31, 41, 55, 0.15);
+  --select-selector-color: #1f2937;
+  --select-item-color: #1f2937;
+  --select-placeholder-color: #9ca3af;
+  --select-arrow-color: #6b7280;
 
-    /* Button styling */
-    --button-primary-bg: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-    --button-primary-border: rgba(59, 130, 246, 0.5);
-    --button-primary-color: #ffffff;
-    --button-default-bg: #ffffff;
-    --button-default-border: rgba(31, 41, 55, 0.2);
-    --button-default-color: #374151;
-    --button-dashed-bg: transparent;
-    --button-dashed-border: rgba(31, 41, 55, 0.3);
-    --button-dashed-color: #6b7280;
+  /* Button styling */
+  --button-primary-bg: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  --button-primary-border: rgba(59, 130, 246, 0.5);
+  --button-primary-color: #ffffff;
+  --button-default-bg: #ffffff;
+  --button-default-border: rgba(31, 41, 55, 0.2);
+  --button-default-color: #374151;
+  --button-dashed-bg: transparent;
+  --button-dashed-border: rgba(31, 41, 55, 0.3);
+  --button-dashed-color: #6b7280;
 
-    /* Table styling */
-    --table-header-bg: rgba(243, 244, 246, 0.8);
-    --table-header-border: rgba(31, 41, 55, 0.1);
-    --table-header-color: #374151;
-    --table-cell-bg: transparent;
-    --table-cell-border: rgba(31, 41, 55, 0.05);
-    --table-cell-color: #1f2937;
-    --table-row-hover: rgba(59, 130, 246, 0.05);
-    --table-row-selected: rgba(59, 130, 246, 0.1);
+  /* Table styling */
+  --table-header-bg: rgba(243, 244, 246, 0.8);
+  --table-header-border: rgba(31, 41, 55, 0.1);
+  --table-header-color: #374151;
+  --table-cell-bg: transparent;
+  --table-cell-border: rgba(31, 41, 55, 0.05);
+  --table-cell-color: #1f2937;
+  --table-row-hover: rgba(59, 130, 246, 0.05);
+  --table-row-selected: rgba(59, 130, 246, 0.1);
 
-    /* Tag styling */
-    --tag-bg: rgba(59, 130, 246, 0.1);
-    --tag-border: rgba(59, 130, 246, 0.3);
-    --tag-color: #1e40af;
-    --tag-close-icon-color: #6b7280;
+  /* Tag styling */
+  --tag-bg: rgba(59, 130, 246, 0.1);
+  --tag-border: rgba(59, 130, 246, 0.3);
+  --tag-color: #1e40af;
+  --tag-close-icon-color: #6b7280;
 
-    /* Alert styling */
-    --alert-bg: rgba(243, 244, 246, 0.8);
-    --alert-border: rgba(31, 41, 55, 0.15);
-    --alert-color: #374151;
-    --alert-warning-bg: rgba(251, 191, 36, 0.1);
-    --alert-warning-border: rgba(251, 191, 36, 0.3);
-    --alert-info-bg: rgba(59, 130, 246, 0.1);
-    --alert-info-border: rgba(59, 130, 246, 0.3);
+  /* Alert styling */
+  --alert-bg: rgba(243, 244, 246, 0.8);
+  --alert-border: rgba(31, 41, 55, 0.15);
+  --alert-color: #374151;
+  --alert-warning-bg: rgba(251, 191, 36, 0.1);
+  --alert-warning-border: rgba(251, 191, 36, 0.3);
+  --alert-info-bg: rgba(59, 130, 246, 0.1);
+  --alert-info-border: rgba(59, 130, 246, 0.3);
 
-    /* Radio styling */
-    --radio-bg: #ffffff;
-    --radio-border: rgba(31, 41, 55, 0.3);
-    --radio-checked-bg: #3b82f6;
-    --radio-checked-border: #3b82f6;
+  /* Radio styling */
+  --radio-bg: #ffffff;
+  --radio-border: rgba(31, 41, 55, 0.3);
+  --radio-checked-bg: #3b82f6;
+  --radio-checked-border: #3b82f6;
 
-    /* Tabs styling */
-    --tabs-text: #6b7280;
-    --tabs-active-text: #1f2937;
-    --tabs-ink-bar: #3b82f6;
+  /* Tabs styling */
+  --tabs-text: #6b7280;
+  --tabs-active-text: #1f2937;
+  --tabs-ink-bar: #3b82f6;
 
-    /* Upload styling */
-    --upload-bg: rgba(243, 244, 246, 0.5);
-    --upload-border: rgba(31, 41, 55, 0.3);
-    --upload-icon: #3b82f6;
-    --upload-text: #374151;
-    --upload-hint: #6b7280;
+  /* Upload styling */
+  --upload-bg: rgba(243, 244, 246, 0.5);
+  --upload-border: rgba(31, 41, 55, 0.3);
+  --upload-icon: #3b82f6;
+  --upload-text: #374151;
+  --upload-hint: #6b7280;
 
-    /* Steps styling */
-    --steps-title-color: #374151;
-    --steps-description-color: #6b7280;
-    --steps-icon-bg: rgba(243, 244, 246, 0.8);
-    --steps-icon-border: rgba(31, 41, 55, 0.3);
-    --steps-icon-color: #6b7280;
-    --steps-process-icon-bg: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-    --steps-process-icon-border: #3b82f6;
-    --steps-finish-icon-bg: #10b981;
-    --steps-finish-icon-border: #10b981;
-    --steps-finish-icon-color: #ffffff;
+  /* Steps styling */
+  --steps-title-color: #374151;
+  --steps-description-color: #6b7280;
+  --steps-icon-bg: rgba(243, 244, 246, 0.8);
+  --steps-icon-border: rgba(31, 41, 55, 0.3);
+  --steps-icon-color: #6b7280;
+  --steps-process-icon-bg: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  --steps-process-icon-border: #3b82f6;
+  --steps-finish-icon-bg: #10b981;
+  --steps-finish-icon-border: #10b981;
+  --steps-finish-icon-color: #ffffff;
 
-    /* Divider */
-    --divider-color: rgba(31, 41, 55, 0.1);
+  /* Divider */
+  --divider-color: rgba(31, 41, 55, 0.1);
 
-    /* Deploy page accents */
-    --deploy-uptime-color: #f59e0b;
-    --deploy-total-color: #3b82f6;
+  /* Deploy page accents */
+  --deploy-uptime-color: #f59e0b;
+  --deploy-total-color: #3b82f6;
 
-    /* Dropdown styling */
-    --dropdown-head: #000000;
-    --dropdown-bg: #ffffff;
-    --dropdown-border: #e2e8f0;
-    --dropdown-text: #1f2937;
-    --dropdown-hover-bg: #3b82f6;
-    --dropdown-hover-text: #ffffff;
-    --dropdown-selected-bg: #dbeafe;
-    --dropdown-selected-text: #1e40af;
-    --dropdown-placeholder: #9ca3af;
+  /* Dropdown styling */
+  --dropdown-head: #000000;
+  --dropdown-bg: #ffffff;
+  --dropdown-border: #e2e8f0;
+  --dropdown-text: #1f2937;
+  --dropdown-hover-bg: #3b82f6;
+  --dropdown-hover-text: #ffffff;
+  --dropdown-selected-bg: #dbeafe;
+  --dropdown-selected-text: #1e40af;
+  --dropdown-placeholder: #9ca3af;
 }
 
 .dark {
-    /* Landing / page background gradient – enterprise, balanced */
-    --bg-gradient: linear-gradient(135deg, #121212 0%, #181818 100%);
+  /* Landing / page background gradient – enterprise, balanced */
+  --bg-gradient: linear-gradient(135deg, #121212 0%, #181818 100%);
 
-    /* Core surfaces */
-    --surface: #161616;
-    --text: #ffffff;
-    --secondary-text: #e5e7eb;
-    --accent-text: #60a5fa;
+  /* Core surfaces */
+  --surface: #030712;
+  --text: #ffffff;
+  --secondary-text: #e5e7eb;
+  --accent-text: #60a5fa;
 
-    /* Card & container gradients – lighter gray for visibility in dark mode */
-    --card-gradient: linear-gradient(135deg, #282828 0%, #2d2d2d 100%);
-    --tag-gradient: linear-gradient(135deg, #1f1f1f 0%, #252525 100%);
-    --button-gradient: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-    --button-gradient-dark: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-    --accent-gradient: linear-gradient(135deg, #1f1f1f 0%, #2a2a2a 100%);
+  /* Card & container gradients – lighter gray for visibility in dark mode */
+  --card-gradient: linear-gradient(135deg, #282828 0%, #2d2d2d 100%);
+  --tag-gradient: linear-gradient(135deg, #1f1f1f 0%, #252525 100%);
+  --button-gradient: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  --button-gradient-dark: linear-gradient(
+    135deg,
+    #1a1a2e 0%,
+    #16213e 50%,
+    #0f3460 100%
+  );
+  --accent-gradient: linear-gradient(135deg, #1f1f1f 0%, #2a2a2a 100%);
 
-    /* Borders & dividers */
-    --border: rgba(148, 163, 184, 0.25);
-    --border-hover: rgba(148, 163, 184, 0.4);
-    --divider: rgba(148, 163, 184, 0.15);
+  /* Borders & dividers */
+  --border: rgba(148, 163, 184, 0.25);
+  --border-hover: rgba(148, 163, 184, 0.4);
+  --divider: rgba(148, 163, 184, 0.15);
 
-    /* Navigation */
-    --nav-bg: rgba(18, 18, 18, 0.95);
-    --nav-text: #ffffff;
-    --nav-hover: rgba(255, 255, 255, 0.08);
+  /* Navigation */
+  --nav-bg: rgba(18, 18, 18, 0.95);
+  --nav-text: #ffffff;
+  --nav-hover: rgba(255, 255, 255, 0.08);
 
-    /* Form elements */
-    --input-bg: rgba(26, 26, 26, 0.9);
-    --input-border: rgba(148, 163, 184, 0.3);
-    --input-focus-border: #60a5fa;
-    --input-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
-    --placeholder-text: #9ca3af;
+  /* Form elements */
+  --input-bg: rgba(26, 26, 26, 0.9);
+  --input-border: rgba(148, 163, 184, 0.3);
+  --input-focus-border: #60a5fa;
+  --input-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+  --placeholder-text: #9ca3af;
 
-    /* Interactive states */
-    --hover-bg: rgba(96, 165, 250, 0.08);
-    --active-bg: rgba(96, 165, 250, 0.15);
-    --selection-bg: rgba(96, 165, 250, 0.2);
+  /* Interactive states */
+  --hover-bg: rgba(96, 165, 250, 0.08);
+  --active-bg: rgba(96, 165, 250, 0.15);
+  --selection-bg: rgba(96, 165, 250, 0.2);
 
-    /* Title styling */
-    --title-color: transparent;
-    --title-project: rgb(0, 0, 0);
-    --title-project: #ffffff;
-    --title-gradient: linear-gradient(90deg, #5C8DFF 0%, #65FFA0 100%);
+  /* Title styling */
+  --title-color: transparent;
+  --title-project: rgb(0, 0, 0);
+  --title-project: #ffffff;
+  --title-gradient: linear-gradient(90deg, #5c8dff 0%, #65ffa0 100%);
 
-    /* Filter component styling - preserve original dark theme */
-    --filter-bg: rgba(255, 255, 255, 0.05);
-    --filter-border: rgba(255, 255, 255, 0.1);
-    --filter-input-bg: rgba(26, 26, 26, 0.9);
-    --filter-input-border: rgba(255, 255, 255, 0.2);
-    --filter-input-hover: rgba(255, 255, 255, 0.4);
-    --filter-input-focus: rgba(59, 130, 246, 0.5);
-    --filter-dropdown-bg: rgba(16, 16, 16, 0.98);
-    --filter-dropdown-border: rgba(255, 255, 255, 0.1);
-    --filter-item-hover: rgba(255, 255, 255, 0.1);
+  /* Filter component styling - preserve original dark theme */
+  --filter-bg: rgba(255, 255, 255, 0.05);
+  --filter-border: rgba(255, 255, 255, 0.1);
+  --filter-input-bg: rgba(26, 26, 26, 0.9);
+  --filter-input-border: rgba(255, 255, 255, 0.2);
+  --filter-input-hover: rgba(255, 255, 255, 0.4);
+  --filter-input-focus: rgba(59, 130, 246, 0.5);
+  --filter-dropdown-bg: rgba(16, 16, 16, 0.98);
+  --filter-dropdown-border: rgba(255, 255, 255, 0.1);
+  --filter-item-hover: rgba(255, 255, 255, 0.1);
 
-    /* Modal components - preserve original dark theme */
-    --modal-bg: linear-gradient(135deg, #141414 0%, #1a1a1a 50%, #222222 100%);
-    --modal-border: rgba(255, 255, 255, 0.2);
-    --modal-header-bg: transparent;
-    --modal-header-border: rgba(255, 255, 255, 0.1);
-    --modal-title-color: white;
-    --modal-close-color: white;
-    --modal-close-hover: #65FFA0;
+  /* Modal components - preserve original dark theme */
+  --modal-bg: linear-gradient(135deg, #141414 0%, #1a1a1a 50%, #222222 100%);
+  --modal-border: rgba(255, 255, 255, 0.2);
+  --modal-header-bg: transparent;
+  --modal-header-border: rgba(255, 255, 255, 0.1);
+  --modal-title-color: white;
+  --modal-close-color: white;
+  --modal-close-hover: #65ffa0;
 
-    /* Form styling - preserve original dark theme */
-    --form-label-color: white;
-    --input-color: white;
-    --placeholder-color: rgba(255, 255, 255, 0.5);
-    --input-hover-border: rgba(255, 255, 255, 0.4);
-    --input-disabled-bg: rgba(255, 255, 255, 0.05);
-    --input-disabled-color: rgba(255, 255, 255, 0.7);
+  /* Form styling - preserve original dark theme */
+  --form-label-color: white;
+  --input-color: white;
+  --placeholder-color: rgba(255, 255, 255, 0.5);
+  --input-hover-border: rgba(255, 255, 255, 0.4);
+  --input-disabled-bg: rgba(255, 255, 255, 0.05);
+  --input-disabled-color: rgba(255, 255, 255, 0.7);
 
-    /* Select styling - preserve original dark theme */
-    --select-selector-bg: rgba(255, 255, 255, 0.1);
-    --select-selector-border: rgba(255, 255, 255, 0.2);
-    --select-selector-color: white;
-    --select-item-color: white;
-    --select-placeholder-color: rgba(255, 255, 255, 0.5);
-    --select-arrow-color: white;
+  /* Select styling - preserve original dark theme */
+  --select-selector-bg: rgba(255, 255, 255, 0.1);
+  --select-selector-border: rgba(255, 255, 255, 0.2);
+  --select-selector-color: white;
+  --select-item-color: white;
+  --select-placeholder-color: rgba(255, 255, 255, 0.5);
+  --select-arrow-color: white;
 
-    /* Button styling - preserve original dark theme */
-    --button-primary-bg: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-    --button-primary-border: rgba(255, 255, 255, 0.2);
-    --button-primary-color: white;
-    --button-default-bg: rgba(255, 255, 255, 0.1);
-    --button-default-border: rgba(255, 255, 255, 0.2);
-    --button-default-color: white;
-    --button-dashed-bg: rgba(255, 255, 255, 0.05);
-    --button-dashed-border: rgb(0, 255, 255, 0.3);
-    --button-dashed-color: white;
+  /* Button styling - preserve original dark theme */
+  --button-primary-bg: linear-gradient(
+    135deg,
+    #1a1a2e 0%,
+    #16213e 50%,
+    #0f3460 100%
+  );
+  --button-primary-border: rgba(255, 255, 255, 0.2);
+  --button-primary-color: white;
+  --button-default-bg: rgba(255, 255, 255, 0.1);
+  --button-default-border: rgba(255, 255, 255, 0.2);
+  --button-default-color: white;
+  --button-dashed-bg: rgba(255, 255, 255, 0.05);
+  --button-dashed-border: rgb(0, 255, 255, 0.3);
+  --button-dashed-color: white;
 
-    /* Table styling - preserve original dark theme */
-    --table-header-bg: rgba(255, 255, 255, 0.05);
-    --table-header-border: rgba(255, 255, 255, 0.1);
-    --table-header-color: white;
-    --table-cell-bg: transparent;
-    --table-cell-border: rgba(255, 255, 255, 0.05);
-    --table-cell-color: white;
-    --table-row-hover: rgba(255, 255, 255, 0.05);
-    --table-row-selected: rgba(101, 255, 160, 0.1);
+  /* Table styling - preserve original dark theme */
+  --table-header-bg: rgba(255, 255, 255, 0.05);
+  --table-header-border: rgba(255, 255, 255, 0.1);
+  --table-header-color: white;
+  --table-cell-bg: transparent;
+  --table-cell-border: rgba(255, 255, 255, 0.05);
+  --table-cell-color: white;
+  --table-row-hover: rgba(255, 255, 255, 0.05);
+  --table-row-selected: rgba(101, 255, 160, 0.1);
 
-    /* Deploy page accents */
-    --deploy-uptime-color: #fbbf24;
-    --deploy-total-color: #60a5fa;
+  /* Deploy page accents */
+  --deploy-uptime-color: #fbbf24;
+  --deploy-total-color: #60a5fa;
 
-    /* Tag styling - preserve original dark theme */
-    --tag-bg: rgba(101, 255, 160, 0.2);
-    --tag-border: #65FFA0;
-    --tag-color: white;
-    --tag-close-icon-color: white;
+  /* Tag styling - preserve original dark theme */
+  --tag-bg: rgba(101, 255, 160, 0.2);
+  --tag-border: #65ffa0;
+  --tag-color: white;
+  --tag-close-icon-color: white;
 
-    /* Alert styling - preserve original dark theme */
-    --alert-bg: rgba(255, 255, 255, 0.05);
-    --alert-border: rgba(255, 255, 255, 0.2);
-    --alert-color: white;
-    --alert-warning-bg: rgba(255, 193, 7, 0.1);
-    --alert-warning-border: rgba(255, 193, 7, 0.3);
-    --alert-info-bg: rgba(24, 144, 255, 0.1);
-    --alert-info-border: rgba(24, 144, 255, 0.3);
+  /* Alert styling - preserve original dark theme */
+  --alert-bg: rgba(255, 255, 255, 0.05);
+  --alert-border: rgba(255, 255, 255, 0.2);
+  --alert-color: white;
+  --alert-warning-bg: rgba(255, 193, 7, 0.1);
+  --alert-warning-border: rgba(255, 193, 7, 0.3);
+  --alert-info-bg: rgba(24, 144, 255, 0.1);
+  --alert-info-border: rgba(24, 144, 255, 0.3);
 
-    /* Radio styling - preserve original dark theme */
-    --radio-bg: rgba(255, 255, 255, 0.1);
-    --radio-border: rgba(255, 255, 255, 0.3);
-    --radio-checked-bg: #65FFA0;
-    --radio-checked-border: #65FFA0;
+  /* Radio styling - preserve original dark theme */
+  --radio-bg: rgba(255, 255, 255, 0.1);
+  --radio-border: rgba(255, 255, 255, 0.3);
+  --radio-checked-bg: #65ffa0;
+  --radio-checked-border: #65ffa0;
 
-    /* Tabs styling - preserve original dark theme */
-    --tabs-text: rgba(255, 255, 255, 0.7);
-    --tabs-active-text: white;
-    --tabs-ink-bar: #65FFA0;
+  /* Tabs styling - preserve original dark theme */
+  --tabs-text: rgba(255, 255, 255, 0.7);
+  --tabs-active-text: white;
+  --tabs-ink-bar: #65ffa0;
 
-    /* Upload styling - preserve original dark theme */
-    --upload-bg: rgba(255, 255, 255, 0.05);
-    --upload-border: rgba(255, 255, 255, 0.3);
-    --upload-icon: #65FFA0;
-    --upload-text: white;
-    --upload-hint: rgba(255, 255, 255, 0.7);
+  /* Upload styling - preserve original dark theme */
+  --upload-bg: rgba(255, 255, 255, 0.05);
+  --upload-border: rgba(255, 255, 255, 0.3);
+  --upload-icon: #65ffa0;
+  --upload-text: white;
+  --upload-hint: rgba(255, 255, 255, 0.7);
 
-    /* Steps styling - preserve original dark theme */
-    --steps-title-color: white;
-    --steps-description-color: rgba(255, 255, 255, 0.7);
-    --steps-icon-bg: rgba(255, 255, 255, 0.1);
-    --steps-icon-border: rgba(255, 255, 255, 0.3);
-    --steps-icon-color: white;
-    --steps-process-icon-bg: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-    --steps-process-icon-border: #65FFA0;
-    --steps-finish-icon-bg: #65FFA0;
-    --steps-finish-icon-border: #65FFA0;
-    --steps-finish-icon-color: #0F2027;
+  /* Steps styling - preserve original dark theme */
+  --steps-title-color: white;
+  --steps-description-color: rgba(255, 255, 255, 0.7);
+  --steps-icon-bg: rgba(255, 255, 255, 0.1);
+  --steps-icon-border: rgba(255, 255, 255, 0.3);
+  --steps-icon-color: white;
+  --steps-process-icon-bg: linear-gradient(
+    135deg,
+    #1a1a2e 0%,
+    #16213e 50%,
+    #0f3460 100%
+  );
+  --steps-process-icon-border: #65ffa0;
+  --steps-finish-icon-bg: #65ffa0;
+  --steps-finish-icon-border: #65ffa0;
+  --steps-finish-icon-color: #0f2027;
 
-    /* Divider */
-    --divider-color: rgba(255, 255, 255, 0.1);
+  /* Divider */
+  --divider-color: rgba(255, 255, 255, 0.1);
 
-    /* Dropdown styling - dark mode */
-    --dropdown-bg: #1f1f1f;
-    --dropdown-border: rgba(148, 163, 184, 0.25);
-    --dropdown-text: #e2e8f0;
-    --dropdown-hover-bg: #2563eb;
-    --dropdown-hover-text: #ffffff;
-    --dropdown-selected-bg: #1e3a5f;
-    --dropdown-selected-text: #93c5fd;
-    --dropdown-placeholder: #6b7280;
+  /* Dropdown styling - dark mode */
+  --dropdown-bg: #1f1f1f;
+  --dropdown-border: rgba(148, 163, 184, 0.25);
+  --dropdown-text: #e2e8f0;
+  --dropdown-hover-bg: #2563eb;
+  --dropdown-hover-text: #ffffff;
+  --dropdown-selected-bg: #1e3a5f;
+  --dropdown-selected-text: #93c5fd;
+  --dropdown-placeholder: #6b7280;
 }
 
 /* Theme dropdown styling (shared) */
 .theme-dropdown {
-    background: var(--dropdown-bg) !important;
-    border: 1px solid var(--dropdown-border) !important;
-    color: var(--dropdown-text) !important;
+  background: var(--dropdown-bg) !important;
+  border: 1px solid var(--dropdown-border) !important;
+  color: var(--dropdown-text) !important;
 }
 
 .custom-select-trigger {
-    background: var(--dropdown-bg) !important;
-    border: 1px solid var(--dropdown-border) !important;
-    color: var(--dropdown-text) !important;
+  background: var(--dropdown-bg) !important;
+  border: 1px solid var(--dropdown-border) !important;
+  color: var(--dropdown-text) !important;
 }
 
 .custom-select-text {
-    color: var(--dropdown-text) !important;
+  color: var(--dropdown-text) !important;
 }
 
 .custom-select-placeholder {
-    color: var(--dropdown-placeholder) !important;
+  color: var(--dropdown-placeholder) !important;
 }
 
 .custom-select-icon {
-    color: var(--dropdown-placeholder) !important;
+  color: var(--dropdown-placeholder) !important;
 }
 
 .custom-select-dropdown {
-    background: var(--dropdown-bg) !important;
-    border: 1px solid var(--dropdown-border) !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
+  background: var(--dropdown-bg) !important;
+  border: 1px solid var(--dropdown-border) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
 }
 
 .custom-select-item {
-    color: var(--dropdown-text) !important;
-    background: var(--dropdown-bg) !important;
+  color: var(--dropdown-text) !important;
+  background: var(--dropdown-bg) !important;
 }
 
 .custom-select-item:hover {
-    background: var(--dropdown-hover-bg) !important;
-    color: var(--dropdown-hover-text) !important;
+  background: var(--dropdown-hover-bg) !important;
+  color: var(--dropdown-hover-text) !important;
 }
 
 .custom-select-item--selected {
-    background: var(--dropdown-selected-bg) !important;
-    color: var(--dropdown-selected-text) !important;
+  background: var(--dropdown-selected-bg) !important;
+  color: var(--dropdown-selected-text) !important;
 }
 
 .custom-select-item--selected:hover {
-    background: var(--dropdown-hover-bg) !important;
-    color: var(--dropdown-hover-text) !important;
+  background: var(--dropdown-hover-bg) !important;
+  color: var(--dropdown-hover-text) !important;
 }
 
 .theme-dropdown .ant-select-selector {
-    background: var(--dropdown-bg) !important;
-    border: 1px solid var(--dropdown-border) !important;
-    color: var(--dropdown-text) !important;
+  background: var(--dropdown-bg) !important;
+  border: 1px solid var(--dropdown-border) !important;
+  color: var(--dropdown-text) !important;
 }
 
 .theme-dropdown .ant-select-selection-placeholder {
-    color: var(--dropdown-placeholder) !important;
+  color: var(--dropdown-placeholder) !important;
 }
 
 .theme-dropdown .ant-select-arrow {
-    color: var(--dropdown-text) !important;
+  color: var(--dropdown-text) !important;
 }
 
 .theme-dropdown .ant-select-dropdown {
-    background: var(--dropdown-bg) !important;
-    border: 1px solid var(--dropdown-border) !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  background: var(--dropdown-bg) !important;
+  border: 1px solid var(--dropdown-border) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
 }
 
 .theme-dropdown .ant-select-item {
-    color: var(--dropdown-text) !important;
-    background: transparent !important;
+  color: var(--dropdown-text) !important;
+  background: transparent !important;
 }
 
 .theme-dropdown .ant-select-item:hover {
-    background: var(--dropdown-hover-bg) !important;
-    color: var(--dropdown-hover-text) !important;
+  background: var(--dropdown-hover-bg) !important;
+  color: var(--dropdown-hover-text) !important;
 }
 
 .theme-dropdown .ant-select-item-option-selected {
-    background: var(--dropdown-selected-bg) !important;
-    color: var(--dropdown-selected-text) !important;
+  background: var(--dropdown-selected-bg) !important;
+  color: var(--dropdown-selected-text) !important;
 }
 
 .theme-dropdown .ant-select-item-option-selected:hover {
-    background: var(--dropdown-selected-bg) !important;
-    color: var(--dropdown-selected-text) !important;
+  background: var(--dropdown-selected-bg) !important;
+  color: var(--dropdown-selected-text) !important;
 }
 
 .modal-close-btn:hover {
-    color: var(--modal-close-hover) !important;
+  color: var(--modal-close-hover) !important;
 }
 
 .theme-modal-btn-outline {
-    background: var(--button-default-bg) !important;
-    border: 1px solid var(--button-default-border) !important;
-    color: var(--button-default-color) !important;
+  background: var(--button-default-bg) !important;
+  border: 1px solid var(--button-default-border) !important;
+  color: var(--button-default-color) !important;
 }
 
 .theme-modal-btn-outline:hover:not(:disabled) {
-    background: var(--hover-bg) !important;
-    border-color: var(--border-hover) !important;
+  background: var(--hover-bg) !important;
+  border-color: var(--border-hover) !important;
 }
 
 .theme-modal-btn-primary {
-    background: var(--button-gradient) !important;
-    border: 1px solid var(--button-primary-border) !important;
-    color: var(--button-primary-color) !important;
+  background: var(--button-gradient) !important;
+  border: 1px solid var(--button-primary-border) !important;
+  color: var(--button-primary-color) !important;
 }
 
 .theme-modal-btn-primary:hover:not(:disabled) {
-    opacity: 0.95;
+  opacity: 0.95;
 }
 
 .modal-form-input:focus {
-    border-color: var(--input-focus-border) !important;
-    box-shadow: var(--input-shadow) !important;
+  border-color: var(--input-focus-border) !important;
+  box-shadow: var(--input-shadow) !important;
 }
 
 .modal-form-input::placeholder {
-    color: var(--placeholder-text);
+  color: var(--placeholder-text);
 }
 
 /* AppCard Details button - rõ ràng cả default và hover */
 .app-card-details-btn {
-    background: var(--button-default-bg) !important;
-    border: 1px solid var(--button-default-border) !important;
-    color: var(--button-default-color) !important;
+  background: var(--button-default-bg) !important;
+  border: 1px solid var(--button-default-border) !important;
+  color: var(--button-default-color) !important;
 }
 
 .app-card-details-btn:hover:not(:disabled) {
-    background: var(--hover-bg) !important;
-    border-color: var(--border-hover) !important;
-    color: var(--text) !important;
+  background: var(--hover-bg) !important;
+  border-color: var(--border-hover) !important;
+  color: var(--text) !important;
 }
 
 @keyframes ping {
-
-    30%,
-    100% {
-        transform: scale(1.02);
-        opacity: 0.6;
-    }
+  30%,
+  100% {
+    transform: scale(1.02);
+    opacity: 0.6;
+  }
 }
 
 .spinner {
-    width: 56px;
-    height: 56px;
-    display: grid;
-    border: 4.5px solid #0000;
-    border-radius: 50%;
-    border-color: #dbdcef #0000;
-    animation: spinner-animation 1s infinite linear;
+  width: 56px;
+  height: 56px;
+  display: grid;
+  border: 4.5px solid #0000;
+  border-radius: 50%;
+  border-color: #dbdcef #0000;
+  animation: spinner-animation 1s infinite linear;
 }
 
 .spinner::before,
 .spinner::after {
-    content: '';
-    grid-area: 1/1;
-    margin: 2.2px;
-    border: inherit;
-    border-radius: 50%;
+  content: "";
+  grid-area: 1/1;
+  margin: 2.2px;
+  border: inherit;
+  border-radius: 50%;
 }
 
 .spinner::before {
-    border-color: #474bff #0000;
-    animation: inherit;
-    animation-duration: 0.5s;
-    animation-direction: reverse;
+  border-color: #474bff #0000;
+  animation: inherit;
+  animation-duration: 0.5s;
+  animation-direction: reverse;
 }
 
 .spinner::after {
-    margin: 8.9px;
+  margin: 8.9px;
 }
 
 @keyframes spinner-animation {
-    100% {
-        transform: rotate(1turn);
-    }
+  100% {
+    transform: rotate(1turn);
+  }
 }
 
 html,
 body,
 #root,
 .App {
-    height: 100%;
-    min-height: 100%;
+  height: 100%;
+  min-height: 100%;
 }
 
 body {
-    height: 100vh;
+  height: 100vh;
 }
 
 /* Light mode – base background */
 html,
 html.light body,
 html.light #root {
-    background-color: #f3f4f6;
+  background-color: #f3f4f6;
 }
 
 /* Dark mode – base background (html, body, #root) – enterprise darker */
 html.dark,
 html.dark body,
 html.dark #root {
-    background-color: #0d0d0d !important;
+  background-color: #0d0d0d !important;
 }
 
 /* Global scrollbar - light mode (track xám nhạt, không đen) */
 html::-webkit-scrollbar,
 body::-webkit-scrollbar {
-    width: 8px;
+  width: 8px;
 }
 
 html::-webkit-scrollbar-track,
 body::-webkit-scrollbar-track {
-    background: rgb(243, 244, 246);
+  background: rgb(243, 244, 246);
 }
 
 html::-webkit-scrollbar-thumb,
 body::-webkit-scrollbar-thumb {
-    background: rgb(156, 163, 175);
-    border-radius: 4px;
+  background: rgb(156, 163, 175);
+  border-radius: 4px;
 }
 
 html::-webkit-scrollbar-thumb:hover,
 body::-webkit-scrollbar-thumb:hover {
-    background: rgb(107, 114, 128);
+  background: rgb(107, 114, 128);
 }
 
 html,
 body {
-    scrollbar-width: 6px;
-    scrollbar-color: rgb(156, 163, 175) rgb(243, 244, 246);
+  scrollbar-width: 6px;
+  scrollbar-color: rgb(156, 163, 175) rgb(243, 244, 246);
 }
 
 /* Dark mode - scrollbar tối */
 html.dark::-webkit-scrollbar-track,
 html.dark body::-webkit-scrollbar-track {
-    background: rgb(55, 65, 81);
+  background: rgb(55, 65, 81);
 }
 
 html.dark::-webkit-scrollbar-thumb,
 html.dark body::-webkit-scrollbar-thumb {
-    background: rgb(107, 114, 128);
+  background: rgb(107, 114, 128);
 }
 
 html.dark::-webkit-scrollbar-thumb:hover,
 html.dark body::-webkit-scrollbar-thumb:hover {
-    background: rgb(156, 163, 175);
+  background: rgb(156, 163, 175);
 }
 
 html.dark,
 html.dark body {
-    scrollbar-color: rgb(107, 114, 128) rgb(55, 65, 81);
+  scrollbar-color: rgb(107, 114, 128) rgb(55, 65, 81);
 }
-
 
 /* From Uiverse.io by AlimurtuzaCodes */
 .btn {
-    border: none;
-    width: 15em;
-    height: 3em;
-    border-radius: 0.5rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 12px;
-    background: #3b82f6;
-    cursor: pointer;
-    transition: all 450ms ease-in-out;
+  border: none;
+  width: 15em;
+  height: 3em;
+  border-radius: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  background: #3b82f6;
+  cursor: pointer;
+  transition: all 450ms ease-in-out;
 }
 
 .sparkle {
-    fill: #ffffff;
-    transition: all 800ms ease;
+  fill: #ffffff;
+  transition: all 800ms ease;
 }
 
 .text {
-    font-weight: 600;
-    color: #ffffff;
-    font-size: medium;
+  font-weight: 600;
+  color: #ffffff;
+  font-size: medium;
 }
 
 /* .btn:hover {
@@ -624,235 +642,236 @@ html.dark body {
 } */
 
 .btn:hover {
-    background: linear-gradient(0deg, #a47cf3, #683fea);
-    box-shadow:
-        inset 0px 1px 0px 0px rgba(255, 255, 255, 0.4),
-        inset 0px -4px 0px 0px rgba(0, 0, 0, 0.2),
-        0px 0px 0px 4px rgba(255, 255, 255, 0.2);
-    transform: translateY(-2px);
-    transition: all 0.3s ease;
+  background: linear-gradient(0deg, #a47cf3, #683fea);
+  box-shadow:
+    inset 0px 1px 0px 0px rgba(255, 255, 255, 0.4),
+    inset 0px -4px 0px 0px rgba(0, 0, 0, 0.2),
+    0px 0px 0px 4px rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  transition: all 0.3s ease;
 }
 
 .btn:hover .text {
-    color: white;
+  color: white;
 }
 
 .btn:hover .sparkle {
-    fill: white;
-    transform: scale(1.2);
+  fill: white;
+  transform: scale(1.2);
 }
 
 /* From Uiverse.io by vikiWayne */
 .buttonFalse {
-    padding: 1em 2em;
-    border: none;
-    border-radius: 5px;
-    font-weight: bold;
-    letter-spacing: 5px;
-    text-transform: uppercase;
-    cursor: pointer;
-    color: #e63946;
-    transition: all 1000ms;
-    font-size: 15px;
-    position: relative;
-    overflow: hidden;
-    outline: 2px solid #e63946;
+  padding: 1em 2em;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  color: #e63946;
+  transition: all 1000ms;
+  font-size: 15px;
+  position: relative;
+  overflow: hidden;
+  outline: 2px solid #e63946;
 }
 
 .buttonFalse:hover {
-    color: #ffffff;
-    transform: scale(1.1);
-    outline: 2px solid #b41d46;
-    box-shadow: 4px 5px 17px -4px #b41d46;
+  color: #ffffff;
+  transform: scale(1.1);
+  outline: 2px solid #b41d46;
+  box-shadow: 4px 5px 17px -4px #b41d46;
 }
 
 .buttonFalse::before {
-    content: '';
-    position: absolute;
-    left: -50px;
-    top: 0;
-    width: 0;
-    height: 100%;
-    background-color: #e63946;
-    transform: skewX(45deg);
-    z-index: -1;
-    transition: width 1000ms;
+  content: "";
+  position: absolute;
+  left: -50px;
+  top: 0;
+  width: 0;
+  height: 100%;
+  background-color: #e63946;
+  transform: skewX(45deg);
+  z-index: -1;
+  transition: width 1000ms;
 }
 
 .buttonFalse:hover::before {
-    width: 250%;
+  width: 250%;
 }
 
 /* From Uiverse.io by vikiWayne */
 .buttonTrue {
-    padding: 1em 2em;
-    border: none;
-    border-radius: 5px;
-    font-weight: bold;
-    letter-spacing: 5px;
-    text-transform: uppercase;
-    cursor: pointer;
-    color: #50c878;
-    transition: all 1000ms;
-    font-size: 15px;
-    position: relative;
-    overflow: hidden;
-    outline: 2px solid #50c878;
+  padding: 1em 2em;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  color: #50c878;
+  transition: all 1000ms;
+  font-size: 15px;
+  position: relative;
+  overflow: hidden;
+  outline: 2px solid #50c878;
 }
 
 .buttonTrue:hover {
-    color: #ffffff;
-    transform: scale(1.1);
-    outline: 2px solid #2ca75b;
-    box-shadow: 4px 5px 17px -4px #3ebb6a;
+  color: #ffffff;
+  transform: scale(1.1);
+  outline: 2px solid #2ca75b;
+  box-shadow: 4px 5px 17px -4px #3ebb6a;
 }
 
 .buttonTrue::before {
-    content: '';
-    position: absolute;
-    left: -50px;
-    top: 0;
-    width: 0;
-    height: 100%;
-    background-color: #50c878;
-    transform: skewX(45deg);
-    z-index: -1;
-    transition: width 1000ms;
+  content: "";
+  position: absolute;
+  left: -50px;
+  top: 0;
+  width: 0;
+  height: 100%;
+  background-color: #50c878;
+  transform: skewX(45deg);
+  z-index: -1;
+  transition: width 1000ms;
 }
 
 .buttonTrue:hover::before {
-    width: 250%;
+  width: 250%;
 }
 
 .glassMorphism {
-    background: rgba(255, 255, 255, 0.5);
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-    backdrop-filter: blur(17px);
-    -webkit-backdrop-filter: blur(17px);
-    border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  backdrop-filter: blur(17px);
+  -webkit-backdrop-filter: blur(17px);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 /* Tooltip container */
 .tooltip {
-    position: relative;
-    display: inline-block;
-    /* If you want dots under the hoverable text */
+  position: relative;
+  display: inline-block;
+  /* If you want dots under the hoverable text */
 }
 
 /* Tooltip text */
 .tooltip .tooltiptext {
-    visibility: hidden;
-    width: 120px;
-    background-color: #a9a9a9;
-    color: #fff;
-    text-align: center;
-    padding: 5px 0;
-    border-radius: 6px;
-    top: -30px;
-    right: 105%;
+  visibility: hidden;
+  width: 120px;
+  background-color: #a9a9a9;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+  top: -30px;
+  right: 105%;
 
-    /* Position the tooltip text - see examples below! */
-    position: absolute;
-    z-index: 1;
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  z-index: 1;
 }
 
 /* Show the tooltip text when you mouse over the tooltip container */
 .tooltip:hover .tooltiptext {
-    visibility: visible;
+  visibility: visible;
 }
 
-
-.markdown>* {
-    all: revert;
+.markdown > * {
+  all: revert;
 }
 
 .markdown .text {
-    all: revert;
+  all: revert;
 }
 
 .markdown li ul {
-    list-style-type: disc;
-    padding-left: 20px;
+  list-style-type: disc;
+  padding-left: 20px;
 }
 
 .katex-display {
-    display: block !important;
-    max-width: 100% !important;
-    overflow-x: auto;
-    overflow-y: hidden;
+  display: block !important;
+  max-width: 100% !important;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 /* Button gradient - blue to green */
 .btn-gradient-dark {
-    background: linear-gradient(to right, #2558FF, #40FF80) !important;
-    box-shadow: 0 10px 36px rgba(92, 141, 255, 0.45);
-    transition: transform 0.2s, box-shadow 0.2s;
+  background: linear-gradient(to right, #2558ff, #40ff80) !important;
+  box-shadow: 0 10px 36px rgba(92, 141, 255, 0.45);
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
 }
 
 .btn-gradient-dark:hover {
-    box-shadow: 0 16px 46px rgba(92, 141, 255, 0.65);
-    transform: translateY(-2px);
+  box-shadow: 0 16px 46px rgba(92, 141, 255, 0.65);
+  transform: translateY(-2px);
 }
 
 .btn-gradient-dark:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(92, 141, 255, 0.7);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(92, 141, 255, 0.7);
 }
 
 /* Theme gradient – landing & full-page background */
 .bg-theme-gradient {
-    background: var(--bg-gradient);
-    background-size: 200% 200%;
+  background: var(--bg-gradient);
+  background-size: 200% 200%;
 }
 
 /* Select dropdown - custom scrollbar (gray, matches UI) */
 .custom-dropdown-scroll::-webkit-scrollbar {
-    width: 8px;
-    border: none;
+  width: 8px;
+  border: none;
 }
 
 .custom-dropdown-scroll::-webkit-scrollbar-track {
-    background: rgb(243, 244, 246);
-    border-radius: 4px;
-    border: none;
-    border-left: none;
-    border-right: none;
+  background: rgb(243, 244, 246);
+  border-radius: 4px;
+  border: none;
+  border-left: none;
+  border-right: none;
 }
 
 .custom-dropdown-scroll::-webkit-scrollbar-thumb {
-    background: rgb(156, 163, 175);
-    border-radius: 4px;
-    border: none;
+  background: rgb(156, 163, 175);
+  border-radius: 4px;
+  border: none;
 }
 
 .custom-dropdown-scroll::-webkit-scrollbar-thumb:hover {
-    background: rgb(107, 114, 128);
+  background: rgb(107, 114, 128);
 }
 
 .custom-dropdown-scroll::-webkit-scrollbar-button {
-    display: none;
+  display: none;
 }
 
 .dark .custom-dropdown-scroll::-webkit-scrollbar-track {
-    background: rgb(55, 65, 81);
-    border: none;
+  background: rgb(55, 65, 81);
+  border: none;
 }
 
 .dark .custom-dropdown-scroll::-webkit-scrollbar-thumb {
-    background: rgb(107, 114, 128);
-    border: none;
+  background: rgb(107, 114, 128);
+  border: none;
 }
 
 .dark .custom-dropdown-scroll::-webkit-scrollbar-thumb:hover {
-    background: rgb(156, 163, 175);
+  background: rgb(156, 163, 175);
 }
 
 .custom-dropdown-scroll {
-    scrollbar-width: thin;
-    scrollbar-color: rgb(156, 163, 175) rgb(243, 244, 246);
+  scrollbar-width: thin;
+  scrollbar-color: rgb(156, 163, 175) rgb(243, 244, 246);
 }
 
 .dark .custom-dropdown-scroll {
-    scrollbar-color: rgb(107, 114, 128) rgb(55, 65, 81);
+  scrollbar-color: rgb(107, 114, 128) rgb(55, 65, 81);
 }

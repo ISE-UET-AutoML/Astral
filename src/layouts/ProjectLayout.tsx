@@ -39,9 +39,9 @@ export default function ProjectLayout() {
     : "overflow-hidden";
 
   return (
-    <div className="relative h-screen overflow-hidden bg-gray-50 dark:bg-[#111111]">
+    <div className="relative h-screen overflow-hidden bg-gray-50 dark:bg-slate-950">
       {/* Full-viewport background fill */}
-      <div className="fixed inset-0 bg-gray-50 dark:bg-[#111111] -z-50" />
+      <div className="fixed inset-0 bg-gray-50 dark:bg-slate-950 -z-50" />
 
       {/* Dark mode decorative background shapes */}
       {theme === "dark" && (

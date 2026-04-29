@@ -114,9 +114,9 @@ const LabelProjectPollingManager = () => {
 
 const DefaultLayout = () => {
   return (
-    <div className="relative min-h-screen bg-white dark:bg-[#01000A]">
+    <div className="relative min-h-screen bg-white dark:bg-slate-950">
       {/* Full-viewport background fill */}
-      <div className="fixed inset-0 bg-white dark:bg-[#01000A] -z-50" />
+      <div className="fixed inset-0 bg-white dark:bg-slate-950 -z-50" />
 
       <NavBar />
       <div className="min-h-[calc(100dvh-60px)]">
