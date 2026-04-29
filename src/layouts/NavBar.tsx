@@ -79,7 +79,7 @@ const NavBar = () => {
 	return (
 		<header
 			className={clsx(
-				'fixed top-0 w-full z-[999] border-b transition-[border-color,box-shadow] duration-200',
+				'fixed top-0 z-40 w-full border-b transition-[border-color,box-shadow] duration-200',
 				'bg-white border-gray-200',
 				'dark:bg-[#030712] dark:border-white/10',
 				scrolled && 'shadow-sm dark:shadow-none dark:border-white/15'

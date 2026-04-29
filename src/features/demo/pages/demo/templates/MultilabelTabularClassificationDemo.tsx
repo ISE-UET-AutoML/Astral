@@ -857,7 +857,7 @@ const MultilabelTabularClassificationDemo = ({ metadata }) => {
 					{showColumnDrawer && (
 						<div className="fixed inset-0 z-50 overflow-hidden">
 							<div
-								className="absolute inset-0 bg-black/50"
+								className="absolute inset-0 bg-black/40 backdrop-blur-sm"
 								onClick={() => setShowColumnDrawer(false)}
 							/>
 							<div className="absolute right-0 top-0 h-full w-full max-w-md bg-white dark:bg-gray-800 shadow-2xl flex flex-col">

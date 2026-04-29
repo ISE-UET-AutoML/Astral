@@ -5,7 +5,7 @@ export function ExportProgressModal({ isExporting }) {
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/50" />
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
 
       <div className="relative z-10 w-full max-w-md">
         <div className="rounded-2xl overflow-hidden border border-gray-200 bg-white dark:border-white/10 dark:bg-slate-900">
