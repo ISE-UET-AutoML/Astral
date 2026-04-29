@@ -1,4 +1,5 @@
-import newDatasetIcon from "src/assets/icon/new-dataset.png";
+import { useId } from "react";
+import { Database } from "lucide-react";
 import DatasetCard from "./DatasetCard";
 
 const DatasetGrid = ({
@@ -9,6 +10,8 @@ const DatasetGrid = ({
   deletingIds,
   isLoading,
 }) => {
+  const datasetGradientId = `dataset-grad-${useId().replace(/:/g, "")}`;
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
@@ -33,10 +36,27 @@ const DatasetGrid = ({
 					<span className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-400/20 to-cyan-400/10 scale-110 blur-xl group-hover:scale-125 transition-transform duration-500" />
 								{/* Icon card */}
           <span className="relative flex items-center justify-center w-36 h-36 rounded-3xl bg-white dark:bg-[#1c1c24] shadow-[0_8px_40px_rgba(6,182,212,0.25)] dark:shadow-[0_8px_48px_rgba(6,182,212,0.18)] ring-1 ring-black/5 dark:ring-white/8 group-hover:-translate-y-2 group-hover:shadow-[0_20px_56px_rgba(6,182,212,0.38)] dark:group-hover:shadow-[0_20px_56px_rgba(6,182,212,0.3)] transition-all duration-300 ease-out">
-            <img
-              src={newDatasetIcon}
-              alt="New dataset"
-              className="w-14 h-14 object-contain drop-shadow-[0_2px_8px_rgba(59,130,246,0.4)] group-hover:scale-110 transition-transform duration-300"
+            <svg width="0" height="0" className="absolute" aria-hidden>
+              <defs>
+                <linearGradient
+                  id={datasetGradientId}
+                  x1="0"
+                  y1="12"
+                  x2="24"
+                  y2="12"
+                  gradientUnits="userSpaceOnUse"
+                >
+                  <stop offset="0%" stopColor="#00C2FF" />
+                  <stop offset="100%" stopColor="#4E54F3" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <Database
+              className="w-14 h-14 drop-shadow-[0_2px_8px_rgba(59,130,246,0.4)] group-hover:scale-110 transition-transform duration-300"
+              stroke={`url(#${datasetGradientId})`}
+              strokeWidth={1.75}
+              fill="none"
+              aria-hidden
             />
           </span>
         </button>

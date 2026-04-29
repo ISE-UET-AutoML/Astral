@@ -1,9 +1,8 @@
 import React from 'react'
+import { FolderPlus } from 'lucide-react'
 import AIAssistantModal from './AIAssistantModal'
 import ContentContainer from 'src/layouts/ContentContainer'
-import create_project from 'src/assets/icon/add-folder.png'
 import { useProjects, useChatbot, useDatasets } from 'src/shared/hooks'
-import { useTheme } from 'src/theme/ThemeProvider'
 import {
 	Pagination,
 	PaginationContent,
@@ -80,7 +79,7 @@ export default function Projects() {
 		}
 	}
 
-	const { theme } = useTheme()
+	const folderPlusGradientId = `folder-plus-grad-${React.useId().replace(/:/g, '')}`
 
 	React.useEffect(() => {
 		const total = projectState.projects?.length || 0
@@ -178,10 +177,27 @@ export default function Projects() {
 								<span className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-400/20 to-cyan-400/10 scale-110 blur-xl group-hover:scale-125 transition-transform duration-500" />
 								{/* Icon card */}
 								<span className="relative flex items-center justify-center w-36 h-36 rounded-3xl bg-white dark:bg-[#1c1c24] shadow-[0_8px_40px_rgba(59,130,246,0.25)] dark:shadow-[0_8px_48px_rgba(59,130,246,0.18)] ring-1 ring-black/5 dark:ring-white/8 group-hover:-translate-y-2 group-hover:shadow-[0_20px_56px_rgba(59,130,246,0.38)] dark:group-hover:shadow-[0_20px_56px_rgba(59,130,246,0.3)] transition-all duration-300 ease-out">
-									<img
-										src={create_project}
-										alt="Add folder"
-										className="w-14 h-14 object-contain drop-shadow-[0_2px_8px_rgba(59,130,246,0.4)] group-hover:scale-110 transition-transform duration-300"
+									<svg width="0" height="0" className="absolute" aria-hidden>
+										<defs>
+											<linearGradient
+												id={folderPlusGradientId}
+												x1="0"
+												y1="12"
+												x2="24"
+												y2="12"
+												gradientUnits="userSpaceOnUse"
+											>
+												<stop offset="0%" stopColor="#0066CC" />
+												<stop offset="100%" stopColor="#29B6F6" />
+											</linearGradient>
+										</defs>
+									</svg>
+									<FolderPlus
+										className="w-14 h-14 drop-shadow-[0_2px_8px_rgba(59,130,246,0.4)] group-hover:scale-110 transition-transform duration-300"
+										stroke={`url(#${folderPlusGradientId})`}
+										strokeWidth={1.75}
+										fill="none"
+										aria-hidden
 									/>
 								</span>
 							</button>
