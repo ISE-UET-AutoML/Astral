@@ -30,6 +30,7 @@ const CreateDatasetModal = ({ visible, onCancel, onCreate }) => {
   const [datasetFormValues, setDatasetFormValues] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [canSubmitLabelForm, setCanSubmitLabelForm] = useState(false);
+  const [canProceedStep0, setCanProceedStep0] = useState(false);
   const [labelProjectData, setLabelProjectData] = useState(null);
   const showError = (msg) => toast.error(msg);
 
@@ -247,6 +248,7 @@ const CreateDatasetModal = ({ visible, onCancel, onCreate }) => {
     setLabelProjectData(null);
     setIsLoading(false);
     setCanSubmitLabelForm(false);
+    setCanProceedStep0(false);
     onCancel();
   };
 
@@ -321,6 +323,7 @@ const CreateDatasetModal = ({ visible, onCancel, onCreate }) => {
                       datasetFormValues?.detectedLabels || []
                     }
                     initialCsvMetadata={datasetFormValues?.csvMetadata || null}
+                    onStep0ValidityChange={setCanProceedStep0}
                   />
                 ) : (
                   <CreateLabelProjectForm
@@ -347,7 +350,8 @@ const CreateDatasetModal = ({ visible, onCancel, onCreate }) => {
                 <button
                   type="submit"
                   form="create-dataset-form-step0"
-                  className="px-4 sm:px-6 py-2 rounded-xl text-sm font-medium text-white border-none bg-gradient-to-r from-blue-700 to-blue-600 hover:-translate-y-[1px] transition-all shadow-sm"
+                  disabled={!canProceedStep0}
+                  className={`px-4 sm:px-6 py-2 rounded-xl text-sm font-medium text-white border-none bg-gradient-to-r from-blue-700 to-blue-600 transition-all shadow-sm ${canProceedStep0 ? "hover:-translate-y-[1px] cursor-pointer" : "cursor-not-allowed opacity-50"}`}
                 >
                   Next
                 </button>

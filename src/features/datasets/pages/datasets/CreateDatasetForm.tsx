@@ -42,6 +42,7 @@ export default function CreateDatasetForm({
   initialFiles = [],
   initialDetectedLabels = [],
   initialCsvMetadata = null,
+  onStep0ValidityChange,
 }) {
   // Form States
   const [title, setTitle] = useState(initialValues?.title || "");
@@ -91,6 +92,25 @@ export default function CreateDatasetForm({
     if (initialDetectedLabels.length) setDetectedLabels(initialDetectedLabels);
     if (initialCsvMetadata) setCsvMetadata(initialCsvMetadata);
   }, [initialFiles, initialDetectedLabels, initialCsvMetadata]);
+
+  useEffect(() => {
+    if (!onStep0ValidityChange) return;
+    const requiredFieldsOk =
+      Boolean(title.trim()) && Boolean(datasetType) && Boolean(taskType);
+    const sourceOk =
+      activeTab === "file"
+        ? files.length > 0
+        : Boolean(url.trim());
+    onStep0ValidityChange(requiredFieldsOk && sourceOk);
+  }, [
+    onStep0ValidityChange,
+    title,
+    datasetType,
+    taskType,
+    activeTab,
+    files.length,
+    url,
+  ]);
 
   const validateFiles = (files, datasetType) => {
     const allowedImageTypes = ["image/jpeg", "image/png"];
@@ -190,6 +210,12 @@ export default function CreateDatasetForm({
 
     setFiles(fileMetadata);
     setTotalKbytes(totalSizeInKB);
+    setErrors((prev) => {
+      if (!prev.files) return prev;
+      const next = { ...prev };
+      delete next.files;
+      return next;
+    });
   };
 
   const handleDeleteFile = (fileId) => {
@@ -286,6 +312,8 @@ export default function CreateDatasetForm({
     if (!taskType) newErrors.taskType = "Please select a task type";
     if (activeTab === "url" && !url.trim())
       newErrors.url = "Please enter a URL";
+    if (activeTab === "file" && files.length === 0)
+      newErrors.files = "Please add at least one file or folder";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -539,7 +567,7 @@ export default function CreateDatasetForm({
             <label
               htmlFor="file"
               className={clsx(
-                "mb-4 flex h-[120px] cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed transition-all duration-300",
+                "relative mb-4 flex min-h-[120px] cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed transition-all duration-300",
                 isDragging
                   ? "border-[var(--modal-close-hover)] bg-[var(--hover-bg)]"
                   : "border-[var(--upload-border)] bg-[var(--upload-bg)]",
@@ -549,20 +577,31 @@ export default function CreateDatasetForm({
               onDragOver={handleDragOver}
               onDrop={handleDrop}
             >
-              <div className="text-center">
+              <span className="flex w-full flex-col items-center justify-center gap-2 px-4 py-3">
                 {isFolderUpload ? (
-                  <FolderOutlined className="text-[64px] text-[var(--upload-icon)]" />
+                  <FolderOutlined
+                    className="size-16 shrink-0 text-[var(--upload-icon)]"
+                    aria-hidden
+                  />
                 ) : (
-                  <FileOutlined className="text-[64px] text-[var(--upload-icon)]" />
+                  <FileOutlined
+                    className="size-16 shrink-0 text-[var(--upload-icon)]"
+                    aria-hidden
+                  />
                 )}
-                <p className="mt-2 text-[var(--upload-text)] text-sm">
+                <p className="m-0 max-w-full text-center text-sm text-[var(--upload-text)]">
                   {isFolderUpload
                     ? "Drag and drop a folder or click to upload"
                     : "Drag and drop files or click to upload"}
                 </p>
-              </div>
+              </span>
               <input {...fileInputProps} />
             </label>
+            {errors.files && (
+              <span className="mt-1 block text-xs text-red-500">
+                {errors.files}
+              </span>
+            )}
 
             <div className="text-[var(--text)] text-sm">
               <span className="font-medium">{files.length} Files</span>
