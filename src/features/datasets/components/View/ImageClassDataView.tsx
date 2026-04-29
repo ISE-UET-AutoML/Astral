@@ -1,7 +1,13 @@
 import type { InputHTMLAttributes } from "react";
 import { useState } from "react";
-import PaginationNew from "src/components/shared/data-display/PaginationNew";
 import { Spinner } from "src/components/ui/spinner";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "src/components/ui/pagination";
 import { PlusIcon, Trash as TrashIcon, Check as CheckIcon } from "lucide-react";
 import { File as DocumentIcon, X as XMarkIcon } from "lucide-react";
 import database from "src/assets/images/background.png";
@@ -184,11 +190,37 @@ const ImageClassDataView = ({ dataset, files }) => {
           </div>
         )}
       </div>
-      <PaginationNew
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />
+      <Pagination className="mt-2">
+        <PaginationContent className="gap-2">
+          <PaginationItem>
+            <PaginationPrevious
+              href="#"
+              text=""
+              onClick={(event) => {
+                event.preventDefault();
+                if (currentPage > 1) handlePageChange(currentPage - 1);
+              }}
+              className={currentPage <= 1 ? "pointer-events-none opacity-50" : ""}
+            />
+          </PaginationItem>
+          <PaginationItem>
+            <div className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700">
+              {currentPage} / {Math.max(1, totalPages)}
+            </div>
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationNext
+              href="#"
+              text=""
+              onClick={(event) => {
+                event.preventDefault();
+                if (currentPage < totalPages) handlePageChange(currentPage + 1);
+              }}
+              className={currentPage >= totalPages ? "pointer-events-none opacity-50" : ""}
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
       {isUpload && (
         <div className="w-full h-[50%] absolute bottom-[-2px] bg-white pr-4 pt-4 mt-4">
           <label

@@ -1,10 +1,16 @@
 import React from 'react'
 import AIAssistantModal from './AIAssistantModal'
 import ContentContainer from 'src/layouts/ContentContainer'
-import Pager from 'src/components/shared/data-display/Pager'
 import create_project from 'src/assets/images/create_project.png'
 import { useProjects, useChatbot, useDatasets } from 'src/shared/hooks'
 import { useTheme } from 'src/theme/ThemeProvider'
+import {
+	Pagination,
+	PaginationContent,
+	PaginationItem,
+	PaginationNext,
+	PaginationPrevious,
+} from 'src/components/ui/pagination'
 
 // Components
 import {
@@ -85,6 +91,10 @@ export default function Projects() {
 	const startIndex = (currentPage - 1) * pageSize
 	const paginatedProjects = (projectState.projects || []).slice(startIndex, startIndex + pageSize)
 	const hasProjects = (projectState.projects || []).length > 0
+	const totalPages = Math.max(
+		1,
+		Math.ceil(((projectState.projects || []).length || 0) / pageSize)
+	)
 
 	return (
 		<div className="min-h-screen bg-gray-100 dark:bg-[#161616] text-gray-900 dark:text-white">
@@ -115,12 +125,43 @@ export default function Projects() {
 									onCreateProject={() => updateProjState({ showUploaderManual: true })}
 								/>
 								<div className="mt-8">
-									<Pager
-										currentPage={currentPage}
-										totalItems={(projectState.projects || []).length}
-										pageSize={pageSize}
-										onPageChange={setCurrentPage}
-									/>
+									<Pagination>
+										<PaginationContent className="gap-2">
+											<PaginationItem>
+												<PaginationPrevious
+													href="#"
+													text=""
+													onClick={(event) => {
+														event.preventDefault()
+														if (currentPage > 1) setCurrentPage(currentPage - 1)
+													}}
+													className={
+														currentPage <= 1 ? 'pointer-events-none opacity-50' : ''
+													}
+												/>
+											</PaginationItem>
+											<PaginationItem>
+												<div className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 dark:border-white/10 dark:bg-slate-950/70 dark:text-slate-200">
+													{currentPage} / {totalPages}
+												</div>
+											</PaginationItem>
+											<PaginationItem>
+												<PaginationNext
+													href="#"
+													text=""
+													onClick={(event) => {
+														event.preventDefault()
+														if (currentPage < totalPages) setCurrentPage(currentPage + 1)
+													}}
+													className={
+														currentPage >= totalPages
+															? 'pointer-events-none opacity-50'
+															: ''
+													}
+												/>
+											</PaginationItem>
+										</PaginationContent>
+									</Pagination>
 								</div>
 							</>
 						) : (

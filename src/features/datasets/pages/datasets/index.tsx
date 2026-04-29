@@ -2,10 +2,16 @@ import { useState, useReducer, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import CreateDatasetModal from "./CreateDatasetModal";
 import ContentContainer from "src/layouts/ContentContainer";
-import Pager from "src/components/shared/data-display/Pager";
 import * as datasetAPI from "src/features/datasets/api/dataset";
 import * as labelProjectAPI from "src/features/labels/api/labelProject";
 import { POLL_DATASET_PROCESSING_STATUS_TIME } from "src/constants/time";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "src/components/ui/pagination";
 import {
   DatasetHeader,
   DatasetFilter,
@@ -36,6 +42,7 @@ export default function Datasets() {
   const [deletingIds, setDeletingIds] = useState(new Set());
   const [currentPage, setCurrentPage] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
+  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
 
   // polling
   const pollingRef = useRef(null);
@@ -233,12 +240,37 @@ export default function Datasets() {
 
             {/* Pager */}
             <div className="mt-8">
-              <Pager
-                currentPage={currentPage}
-                totalItems={totalItems}
-                pageSize={pageSize}
-                onPageChange={handlePageChange}
-              />
+              <Pagination>
+                <PaginationContent className="gap-2">
+                  <PaginationItem>
+                    <PaginationPrevious
+                      href="#"
+                      text=""
+                      onClick={(event) => {
+                        event.preventDefault();
+                        if (currentPage > 1) handlePageChange(currentPage - 1);
+                      }}
+                      className={currentPage <= 1 ? "pointer-events-none opacity-50" : ""}
+                    />
+                  </PaginationItem>
+                  <PaginationItem>
+                    <div className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 dark:border-white/10 dark:bg-slate-950/70 dark:text-slate-200">
+                      {currentPage} / {totalPages}
+                    </div>
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationNext
+                      href="#"
+                      text=""
+                      onClick={(event) => {
+                        event.preventDefault();
+                        if (currentPage < totalPages) handlePageChange(currentPage + 1);
+                      }}
+                      className={currentPage >= totalPages ? "pointer-events-none opacity-50" : ""}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
             </div>
           </ContentContainer>
         </main>

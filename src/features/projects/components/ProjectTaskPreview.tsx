@@ -1,6 +1,6 @@
 import React from "react";
 import { Clock, Sparkles } from "lucide-react";
-import MarkdownRenderer from "src/components/shared/utilities/MarkdownRenderer";
+import MarkdownRenderer from "@/src/features/projects/components/MarkdownRenderer";
 
 const EmptyTaskPreview = () => (
   <div className="flex min-h-[420px] items-center justify-center rounded-3xl border border-dashed border-slate-200 bg-slate-50/80 text-center dark:border-white/10 dark:bg-white/5">
