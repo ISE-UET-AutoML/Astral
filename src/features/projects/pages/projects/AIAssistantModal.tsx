@@ -130,7 +130,7 @@ const Modal = ({
   if (!isOpen) return null;
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+      className="fixed inset-0 z-[1100] flex items-center justify-center bg-black/50 p-4 supports-backdrop-filter:backdrop-blur-sm"
       onClick={onCancel || onClose}
     >
       <div
