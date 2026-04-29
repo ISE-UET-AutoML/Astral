@@ -282,18 +282,18 @@ const CreateDatasetModal = ({ visible, onCancel, onCreate }) => {
           aria-hidden="true"
         />
         <div
-          className={`relative z-[1001] w-full mx-4 sm:mx-6 lg:mx-8 flex flex-col max-h-[85dvh] sm:max-h-[90vh] [background:var(--modal-bg)] border border-[var(--modal-border)] rounded-2xl shadow-[0_25px_50px_rgba(0,0,0,0.4)] ${datasetFormValues?.dataset_type === "TABULAR" ? "max-w-[95vw] sm:max-w-[640px] lg:max-w-[900px]" : "max-w-[90vw] sm:max-w-[600px] lg:max-w-[800px]"}`}
+          className={`relative z-[1001] mx-4 flex w-full max-h-[85dvh] flex-col rounded-2xl border border-slate-200 bg-white shadow-[0_25px_50px_rgba(0,0,0,0.4)] sm:mx-6 sm:max-h-[90vh] dark:border-white/10 dark:bg-slate-950 lg:mx-8 ${datasetFormValues?.dataset_type === "TABULAR" ? "max-w-[95vw] sm:max-w-[640px] lg:max-w-[900px]" : "max-w-[90vw] sm:max-w-[600px] lg:max-w-[800px]"}`}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-6 py-4 shrink-0 bg-[var(--modal-header-bg)] border-b border-[var(--modal-header-border)] rounded-t-2xl">
-            <h2 className="m-0 text-lg font-semibold text-[var(--modal-title-color)] font-poppins">
+          <div className="flex shrink-0 items-center justify-between rounded-t-2xl border-b border-slate-200/80 bg-transparent px-6 py-4 dark:border-white/10">
+            <h2 className="m-0 font-poppins text-lg font-semibold text-slate-950 dark:text-white">
               Create New Dataset
             </h2>
             <button
               type="button"
               onClick={handleCancel}
-              className="flex items-center justify-center w-8 h-8 rounded-full transition-colors hover:bg-white/10 text-[var(--modal-close-color)] bg-transparent border-none cursor-pointer text-[18px]"
+              className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border-none bg-transparent text-[18px] text-slate-600 transition-colors hover:bg-slate-100 dark:text-white dark:hover:bg-white/10"
             >
               ✕
             </button>
@@ -301,11 +301,11 @@ const CreateDatasetModal = ({ visible, onCancel, onCreate }) => {
 
           {/* Body - flex-1 min-h-0 để phần này scroll được */}
           <div
-            className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden overscroll-contain p-6"
+            className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain bg-slate-50/70 p-6 dark:bg-slate-950/40"
             style={{ scrollbarWidth: "thin" }}
           >
             {isLoading ? (
-              <div className="flex min-h-40 flex-col items-center justify-center gap-3 text-sm text-[var(--secondary-text)]">
+              <div className="flex min-h-40 flex-col items-center justify-center gap-3 text-sm text-slate-600 dark:text-slate-400">
                 <Spinner />
                 <span>Processing dataset, please wait...</span>
               </div>
@@ -342,7 +342,7 @@ const CreateDatasetModal = ({ visible, onCancel, onCreate }) => {
           </div>
 
           {!isLoading && (
-            <div className="shrink-0 flex justify-end gap-2 sm:gap-3 px-6 py-4 border-t border-[var(--modal-header-border)] bg-[var(--modal-header-bg)] rounded-b-2xl">
+            <div className="flex shrink-0 justify-end gap-2 rounded-b-2xl border-t border-slate-200/80 bg-transparent px-6 py-4 dark:border-white/10 sm:gap-3">
               {currentStep === 0 ? (
                 <button
                   type="submit"

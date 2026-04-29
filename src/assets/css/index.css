@@ -201,9 +201,9 @@
   --nav-text: #ffffff;
   --nav-hover: rgba(255, 255, 255, 0.08);
 
-  /* Form elements */
-  --input-bg: rgba(26, 26, 26, 0.9);
-  --input-border: rgba(148, 163, 184, 0.3);
+  /* Form elements – light blue-slate fill (tím than nhạt) on dark surfaces */
+  --input-bg: rgba(38, 44, 62, 0.96);
+  --input-border: rgba(129, 140, 168, 0.35);
   --input-focus-border: #60a5fa;
   --input-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
   --placeholder-text: #9ca3af;
@@ -222,7 +222,7 @@
   /* Filter component styling - preserve original dark theme */
   --filter-bg: rgba(255, 255, 255, 0.05);
   --filter-border: rgba(255, 255, 255, 0.1);
-  --filter-input-bg: rgba(26, 26, 26, 0.9);
+  --filter-input-bg: rgba(38, 44, 62, 0.96);
   --filter-input-border: rgba(255, 255, 255, 0.2);
   --filter-input-hover: rgba(255, 255, 255, 0.4);
   --filter-input-focus: rgba(59, 130, 246, 0.5);
@@ -247,9 +247,9 @@
   --input-disabled-bg: rgba(255, 255, 255, 0.05);
   --input-disabled-color: rgba(255, 255, 255, 0.7);
 
-  /* Select styling - preserve original dark theme */
-  --select-selector-bg: rgba(255, 255, 255, 0.1);
-  --select-selector-border: rgba(255, 255, 255, 0.2);
+  /* Select styling - align with input surfaces */
+  --select-selector-bg: rgba(38, 44, 62, 0.92);
+  --select-selector-border: rgba(129, 140, 168, 0.35);
   --select-selector-color: white;
   --select-item-color: white;
   --select-placeholder-color: rgba(255, 255, 255, 0.5);
@@ -300,8 +300,8 @@
   --alert-info-bg: rgba(24, 144, 255, 0.1);
   --alert-info-border: rgba(24, 144, 255, 0.3);
 
-  /* Radio styling - preserve original dark theme */
-  --radio-bg: rgba(255, 255, 255, 0.1);
+  /* Radio styling - match input surface */
+  --radio-bg: rgba(38, 44, 62, 0.92);
   --radio-border: rgba(255, 255, 255, 0.3);
   --radio-checked-bg: #65ffa0;
   --radio-checked-border: #65ffa0;
@@ -311,9 +311,9 @@
   --tabs-active-text: white;
   --tabs-ink-bar: #65ffa0;
 
-  /* Upload styling - preserve original dark theme */
-  --upload-bg: rgba(255, 255, 255, 0.05);
-  --upload-border: rgba(255, 255, 255, 0.3);
+  /* Upload styling – same hue family as inputs, slightly softer */
+  --upload-bg: rgba(38, 44, 62, 0.45);
+  --upload-border: rgba(129, 140, 168, 0.35);
   --upload-icon: #65ffa0;
   --upload-text: white;
   --upload-hint: rgba(255, 255, 255, 0.7);
@@ -339,8 +339,8 @@
   --divider-color: rgba(255, 255, 255, 0.1);
 
   /* Dropdown styling - dark mode */
-  --dropdown-bg: #1f1f1f;
-  --dropdown-border: rgba(148, 163, 184, 0.25);
+  --dropdown-bg: rgb(34, 39, 56);
+  --dropdown-border: rgba(129, 140, 168, 0.3);
   --dropdown-text: #e2e8f0;
   --dropdown-hover-bg: #2563eb;
   --dropdown-hover-text: #ffffff;

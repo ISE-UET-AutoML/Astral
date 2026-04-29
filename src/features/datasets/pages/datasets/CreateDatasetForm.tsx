@@ -439,15 +439,15 @@ export default function CreateDatasetForm({
 
       {/* Preparing Instructions */}
       {currentTaskInfo?.preparingInstructions && (
-        <details className="group border border-[#ddd] rounded-lg bg-[rgba(255,255,255,0.97)] overflow-hidden">
-          <summary className="flex items-center cursor-pointer p-3 font-medium text-green-600 outline-none list-none select-none">
+        <details className="group overflow-hidden rounded-lg border border-slate-200 bg-white/97 dark:border-white/10 dark:bg-slate-950/50">
+          <summary className="flex cursor-pointer list-none items-center p-3 font-medium text-green-600 outline-none select-none dark:text-green-400">
             <QuestionCircleOutlined className="mr-2" />
             Task Preparation Instructions ({currentTaskInfo.displayName})
             <span className="ml-auto transition-transform group-open:rotate-180">
               ▼
             </span>
           </summary>
-          <div className="p-4 pt-0 border-t border-[#ddd] whitespace-pre-line text-[var(--text)] text-sm mt-2">
+          <div className="mt-2 border-t border-slate-200 p-4 pt-0 text-sm whitespace-pre-line text-[var(--text)] dark:border-white/10">
             {currentTaskInfo.preparingInstructions}
           </div>
         </details>
