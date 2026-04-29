@@ -1,19 +1,11 @@
-import React from "react";
 import { useLocation, useOutletContext, useNavigate } from "react-router-dom";
-import { Alert } from "src/components/ui/alert";
-import { Button } from "src/components/ui/button";
-import {
-  History as HistoryOutlined,
-  CloudDownload as CloudDownloadOutlined,
-  Rocket as RocketOutlined,
-} from "lucide-react";
+import { History, Download, Rocket, BarChart3 } from "lucide-react";
 import * as modelServiceAPI from "src/features/models/api/model";
 import { PATHS } from "src/constants/paths";
 import { useTrainResultPage } from "src/features/project-build/hooks/useTrainResultPage";
 import { TrainResultSummaryCards } from "src/features/project-build/components/training/TrainResultSummaryCards";
 import { TrainResultPerformanceCharts } from "src/features/project-build/components/training/TrainResultPerformanceCharts";
 import { TrainResultMetricsTable } from "src/features/project-build/components/training/TrainResultMetricsTable";
-import { ChartBarBig as ChartBarSquareIcon } from "lucide-react";
 
 const TrainResult = () => {
   const { projectInfo } = useOutletContext();
@@ -37,58 +29,74 @@ const TrainResult = () => {
   });
 
   return (
-    <div className="h-full overflow-y-auto bg-[var(--surface)]">
-      <div className="relative z-10 w-full px-3 py-6 sm:px-4 lg:px-6 lg:py-8">
-        <div className="mb-6 flex items-center gap-2">
-          <ChartBarSquareIcon className="w-12 h-12 text-blue-200 dark:text-white" />
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-            Training Result
-          </h1>
+    <div className="min-h-screen overflow-y-auto bg-white dark:bg-slate-950">
+      <div className="w-full max-w-7xl mx-auto px-6 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-2">
+            <BarChart3 className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              Training Result
+            </h1>
+          </div>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Review the performance metrics and results from your training
+            experiment.
+          </p>
         </div>
-        <div className="flex w-full flex-col gap-6">
+
+        {/* Content */}
+        <div className="flex flex-col gap-6">
+          {/* Summary Cards */}
           <TrainResultSummaryCards
             metrics={metrics}
             experiment={experiment}
             epoch={epoch}
           />
 
-          <div className="flex w-full items-center justify-center">
-            <Button
-              type="primary"
-              icon={<RocketOutlined />}
+          {/* View Model Button */}
+          <div className="flex justify-center">
+            <button
               onClick={async () => {
                 const modelRes =
                   await modelServiceAPI.getModelByExperimentId(experimentId);
                 navigate(PATHS.MODEL_VIEW(projectInfo.id, modelRes.data.id));
               }}
-              size="large"
-              className="deploy-btn-solid mt-4 h-[50px] w-[25%] font-poppins text-lg font-bold"
+              className="flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 active:bg-blue-800"
             >
+              <Rocket className="w-4 h-4" />
               View Model
-            </Button>
+            </button>
           </div>
 
-          <div className="rounded-xl border border-[var(--border)] [background:var(--card-gradient)] p-4 shadow-lg backdrop-blur-md">
-            <Button
-              type="link"
-              icon={<HistoryOutlined className="text-[#60a5fa]" />}
+          {/* Detailed Results Section */}
+          <div className="rounded-2xl border border-gray-200 dark:border-white/10 bg-gray-50/50 dark:bg-white/5 backdrop-blur-sm">
+            <button
               onClick={() => setIsDetailsExpanded(!isDetailsExpanded)}
-              className="font-poppins text-xl text-[#e2e8f0]"
+              className="flex w-full items-center gap-2 px-6 py-4 text-left font-semibold text-gray-900 dark:text-white transition hover:bg-gray-100/50 dark:hover:bg-white/10 rounded-t-2xl"
             >
+              <History className="w-5 h-5 text-blue-500 dark:text-blue-400" />
               {isDetailsExpanded ? "Hide Details" : "Show Detailed Results"}
-            </Button>
+            </button>
 
             {isDetailsExpanded && (
-              <div className="mt-4 flex w-full flex-col gap-6">
+              <div className="border-t border-gray-200 dark:border-white/10 px-6 py-6 flex flex-col gap-6">
                 <TrainResultPerformanceCharts valGraphs={valGraphs} />
                 <TrainResultMetricsTable metrics={metrics} />
-                <Alert
-                  type="info"
-                  showIcon
-                  icon={<CloudDownloadOutlined />}
-                  className="border border-[var(--border)] bg-[var(--hover-bg)] font-poppins text-[var(--secondary-text)]"
-                  message="Tip: You can export these metrics and training history data for offline analysis or reporting."
-                />
+                <div className="rounded-xl border border-blue-200 dark:border-blue-900/30 bg-blue-50 dark:bg-blue-950/20 p-4">
+                  <div className="flex gap-3">
+                    <Download className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-blue-900 dark:text-blue-200">
+                        Export Metrics
+                      </p>
+                      <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
+                        You can export these metrics and training history data
+                        for offline analysis or reporting.
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
           </div>

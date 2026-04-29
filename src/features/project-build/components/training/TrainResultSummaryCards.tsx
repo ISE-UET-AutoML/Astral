@@ -1,76 +1,24 @@
 import React from "react";
-import {
-  Card as UiCard,
-  CardContent as UiCardContent,
-  CardHeader as UiCardHeader,
-  CardTitle as UiCardTitle,
-} from "src/components/ui/card";
-import {
-  Trophy as TrophyOutlined,
-  Clock as ClockCircleOutlined,
-  FlaskConical as ExperimentOutlined,
-} from "lucide-react";
-const cx = (...classes) => classes.filter(Boolean).join(" ");
-const Card = ({ title, children, className = "", style, ...props }) => (
-  <UiCard className={className} style={style} {...props}>
-    {title && (
-      <UiCardHeader>
-        <UiCardTitle>{title}</UiCardTitle>
-      </UiCardHeader>
-    )}
-    <UiCardContent>{children}</UiCardContent>
-  </UiCard>
-);
-Card.Meta = ({ title, description, avatar, className = "" }) => (
-  <div className={cx("flex items-start gap-3", className)}>
-    {avatar}
-    <div>
-      {title && <div className="font-medium">{title}</div>}
-      {description && (
-        <div className="text-sm text-muted-foreground">{description}</div>
-      )}
-    </div>
-  </div>
-);
-const Typography = {
-  Title: ({ level = 3, children, className = "", ...props }) => {
-    const Heading = `h${level}`;
-    return (
-      <Heading className={cx("font-semibold", className)} {...props}>
-        {children}
-      </Heading>
-    );
-  },
-  Text: ({ children, className = "", ...props }) => (
-    <span className={className} {...props}>
-      {children}
-    </span>
-  ),
-  Paragraph: ({ children, className = "", ...props }) => (
-    <p className={className} {...props}>
-      {children}
-    </p>
-  ),
-};
-const Statistic = ({
-  title,
-  value,
-  prefix,
-  suffix,
-  className = "",
-  ...props
-}) => (
-  <div className={className} {...props}>
-    {title && <div className="text-sm text-muted-foreground">{title}</div>}
-    <div className="text-2xl font-semibold">
-      {prefix}
-      {value}
-      {suffix}
-    </div>
-  </div>
-);
+import { Trophy, Clock, FlaskConical } from "lucide-react";
 
-const { Text } = Typography;
+const StatCard = ({ icon: Icon, title, value, suffix }) => (
+  <div className="rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 p-6 backdrop-blur-sm transition hover:border-gray-300 dark:hover:border-white/15">
+    <div className="flex items-start gap-4">
+      <div className="rounded-xl bg-blue-100 dark:bg-blue-950/40 p-3">
+        <Icon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
+          {title}
+        </p>
+        <p className="text-2xl font-bold text-gray-900 dark:text-white truncate">
+          {value}
+          {suffix && <span className="text-lg ml-1">{suffix}</span>}
+        </p>
+      </div>
+    </div>
+  </div>
+);
 
 export function TrainResultSummaryCards({ metrics, experiment, epoch }) {
   const mainMetric = metrics[0];
@@ -78,63 +26,26 @@ export function TrainResultSummaryCards({ metrics, experiment, epoch }) {
   const mins = Math.floor(totalMinutes);
   const secs = Math.round((totalMinutes - mins) * 60);
 
+  const metricValue = mainMetric
+    ? ((mainMetric.value ?? 0) * 100).toFixed(2)
+    : "0.00";
+
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-      <Card className="rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-slate-900 transition-all duration-300">
-        <Statistic
-          title={
-            <span className="text-gray-600 dark:text-gray-400">
-              {`Final ${mainMetric?.metric ?? "metric"} score`}
-            </span>
-          }
-          value={(mainMetric?.value ?? 0) * 100}
-          precision={2}
-          prefix={
-            <TrophyOutlined className="text-blue-600 dark:text-blue-400" />
-          }
-          suffix="%"
-          valueStyle={{
-            color: "rgb(37, 99, 235)",
-            fontWeight: "bold",
-          }}
-        />
-      </Card>
+      <StatCard
+        icon={Trophy}
+        title={`Final ${mainMetric?.metric ?? "Metric"} Score`}
+        value={metricValue}
+        suffix="%"
+      />
 
-      <Card className="rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-slate-900 transition-all duration-300\">
-        <Statistic
-          title={
-            <span className="text-gray-600 dark:text-gray-400">
-              Training Duration
-            </span>
-          }
-          valueRender={() => (
-            <Text className="text-lg font-bold text-amber-600 dark:text-amber-400">
-              {mins}m {secs}s
-            </Text>
-          )}
-          prefix={
-            <ClockCircleOutlined className="text-amber-500 dark:text-amber-400" />
-          }
-        />
-      </Card>
+      <StatCard
+        icon={Clock}
+        title="Training Duration"
+        value={`${mins}m ${secs}s`}
+      />
 
-      <Card className="rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-slate-900 transition-all duration-300">
-        <Statistic
-          title={
-            <span className="text-gray-600 dark:text-gray-400">
-              Total Epochs
-            </span>
-          }
-          value={epoch ?? 0}
-          prefix={
-            <ExperimentOutlined className="text-blue-600 dark:text-blue-400" />
-          }
-          valueStyle={{
-            color: "rgb(37, 99, 235)",
-            fontWeight: "bold",
-          }}
-        />
-      </Card>
+      <StatCard icon={FlaskConical} title="Total Epochs" value={epoch ?? 0} />
     </div>
   );
 }

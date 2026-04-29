@@ -5,31 +5,36 @@ import {
 	YAxis,
 	CartesianGrid,
 	Tooltip,
+	ResponsiveContainer,
 } from 'recharts'
 
 type LineGraphProps = {
 	data: Array<Record<string, unknown>>
-	label: React.ReactNode
 }
 
-const LineGraph = ({ data, label }: LineGraphProps) => (
+const LineGraph = ({ data }: LineGraphProps) => (
 	<>
 		{data.length > 0 && (
-			<div className="charts-container mx-auto relative flex items-center">
-				<div className="chart flex justify-center">
+			<div className="h-[250px] w-full">
+				<ResponsiveContainer width="100%" height="100%">
 					<LineChart
-						width={400}
-						height={290}
 						data={data}
 						margin={{
 							top: 5,
-							right: 30,
+							right: 16,
 							left: 0,
-							bottom: 5,
+							bottom: 24,
 						}}
 					>
 						<CartesianGrid strokeDasharray="3 3" />
-						<XAxis dataKey="step" />
+						<XAxis
+							dataKey="step"
+							label={{
+								value: 'Step',
+								position: 'insideBottom',
+								offset: -8,
+							}}
+						/>
 						<YAxis />
 						<Tooltip />
 						<Line
@@ -39,8 +44,7 @@ const LineGraph = ({ data, label }: LineGraphProps) => (
 							strokeWidth="3"
 						/>
 					</LineChart>
-				</div>
-				<h3 className="text-center">{label}</h3>
+				</ResponsiveContainer>
 			</div>
 		)}
 	</>
