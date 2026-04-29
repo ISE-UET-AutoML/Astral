@@ -1,557 +1,838 @@
-import React, { useState, useEffect, useRef } from 'react';
-import * as modelAPI from 'src/features/models/api/model'
-import { Button as UiButton } from 'src/components/ui/button'
-import { Card as UiCard, CardContent as UiCardContent, CardHeader as UiCardHeader, CardTitle as UiCardTitle } from 'src/components/ui/card'
-import { Alert as UiAlert, AlertDescription as UiAlertDescription, AlertTitle as UiAlertTitle } from 'src/components/ui/alert'
-import { Progress as UiProgress } from 'src/components/ui/progress'
-import { Badge as UiBadge } from 'src/components/ui/badge'
-import { Separator as UiSeparator } from 'src/components/ui/separator'
-import { Spinner as UiSpinner } from 'src/components/ui/spinner'
-import { Tooltip as UiTooltip, TooltipContent as UiTooltipContent, TooltipProvider as UiTooltipProvider, TooltipTrigger as UiTooltipTrigger } from 'src/components/ui/tooltip'
-import { Empty as UiEmpty, EmptyDescription as UiEmptyDescription } from 'src/components/ui/empty'
-import { toast } from 'sonner'
-import { CircleQuestionMark as QuestionCircleOutlined, CircleCheck as CheckCircleOutlined, CircleX as CloseCircleOutlined, FileText as FileTextOutlined, Eye as EyeOutlined, Table as TableOutlined, CircleAlert as ExclamationCircleOutlined, Filter as FilterOutlined, ChevronDown as DownOutlined, Check as CheckOutlined, Upload as UploadOutlined } from 'lucide-react'
-import Papa from 'papaparse'
-const cx = (...classes) => classes.filter(Boolean).join(' ')
-const getToastContent = (value) => typeof value === 'object' && value?.content ? value.content : value
-const message = { success: (value) => toast.success(getToastContent(value)), error: (value) => toast.error(getToastContent(value)), warning: (value) => toast.warning(getToastContent(value)), info: (value) => toast.info(getToastContent(value)), loading: (value) => toast.loading(getToastContent(value)) }
-const Spin = ({ tip, children, className = '', ...props }) => (<div className={cx('inline-flex items-center gap-2', className)} {...props}><UiSpinner />{tip && <span>{tip}</span>}{children}</div>)
-const Button = ({ children, icon, loading, disabled, htmlType, type, className = '', ...props }) => (<UiButton type={htmlType || 'button'} disabled={disabled || loading} className={className} {...props}>{loading && <UiSpinner className="mr-2" />}{icon && <span className="inline-flex">{icon}</span>}{children}</UiButton>)
-const Card = ({ title, children, className = '', style, ...props }) => (<UiCard className={className} style={style} {...props}>{title && <UiCardHeader><UiCardTitle>{title}</UiCardTitle></UiCardHeader>}<UiCardContent>{children}</UiCardContent></UiCard>)
-Card.Meta = ({ title, description, avatar, className = '' }) => (<div className={cx('flex items-start gap-3', className)}>{avatar}<div>{title && <div className="font-medium">{title}</div>}{description && <div className="text-sm text-muted-foreground">{description}</div>}</div></div>)
-const Alert = ({ message, description, type, showIcon, className = '', ...props }) => (<UiAlert variant={type === 'error' ? 'destructive' : 'default'} className={className} {...props}>{message && <UiAlertTitle>{message}</UiAlertTitle>}{description && <UiAlertDescription>{description}</UiAlertDescription>}</UiAlert>)
-const Progress = ({ percent, value, className = '', ...props }) => <UiProgress value={percent ?? value ?? 0} className={className} {...props} />
-const Tag = ({ color, children, className = '', ...props }) => <UiBadge className={className} {...props}>{children}</UiBadge>
-const Badge = ({ count, children, className = '', ...props }) => children ? <span className={cx('relative inline-flex', className)} {...props}>{children}{count != null && <UiBadge className="absolute -right-2 -top-2">{count}</UiBadge>}</span> : <UiBadge className={className} {...props}>{count}</UiBadge>
-const Divider = ({ className = '', ...props }) => <UiSeparator className={className} {...props} />
-const Tooltip = ({ title, children, ...props }) => (<UiTooltipProvider><UiTooltip><UiTooltipTrigger asChild>{children || <span />}</UiTooltipTrigger>{title && <UiTooltipContent {...props}>{title}</UiTooltipContent>}</UiTooltip></UiTooltipProvider>)
-const Empty = ({ description = 'No data', className = '', ...props }) => <UiEmpty className={className} {...props}><UiEmptyDescription>{description}</UiEmptyDescription></UiEmpty>
-const Typography = { Title: ({ level = 3, children, className = '', ...props }) => { const Heading = `h${level}`; return <Heading className={cx('font-semibold', className)} {...props}>{children}</Heading> }, Text: ({ children, className = '', ...props }) => <span className={className} {...props}>{children}</span>, Paragraph: ({ children, className = '', ...props }) => <p className={className} {...props}>{children}</p> }
-const Space = ({ children, className = '', direction = 'horizontal', size = 8, ...props }) => <div className={cx('flex', direction === 'vertical' ? 'flex-col' : 'flex-row items-center', className)} style={{ gap: typeof size === 'number' ? size : undefined, ...props.style }} {...props}>{children}</div>
-const Layout = ({ children, className = '', ...props }) => <div className={className} {...props}>{children}</div>
-Layout.Content = ({ children, className = '', ...props }) => <main className={className} {...props}>{children}</main>
-Layout.Header = ({ children, className = '', ...props }) => <header className={className} {...props}>{children}</header>
-Layout.Sider = ({ children, className = '', ...props }) => <aside className={className} {...props}>{children}</aside>
-const Statistic = ({ title, value, prefix, suffix, className = '', ...props }) => <div className={className} {...props}>{title && <div className="text-sm text-muted-foreground">{title}</div>}<div className="text-2xl font-semibold">{prefix}{value}{suffix}</div></div>
-const Switch = ({ checked, onChange, className = '', ...props }) => <input type="checkbox" checked={checked} onChange={(e) => onChange?.(e.target.checked)} className={className} {...props} />
-const getCellValue = (record, dataIndex) => Array.isArray(dataIndex) ? dataIndex.reduce((value, key) => value?.[key], record) : record?.[dataIndex]
-const Table = ({ columns = [], dataSource = [], rowKey = 'id', rowSelection, onRow, className = '', ...props }) => <div className={cx('w-full overflow-x-auto', className)}><table className="w-full border-collapse text-sm" {...props}><thead><tr>{rowSelection && <th className="border-b p-2" />}{columns.map((column, index) => <th key={column.key || column.dataIndex || index} className="border-b p-2 text-left font-medium">{column.title}</th>)}</tr></thead><tbody>{dataSource.map((record, rowIndex) => { const key = typeof rowKey === 'function' ? rowKey(record) : record?.[rowKey] ?? rowIndex; const rowProps = onRow?.(record, rowIndex) || {}; return <tr key={key} className="hover:bg-muted/50" {...rowProps}>{rowSelection && <td className="border-b p-2"><input type={rowSelection.type === 'radio' ? 'radio' : 'checkbox'} checked={rowSelection.selectedRowKeys?.includes(key)} onChange={() => rowSelection.onChange?.([key], [record])} /></td>}{columns.map((column, colIndex) => { const value = getCellValue(record, column.dataIndex); return <td key={column.key || column.dataIndex || colIndex} className="border-b p-2">{column.render ? column.render(value, record, rowIndex) : value}</td> })}</tr> })}</tbody></table></div>
-const Pagination = ({ current = 1, total = 0, pageSize = 10, onChange, className = '', ...props }) => { const pages = Math.max(1, Math.ceil(total / pageSize)); return <div className={cx('flex items-center gap-2', className)} {...props}><button type="button" disabled={current <= 1} onClick={() => onChange?.(current - 1, pageSize)}>Prev</button><span>{current} / {pages}</span><button type="button" disabled={current >= pages} onClick={() => onChange?.(current + 1, pageSize)}>Next</button></div> }
-const Drawer = ({ open, visible, onCancel, onClose, title, footer, children, width, className = '', centered, ...props }) => { const isOpen = open ?? visible; if (!isOpen) return null; return <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={onCancel || onClose}><div className={cx('max-h-[90vh] overflow-auto rounded-xl border bg-background p-4 shadow-xl', className)} style={{ width: typeof width === 'number' ? width : width || undefined, ...props.style }} onClick={(event) => event.stopPropagation()}>{title && <div className="mb-4 text-lg font-semibold">{title}</div>}{children}{footer !== null && footer !== undefined && <div className="mt-4 flex justify-end gap-2">{footer}</div>}</div></div> }
-const Select = ({ options, value, defaultValue, onChange, children, placeholder, className = '', ...props }) => <select value={value} defaultValue={defaultValue} onChange={(event) => onChange?.(event.target.value)} className={cx('h-9 rounded-lg border border-input bg-background px-3 text-sm', className)} {...props}>{placeholder && <option value="">{placeholder}</option>}{options?.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}{children}</select>
-Select.Option = ({ value, children, ...props }) => <option value={value} {...props}>{children}</option>
-const Dropdown = ({ overlay, menu, children }) => <span className="relative inline-flex">{children}</span>
-const Menu = ({ children, className = '', ...props }) => <div className={className} {...props}>{children}</div>
-Menu.Item = ({ children, onClick, className = '', ...props }) => <button type="button" className={cx('block w-full px-3 py-2 text-left text-sm hover:bg-muted', className)} onClick={onClick} {...props}>{children}</button>
-const { Title, Text, Paragraph } = Typography
-const { Content, Header } = Layout
-const { Option } = Select
+import { useState, useEffect, useRef } from "react";
+import * as modelAPI from "src/features/models/api/model";
+import { Button } from "src/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "src/components/ui/card";
+import { Badge } from "src/components/ui/badge";
+import { Spinner } from "src/components/ui/spinner";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "src/components/ui/tooltip";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "src/components/ui/dialog";
+import { Empty } from "src/components/ui/empty";
+import { Alert, AlertDescription } from "src/components/ui/alert";
+import { toast } from "sonner";
+import {
+  CircleCheck,
+  CircleX,
+  FileText,
+  Eye,
+  Filter,
+  ChevronDown,
+  Check,
+  Upload,
+} from "lucide-react";
+import Papa from "papaparse";
 
+const getToastContent = (value: any) =>
+  typeof value === "object" && value?.content ? value.content : value;
+const message = {
+  success: (value: any) => toast.success(getToastContent(value)),
+  error: (value: any) => toast.error(getToastContent(value)),
+  warning: (value: any) => toast.warning(getToastContent(value)),
+  info: (value: any) => toast.info(getToastContent(value)),
+  loading: (value: any) => toast.loading(getToastContent(value)),
+};
 
-const TabularPredict = ({ predictResult, uploadedFiles, projectInfo, handleUploadFiles, s3_url }) => {
-    const [csvData, setCsvData] = useState([]);
-    const [predictionHistory, setPredictionHistory] = useState([]);
-    const [currentFileIndex, setCurrentFileIndex] = useState(-1); // -1 khi chưa có file
-    const [currentPage, setCurrentPage] = useState(1);
-    const [incorrectPredictions, setIncorrectPredictions] = useState([]);
-    const [statistics, setStatistics] = useState({
-        correct: 0,
-        incorrect: 0,
-        accuracy: 0,
-        totalReviewed: 0,
-    });
-    const [loading, setLoading] = useState(false);
-    const [infoDrawerVisible, setInfoDrawerVisible] = useState(false);
-    const [selectedRowData, setSelectedRowData] = useState(null);
-    const [visibleColumns, setVisibleColumns] = useState([]);
-    const [confidenceFilter, setConfidenceFilter] = useState('all');
-    const [uploading, setUploading] = useState(false);
-    const [isSavingFeedback, setIsSavingFeedback] = useState(false);
+const TabularPredict = ({
+  predictResult,
+  uploadedFiles,
+  projectInfo,
+  handleUploadFiles,
+  s3_url,
+}: {
+  predictResult: any[];
+  uploadedFiles: any[];
+  projectInfo: any;
+  handleUploadFiles: (files: FileList) => Promise<void>;
+  s3_url: string;
+}) => {
+  const [csvData, setCsvData] = useState<any[]>([]);
+  const [predictionHistory, setPredictionHistory] = useState<any[]>([]);
+  const [currentFileIndex, setCurrentFileIndex] = useState<number>(-1);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [incorrectPredictions, setIncorrectPredictions] = useState<number[]>(
+    [],
+  );
+  const [statistics, setStatistics] = useState<{
+    correct: number;
+    incorrect: number;
+    accuracy: string;
+    totalReviewed: number;
+  }>({
+    correct: 0,
+    incorrect: 0,
+    accuracy: "0",
+    totalReviewed: 0,
+  });
+  const [loading, setLoading] = useState<boolean>(false);
+  const [infoDrawerVisible, setInfoDrawerVisible] = useState<boolean>(false);
+  const [selectedRowData, setSelectedRowData] = useState<{
+    record: any;
+    index: number;
+  } | null>(null);
+  const [visibleColumns, setVisibleColumns] = useState<string[]>([]);
+  const [confidenceFilter, setConfidenceFilter] = useState<string>("all");
+  const [uploading, setUploading] = useState<boolean>(false);
+  const [isSavingFeedback, setIsSavingFeedback] = useState<boolean>(false);
 
-    const fileInputRef = useRef(null);
-    const pageSize = 9;
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const pageSize = 9;
 
-    // Parse CSV và cập nhật dữ liệu
-    useEffect(() => {
-        if (uploadedFiles?.length && uploadedFiles[0]?.name.endsWith('.csv')) {
-            setLoading(true);
-            const reader = new FileReader();
-            reader.onload = () => {
-                Papa.parse(reader.result, {
-                    header: true,
-                    skipEmptyLines: true,
-                    complete: ({ data, meta }) => {
-                        const importantColumns = [
-                            projectInfo.target_column,
-                            'Predicted Class',
-                            'Confidence',
-                            'Actions',
-                        ];
-                        const initialVisibleColumns = meta.fields.filter(
-                            (field) => importantColumns.includes(field) || meta.fields.indexOf(field) < 3
-                        );
-                        const initialIncorrect = predictResult
-                            .map((result, idx) => (result.confidence < 0.7 ? idx : null))
-                            .filter((idx) => idx !== null);
+  useEffect(() => {
+    if (uploadedFiles?.length && uploadedFiles[0]?.name.endsWith(".csv")) {
+      setLoading(true);
+      const reader = new FileReader();
+      reader.onload = () => {
+        Papa.parse(reader.result as string, {
+          header: true,
+          skipEmptyLines: true,
+          complete: ({ data, meta }: any) => {
+            const importantColumns = [
+              projectInfo.target_column,
+              "Predicted Class",
+              "Confidence",
+              "Actions",
+            ];
+            const initialVisibleColumns = (meta.fields || []).filter(
+              (field: string) =>
+                importantColumns.includes(field) ||
+                (meta.fields || []).indexOf(field) < 3,
+            );
+            const initialIncorrect = predictResult
+              .map((result: any, idx: number) =>
+                result.confidence < 0.7 ? idx : null,
+              )
+              .filter((idx: any) => idx !== null);
 
-                        // Cập nhật lịch sử
-                        setPredictionHistory((prev) => {
-                            const existingIndex = prev.findIndex(
-                                (item) => item.fileName === uploadedFiles[0].name
-                            );
-                            const newHistoryItem = {
-                                fileName: uploadedFiles[0].name,
-                                predictions: predictResult,
-                                data,
-                                visibleColumns: initialVisibleColumns,
-                                incorrectPredictions: initialIncorrect,
-                            };
+            setPredictionHistory((prev: any[]) => {
+              const existingIndex = prev.findIndex(
+                (item: any) => item.fileName === uploadedFiles[0].name,
+              );
+              const newHistoryItem = {
+                fileName: uploadedFiles[0].name,
+                predictions: predictResult,
+                data,
+                visibleColumns: initialVisibleColumns,
+                incorrectPredictions: initialIncorrect,
+              };
 
-                            let newHistory;
-                            if (existingIndex >= 0) {
-                                // Cập nhật file hiện có
-                                newHistory = [...prev];
-                                newHistory[existingIndex] = newHistoryItem;
-                            } else {
-                                // Thêm file mới
-                                newHistory = [...prev, newHistoryItem];
-                            }
+              let newHistory;
+              if (existingIndex >= 0) {
+                newHistory = [...prev];
+                newHistory[existingIndex] = newHistoryItem;
+              } else {
+                newHistory = [...prev, newHistoryItem];
+              }
 
-                            // Cập nhật currentFileIndex
-                            setCurrentFileIndex(existingIndex >= 0 ? existingIndex : newHistory.length - 1);
+              setCurrentFileIndex(
+                existingIndex >= 0 ? existingIndex : newHistory.length - 1,
+              );
 
-                            return newHistory;
-                        });
-
-                        // Cập nhật trạng thái hiện tại
-                        setCsvData(data);
-                        setVisibleColumns(initialVisibleColumns);
-                        setIncorrectPredictions(initialIncorrect);
-                        setCurrentPage(1); // Reset trang
-                        setConfidenceFilter('all'); // Reset bộ lọc
-                        setLoading(false);
-                    },
-                });
-            };
-            reader.readAsText(uploadedFiles[0]);
-        }
-    }, [uploadedFiles, predictResult, projectInfo]);
-
-    // Chuyển đổi giữa các file trong lịch sử
-    const handleFileSelect = (index) => {
-        if (index >= 0 && index < predictionHistory.length) {
-            const selectedItem = predictionHistory[index];
-            setCurrentFileIndex(index);
-            setCsvData(selectedItem.data);
-            setVisibleColumns(selectedItem.visibleColumns);
-            setIncorrectPredictions(selectedItem.incorrectPredictions);
-            setCurrentPage(1); // Reset trang
-            setConfidenceFilter('all'); // Reset bộ lọc
-            setLoading(false);
-        }
-    };
-
-    // Cập nhật thống kê
-    useEffect(() => {
-        const incorrect = incorrectPredictions.length;
-        const total = csvData.length;
-        const reviewed = Math.min(currentPage * pageSize, total);
-
-        setStatistics({
-            correct: total - incorrect,
-            incorrect,
-            accuracy: total ? (((total - incorrect) / total) * 100).toFixed(1) : 0,
-            totalReviewed: reviewed,
-        });
-    }, [incorrectPredictions, csvData, currentPage]);
-
-    const handlePredictionToggle = (index) => {
-        setIncorrectPredictions((prev) =>
-            prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
-        );
-        // Cập nhật predictionHistory
-        setPredictionHistory((prev) => {
-            const newHistory = [...prev];
-            if (newHistory[currentFileIndex]) {
-                newHistory[currentFileIndex].incorrectPredictions = incorrectPredictions.includes(index)
-                    ? incorrectPredictions.filter((i) => i !== index)
-                    : [...incorrectPredictions, index];
-            }
-            return newHistory;
-        });
-    };
-
-    const showRowDetails = (record, index) => {
-        setSelectedRowData({ record, index });
-        setInfoDrawerVisible(true);
-    };
-
-    const handleClick = () => {
-        fileInputRef.current?.click();
-    };
-
-    const handleChange = (event) => {
-        const files = event.target.files;
-        if (files && files.length > 0) {
-            setUploading(true);
-            handleUploadFiles(files).finally(() => {
-                setUploading(false);
+              return newHistory;
             });
-        }
-    };
 
-    const handleColumnVisibilityToggle = (column) => {
-        setVisibleColumns((prev) =>
-            prev.includes(column) ? prev.filter((col) => col !== column) : [...prev, column]
-        );
-        // Cập nhật predictionHistory
-        setPredictionHistory((prev) => {
-            const newHistory = [...prev];
-            if (newHistory[currentFileIndex]) {
-                newHistory[currentFileIndex].visibleColumns = visibleColumns.includes(column)
-                    ? visibleColumns.filter((col) => col !== column)
-                    : [...visibleColumns, column];
-            }
-            return newHistory;
+            setCsvData(data);
+            setVisibleColumns(initialVisibleColumns);
+            setIncorrectPredictions(initialIncorrect);
+            setCurrentPage(1);
+            setConfidenceFilter("all");
+            setLoading(false);
+          },
         });
-    };
+      };
+      reader.readAsText(uploadedFiles[0]);
+    }
+  }, [uploadedFiles, predictResult, projectInfo]);
 
-    const handleUpdateFeedback = async () => {
-		if (!s3_url) {
-			message.error('Unable to save feedback: S3 URL is missing.')
-			return
-		}
+  const handleFileSelect = (index: number) => {
+    if (index >= 0 && index < predictionHistory.length) {
+      const selectedItem = predictionHistory[index];
+      setCurrentFileIndex(index);
+      setCsvData(selectedItem.data);
+      setVisibleColumns(selectedItem.visibleColumns);
+      setIncorrectPredictions(selectedItem.incorrectPredictions);
+      setCurrentPage(1);
+      setConfidenceFilter("all");
+      setLoading(false);
+    }
+  };
 
-		const feedbackList = csvData.map((row, index) => ({
-			index,
-			data: row,
-			prediction: predictResult[index],
-			feedback: incorrectPredictions.includes(index) ? 'Incorrect' : 'Correct',
-		}))
-		
-		try {
-			setIsSavingFeedback(true)
-			await modelAPI.feedbackUpdate(s3_url, feedbackList)
-			message.success('Feedback updated successfully')
-		} catch (error) {
-			console.error('Error updating feedback:', error)
-			message.error(error.response?.data?.error || 'Failed to update feedback')
-		} finally {
-			setIsSavingFeedback(false)
-		}
-	}
+  useEffect(() => {
+    const incorrect = incorrectPredictions.length;
+    const total = csvData.length;
+    const reviewed = Math.min(currentPage * pageSize, total);
 
-    const getFilteredData = () => {
-        if (confidenceFilter === 'all') return csvData;
-        return csvData.filter((_, index) => {
-            const confidence = predictResult[index]?.confidence || 0;
-            if (confidenceFilter === 'high') return confidence >= 0.8;
-            if (confidenceFilter === 'medium') return confidence >= 0.5 && confidence < 0.8;
-            if (confidenceFilter === 'low') return confidence < 0.5;
-            return true;
-        });
-    };
+    setStatistics({
+      correct: total - incorrect,
+      incorrect,
+      accuracy: total ? (((total - incorrect) / total) * 100).toFixed(1) : "0",
+      totalReviewed: reviewed,
+    });
+  }, [incorrectPredictions, csvData, currentPage]);
 
-    const getColumns = () => {
-        if (!csvData.length) return [];
-        const allColumns = Object.keys(csvData[0]);
-        const targetColumn = projectInfo.target_column;
-
-        const baseColumns = allColumns
-            .filter((col) => visibleColumns.includes(col))
-            .map((col) => ({
-                title: col,
-                dataIndex: col,
-                key: col,
-                render: (text) => (col === targetColumn ? <Tag color="blue">{text}</Tag> : <Text>{text}</Text>),
-                ellipsis: true,
-            }));
-
-        return [
-            ...baseColumns,
-            {
-                title: 'Predicted Class',
-                key: 'predictedClass',
-                width: 160,
-                render: (_, __, index) => {
-                    const globalIndex = index + (currentPage - 1) * pageSize;
-                    const predicted = predictResult[globalIndex]?.class;
-                    const isCorrect = !incorrectPredictions.includes(globalIndex);
-                    return <Tag color={isCorrect ? 'green' : 'red'}>{predicted}</Tag>;
-                },
-            },
-            {
-                title: 'Confidence',
-                key: 'confidence',
-                width: 160,
-                render: (_, __, index) => {
-                    const globalIndex = index + (currentPage - 1) * pageSize;
-                    const confidence = predictResult[globalIndex]?.confidence || 0;
-                    const color = confidence >= 0.7 ? 'green' : confidence >= 0.5 ? 'orange' : 'red';
-                    return (
-                        <Progress
-                            percent={Math.round(confidence * 100)}
-                            size="small"
-                            status={confidence >= 0.4 ? 'normal' : 'exception'}
-                            strokeColor={color}
-                        />
-                    );
-                },
-            },
-            {
-                title: 'Actions',
-                key: 'actions',
-                fixed: 'right',
-                width: 150,
-                render: (_, record, index) => {
-                    const globalIndex = index + (currentPage - 1) * pageSize;
-                    return (
-                        <Space>
-                            <Tooltip title={incorrectPredictions.includes(globalIndex) ? 'Mark as correct' : 'Mark as incorrect'}>
-                                <Button
-                                    type={incorrectPredictions.includes(globalIndex) ? 'default' : 'primary'}
-                                    size="small"
-                                    icon={incorrectPredictions.includes(globalIndex) ? <CheckCircleOutlined /> : <CloseCircleOutlined />}
-                                    onClick={() => handlePredictionToggle(globalIndex)}
-                                    danger={!incorrectPredictions.includes(globalIndex)}
-                                >
-                                    {incorrectPredictions.includes(globalIndex) ? 'Correct' : 'Incorrect'}
-                                </Button>
-                            </Tooltip>
-                            <Tooltip title="View details">
-                                <Button
-                                    type="text"
-                                    size="small"
-                                    icon={<EyeOutlined />}
-                                    onClick={() => showRowDetails(record, globalIndex)}
-                                />
-                            </Tooltip>
-                        </Space>
-                    );
-                },
-            },
-        ];
-    };
-
-    const columns = getColumns();
-    const filteredData = getFilteredData();
-
-    return (
-        <Layout className="bg-white">
-            <Header className="bg-white p-0 mb-4">
-                <Card bordered={false} className="shadow-sm">
-                    <div className="flex justify-between items-center">
-                        <Space>
-                            <Title level={4} className="!m-0">
-                                <TableOutlined /> Prediction Review Dashboard
-                            </Title>
-                            <Dropdown
-                                overlay={
-                                    <Menu>
-                                        {predictionHistory.map((item, index) => (
-                                            <Menu.Item key={index} onClick={() => handleFileSelect(index)}>
-                                                <FileTextOutlined /> {item.fileName}
-                                                {index === currentFileIndex && <CheckOutlined className="ml-2" />}
-                                            </Menu.Item>
-                                        ))}
-                                    </Menu>
-                                }
-                                trigger={['click']}
-                            >
-                                <Tag color="blue" icon={<FileTextOutlined />} className="cursor-pointer">
-                                    {predictionHistory[currentFileIndex]?.fileName || 'No file uploaded'} <DownOutlined />
-                                </Tag>
-                            </Dropdown>
-                        </Space>
-                        <Space>
-                            <Tooltip title="Filter by confidence">
-                                <Select
-                                    value={confidenceFilter}
-                                    className="w-[120px]"
-                                    onChange={setConfidenceFilter}
-                                    dropdownMatchSelectWidth={false}
-                                >
-                                    <Option value="all">All predictions</Option>
-                                    <Option value="high">High confidence</Option>
-                                    <Option value="medium">Medium confidence</Option>
-                                    <Option value="low">Low confidence</Option>
-                                </Select>
-                            </Tooltip>
-                            <Tooltip title="Configure visible columns">
-                                <Button icon={<FilterOutlined />} onClick={() => setInfoDrawerVisible(true)}>
-                                    Columns
-                                </Button>
-                            </Tooltip>
-                            <Tooltip title="Update feedback status">
-								<Button
-									icon={<CheckOutlined />}
-									onClick={handleUpdateFeedback}
-									disabled={!csvData.length || isSavingFeedback}
-									loading={isSavingFeedback}
-								>
-									Update feedback
-								</Button>
-                            </Tooltip>
-                            <Tooltip title="Upload new file for prediction">
-                                <Button icon={<UploadOutlined />} onClick={handleClick} loading={uploading} type="primary">
-                                    Upload New File
-                                </Button>
-                            </Tooltip>
-                            <input
-                                type="file"
-                                ref={fileInputRef}
-                                onChange={handleChange}
-                                className="hidden"
-                                accept=".csv"
-                            />
-                        </Space>
-                    </div>
-                </Card>
-            </Header>
-            <Content>
-                <Card size="small" className="mb-4 border-green-500 bg-green-50 border-dashed">
-                    <Space size="large" className="flex justify-between items-center">
-                        <Statistic title="Total Predictions" value={csvData.length} prefix={<QuestionCircleOutlined />} />
-                        <Statistic
-                            title="Correct Predictions"
-                            value={statistics.correct}
-                            prefix={<CheckCircleOutlined className="text-green-500" />}
-                        />
-                        <Statistic
-                            title="Incorrect Predictions"
-                            value={statistics.incorrect}
-                            prefix={<CloseCircleOutlined className="text-red-500" />}
-                        />
-                        <Statistic title="Accuracy" value={statistics.accuracy} suffix="%" precision={1} />
-                    </Space>
-                </Card>
-                {loading ? (
-                    <Card>
-                        <div className="flex items-center justify-center p-12">
-                            <Spin size="large" tip="Loading prediction data..." />
-                        </div>
-                    </Card>
-                ) : csvData.length > 0 ? (
-                    <Card className="shadow-sm [&_.ant-card-body]:p-0">
-                        <Table
-                            dataSource={filteredData}
-                            columns={columns}
-                            rowKey={(_, index) => index}
-                            pagination={{
-                                pageSize,
-                                current: currentPage,
-                                onChange: setCurrentPage,
-                                showSizeChanger: false,
-                                showTotal: (total) => `${total} predictions`,
-                            }}
-                            size="small"
-                            scroll={{ x: 'max-content' }}
-                            rowClassName={(_, index) =>
-                                incorrectPredictions.includes(index + (currentPage - 1) * pageSize) ? 'bg-red-50' : ''
-                            }
-                        />
-                    </Card>
-                ) : (
-                    <Card>
-                        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No prediction data available">
-                            <Button type="primary" onClick={handleClick} loading={uploading}>
-                                Upload a file to start
-                            </Button>
-                        </Empty>
-                    </Card>
-                )}
-            </Content>
-            <Drawer
-                title={selectedRowData ? 'Prediction Details' : 'Column Visibility'}
-                placement="right"
-                onClose={() => {
-                    setInfoDrawerVisible(false);
-                    setSelectedRowData(null);
-                }}
-                open={infoDrawerVisible}
-                width={400}
-            >
-                {selectedRowData ? (
-                    <div>
-                        <div className="mb-2">
-                            <Statistic
-                                title="Confidence Score"
-                                value={(predictResult[selectedRowData.index]?.confidence * 100).toFixed(1)}
-                                suffix="%"
-                            />
-                        </div>
-                        <Divider orientation="left" orientationMargin="0">
-                            Data Fields
-                        </Divider>
-                        {Object.entries(selectedRowData.record).map(([key, value]) => (
-                            <div key={key} className="mb-2">
-                                <Text strong>{key}: </Text>
-                                <Text>
-                                    {key === projectInfo.target_column ? <Tag color="blue">{value}</Tag> : value}
-                                </Text>
-                            </div>
-                        ))}
-                        <Divider orientation="left" orientationMargin="0">
-                            Prediction
-                        </Divider>
-                        <div className="mb-2">
-                            <Text strong>Predicted {projectInfo.target_column}: </Text>
-                            <Tag color="purple">{predictResult[selectedRowData.index]?.class}</Tag>
-                        </div>
-                        <div className="mt-4">
-                            <Space>
-                                <Button
-                                    type={incorrectPredictions.includes(selectedRowData.index) ? 'default' : 'primary'}
-                                    danger={!incorrectPredictions.includes(selectedRowData.index)}
-                                    icon={
-                                        incorrectPredictions.includes(selectedRowData.index) ? (
-                                            <CheckCircleOutlined />
-                                        ) : (
-                                            <CloseCircleOutlined />
-                                        )
-                                    }
-                                    onClick={() => handlePredictionToggle(selectedRowData.index)}
-                                >
-                                    Mark as {incorrectPredictions.includes(selectedRowData.index) ? 'Correct' : 'Incorrect'}
-                                </Button>
-                            </Space>
-                        </div>
-                    </div>
-                ) : (
-                    <div>
-                        <Text>Select which columns to display in the table.</Text>
-                        <Divider orientation="left">Available Columns</Divider>
-                        {csvData.length > 0 &&
-                            Object.keys(csvData[0]).map((column) => (
-                                <div key={column} className="mb-2">
-                                    <Switch
-                                        checked={visibleColumns.includes(column)}
-                                        onChange={() => handleColumnVisibilityToggle(column)}
-                                        size="small"
-                                        className="mr-2"
-                                    />
-                                    <Text
-                                        strong={column === projectInfo.target_column}
-                                        type={column === projectInfo.target_column ? 'success' : undefined}
-                                    >
-                                        {column}
-                                    </Text>
-                                    {column === projectInfo.target_column && (
-                                        <Tag color="blue" className="ml-2">
-                                            Target
-                                        </Tag>
-                                    )}
-                                </div>
-                            ))}
-                        <Divider />
-                        <Button type="primary" block onClick={() => setInfoDrawerVisible(false)}>
-                            Apply Changes
-                        </Button>
-                    </div>
-                )}
-            </Drawer>
-        </Layout>
+  const handlePredictionToggle = (index: number) => {
+    setIncorrectPredictions((prev: number[]) =>
+      prev.includes(index)
+        ? prev.filter((i: number) => i !== index)
+        : [...prev, index],
     );
+    setPredictionHistory((prev: any[]) => {
+      const newHistory = [...prev];
+      if (newHistory[currentFileIndex]) {
+        newHistory[currentFileIndex].incorrectPredictions =
+          incorrectPredictions.includes(index)
+            ? incorrectPredictions.filter((i: number) => i !== index)
+            : [...incorrectPredictions, index];
+      }
+      return newHistory;
+    });
+  };
+
+  const showRowDetails = (record: any, index: number) => {
+    setSelectedRowData({ record, index });
+    setInfoDrawerVisible(true);
+  };
+
+  const handleClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      setUploading(true);
+      handleUploadFiles(files).finally(() => {
+        setUploading(false);
+      });
+    }
+  };
+
+  const handleColumnVisibilityToggle = (column: string) => {
+    setVisibleColumns((prev: string[]) =>
+      prev.includes(column)
+        ? prev.filter((col: string) => col !== column)
+        : [...prev, column],
+    );
+    setPredictionHistory((prev: any[]) => {
+      const newHistory = [...prev];
+      if (newHistory[currentFileIndex]) {
+        newHistory[currentFileIndex].visibleColumns = visibleColumns.includes(
+          column,
+        )
+          ? visibleColumns.filter((col: string) => col !== column)
+          : [...visibleColumns, column];
+      }
+      return newHistory;
+    });
+  };
+
+  const handleUpdateFeedback = async () => {
+    if (!s3_url) {
+      message.error("Unable to save feedback: S3 URL is missing.");
+      return;
+    }
+
+    const feedbackList = csvData.map((row: any, index: number) => ({
+      index,
+      data: row,
+      prediction: predictResult[index],
+      feedback: incorrectPredictions.includes(index) ? "Incorrect" : "Correct",
+    }));
+
+    try {
+      setIsSavingFeedback(true);
+      await modelAPI.feedbackUpdate(s3_url, feedbackList);
+      message.success("Feedback updated successfully");
+    } catch (error: any) {
+      console.error("Error updating feedback:", error);
+      message.error(error.response?.data?.error || "Failed to update feedback");
+    } finally {
+      setIsSavingFeedback(false);
+    }
+  };
+
+  const getFilteredData = () => {
+    if (confidenceFilter === "all") return csvData;
+    return csvData.filter((_, index: number) => {
+      const confidence = predictResult[index]?.confidence || 0;
+      if (confidenceFilter === "high") return confidence >= 0.8;
+      if (confidenceFilter === "medium")
+        return confidence >= 0.5 && confidence < 0.8;
+      if (confidenceFilter === "low") return confidence < 0.5;
+      return true;
+    });
+  };
+
+  const getColumns = () => {
+    if (!csvData.length) return [];
+    const allColumns = Object.keys(csvData[0]);
+    const targetColumn = projectInfo.target_column;
+
+    return allColumns
+      .filter((col: string) => visibleColumns.includes(col))
+      .map((col: string) => ({
+        title: col,
+        dataIndex: col,
+        key: col,
+        render: (text: any) =>
+          col === targetColumn ? (
+            <Badge className="bg-blue-100 dark:bg-blue-900/50 text-blue-900 dark:text-blue-200">
+              {text}
+            </Badge>
+          ) : (
+            <span className="text-slate-900 dark:text-slate-50">{text}</span>
+          ),
+      }));
+  };
+
+  const columns = getColumns();
+  const filteredData = getFilteredData();
+
+  return (
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-4 md:p-6">
+      {/* Header Card */}
+      <Card className="mb-6 shadow-sm border-slate-200 dark:border-slate-800">
+        <CardHeader>
+          <CardTitle className="text-slate-900 dark:text-slate-50">
+            Prediction Review Dashboard
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div className="flex items-center gap-3">
+              <FileText className="w-5 h-5 text-blue-600" />
+              <div className="flex items-center gap-2">
+                <select
+                  value={currentFileIndex}
+                  onChange={(e) => handleFileSelect(parseInt(e.target.value))}
+                  disabled={predictionHistory.length === 0}
+                  className="h-9 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 text-sm text-slate-900 dark:text-slate-50 cursor-pointer"
+                >
+                  <option value="-1">No file uploaded</option>
+                  {predictionHistory.map((item: any, index: number) => (
+                    <option key={index} value={index}>
+                      {item.fileName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="flex flex-col md:flex-row items-start md:items-center gap-2">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <select
+                      value={confidenceFilter}
+                      onChange={(e) => setConfidenceFilter(e.target.value)}
+                      className="h-9 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 text-sm text-slate-900 dark:text-slate-50 cursor-pointer"
+                    >
+                      <option value="all">All predictions</option>
+                      <option value="high">High confidence</option>
+                      <option value="medium">Medium confidence</option>
+                      <option value="low">Low confidence</option>
+                    </select>
+                  </TooltipTrigger>
+                  <TooltipContent>Filter by confidence</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setInfoDrawerVisible(true)}
+                      className="dark:border-slate-700 dark:text-slate-300"
+                    >
+                      <Filter className="w-4 h-4 mr-2" />
+                      Columns
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Configure visible columns</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleUpdateFeedback}
+                      disabled={!csvData.length || isSavingFeedback}
+                      className="dark:border-slate-700 dark:text-slate-300"
+                    >
+                      {isSavingFeedback ? (
+                        <Spinner className="w-4 h-4 mr-2" />
+                      ) : (
+                        <Check className="w-4 h-4 mr-2" />
+                      )}
+                      Update feedback
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Update feedback status</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="sm"
+                      onClick={handleClick}
+                      disabled={uploading}
+                      className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600"
+                    >
+                      {uploading ? (
+                        <Spinner className="w-4 h-4 mr-2" />
+                      ) : (
+                        <Upload className="w-4 h-4 mr-2" />
+                      )}
+                      Upload File
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    Upload new file for prediction
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleChange}
+                className="hidden"
+                accept=".csv"
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Statistics Card */}
+      <Card className="mb-6 shadow-sm bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-900/50">
+        <CardContent className="pt-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div>
+              <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">
+                Total Predictions
+              </p>
+              <p className="text-2xl font-semibold text-slate-900 dark:text-slate-50">
+                {csvData.length}
+              </p>
+            </div>
+            <div>
+              <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">
+                Correct Predictions
+              </p>
+              <p className="text-2xl font-semibold text-emerald-600 dark:text-emerald-400">
+                {statistics.correct}
+              </p>
+            </div>
+            <div>
+              <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">
+                Incorrect Predictions
+              </p>
+              <p className="text-2xl font-semibold text-red-600 dark:text-red-400">
+                {statistics.incorrect}
+              </p>
+            </div>
+            <div>
+              <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">
+                Accuracy
+              </p>
+              <p className="text-2xl font-semibold text-blue-600 dark:text-blue-400">
+                {statistics.accuracy}%
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Content Card */}
+      {loading ? (
+        <Card className="shadow-sm">
+          <CardContent className="flex items-center justify-center py-12">
+            <div className="flex items-center gap-3">
+              <Spinner className="w-5 h-5" />
+              <p className="text-slate-600 dark:text-slate-400">
+                Loading prediction data...
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      ) : csvData.length > 0 ? (
+        <Card className="shadow-sm">
+          <CardContent className="p-0">
+            {/* Native Table */}
+            <div className="w-full overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
+                    {columns.map((col: any) => (
+                      <th
+                        key={col.key}
+                        className="px-4 py-3 text-left font-semibold text-slate-900 dark:text-slate-50"
+                      >
+                        {col.title}
+                      </th>
+                    ))}
+                    <th className="px-4 py-3 text-left font-semibold text-slate-900 dark:text-slate-50">
+                      Predicted Class
+                    </th>
+                    <th className="px-4 py-3 text-left font-semibold text-slate-900 dark:text-slate-50">
+                      Confidence
+                    </th>
+                    <th className="px-4 py-3 text-left font-semibold text-slate-900 dark:text-slate-50">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredData
+                    .slice((currentPage - 1) * pageSize, currentPage * pageSize)
+                    .map((record: any, index: number) => {
+                      const globalIndex = index + (currentPage - 1) * pageSize;
+                      const isIncorrect =
+                        incorrectPredictions.includes(globalIndex);
+                      const confidence =
+                        predictResult[globalIndex]?.confidence || 0;
+                      const predicted = predictResult[globalIndex]?.class;
+
+                      return (
+                        <tr
+                          key={index}
+                          className={`border-b border-slate-200 dark:border-slate-700 ${
+                            isIncorrect
+                              ? "bg-red-50 dark:bg-red-950/20 hover:bg-red-100 dark:hover:bg-red-900/30"
+                              : "hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                          }`}
+                        >
+                          {columns.map((col: any) => (
+                            <td
+                              key={col.key}
+                              className="px-4 py-3 text-slate-700 dark:text-slate-300"
+                            >
+                              {col.render
+                                ? col.render(record[col.dataIndex])
+                                : record[col.dataIndex]}
+                            </td>
+                          ))}
+                          <td className="px-4 py-3 text-slate-700 dark:text-slate-300">
+                            <Badge
+                              className={
+                                isIncorrect
+                                  ? "bg-red-100 dark:bg-red-900/50 text-red-900 dark:text-red-200"
+                                  : "bg-emerald-100 dark:bg-emerald-900/50 text-emerald-900 dark:text-emerald-200"
+                              }
+                            >
+                              {predicted || "-"}
+                            </Badge>
+                          </td>
+                          <td className="px-4 py-3 text-slate-700 dark:text-slate-300">
+                            <div className="flex items-center gap-2">
+                              <div
+                                className={`w-12 h-2 rounded-full ${
+                                  confidence >= 0.7
+                                    ? "bg-emerald-500"
+                                    : confidence >= 0.5
+                                      ? "bg-amber-500"
+                                      : "bg-red-500"
+                                }`}
+                                style={{
+                                  width: `${confidence * 100}%`,
+                                }}
+                              />
+                              <span className="text-xs text-slate-600 dark:text-slate-400">
+                                {(confidence * 100).toFixed(0)}%
+                              </span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-2">
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Button
+                                      variant={
+                                        isIncorrect ? "outline" : "destructive"
+                                      }
+                                      size="sm"
+                                      onClick={() =>
+                                        handlePredictionToggle(globalIndex)
+                                      }
+                                      className="dark:border-slate-600"
+                                    >
+                                      {isIncorrect ? (
+                                        <Check className="w-4 h-4" />
+                                      ) : (
+                                        <CircleX className="w-4 h-4" />
+                                      )}
+                                      <span className="hidden sm:inline ml-1">
+                                        {isIncorrect ? "Correct" : "Incorrect"}
+                                      </span>
+                                    </Button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    Mark as{" "}
+                                    {isIncorrect ? "correct" : "incorrect"}
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() =>
+                                        showRowDetails(record, globalIndex)
+                                      }
+                                      className="dark:border-slate-600"
+                                    >
+                                      <Eye className="w-4 h-4" />
+                                    </Button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>View details</TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Pagination */}
+            <div className="flex items-center justify-between px-6 py-4 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700">
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                Showing{" "}
+                {Math.min(
+                  (currentPage - 1) * pageSize + 1,
+                  filteredData.length,
+                )}{" "}
+                to {Math.min(currentPage * pageSize, filteredData.length)} of{" "}
+                {filteredData.length}
+              </p>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+                >
+                  Previous
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setCurrentPage((p) =>
+                      Math.min(
+                        Math.ceil(filteredData.length / pageSize),
+                        p + 1,
+                      ),
+                    )
+                  }
+                  disabled={
+                    currentPage >= Math.ceil(filteredData.length / pageSize)
+                  }
+                  className="dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card className="shadow-sm">
+          <CardContent className="flex flex-col items-center justify-center py-12">
+            <FileText className="w-16 h-16 text-slate-300 dark:text-slate-700 mb-4" />
+            <p className="text-lg font-semibold text-slate-900 dark:text-slate-50 mb-2">
+              No prediction data available
+            </p>
+            <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
+              Upload a CSV file to start reviewing predictions
+            </p>
+            <Button
+              onClick={handleClick}
+              disabled={uploading}
+              className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600"
+            >
+              {uploading ? (
+                <Spinner className="w-4 h-4 mr-2" />
+              ) : (
+                <Upload className="w-4 h-4 mr-2" />
+              )}
+              Upload CSV File
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Details/Column Visibility Dialog */}
+      <Dialog open={infoDrawerVisible} onOpenChange={setInfoDrawerVisible}>
+        <DialogContent className="w-full max-w-md bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-slate-900 dark:text-slate-50">
+              {selectedRowData ? "Prediction Details" : "Column Visibility"}
+            </DialogTitle>
+          </DialogHeader>
+
+          {selectedRowData ? (
+            <div className="space-y-4 py-4">
+              <div>
+                <p className="text-sm font-semibold text-slate-900 dark:text-slate-50 mb-2">
+                  Confidence Score
+                </p>
+                <p className="text-xl font-semibold text-blue-600 dark:text-blue-400">
+                  {(
+                    predictResult[selectedRowData.index]?.confidence * 100
+                  ).toFixed(1)}
+                  %
+                </p>
+              </div>
+
+              <div className="border-t border-slate-200 dark:border-slate-700 pt-4">
+                <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-50 mb-3">
+                  Data Fields
+                </h4>
+                <div className="space-y-2">
+                  {Object.entries(selectedRowData.record).map(
+                    ([key, value]: [string, any]) => (
+                      <div
+                        key={key}
+                        className="p-3 bg-slate-50 dark:bg-slate-800 rounded-lg"
+                      >
+                        <p className="text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
+                          {key}
+                        </p>
+                        {key === projectInfo.target_column ? (
+                          <Badge className="bg-blue-100 dark:bg-blue-900/50 text-blue-900 dark:text-blue-200">
+                            {value}
+                          </Badge>
+                        ) : (
+                          <p className="text-sm text-slate-900 dark:text-slate-50">
+                            {value}
+                          </p>
+                        )}
+                      </div>
+                    ),
+                  )}
+                </div>
+              </div>
+
+              <div className="border-t border-slate-200 dark:border-slate-700 pt-4">
+                <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-50 mb-3">
+                  Prediction
+                </h4>
+                <div>
+                  <p className="text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
+                    Predicted {projectInfo.target_column}
+                  </p>
+                  <Badge className="bg-purple-100 dark:bg-purple-900/50 text-purple-900 dark:text-purple-200">
+                    {predictResult[selectedRowData.index]?.class}
+                  </Badge>
+                </div>
+              </div>
+
+              <div className="flex gap-2 pt-4">
+                <Button
+                  variant={
+                    incorrectPredictions.includes(selectedRowData.index)
+                      ? "outline"
+                      : "destructive"
+                  }
+                  onClick={() => handlePredictionToggle(selectedRowData.index)}
+                  className="flex-1 dark:border-slate-600"
+                >
+                  {incorrectPredictions.includes(selectedRowData.index) ? (
+                    <Check className="w-4 h-4 mr-2" />
+                  ) : (
+                    <CircleX className="w-4 h-4 mr-2" />
+                  )}
+                  Mark as{" "}
+                  {incorrectPredictions.includes(selectedRowData.index)
+                    ? "Correct"
+                    : "Incorrect"}
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-4 py-4">
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                Select which columns to display in the table.
+              </p>
+
+              <div className="border-t border-slate-200 dark:border-slate-700 pt-4">
+                <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-50 mb-3">
+                  Available Columns
+                </h4>
+                <div className="space-y-2">
+                  {csvData.length > 0 &&
+                    Object.keys(csvData[0]).map((column: string) => (
+                      <div
+                        key={column}
+                        className="flex items-center gap-3 p-2 hover:bg-slate-50 dark:hover:bg-slate-800 rounded"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={visibleColumns.includes(column)}
+                          onChange={() => handleColumnVisibilityToggle(column)}
+                          className="w-4 h-4 rounded border-slate-300 dark:border-slate-600"
+                        />
+                        <span
+                          className={`text-sm ${
+                            column === projectInfo.target_column
+                              ? "font-semibold text-blue-600 dark:text-blue-400"
+                              : "text-slate-900 dark:text-slate-50"
+                          }`}
+                        >
+                          {column}
+                        </span>
+                        {column === projectInfo.target_column && (
+                          <Badge className="ml-auto bg-blue-100 dark:bg-blue-900/50 text-blue-900 dark:text-blue-200 text-xs">
+                            Target
+                          </Badge>
+                        )}
+                      </div>
+                    ))}
+                </div>
+              </div>
+
+              <DialogFooter className="border-t border-slate-200 dark:border-slate-700 pt-4">
+                <Button
+                  onClick={() => setInfoDrawerVisible(false)}
+                  className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600"
+                >
+                  Apply Changes
+                </Button>
+              </DialogFooter>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
 };
 
 export default TabularPredict;

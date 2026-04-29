@@ -1,92 +1,91 @@
-import React from 'react'
-import { Button as UiButton } from 'src/components/ui/button'
-import { Spinner as UiSpinner } from 'src/components/ui/spinner'
-import { Settings as SettingOutlined, Download as DownloadOutlined } from 'lucide-react'
-import ImageHistoryViewer from 'src/features/models/components/ImageHistoryViewer'
-import TextHistoryViewer from 'src/features/models/components/TextHistoryViewer'
-import MultilabelHistoryViewer from 'src/features/models/components/MultilabelHistoryViewer'
-const cx = (...classes) => classes.filter(Boolean).join(' ')
-const Spin = ({ tip, children, className = '', ...props }) => (<div className={cx('inline-flex items-center gap-2', className)} {...props}><UiSpinner />{tip && <span>{tip}</span>}{children}</div>)
-const Button = ({ children, icon, loading, disabled, htmlType, type, className = '', ...props }) => (<UiButton type={htmlType || 'button'} disabled={disabled || loading} className={className} {...props}>{loading && <UiSpinner className="mr-2" />}{icon && <span className="inline-flex">{icon}</span>}{children}</UiButton>)
-const Modal = ({ open, visible, onCancel, onClose, title, footer, children, width, className = '', centered, ...props }) => { const isOpen = open ?? visible; if (!isOpen) return null; return <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={onCancel || onClose}><div className={cx('max-h-[90vh] overflow-auto rounded-xl border bg-background p-4 shadow-xl', className)} style={{ width: typeof width === 'number' ? width : width || undefined, ...props.style }} onClick={(event) => event.stopPropagation()}>{title && <div className="mb-4 text-lg font-semibold">{title}</div>}{children}{footer !== null && footer !== undefined && <div className="mt-4 flex justify-end gap-2">{footer}</div>}</div></div> }
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "src/components/ui/dialog";
+import { Spinner } from "src/components/ui/spinner";
+import {
+  Settings as SettingOutlined,
+  Download as DownloadOutlined,
+} from "lucide-react";
+import ImageHistoryViewer from "src/features/models/components/ImageHistoryViewer";
+import TextHistoryViewer from "src/features/models/components/TextHistoryViewer";
+import MultilabelHistoryViewer from "src/features/models/components/MultilabelHistoryViewer";
 
 export function DeployPredictionViewerModal({
-	projectInfo,
-	isVisible,
-	isLoading,
-	selectedContent,
-	onClose,
-	onDownloadCsv,
-	simpleDataModalRef,
-	multilabelModalRef,
+  projectInfo,
+  isVisible,
+  isLoading,
+  selectedContent,
+  onClose,
+  onDownloadCsv,
+  simpleDataModalRef,
+  multilabelModalRef,
 }) {
-	if (!projectInfo?.id) return null
+  if (!projectInfo?.id) return null;
 
-	const isImageTask = projectInfo.task_type?.includes('IMAGE')
-	const isMultilabelTask = projectInfo.task_type?.includes('MULTILABEL')
+  const isImageTask = projectInfo.task_type?.includes("IMAGE");
+  const isMultilabelTask = projectInfo.task_type?.includes("MULTILABEL");
 
-	return (
-		<Modal
-			title="Recent Prediction Details"
-			open={isVisible}
-			onCancel={onClose}
-			width="90%"
-			className="top-5"
-			footer={[
-				!isImageTask && (
-					<Button
-						key="settings"
-						icon={<SettingOutlined />}
-						onClick={() =>
-							simpleDataModalRef.current?.openDrawer()
-						}
-					>
-						Columns Settings
-					</Button>
-				),
-				!isImageTask && (
-					<Button
-						key="download"
-						icon={<DownloadOutlined />}
-						onClick={onDownloadCsv}
-						disabled={!selectedContent}
-					>
-						Download as CSV
-					</Button>
-				),
-				<Button
-					key="close"
-					type="primary"
-					onClick={onClose}
-				>
-					Close
-				</Button>,
-			]}
-		>
-			{isLoading ? (
-				<div className="text-center p-[50px]">
-					<Spin size="large" />
-				</div>
-			) : (
-				<>
-					{isImageTask && (
-						<ImageHistoryViewer data={selectedContent} />
-					)}
-					{!isImageTask && isMultilabelTask && (
-						<MultilabelHistoryViewer
-							data={selectedContent}
-							ref={multilabelModalRef}
-						/>
-					)}
-					{!isImageTask && !isMultilabelTask && (
-						<TextHistoryViewer
-							data={selectedContent}
-							ref={simpleDataModalRef}
-						/>
-					)}
-				</>
-			)}
-		</Modal>
-	)
+  return (
+    <Dialog open={isVisible} onOpenChange={onClose}>
+      <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Prediction Details</DialogTitle>
+        </DialogHeader>
+
+        {isLoading ? (
+          <div className="flex min-h-96 items-center justify-center">
+            <Spinner className="h-6 w-6" />
+          </div>
+        ) : (
+          <>
+            {isImageTask && <ImageHistoryViewer data={selectedContent} />}
+            {!isImageTask && isMultilabelTask && (
+              <MultilabelHistoryViewer
+                data={selectedContent}
+                ref={multilabelModalRef}
+              />
+            )}
+            {!isImageTask && !isMultilabelTask && (
+              <TextHistoryViewer
+                data={selectedContent}
+                ref={simpleDataModalRef}
+              />
+            )}
+          </>
+        )}
+
+        <DialogFooter className="flex gap-2 justify-end mt-6">
+          {!isImageTask && (
+            <button
+              onClick={() => simpleDataModalRef.current?.openDrawer()}
+              className="inline-flex items-center gap-2 h-10 px-4 rounded-xl border border-gray-200 bg-white text-sm font-medium text-gray-700 transition hover:bg-gray-50 dark:border-white/20 dark:bg-white/10 dark:text-gray-200 dark:hover:bg-white/15"
+            >
+              <SettingOutlined className="h-4 w-4" />
+              Columns
+            </button>
+          )}
+          {!isImageTask && (
+            <button
+              onClick={onDownloadCsv}
+              disabled={!selectedContent}
+              className="inline-flex items-center gap-2 h-10 px-4 rounded-xl border border-gray-200 bg-white text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:border-white/20 dark:bg-white/10 dark:text-gray-200 dark:hover:bg-white/15"
+            >
+              <DownloadOutlined className="h-4 w-4" />
+              CSV
+            </button>
+          )}
+          <button
+            onClick={onClose}
+            className="h-10 px-4 rounded-xl bg-blue-600 text-sm font-medium text-white transition hover:bg-blue-700"
+          >
+            Close
+          </button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
 }
-
