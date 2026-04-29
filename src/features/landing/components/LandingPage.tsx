@@ -34,7 +34,9 @@ const LandingPage = () => {
 	}, [])
 
 	const isDark = theme === 'dark'
-	const bgClass = isDark ? 'bg-theme-gradient' : 'bg-gray-50'
+	const bgClass = isDark
+		? 'landing-hero-atmosphere'
+		: 'landing-hero-atmosphere-light'
 	const textClass = isDark ? 'text-white' : 'text-gray-900'
 
 	return (

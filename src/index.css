@@ -262,6 +262,42 @@ body {
   border: 1px solid var(--glass-border);
 }
 
+/* Landing hero: layered radials + deep base (replaces flat theme gradient on marketing page) */
+.landing-hero-atmosphere {
+  background:
+    radial-gradient(
+      ellipse 100% 85% at 100% -8%,
+      rgba(101, 255, 160, 0.1),
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse 90% 72% at -8% 92%,
+      rgba(92, 141, 255, 0.2),
+      transparent 58%
+    ),
+    radial-gradient(
+      ellipse 55% 42% at 72% 52%,
+      rgba(61, 111, 245, 0.07),
+      transparent 52%
+    ),
+    linear-gradient(168deg, #07080c 0%, #0f121a 42%, #0a0e16 100%);
+}
+
+.landing-hero-atmosphere-light {
+  background:
+    radial-gradient(
+      ellipse 95% 72% at 100% 0%,
+      rgba(14, 165, 233, 0.14),
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse 75% 55% at 0% 100%,
+      rgba(92, 141, 255, 0.1),
+      transparent 52%
+    ),
+    linear-gradient(180deg, #f8fafc 0%, #f1f5f9 52%, #eef2f7 100%);
+}
+
 /* Gradient Background utilities */
 .bg-theme-gradient {
   background: var(--bg-gradient);

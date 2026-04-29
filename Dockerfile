@@ -2,36 +2,28 @@
 # ----------------------------------------------------------------
 FROM node:20-alpine AS base
 
-# Đặt thư mục làm việc
 WORKDIR /app
 
-# Copy các file quản lý package để tận dụng cache của Docker
-COPY package*.json ./
+COPY package.json package-lock.json ./
 
 
 # Stage 2: 'development' - Dành riêng cho môi trường Development
 # ----------------------------------------------------------------
 FROM base AS development
 
-# Cài đặt tất cả dependencies, bao gồm cả devDependencies
-RUN npm install
+RUN npm ci
 
-# Copy toàn bộ mã nguồn
 COPY . .
 
-# Lệnh mặc định để khởi động dev server (thường có hot-reload)
-# Giả sử trong package.json của bạn có script "start" hoặc "dev"
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "dev", "--", "--host"]
 
 
 # Stage 3: 'builder' - Dùng để build ra các file tĩnh cho Production
 # ----------------------------------------------------------------
 FROM base AS builder
 
-# Cài tất cả deps
-RUN npm install
+RUN npm ci
 
-# Copy source
 COPY . .
 
 # Truyền biến build-time từ docker-compose vào React

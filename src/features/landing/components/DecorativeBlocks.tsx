@@ -12,8 +12,8 @@ const DecorativeBlocks = () => {
 	// Single blue - matches brand (#5C8DFF)
 	const blockColors = isDark
 		? {
-				pale: 'rgba(147, 197, 253, 0.2)',
-				vibrant: 'rgba(96, 165, 250, 0.35)',
+				pale: 'rgba(147, 197, 253, 0.32)',
+				vibrant: 'rgba(96, 165, 250, 0.48)',
 		  }
 		: {
 				pale: '#dbeafe',

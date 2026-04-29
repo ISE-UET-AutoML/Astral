@@ -24,7 +24,7 @@ const HeroSection = () => {
               results, lower costs, and smarter decisions.
             </h2>
 
-            <div className="text-left flex gap-4">
+            <div className="text-left flex flex-wrap items-center gap-5">
               <Button
                 href="/login"
                 variant="gradientHover"
