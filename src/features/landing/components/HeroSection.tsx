@@ -10,21 +10,32 @@ const HeroSection = () => {
         <div className="relative">
           {/* Left side: Content */}
           <div className="max-w-4xl">
-            <h1 className="text-left text-7xl lh-6 ld-04 text-gray-900 dark:text-white mb-6">
-              <div className="font-bold font-poppins">Build your model</div>
-              <div className="text-7xl font-bold italic inline-block bg-gradient-to-r from-[#5C8DFF] to-[#65FFA0] bg-clip-text text-transparent font-poppins">
+            <h1 className="text-left text-7xl lh-6 ld-04 text-gray-900 dark:text-white mb-6 overflow-visible">
+              <div className="font-bold font-poppins" data-landing="hero-line-1">
+                Build your model
+              </div>
+              <div
+                className="text-7xl font-bold italic inline-block bg-gradient-to-r from-[#5C8DFF] via-[#7fd6ff] to-[#65FFA0] bg-[length:220%_100%] bg-clip-text text-transparent font-poppins"
+                data-landing="hero-line-2"
+              >
                 fast and easy
               </div>
             </h1>
 
-            <h2 className="text-xl font-4 font-regular lh-6 ld-04 pb-11 text-gray-700 dark:text-white text-left font-poppins">
+            <h2
+              className="text-xl font-4 font-regular lh-6 ld-04 pb-11 text-gray-700 dark:text-white text-left font-poppins"
+              data-landing="hero-sub"
+            >
               Launch powerful AI models in minutes with our automated platform.{" "}
               <br />
               <span className="font-bold">No coding</span> — just faster
               results, lower costs, and smarter decisions.
             </h2>
 
-            <div className="text-left flex flex-wrap items-center gap-5">
+            <div
+              className="text-left flex flex-wrap items-center gap-5"
+              data-landing="hero-cta"
+            >
               <Button
                 href="/login"
                 variant="gradientHover"
@@ -47,7 +58,7 @@ const HeroSection = () => {
 
           {/* Robot Image with Glowing Lights - Positioned absolutely so it doesn't push text */}
           <div className="absolute top-20 left-1/2 h-full flex items-center">
-            <div className="relative">
+            <div className="relative" data-landing="hero-robot">
               <img
                 src={robotImage}
                 alt="AI Robot"

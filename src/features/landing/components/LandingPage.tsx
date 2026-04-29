@@ -8,6 +8,8 @@ import ShowcaseSection from './ShowcaseSection'
 import FooterSection from './FooterSection'
 import DecorativeBlocks from './DecorativeBlocks'
 import DecorativeBlocksRevert from './DecorativeBlockRevert'
+import LandingMotionFX from './LandingMotionFX'
+import { useLandingPageAnime } from '../hooks/useLandingPageAnime'
 
 /**
  * LandingPage - Main wrapper component for the landing page
@@ -20,8 +22,11 @@ import DecorativeBlocksRevert from './DecorativeBlockRevert'
  */
 const LandingPage = () => {
 	const { theme } = useTheme()
+	const landingRootRef = React.useRef<HTMLDivElement>(null)
 	const [navbarOpen, setNavbarOpen] = React.useState(false)
 	const [scrolled, setScrolled] = React.useState(false)
+
+	useLandingPageAnime(landingRootRef)
 
 	React.useEffect(() => {
 		const handleScroll = () => {
@@ -40,11 +45,23 @@ const LandingPage = () => {
 	const textClass = isDark ? 'text-white' : 'text-gray-900'
 
 	return (
-		<div 
+		<div
+			ref={landingRootRef}
 			className={`min-h-screen relative overflow-x-hidden ${bgClass} ${textClass}`}
 		>
+			<div
+				data-landing="orb"
+				className="pointer-events-none absolute -top-36 right-[-10%] h-[min(58vw,560px)] w-[min(58vw,560px)] rounded-full -z-[95] opacity-0 mix-blend-screen"
+				style={{
+					background:
+						"radial-gradient(circle at 35% 35%, rgba(101,255,160,0.38), rgba(92,141,255,0.16) 48%, transparent 72%)",
+					filter: "blur(42px)",
+				}}
+				aria-hidden
+			/>
 			{/* Full-viewport background fill following app theme */}
 			<div className={`absolute inset-0 ${bgClass} -z-[100]`} />
+			<LandingMotionFX />
 			{/* Decorative sea blue blocks */}
 			<DecorativeBlocks />
 			

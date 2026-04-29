@@ -39,6 +39,7 @@ const DecorativeBlocks = () => {
 		>
 			{/* Top-left cluster */}
 			<div
+				data-landing="deco-grid-tl"
 				className="absolute"
 				style={{
 					top: '10%',
@@ -66,6 +67,7 @@ const DecorativeBlocks = () => {
 
 			{/* Bottom-right cluster */}
 			<div
+				data-landing="deco-grid-br"
 				className="absolute"
 				style={{
 					bottom: '5%',
