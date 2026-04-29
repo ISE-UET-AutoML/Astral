@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { Alert, AlertDescription, AlertTitle } from "src/components/ui/alert";
 import {
   Tooltip,
@@ -6,8 +7,7 @@ import {
   TooltipTrigger,
 } from "src/components/ui/tooltip";
 import { Card, CardContent } from "src/components/ui/card";
-import { Cloud, Info } from "lucide-react";
-import create_project from "src/assets/icon/plus.png";
+import { Cloud, FolderPlus, Info } from "lucide-react";
 import BuildPager from "src/features/project-build/pages/build/BuildPager";
 import {
   Table,
@@ -33,6 +33,8 @@ export function LabelProjectsTable({
   onPageChange,
   onShowCreateDatasetModal,
 }) {
+  const folderPlusGradientId = `folder-plus-grad-${useId().replace(/:/g, "")}`;
+
   return (
     <Card className="rounded-2xl border border-gray-200 bg-white dark:border-white/10 dark:bg-slate-900/50 h-full w-full flex flex-col">
       <CardContent className="p-6 flex-1">
@@ -168,13 +170,40 @@ export function LabelProjectsTable({
             </Table>
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-12">
-            <img
-              src={create_project}
-              alt="Create project"
-              className="w-[300px] max-w-[90%] cursor-pointer"
+          <div className="flex flex-col items-center justify-center py-12 select-none">
+            <button
+              type="button"
               onClick={onShowCreateDatasetModal}
-            />
+              className="group relative flex items-center justify-center focus:outline-none cursor-pointer"
+              aria-label="Create label project"
+            >
+              <span className="absolute inset-0 rounded-full bg-blue-500/10 dark:bg-blue-400/10 scale-125 animate-ping [animation-duration:2.8s] group-hover:bg-blue-400/20" />
+              <span className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-400/20 to-cyan-400/10 scale-110 blur-xl group-hover:scale-125 transition-transform duration-500" />
+              <span className="relative flex items-center justify-center w-36 h-36 rounded-3xl bg-white dark:bg-[#1c1c24] shadow-[0_8px_40px_rgba(59,130,246,0.25)] dark:shadow-[0_8px_48px_rgba(59,130,246,0.18)] ring-1 ring-black/5 dark:ring-white/8 group-hover:-translate-y-2 group-hover:shadow-[0_20px_56px_rgba(59,130,246,0.38)] dark:group-hover:shadow-[0_20px_56px_rgba(59,130,246,0.3)] transition-all duration-300 ease-out">
+                <svg width="0" height="0" className="absolute" aria-hidden>
+                  <defs>
+                    <linearGradient
+                      id={folderPlusGradientId}
+                      x1="0"
+                      y1="12"
+                      x2="24"
+                      y2="12"
+                      gradientUnits="userSpaceOnUse"
+                    >
+                      <stop offset="0%" stopColor="#0066CC" />
+                      <stop offset="100%" stopColor="#29B6F6" />
+                    </linearGradient>
+                  </defs>
+                </svg>
+                <FolderPlus
+                  className="w-14 h-14 drop-shadow-[0_2px_8px_rgba(59,130,246,0.4)] group-hover:scale-110 transition-transform duration-300"
+                  stroke={`url(#${folderPlusGradientId})`}
+                  strokeWidth={1.75}
+                  fill="none"
+                  aria-hidden
+                />
+              </span>
+            </button>
             <div className="mt-6 text-center">
               <div className="text-gray-900 dark:text-white text-xl font-semibold">
                 No Label Projects Yet
