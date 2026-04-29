@@ -13,6 +13,18 @@ import { useEffect } from "react";
 
 const ProjectSidebar = ({ projectID, className }) => {
   const location = useLocation();
+  const projectBasePath = `/app/project/${projectID}`;
+  const projectPathname = location.pathname.startsWith(`${projectBasePath}/`)
+    ? location.pathname.slice(projectBasePath.length)
+    : location.pathname;
+
+  const isSectionActive = (section) =>
+    projectPathname === `/${section}` ||
+    projectPathname.startsWith(`/${section}/`);
+  const isModelActive =
+    isSectionActive("model") || projectPathname === "/build/deployView";
+  const isDeployActive =
+    isSectionActive("deploy") || projectPathname === "/build/deploySettingUp";
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "auto" });
@@ -23,39 +35,41 @@ const ProjectSidebar = ({ projectID, className }) => {
       name: "Info",
       href: PATHS.PROJECT_INFO(projectID),
       icon: Info,
-      isActive: location.pathname.endsWith("/build/info"),
+      isActive: projectPathname === "/build/info",
     },
     {
       name: "Build",
       href: PATHS.PROJECT_BUILD(projectID),
       icon: Hammer,
       isActive:
-        location.pathname.includes("/build") &&
-        !location.pathname.endsWith("/build/info"),
+        isSectionActive("build") &&
+        projectPathname !== "/build/info" &&
+        !isModelActive &&
+        !isDeployActive,
     },
     {
       name: "Experiment",
       href: PATHS.PROJECT_EXPERIMENT(projectID),
       icon: ClipboardList,
-      isActive: location.pathname.includes("/experiments"),
+      isActive: isSectionActive("experiments"),
     },
     {
       name: "Model",
       href: PATHS.PROJECT_MODEL(projectID),
       icon: BrainCircuit,
-      isActive: location.pathname.includes("/model"),
+      isActive: isModelActive,
     },
     {
       name: "Deploy",
       href: PATHS.PROJECT_DEPLOY(projectID),
       icon: Rocket,
-      isActive: location.pathname.includes("/deploy"),
+      isActive: isDeployActive,
     },
     {
       name: "My Apps",
       href: PATHS.PROJECT_MY_APPS(projectID),
       icon: AppWindow,
-      isActive: location.pathname.includes("/my-apps"),
+      isActive: isSectionActive("my-apps"),
     },
   ];
 

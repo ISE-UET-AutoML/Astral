@@ -135,6 +135,11 @@ const DeployView = () => {
   const handleCancel = () => {
     setIsDeploying(false);
     setSelectedOption("");
+    if (modelId) {
+      navigate(PATHS.MODEL_VIEW(projectId, modelId));
+      return;
+    }
+    navigate(-1);
   };
 
   return (
