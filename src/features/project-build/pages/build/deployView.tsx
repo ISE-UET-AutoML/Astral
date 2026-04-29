@@ -55,6 +55,7 @@ const DeployView = () => {
   const { id: projectId } = useParams();
   const modelId = searchParams.get("modelId");
   const modelVersionId = searchParams.get("modelVersionId");
+  const imlIteration = searchParams.get("imlIteration");
   const [isDeploying, setIsDeploying] = useState(false);
   const [selectedOption, setSelectedOption] = useState("");
 
@@ -118,7 +119,9 @@ const DeployView = () => {
     try {
       navigate(PATHS.SETTING_UP_DEPLOY(projectId, "temp-deploy-id"));
 
-      const deployRequest = await modelAPI.deployModel(modelId, modelVersionId);
+      const deployRequest = await modelAPI.deployModel(modelId, modelVersionId, {
+        iml_iteration_name: imlIteration || undefined,
+      });
       console.log(deployRequest);
       if (deployRequest.status !== 200) {
         throw new Error("Failed to deploy model");

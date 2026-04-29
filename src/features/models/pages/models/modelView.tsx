@@ -138,13 +138,24 @@ const getAccuracyStatus = (score) => {
   );
 };
 
+const formatImlIterationName = (name = "") =>
+  name
+    .toString()
+    .replace(/^iteration_/i, "Iteration ")
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+
+const formatMetricLabel = (name = "") =>
+  name.toString().replace(/_/g, " ").toUpperCase();
+
 const ModelView = () => {
   const navigate = useNavigate();
   const { modelId, id } = useParams();
-  const [model, setModel] = useState({});
+  const [model, setModel] = useState<any>({});
   const [metrics, setMetrics] = useState([]);
   const [versions, setVersions] = useState([]);
-  const [selectedVersion, setSelectedVersion] = useState(null);
+  const [selectedVersion, setSelectedVersion] = useState<any>(null);
+  const [selectedImlIterationName, setSelectedImlIterationName] = useState("");
   const [isDetailsExpanded, setIsDetailsExpanded] = useState(true);
 
   const handleVersionSelect = async (versionId) => {
@@ -224,6 +235,46 @@ const ModelView = () => {
     loadVersions();
   }, [modelId]);
 
+  const versionMetadata = selectedVersion?.metadata || model.metadata || {};
+  const imlIterations = Array.isArray(versionMetadata?.iml_iterations)
+    ? versionMetadata.iml_iterations
+    : [];
+  const selectedImlIteration =
+    imlIterations.find(
+      (iteration) => iteration.iteration_name === selectedImlIterationName,
+    ) ||
+    imlIterations.find(
+      (iteration) => iteration.iteration_name === versionMetadata.selected_iteration,
+    ) ||
+    imlIterations.find((iteration) => iteration.deployment_available) ||
+    imlIterations[0];
+  const displayedMetrics = selectedImlIteration?.key_metrics
+    ? Object.entries(selectedImlIteration.key_metrics).map(([key, value]) => ({
+        key: `iml-${selectedImlIteration.iteration_name}-${key}`,
+        metric: formatMetricLabel(key),
+        value: Number(value).toFixed(2),
+        description: `Metric reported by ${formatImlIterationName(
+          selectedImlIteration.iteration_name,
+        )}`,
+        status: getAccuracyStatus(Number(value)),
+      }))
+    : metrics;
+
+  useEffect(() => {
+    if (!imlIterations.length) {
+      setSelectedImlIterationName("");
+      return;
+    }
+
+    const preferred =
+      versionMetadata.selected_iteration ||
+      imlIterations.find((iteration) => iteration.deployment_available)
+        ?.iteration_name ||
+      imlIterations[0]?.iteration_name ||
+      "";
+    setSelectedImlIterationName(preferred);
+  }, [selectedVersion?.id, versionMetadata.selected_iteration, imlIterations.length]);
+
   return (
     <div className="w-full min-h-0 bg-white dark:bg-[var(--surface)] font-poppins text-gray-900 dark:text-white mb-5">
       <div className="w-full px-4 pt-6 pb-10 lg:px-6 lg:pt-8 lg:pb-12 flex flex-col gap-6">
@@ -257,7 +308,7 @@ const ModelView = () => {
             <div className="text-4xl font-bold flex items-center gap-3 text-blue-600 dark:text-blue-300">
               <TrophyOutlined className="text-blue-400 dark:text-blue-500 text-3xl" />
               {(() => {
-                const accuracyMetric = metrics.find(
+                const accuracyMetric = displayedMetrics.find(
                   (m) => m.metric === "ACCURACY",
                 );
                 return accuracyMetric
@@ -292,6 +343,97 @@ const ModelView = () => {
           </div>
         </div>
 
+        {imlIterations.length > 0 && (
+          <div className="rounded-2xl border border-gray-200 dark:border-white/10 p-6 lg:p-8 bg-gray-50 dark:bg-white/5">
+            <div className="flex flex-col gap-1 mb-5">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                <span className="w-1 h-5 rounded-full bg-blue-500 inline-block" />
+                iML Iteration Results
+              </h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Choose which iML deployment bundle should be used for this model.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              {imlIterations.map((iteration) => {
+                const isSelected =
+                  selectedImlIteration?.iteration_name === iteration.iteration_name;
+                const accuracy = iteration.key_metrics?.accuracy;
+                return (
+                  <button
+                    type="button"
+                    key={iteration.iteration_name}
+                    disabled={!iteration.deployment_available}
+                    onClick={() =>
+                      setSelectedImlIterationName(iteration.iteration_name)
+                    }
+                    className={`text-left rounded-xl border p-5 transition-colors bg-white dark:bg-[var(--surface)] ${
+                      isSelected
+                        ? "border-blue-500 ring-2 ring-blue-500/20"
+                        : "border-gray-200 dark:border-white/10 hover:border-blue-300 dark:hover:border-blue-500/50"
+                    } ${
+                      iteration.deployment_available
+                        ? "cursor-pointer"
+                        : "opacity-60 cursor-not-allowed"
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-3 mb-3">
+                      <div>
+                        <div className="text-sm font-semibold text-gray-900 dark:text-white">
+                          {formatImlIterationName(iteration.iteration_name)}
+                        </div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                          {iteration.rank ? `Rank #${iteration.rank}` : "Unranked"}
+                        </div>
+                      </div>
+                      <span
+                        className={`px-2.5 py-1 rounded-lg text-xs font-medium border ${
+                          iteration.deployment_available
+                            ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-500/30"
+                            : "bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-300 border-red-200 dark:border-red-500/30"
+                        }`}
+                      >
+                        {iteration.deployment_available ? "Deployable" : "No bundle"}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-3 gap-3 text-xs">
+                      <div>
+                        <div className="text-gray-500 dark:text-gray-400">
+                          Accuracy
+                        </div>
+                        <div className="font-semibold text-gray-900 dark:text-white mt-1">
+                          {accuracy !== undefined ? Number(accuracy).toFixed(2) : "—"}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-gray-500 dark:text-gray-400">
+                          Reliability
+                        </div>
+                        <div className="font-semibold text-gray-900 dark:text-white mt-1">
+                          {iteration.reliability_score ?? "—"}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-gray-500 dark:text-gray-400">
+                          Performance
+                        </div>
+                        <div className="font-semibold text-gray-900 dark:text-white mt-1">
+                          {iteration.performance_score ?? "—"}
+                        </div>
+                      </div>
+                    </div>
+                    {iteration.weaknesses?.[0] && (
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-4 line-clamp-2">
+                        {iteration.weaknesses[0]}
+                      </p>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         {/* 2. NEXT STEPS SECTION */}
         <div className="rounded-2xl border border-gray-200 dark:border-white/10 p-6 lg:p-8 bg-gray-50 dark:bg-white/5">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
@@ -313,10 +455,20 @@ const ModelView = () => {
                 <button
                   onClick={() =>
                     navigate(
-                      `/app/project/${id}/build/deployView?modelId=${modelId}&modelVersionId=${selectedVersion?.version}`,
+                      `/app/project/${id}/build/deployView?modelId=${modelId}&modelVersionId=${selectedVersion?.version}${
+                        selectedImlIteration?.iteration_name
+                          ? `&imlIteration=${encodeURIComponent(
+                              selectedImlIteration.iteration_name,
+                            )}`
+                          : ""
+                      }`,
                     )
                   }
-                  className="w-full py-2.5 rounded-xl font-semibold flex justify-center items-center gap-2 text-white text-sm hover:opacity-90 transition-opacity"
+                  disabled={
+                    imlIterations.length > 0 &&
+                    !selectedImlIteration?.deployment_available
+                  }
+                  className="w-full py-2.5 rounded-xl font-semibold flex justify-center items-center gap-2 text-white text-sm hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
                   style={{
                     background:
                       "linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)",
@@ -404,7 +556,7 @@ const ModelView = () => {
                 </div>
                 <div className="flex flex-col gap-1 p-3">
                   {Object.entries(
-                    selectedVersion?.metadata || model.metadata || {},
+                    versionMetadata || {},
                   ).map(([key, value]) => (
                     <div
                       key={key}
@@ -549,7 +701,7 @@ const ModelView = () => {
                       </tr>
                     </thead>
                     <tbody className="text-gray-700 dark:text-gray-300">
-                      {metrics.map((record) => (
+                      {displayedMetrics.map((record) => (
                         <tr
                           key={record.key}
                           className="hover:bg-gray-50 dark:hover:bg-white/5 border-b border-gray-100 dark:border-white/10 last:border-0 transition-colors"
