@@ -1,7 +1,7 @@
 import React from 'react'
 import AIAssistantModal from './AIAssistantModal'
 import ContentContainer from 'src/layouts/ContentContainer'
-import create_project from 'src/assets/images/create_project.png'
+import create_project from 'src/assets/icon/add-folder.png'
 import { useProjects, useChatbot, useDatasets } from 'src/shared/hooks'
 import { useTheme } from 'src/theme/ThemeProvider'
 import {
@@ -97,8 +97,8 @@ export default function Projects() {
 	)
 
 	return (
-		<div className="min-h-screen bg-gray-100 dark:bg-[#161616] text-gray-900 dark:text-white">
-			<div className="min-h-screen pt-12 bg-gray-100 dark:bg-[#161616]">
+		<div className="min-h-screen bg-white dark:bg-[#161616] text-gray-900 dark:text-white">
+			<div className="min-h-screen pt-12 bg-white dark:bg-[#161616]">
 				<main className="relative pt-20 px-6 pb-20">
 					<ContentContainer className="relative z-10">
 						{/* Header */}
@@ -165,22 +165,36 @@ export default function Projects() {
 								</div>
 							</>
 						) : (
-							<div className="flex flex-col items-center justify-center py-12">
-								<img
-									src={create_project}
-									alt="Create project"
-									className="w-[360px] max-w-[90%] cursor-pointer drop-shadow-[0_10px_30px_rgba(0,0,0,0.25)]"
-									onClick={() => updateProjState({ showUploaderManual: true })}
-								/>
-								<div className="mt-6 text-center">
-									<div className="text-2xl font-semibold text-gray-900 dark:text-white">
-										No Projects Yet
-									</div>
-									<div className="mt-1.5 text-gray-500 dark:text-gray-400">
-										Start by creating your first AI project
-									</div>
-								</div>
+						<div className="flex flex-col items-center justify-center py-20 select-none">
+							{/* Icon with layered glow rings */}
+							<button
+								onClick={() => updateProjState({ showUploader: true })}
+								className="group relative flex items-center justify-center focus:outline-none"
+								aria-label="Create new project"
+							>
+								{/* Outer pulse ring */}
+								<span className="absolute inset-0 rounded-full bg-blue-500/10 dark:bg-blue-400/10 scale-125 animate-ping [animation-duration:2.8s] group-hover:bg-blue-400/20" />
+								{/* Mid glow ring */}
+								<span className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-400/20 to-cyan-400/10 scale-110 blur-xl group-hover:scale-125 transition-transform duration-500" />
+								{/* Icon card */}
+								<span className="relative flex items-center justify-center w-36 h-36 rounded-3xl bg-white dark:bg-[#1c1c24] shadow-[0_8px_40px_rgba(59,130,246,0.25)] dark:shadow-[0_8px_48px_rgba(59,130,246,0.18)] ring-1 ring-black/5 dark:ring-white/8 group-hover:-translate-y-2 group-hover:shadow-[0_20px_56px_rgba(59,130,246,0.38)] dark:group-hover:shadow-[0_20px_56px_rgba(59,130,246,0.3)] transition-all duration-300 ease-out">
+									<img
+										src={create_project}
+										alt="Add folder"
+										className="w-14 h-14 object-contain drop-shadow-[0_2px_8px_rgba(59,130,246,0.4)] group-hover:scale-110 transition-transform duration-300"
+									/>
+								</span>
+							</button>
+
+							<div className="mt-8 text-center space-y-2">
+								<p className="text-xl font-semibold tracking-tight text-gray-800 dark:text-white">
+									No Projects Yet
+								</p>
+								<p className="text-sm text-gray-500 dark:text-gray-400 max-w-xs mx-auto leading-relaxed">
+									Click the icon or use <span className="font-medium text-blue-500">New Project</span> to get started.
+								</p>
 							</div>
+						</div>
 						)}
 					</ContentContainer>
 

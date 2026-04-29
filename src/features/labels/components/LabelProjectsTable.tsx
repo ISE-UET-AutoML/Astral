@@ -7,7 +7,7 @@ import {
 } from "src/components/ui/tooltip";
 import { Card, CardContent } from "src/components/ui/card";
 import { Cloud, Info } from "lucide-react";
-import create_project from "src/assets/images/create_project.png";
+import create_project from "src/assets/icon/plus.png";
 import BuildPager from "src/features/project-build/pages/build/BuildPager";
 import {
   Table,

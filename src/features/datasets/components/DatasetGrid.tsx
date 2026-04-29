@@ -1,13 +1,5 @@
-import { Database } from "lucide-react";
-import {
-  Empty as UiEmpty,
-  EmptyContent,
-  EmptyDescription as UiEmptyDescription,
-  EmptyMedia,
-  EmptyTitle,
-} from "src/components/ui/empty";
+import newDatasetIcon from "src/assets/icon/new-dataset.png";
 import DatasetCard from "./DatasetCard";
-import { Button } from "src/components/ui/button";
 
 const DatasetGrid = ({
   datasets,
@@ -30,26 +22,34 @@ const DatasetGrid = ({
 
   if (datasets.length === 0) {
     return (
-      <UiEmpty className="min-h-[320px] border border-dashed border-[var(--border)] bg-white/70 dark:bg-white/5">
-        <EmptyMedia variant="icon">
-          <Database className="h-4 w-4" />
-        </EmptyMedia>
-        <EmptyTitle className="font-poppins text-2xl font-semibold text-[var(--text)]">
-          No Datasets Yet
-        </EmptyTitle>
-        <UiEmptyDescription className="font-poppins text-sm text-[var(--secondary-text)]">
-          Start by creating your first dataset
-        </UiEmptyDescription>
-        <EmptyContent>
-          <Button
-            size="sm"
-            onClick={onCreateDataset}
-            className="font-poppins border border-[var(--border)] [background:var(--button-gradient)] text-white"
-          >
-            Create Dataset
-          </Button>
-        </EmptyContent>
-      </UiEmpty>
+      <div className="flex flex-col items-center justify-center py-20 select-none">
+        <button
+          onClick={onCreateDataset}
+          className="group relative flex items-center justify-center focus:outline-none"
+          aria-label="Create new dataset"
+        >
+          <span className="absolute inset-0 rounded-full bg-blue-500/10 dark:bg-blue-400/10 scale-125 animate-ping [animation-duration:2.8s] group-hover:bg-blue-400/20" />
+								{/* Mid glow ring */}
+					<span className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-400/20 to-cyan-400/10 scale-110 blur-xl group-hover:scale-125 transition-transform duration-500" />
+								{/* Icon card */}
+          <span className="relative flex items-center justify-center w-36 h-36 rounded-3xl bg-white dark:bg-[#1c1c24] shadow-[0_8px_40px_rgba(6,182,212,0.25)] dark:shadow-[0_8px_48px_rgba(6,182,212,0.18)] ring-1 ring-black/5 dark:ring-white/8 group-hover:-translate-y-2 group-hover:shadow-[0_20px_56px_rgba(6,182,212,0.38)] dark:group-hover:shadow-[0_20px_56px_rgba(6,182,212,0.3)] transition-all duration-300 ease-out">
+            <img
+              src={newDatasetIcon}
+              alt="New dataset"
+              className="w-14 h-14 object-contain drop-shadow-[0_2px_8px_rgba(59,130,246,0.4)] group-hover:scale-110 transition-transform duration-300"
+            />
+          </span>
+        </button>
+
+        <div className="mt-8 text-center space-y-2">
+          <p className="text-xl font-semibold tracking-tight text-gray-800 dark:text-white">
+            No Datasets Yet
+          </p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 max-w-xs mx-auto leading-relaxed">
+            Click the icon or use <span className="font-medium text-blue-500">New Dataset</span> to get started.
+          </p>
+        </div>
+      </div>
     );
   }
 
