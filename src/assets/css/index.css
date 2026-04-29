@@ -196,8 +196,8 @@
   --border-hover: rgba(148, 163, 184, 0.4);
   --divider: rgba(148, 163, 184, 0.15);
 
-  /* Navigation */
-  --nav-bg: rgba(18, 18, 18, 0.95);
+  /* Navigation – translucent slate-950 so backdrop-blur reads as frosted glass */
+  --nav-bg: rgba(3, 7, 18, 0.58);
   --nav-text: #ffffff;
   --nav-hover: rgba(255, 255, 255, 0.08);
 

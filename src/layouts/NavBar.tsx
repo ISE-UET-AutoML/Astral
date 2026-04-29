@@ -79,10 +79,10 @@ const NavBar = () => {
 	return (
 		<header
 			className={clsx(
-				'fixed top-0 w-full z-[999] transition-all duration-300',
-				scrolled
-					? 'bg-[var(--nav-bg)] backdrop-blur-xl border-b border-gray-200/50 dark:border-white/10 shadow-md dark:shadow-black/20'
-					: 'bg-[var(--nav-bg)] backdrop-blur-xl border-b border-gray-200/30 dark:border-white/5 shadow-sm'
+				'fixed top-0 w-full z-[999] border-b transition-[border-color,box-shadow] duration-200',
+				'bg-white border-gray-200',
+				'dark:bg-[#030712] dark:border-white/10',
+				scrolled && 'shadow-sm dark:shadow-none dark:border-white/15'
 			)}
 		>
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -155,7 +155,7 @@ const NavBar = () => {
 									leaveFrom="transform opacity-100 scale-100"
 									leaveTo="transform opacity-0 scale-95"
 								>
-									<Menu.Items className="absolute right-0 z-10 mt-2 w-56 min-w-[14rem] bg-white dark:bg-[#222222] backdrop-blur-sm rounded-xl shadow-xl border border-gray-200 dark:border-white/10 overflow-hidden focus:outline-none">
+									<Menu.Items className="absolute right-0 z-10 mt-2 w-56 min-w-[14rem] bg-white dark:bg-[#0f172a] rounded-xl shadow-xl border border-gray-200 dark:border-white/10 overflow-hidden focus:outline-none">
 										<Menu.Item>
 											{({ active }) => (
 												<button
@@ -225,7 +225,7 @@ const NavBar = () => {
 					<div className="md:hidden">
 						<button
 							onClick={() => setNavbarOpen(!navbarOpen)}
-							className="bg-gray-200 dark:bg-gray-800 inline-flex items-center justify-center p-2 rounded-md text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-300 dark:hover:bg-gray-700 focus:outline-none"
+							className="bg-gray-200 dark:bg-white/10 dark:border dark:border-white/10 inline-flex items-center justify-center p-2 rounded-md text-gray-600 dark:text-slate-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-300 dark:hover:bg-white/15 focus:outline-none"
 						>
 							<span className="sr-only">Open main menu</span>
 							{navbarOpen ? (
@@ -241,7 +241,7 @@ const NavBar = () => {
 
 						{/* Mobile menu panel */}
 						{navbarOpen && (
-							<div className="absolute top-16 left-0 right-0 bg-white dark:bg-black border-t border-gray-200 dark:border-gray-700">
+							<div className="absolute top-16 left-0 right-0 bg-white dark:bg-[#030712] border-t border-gray-200 dark:border-white/10">
 								<div className="px-2 pt-2 pb-3 space-y-1">
 									{(authed ? authNavigationItems : publicNavigationItems).map((item) => (
 										<button

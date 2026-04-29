@@ -116,8 +116,7 @@ body {
   }
 
   .dark {
-    /* Use neutral dark gray instead of navy */
-    --background: 0 0% 8%;
+    --background: 224 71% 4%; /* slate-950 #030712 */
     --foreground: 0 0% 80%;
     --card: 0 0% 15%;
     --card-foreground: 0 0% 80%;

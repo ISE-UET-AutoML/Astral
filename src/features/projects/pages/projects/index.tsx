@@ -97,8 +97,8 @@ export default function Projects() {
 	)
 
 	return (
-		<div className="min-h-screen bg-white dark:bg-[#161616] text-gray-900 dark:text-white">
-			<div className="min-h-screen pt-12 bg-white dark:bg-[#161616]">
+		<div className="min-h-screen bg-white dark:bg-[#030712] text-gray-900 dark:text-white">
+			<div className="min-h-screen pt-12 bg-white dark:bg-[#030712]">
 				<main className="relative pt-20 px-6 pb-20">
 					<ContentContainer className="relative z-10">
 						{/* Header */}
