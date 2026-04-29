@@ -34,11 +34,7 @@ const CreationMethodModal = ({ open, onCancel, onSelectChatbot, onSelectManual }
             footer={null}
             width={1000}
             centered
-            classNames={{
-                content: 'bg-gradient-to-br from-white to-gray-50 rounded-2xl border border-gray-700/15 dark:!from-[#0F2027] dark:!via-[#203A43] dark:!to-[#2C5364]',
-                header: 'bg-transparent border-b border-gray-700/10',
-            }}
-            className="[&_.ant-modal-title]:dark:!text-white [&_.ant-modal-close]:dark:!text-white"
+            className="rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-gray-50 dark:border-white/10 dark:bg-none dark:bg-slate-950!"
         >
             <div className="text-center mb-8">
                 <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
@@ -56,9 +52,9 @@ const CreationMethodModal = ({ open, onCancel, onSelectChatbot, onSelectManual }
                     >
                         <div
                             onClick={option.action}
-                            className="rounded-xl overflow-hidden border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 hover:border-blue-400 dark:hover:border-blue-400/50 hover:-translate-y-0.5 hover:shadow-xl transition-all duration-300 cursor-pointer"
+                            className="rounded-xl overflow-hidden border border-slate-200 bg-white dark:border-white/10 dark:bg-slate-950 hover:border-blue-400 dark:hover:border-blue-400/50 hover:-translate-y-0.5 hover:shadow-xl transition-all duration-300 cursor-pointer"
                         >
-                            <div className="p-4 overflow-hidden rounded-t-xl bg-gray-50 dark:bg-black/20">
+                            <div className="p-4 overflow-hidden rounded-t-xl bg-slate-50/70 dark:bg-slate-950/40">
                                 <img
                                     alt={option.title}
                                     src={option.image}
