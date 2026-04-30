@@ -1,199 +1,195 @@
-import DeployedModelCard from './card'
-import { useEffect, useState, useCallback } from 'react'
-import { getAllDeployedModel } from 'src/features/deploy/api/deploy'
-import { useParams } from 'react-router-dom'
-import { Button } from 'src/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'src/components/ui/card'
-import { CustomSelect, Option } from 'src/components/ui/custom-select'
-import { useTheme } from 'src/theme/ThemeProvider'
-
-// Simple SVG icons
-const DeploymentIcon = ({ className, ...props }) => (
-    <svg
-        className={className}
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        {...props}
-    >
-        <path
-            d="M12 2L2 7L12 12L22 7L12 2Z"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-        />
-        <path
-            d="M2 17L12 22L22 17"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-        />
-        <path
-            d="M2 12L12 17L22 12"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-        />
-    </svg>
-)
-
-const EmptyIcon = ({ className, ...props }) => (
-    <svg
-        className={className}
-        width="48"
-        height="48"
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        {...props}
-    >
-        <path
-            d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-        />
-    </svg>
-)
+import DeployedModelCard from "./card";
+import { useEffect, useState, useCallback } from "react";
+import { getAllDeployedModel } from "src/features/deploy/api/deploy";
+import { useParams } from "react-router-dom";
+import { Button } from "src/components/ui/button";
+import { Layers, X, Search } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "src/components/ui/select";
+import { Input } from "src/components/ui/input";
+import { Spinner } from "src/components/ui/spinner";
 
 const ProjectDeploy = () => {
-    const { id: projectId } = useParams()
-    const { theme } = useTheme()
-    const [deployedModels, setDeployedModels] = useState([])
-    const [uniqueModels, setUniqueModels] = useState([])
-    const [selectedModelId, setSelectedModelId] = useState(null)
-    const [filteredDeployedModels, setFilteredDeployedModels] = useState([])
+  const { id: projectId } = useParams();
+  const [deployedModels, setDeployedModels] = useState([]);
+  const [uniqueModels, setUniqueModels] = useState([]);
+  const [selectedModelId, setSelectedModelId] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
-    const getListDeployedModels = useCallback(async () => {
-        if (!projectId) return;
-        const { data } = await getAllDeployedModel(projectId)
-        console.log("data:", data)
-        const sortedData = data.sort((a, b) => b.id - a.id)
-        setDeployedModels(prev => sortedData)
-        setFilteredDeployedModels(prev => sortedData)
-        setUniqueModels(prev => Array.from(
-            new Set(data.map((item) => item.model_id))
-        ))
-    }, [projectId])
-
-    const filterListDeployedModels = useCallback(async () => {
-        if (!selectedModelId) {
-            setFilteredDeployedModels(prev => deployedModels)
-            return
-        }
-        const filteredList = deployedModels.filter((item) => item.model_id === selectedModelId)
-        console.log("new list:", filteredList)
-        setFilteredDeployedModels(prev => filteredList)
-    }, [selectedModelId, deployedModels])
-
-    const handleSelectModelId = (option) => {
-        setSelectedModelId(option)
+  const getListDeployedModels = useCallback(async () => {
+    if (!projectId) return;
+    try {
+      setIsLoading(true);
+      const { data } = await getAllDeployedModel(projectId);
+      const sortedData = data.sort((a, b) => b.id - a.id);
+      setDeployedModels(sortedData);
+      setUniqueModels(
+        Array.from(new Set(data.map((item) => item.model_id))) as string[],
+      );
+    } finally {
+      setIsLoading(false);
     }
+  }, [projectId]);
 
-    const handleReset = () => {
-        setSelectedModelId(null)
-    }
+  useEffect(() => {
+    getListDeployedModels();
+  }, [getListDeployedModels]);
 
-    useEffect(() => {
-        getListDeployedModels()
-    }, [getListDeployedModels])
+  const filteredDeployedModels = deployedModels.filter((item) => {
+    const matchesModel = !selectedModelId || item.model_id === selectedModelId;
+    const matchesSearch =
+      !searchTerm ||
+      item.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      String(item.model_id).includes(searchTerm);
+    return matchesModel && matchesSearch;
+  });
 
-    useEffect(() => {
-        filterListDeployedModels()
-    }, [filterListDeployedModels])
+  const hasActiveFilters = Boolean(selectedModelId) || Boolean(searchTerm);
 
-    return (
-        <div className="h-full overflow-y-auto bg-[var(--surface)]">
-            <div className="relative z-10 w-full px-3 py-6 sm:px-4 lg:px-6 lg:py-8">
-                {/* Header Section */}
-                <div className="mb-8">
-                    <div className="mb-4 flex items-center gap-3">
-                        <div className="rounded-xl [background:var(--accent-gradient)] p-2">
-                            <DeploymentIcon className="h-6 w-6 text-white" />
-                        </div>
-                        <div>
-                            <h1 className="text-3xl font-bold text-[var(--text)]">
-                                Deployments
-                            </h1>
-                            <p className="mt-1 text-[var(--secondary-text)]">
-                                {deployedModels.length} Deployed Models
-                            </p>
-                        </div>
-                    </div>
-                </div>
+  const handleReset = () => {
+    setSelectedModelId(null);
+    setSearchTerm("");
+  };
 
-                <div className="space-y-6">
-                    {/* Filter Section */}
-                    <Card className="relative z-50 rounded-2xl border border-[var(--border)] [background:var(--card-gradient)] shadow-2xl">
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2 text-[var(--text)]">
-                                <div className="h-2 w-2 rounded-full bg-[var(--accent-text)]"></div>
-                                Filter Deployments
-                            </CardTitle>
-                            <CardDescription className="text-[var(--secondary-text)]">
-                                Filter your deployed models by model ID
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="flex flex-wrap gap-4">
-                                <div className="flex-1 min-w-[200px] relative z-[60]">
-                                    <CustomSelect
-                                        value={selectedModelId}
-                                        onChange={handleSelectModelId}
-                                        placeholder="Filter by Model ID"
-                                        className="theme-dropdown"
-                                    >
-                                        <Option value="">All Models</Option>
-                                        {uniqueModels.map((modelId) => (
-                                            <Option key={modelId} value={modelId}>
-                                                Model ID: {modelId}
-                                            </Option>
-                                        ))}
-                                    </CustomSelect>
-                                </div>
-                                {selectedModelId && (
-                                    <Button
-                                        variant="outline"
-                                        onClick={handleReset}
-                                        className="border border-[var(--border)] bg-[var(--hover-bg)] text-[var(--text)] hover:opacity-90"
-                                    >
-                                        Reset Filter
-                                    </Button>
-                                )}
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    {/* Deployed Model List */}
-                    {filteredDeployedModels.length > 0 ? (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                            {filteredDeployedModels.map((deployedModel) => (
-                                <DeployedModelCard key={deployedModel.id} deployedModel={deployedModel} />
-                            ))}
-                        </div>
-                    ) : (
-                        <Card className="rounded-2xl border border-[var(--border)] [background:var(--card-gradient)] shadow-2xl">
-                            <CardContent className="flex flex-col items-center justify-center py-16">
-                                <div className="mb-4 rounded-full bg-[var(--hover-bg)] p-4">
-                                    <EmptyIcon className="h-12 w-12 text-[var(--secondary-text)]" />
-                                </div>
-                                <h3 className="mb-2 text-xl font-semibold text-[var(--text)]">No Deployed Models</h3>
-                                <p className="max-w-md text-center text-[var(--secondary-text)]">
-                                    You haven't deployed any models yet. Start by training a model and then deploy it to production.
-                                </p>
-                            </CardContent>
-                        </Card>
-                    )}
-                </div>
-            </div>
+  return (
+    <div className="h-full overflow-y-auto bg-gray-50 dark:bg-slate-950">
+      <div className="w-full px-6 py-8">
+        {/* Page Header */}
+        <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              Deployments
+            </h1>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              {deployedModels.length > 0
+                ? `${deployedModels.length} deployed model${deployedModels.length !== 1 ? "s" : ""}`
+                : "Manage your deployed models"}
+            </p>
+          </div>
         </div>
-    )
-}
 
-export default ProjectDeploy
+        {/* Filter Toolbar */}
+        <div className="mb-6 rounded-2xl border border-gray-200 bg-gray-50/80 p-4 backdrop-blur-sm dark:border-white/10 dark:bg-white/5">
+          <div className="flex flex-wrap items-end gap-3">
+            {/* Search */}
+            <div className="min-w-52 flex-1">
+              <label className="mb-1.5 block text-sm font-medium text-gray-600 dark:text-gray-300">
+                Search
+              </label>
+              <div className="relative">
+                <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
+                <Input
+                  type="text"
+                  placeholder="Search deployments..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="h-10 rounded-xl border-gray-200 bg-white pl-9 pr-3 text-sm text-gray-900 placeholder:text-gray-400 focus-visible:border-blue-400 focus-visible:ring-blue-500/30 dark:border-white/20 dark:bg-white/10 dark:text-white dark:placeholder:text-gray-500"
+                />
+              </div>
+            </div>
+
+            {/* Model ID filter */}
+            <div className="w-full sm:w-60">
+              <label className="mb-1.5 block text-sm font-medium text-gray-600 dark:text-gray-300">
+                Model ID
+              </label>
+              <Select
+                value={selectedModelId ?? "__all__"}
+                onValueChange={(v) =>
+                  setSelectedModelId(v === "__all__" ? null : v)
+                }
+              >
+                <SelectTrigger className="h-10 w-full rounded-xl border-gray-200 bg-white text-sm text-gray-900 hover:border-blue-200 focus-visible:border-blue-400 focus-visible:ring-blue-500/30 dark:border-white/20 dark:bg-white/10 dark:text-white dark:hover:border-blue-400/40">
+                  <SelectValue placeholder="All models" />
+                </SelectTrigger>
+                <SelectContent
+                  align="start"
+                  position="popper"
+                  className="z-[1100] rounded-xl border border-gray-200 bg-white p-1.5 text-gray-900 dark:border-white/10 dark:bg-slate-950 dark:text-white"
+                >
+                  <SelectItem
+                    value="__all__"
+                    className="h-8 rounded-lg px-2.5 pr-8 text-sm text-gray-700 focus:bg-blue-50 focus:text-blue-700 dark:text-gray-200 dark:focus:bg-blue-500/15 dark:focus:text-blue-100"
+                  >
+                    All models
+                  </SelectItem>
+                  {uniqueModels.map((modelId) => (
+                    <SelectItem
+                      key={modelId}
+                      value={modelId}
+                      className="h-8 rounded-lg px-2.5 pr-8 text-sm text-gray-700 focus:bg-blue-50 focus:text-blue-700 data-[state=checked]:bg-blue-50 data-[state=checked]:font-medium data-[state=checked]:text-blue-700 dark:text-gray-200 dark:focus:bg-blue-500/15 dark:focus:text-blue-100 dark:data-[state=checked]:bg-blue-500/15 dark:data-[state=checked]:text-blue-100"
+                    >
+                      Model {modelId}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Reset */}
+            {hasActiveFilters && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleReset}
+                className="h-10 rounded-xl border-gray-200 bg-white px-3 text-gray-700 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 dark:border-white/10 dark:bg-white/10 dark:text-gray-200 dark:hover:border-blue-400/30 dark:hover:bg-blue-400/10 dark:hover:text-blue-200"
+              >
+                <X className="size-4" />
+                Reset
+              </Button>
+            )}
+          </div>
+        </div>
+
+        {/* Content */}
+        {isLoading ? (
+          <div className="flex min-h-52 items-center justify-center">
+            <Spinner className="size-6 text-blue-500" />
+          </div>
+        ) : filteredDeployedModels.length > 0 ? (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {filteredDeployedModels.map((deployedModel) => (
+              <DeployedModelCard
+                key={deployedModel.id}
+                deployedModel={deployedModel}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="flex min-h-[320px] flex-col items-center justify-center gap-4 rounded-2xl border border-dashed border-gray-200 bg-white/70 text-center dark:border-white/10 dark:bg-white/5">
+            <div className="flex size-14 items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5">
+              <Layers className="size-6 text-blue-500 dark:text-blue-400" />
+            </div>
+            <div>
+              <p className="text-base font-semibold text-gray-900 dark:text-white">
+                {hasActiveFilters ? "No results found" : "No deployments yet"}
+              </p>
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                {hasActiveFilters
+                  ? "Try adjusting your filters."
+                  : "Train a model and deploy it to see it here."}
+              </p>
+            </div>
+            {hasActiveFilters && (
+              <Button
+                onClick={handleReset}
+                variant="outline"
+                className="h-9 rounded-xl border-gray-200 px-4 text-sm dark:border-white/10 dark:text-gray-200"
+              >
+                Clear filters
+              </Button>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default ProjectDeploy;
