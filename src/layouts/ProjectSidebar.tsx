@@ -77,7 +77,7 @@ const ProjectSidebar = ({ projectID, className }) => {
     <div
       className={clsx(
         "bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-white/10 z-50",
-        "w-[120px] fixed top-[60px] left-0 bottom-0 h-[calc(100vh-60px)] overflow-hidden",
+        "w-[120px] fixed top-[67px] left-0 bottom-0 h-[calc(100vh-60px)] overflow-hidden",
         "duration-300",
         className,
       )}

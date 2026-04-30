@@ -12,7 +12,7 @@ const ManualCreationFields = ({
       <div>
         <label
           htmlFor="project-name"
-          className="mb-2 block text-sm font-medium text-slate-800 dark:text-slate-200"
+          className="mb-1.5 block text-xs font-medium text-gray-700 dark:text-gray-300"
         >
           Project name
         </label>
@@ -22,7 +22,7 @@ const ManualCreationFields = ({
           value={name}
           onChange={(event) => onNameChange(event.target.value)}
           placeholder="Customer Churn Predictor"
-          className="h-11 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-500/30 dark:border-white/10 dark:bg-slate-950/70 dark:text-white dark:placeholder:text-slate-500"
+          className="h-10 w-full rounded-xl border border-gray-200 bg-white px-4 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-500/30 dark:border-white/10 dark:bg-slate-800 dark:text-white dark:placeholder:text-gray-500"
         />
         {errors.name && (
           <p className="mt-1.5 text-xs font-medium text-red-500 dark:text-red-300">
@@ -34,7 +34,7 @@ const ManualCreationFields = ({
       <div>
         <label
           htmlFor="project-description"
-          className="mb-2 block text-sm font-medium text-slate-800 dark:text-slate-200"
+          className="mb-1.5 block text-xs font-medium text-gray-700 dark:text-gray-300"
         >
           Description
         </label>
@@ -44,7 +44,7 @@ const ManualCreationFields = ({
           value={description}
           onChange={(event) => onDescriptionChange(event.target.value)}
           placeholder="What should this model solve?"
-          className="h-11 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-500/30 dark:border-white/10 dark:bg-slate-950/70 dark:text-white dark:placeholder:text-slate-500"
+          className="h-10 w-full rounded-xl border border-gray-200 bg-white px-4 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-500/30 dark:border-white/10 dark:bg-slate-800 dark:text-white dark:placeholder:text-gray-500"
         />
       </div>
     </div>

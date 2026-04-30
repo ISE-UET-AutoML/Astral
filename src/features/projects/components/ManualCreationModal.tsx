@@ -1,5 +1,6 @@
 import React from "react";
-import { Check, X } from "lucide-react";
+import { Check } from "lucide-react";
+import { Button } from "src/components/ui/button";
 import ProjectBaseModal from "./ProjectBaseModal";
 import ManualCreationFields from "./ManualCreationFields";
 import ProjectTaskList from "./ProjectTaskList";
@@ -79,7 +80,7 @@ const ManualCreationModal = ({
         onSubmit={handleSubmit}
         className="flex min-h-0 max-h-[84vh] flex-col overflow-x-hidden"
       >
-        <div className="shrink-0 border-b border-slate-200/80 px-6 py-5 dark:border-white/10">
+        <div className="shrink-0 border-b border-gray-200 px-6 py-5 dark:border-white/10">
           <div className="flex-1 items-start justify-between gap-4">
             <div className="space-y-2">
               <h2 className="text-2xl font-bold text-slate-950 dark:text-white">
@@ -93,7 +94,7 @@ const ManualCreationModal = ({
           </div>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-hidden bg-slate-50/70 px-4 py-4 sm:px-6 sm:py-6 dark:bg-slate-950/40">
+        <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 px-4 py-4 sm:px-6 sm:py-6 dark:bg-slate-950">
           <div className="grid gap-6 xl:grid-cols-[minmax(360px,0.82fr)_minmax(0,1.18fr)]">
             <div className="flex min-h-0 min-w-0 flex-col gap-5">
               <ManualCreationFields
@@ -120,20 +121,21 @@ const ManualCreationModal = ({
           </div>
         </div>
 
-        <div className="flex shrink-0 items-center justify-end gap-3 border-t border-slate-200/80 bg-white px-6 py-4 dark:border-white/10 dark:bg-slate-950">
-          <button
+        <div className="flex shrink-0 items-center justify-end gap-3 border-t border-gray-200 bg-white px-6 py-4 dark:border-white/10 dark:bg-slate-950">
+          <Button
             type="button"
+            variant="outline"
             onClick={onCancel}
-            className="inline-flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 text-sm font-medium text-slate-700 transition hover:bg-slate-100 dark:border-white/15 dark:bg-slate-950/70 dark:text-white dark:hover:bg-white/10"
+            className="h-10 rounded-xl border-gray-200 text-gray-700 dark:border-white/10 dark:text-gray-300"
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
             type="submit"
-            className="inline-flex h-10 items-center gap-2 rounded-xl bg-blue-600 px-5 text-sm font-semibold text-white transition hover:bg-blue-700"
+            className="h-10 rounded-xl bg-blue-600 px-5 font-semibold text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400"
           >
             Create Project
-          </button>
+          </Button>
         </div>
       </form>
     </ProjectBaseModal>
