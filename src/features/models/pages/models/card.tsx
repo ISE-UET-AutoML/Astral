@@ -1,243 +1,71 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "src/components/ui/card";
 import { Button } from "src/components/ui/button";
+import { Badge } from "src/components/ui/badge";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "src/components/ui/tooltip";
+  Cloud,
+  CheckCircle2,
+  Clock,
+  Rocket,
+  Square,
+  Zap,
+} from "lucide-react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { PATHS } from "src/constants/paths";
 
 dayjs.extend(relativeTime);
 
-// Simple SVG icons
-const CloudIcon = ({ className, ...props }) => (
-  <svg
-    className={className}
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    {...props}
-  >
-    <path
-      d="M18 10H16.74C16.18 6.57 13.17 4 9.5 4C5.36 4 2 7.36 2 11.5C2 15.64 5.36 19 9.5 19H18C19.66 19 21 17.66 21 16V13C21 11.34 19.66 10 18 10Z"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
+type DeployStatus = "onCloud" | "inProduction" | "ONLINE" | "OFFLINE" | "SETTING_UP" | string;
 
-const ThunderboltIcon = ({ className, ...props }) => (
-  <svg
-    className={className}
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    {...props}
-  >
-    <path
-      d="M13 2L3 14H12L11 22L21 10H12L13 2Z"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
+const STATUS_CONFIG: Record<string, {
+  label: string;
+  badge: string;
+  bar: string;
+  icon: React.ReactNode;
+}> = {
+  onCloud: {
+    label: "Ready for Deployment",
+    badge:
+      "rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-700 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400",
+    bar: "border-blue-400/50",
+    icon: <Cloud className="size-5" />,
+  },
+  inProduction: {
+    label: "Live in Production",
+    badge:
+      "rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400",
+    bar: "border-emerald-400/50",
+    icon: <CheckCircle2 className="size-5" />,
+  },
+  ONLINE: {
+    label: "Online",
+    badge:
+      "rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400",
+    bar: "border-emerald-400/50",
+    icon: <CheckCircle2 className="size-5" />,
+  },
+  OFFLINE: {
+    label: "Offline",
+    badge:
+      "rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600 hover:bg-gray-100 dark:bg-white/10 dark:text-gray-400",
+    bar: "border-gray-200 dark:border-white/10",
+    icon: <Square className="size-5" />,
+  },
+  SETTING_UP: {
+    label: "Setting Up",
+    badge:
+      "rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-700 hover:bg-amber-100 dark:bg-amber-900/30 dark:text-amber-400",
+    bar: "border-amber-400/50",
+    icon: <Zap className="size-5" />,
+  },
+};
 
-const CheckCircleIcon = ({ className, ...props }) => (
-  <svg
-    className={className}
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    {...props}
-  >
-    <path
-      d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
-
-const ClockIcon = ({ className, ...props }) => (
-  <svg
-    className={className}
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    {...props}
-  >
-    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
-    <polyline
-      points="12,6 12,12 16,14"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
-
-const DeploymentUnitIcon = ({ className, ...props }) => (
-  <svg
-    className={className}
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    {...props}
-  >
-    <path
-      d="M12 2L2 7L12 12L22 7L12 2Z"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M2 17L12 22L22 17"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M2 12L12 17L22 12"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
-
-const RocketIcon = ({ className, ...props }) => (
-  <svg
-    className={className}
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    {...props}
-  >
-    <path
-      d="M4.5 16.5C4.5 12.5 7.5 6.5 12 6.5C16.5 6.5 19.5 12.5 19.5 16.5C19.5 18.5 18.5 20.5 16.5 20.5C14.5 20.5 13.5 18.5 13.5 16.5C13.5 14.5 12.5 12.5 10.5 12.5C8.5 12.5 7.5 14.5 7.5 16.5C7.5 18.5 6.5 20.5 4.5 20.5C2.5 20.5 1.5 18.5 1.5 16.5C1.5 14.5 2.5 12.5 4.5 12.5C6.5 12.5 7.5 14.5 7.5 16.5Z"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M12 6.5V2L15 5L12 6.5Z"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
-
-const StopIcon = ({ className, ...props }) => (
-  <svg
-    className={className}
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    {...props}
-  >
-    <rect
-      x="6"
-      y="6"
-      width="12"
-      height="12"
-      rx="2"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
-
-// Define status colors and styles
-const getStatusConfig = (status) => {
-  switch (status) {
-    case "ONLINE":
-      return {
-        color: "text-green-400",
-        bgColor: "bg-green-500/10",
-        borderColor: "border-green-500/20",
-        icon: <CheckCircleIcon className="h-6 w-6" />,
-        badge: "Online",
-      };
-    case "OFFLINE":
-      return {
-        color: "text-red-400",
-        bgColor: "bg-red-500/10",
-        borderColor: "border-red-500/20",
-        icon: <StopIcon className="h-6 w-6" />,
-        badge: "Offline",
-      };
-    case "SETTING_UP":
-      return {
-        color: "text-orange-400",
-        bgColor: "bg-orange-500/10",
-        borderColor: "border-orange-500/20",
-        icon: <ThunderboltIcon className="h-6 w-6" />,
-        badge: "Setting Up",
-      };
-    case "onCloud":
-      return {
-        color: "text-blue-400",
-        bgColor: "bg-blue-500/10",
-        borderColor: "border-blue-500/20",
-        icon: <CloudIcon className="h-6 w-6" />,
-        badge: "Ready for Deployment",
-      };
-    case "inProduction":
-      return {
-        color: "text-green-400",
-        bgColor: "bg-green-500/10",
-        borderColor: "border-green-500/20",
-        icon: <CheckCircleIcon className="h-6 w-6" />,
-        badge: "Live in Production",
-      };
-    default:
-      return {
-        color: "text-gray-400",
-        bgColor: "bg-gray-500/10",
-        borderColor: "border-gray-500/20",
-        icon: <ClockIcon className="h-6 w-6" />,
-        badge: "Processing",
-      };
-  }
+const DEFAULT_STATUS = {
+  label: "Processing",
+  badge:
+    "rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600 hover:bg-gray-100 dark:bg-white/10 dark:text-gray-400",
+  bar: "border-gray-200 dark:border-white/10",
+  icon: <Clock className="size-5" />,
 };
 
 export default function ModelCard({ model }) {
@@ -250,15 +78,14 @@ export default function ModelCard({ model }) {
     experiment_id,
     experiment_name: experimentName,
   } = model;
-  const navigate = useNavigate();
-  const statusConfig = getStatusConfig("onCloud");
 
-  // Handle card click to navigate to details
+  const navigate = useNavigate();
+  const cfg = STATUS_CONFIG[deployStatus] ?? DEFAULT_STATUS;
+
   const handleCardClick = () => {
     navigate(PATHS.MODEL_VIEW(project_id, id));
   };
 
-  // Handle deploy button click
   const handleDeploy = (e) => {
     e.stopPropagation();
     navigate(
@@ -266,117 +93,110 @@ export default function ModelCard({ model }) {
     );
   };
 
-  // Handle redeploy button click
-  const handleRedeploy = (e) => {
-    e.stopPropagation();
-    console.log(`Redeploying model ${id}`);
-  };
-
-  // Handle stop button click
   const handleStop = (e) => {
     e.stopPropagation();
     console.log(`Stopping model ${id}`);
   };
 
+  const handleRedeploy = (e) => {
+    e.stopPropagation();
+    console.log(`Redeploying model ${id}`);
+  };
+
   return (
-    <Card
-      className="group cursor-pointer rounded-2xl border border-[var(--border)] [background:var(--card-gradient)] shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-xl"
+    <div
+      className={`group flex cursor-pointer flex-col overflow-hidden rounded-2xl border bg-white shadow transition duration-300 hover:-translate-y-1 hover:shadow-md dark:bg-slate-900 ${cfg.bar}`}
       onClick={handleCardClick}
     >
-      <CardHeader className="pb-4">
-        <div className="flex justify-between items-start">
-          <div className="rounded-xl bg-[var(--hover-bg)] p-3">
-            <div className={statusConfig.color}>{statusConfig.icon}</div>
+      {/* Top accent bar */}
+      <div
+        className={`h-1 w-full shrink-0 ${
+          deployStatus === "inProduction" || deployStatus === "ONLINE"
+            ? "bg-gradient-to-r from-emerald-500 to-emerald-400"
+            : deployStatus === "onCloud"
+              ? "bg-gradient-to-r from-blue-500 to-blue-400"
+              : "bg-gradient-to-r from-gray-300 to-gray-200 dark:from-white/20 dark:to-white/10"
+        }`}
+      />
+
+      <div className="flex flex-1 flex-col px-5 py-4">
+        {/* Icon + status */}
+        <div className="mb-4 flex items-start justify-between gap-2">
+          <div className="flex size-11 shrink-0 items-center justify-center rounded-xl border border-gray-200 bg-gradient-to-br from-blue-500/10 to-blue-600/5 dark:border-white/10 dark:from-blue-500/15 dark:to-blue-600/10">
+            <span className="text-blue-500 dark:text-blue-400">{cfg.icon}</span>
           </div>
-          <div className="flex flex-col gap-2">
-            <div
-              className={`rounded-full border px-3 py-1 text-xs font-medium ${statusConfig.borderColor} bg-[var(--hover-bg)] text-[var(--text)]`}
-            >
-              {statusConfig.badge}
-            </div>
-            <div className="rounded bg-[var(--hover-bg)] px-2 py-1 text-xs font-medium text-[var(--secondary-text)]">
+          <div className="flex flex-col items-end gap-1.5">
+            <Badge className={cfg.badge}>{cfg.label}</Badge>
+            <span className="rounded-md border border-gray-200 bg-gray-50 px-1.5 py-0.5 text-[11px] font-medium text-gray-500 dark:border-white/10 dark:bg-white/5 dark:text-gray-400">
               ID: {id}
-            </div>
+            </span>
           </div>
         </div>
-      </CardHeader>
 
-      <CardContent className="pt-0">
-        <CardTitle className="mb-3 text-lg font-semibold text-[var(--text)] transition-colors">
+        {/* Name */}
+        <h2 className="mb-1 truncate text-base font-bold leading-tight text-gray-900 dark:text-white">
           {name}
-        </CardTitle>
+        </h2>
 
-        <div className="mb-4 space-y-2 text-sm text-[var(--secondary-text)]">
+        {/* Divider */}
+        <div className="my-3 h-px w-full bg-gradient-to-r from-transparent via-gray-200 to-transparent dark:via-white/10" />
+
+        {/* Meta */}
+        <div className="mb-4 flex flex-col gap-2 text-xs text-gray-500 dark:text-gray-400">
           {experimentName && (
-            <p className="flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-[var(--secondary-text)]"></span>
-              Experiment: {experimentName}
-            </p>
+            <div className="flex items-center justify-between">
+              <span className="text-gray-400 dark:text-gray-500">Experiment</span>
+              <span className="max-w-[140px] truncate text-right font-semibold text-gray-800 dark:text-gray-200">
+                {experimentName}
+              </span>
+            </div>
           )}
           {createdAt && (
-            <p className="flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-[var(--secondary-text)]"></span>
-              Created {dayjs(createdAt).fromNow()}
-            </p>
+            <div className="flex items-center justify-between">
+              <span className="text-gray-400 dark:text-gray-500">Created</span>
+              <span className="font-semibold text-gray-800 dark:text-gray-200">
+                {dayjs(createdAt).fromNow()}
+              </span>
+            </div>
           )}
         </div>
 
-        {/* Action Buttons based on status */}
-        <div className="flex gap-2">
-          {deployStatus === "onCloud" && (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    size="sm"
-                    className="border border-[var(--border)] [background:var(--button-gradient)] text-white"
-                    onClick={handleDeploy}
-                  >
-                    <RocketIcon className="h-4 w-4 mr-1" />
-                    Deploy
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Deploy this model to production</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          )}
-
-          {deployStatus === "inProduction" && (
-            <>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={handleStop}
-                    >
-                      <StopIcon className="h-4 w-4 mr-1" />
-                      Stop
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Stop this model in production</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      size="sm"
-                      className="border border-[var(--border)] [background:var(--button-gradient)] text-white"
-                      onClick={handleRedeploy}
-                    >
-                      <DeploymentUnitIcon className="h-4 w-4 mr-1" />
-                      Redeploy
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Redeploy this model</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </>
-          )}
-        </div>
-      </CardContent>
-    </Card>
+        {/* Action Buttons */}
+        {(deployStatus === "onCloud" || deployStatus === "inProduction") && (
+          <div className="flex gap-2">
+            {deployStatus === "onCloud" && (
+              <Button
+                size="sm"
+                onClick={handleDeploy}
+                className="h-8 flex-1 rounded-xl bg-blue-600 px-3 text-xs font-semibold text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400"
+              >
+                <Rocket className="size-3.5" />
+                Deploy
+              </Button>
+            )}
+            {deployStatus === "inProduction" && (
+              <>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={handleStop}
+                  className="h-8 flex-1 rounded-xl px-3 text-xs font-semibold"
+                >
+                  <Square className="size-3.5" />
+                  Stop
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={handleRedeploy}
+                  className="h-8 flex-1 rounded-xl bg-blue-600 px-3 text-xs font-semibold text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400"
+                >
+                  Redeploy
+                </Button>
+              </>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

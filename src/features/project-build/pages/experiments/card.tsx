@@ -1,11 +1,11 @@
-import React from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { PATHS } from "src/constants/paths";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { Badge } from "src/components/ui/badge";
 import {
-  CheckCircle,
+  CheckCircle2,
   AlertCircle,
   Loader2,
   Settings,
@@ -23,65 +23,62 @@ type Experiment = {
   framework?: string;
 };
 
-type StatusConfig = {
-  iconColor: string;
-  bgColor: string;
-  borderColor: string;
-  textColor: string;
+const STATUS_CONFIG: Record<string, {
+  label: string;
   badge: string;
+  bar: string;
+  iconColor: string;
   icon: React.ReactNode;
+}> = {
+  DONE: {
+    label: "Completed",
+    badge:
+      "rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400",
+    bar: "border-emerald-400/50",
+    iconColor: "text-emerald-500 dark:text-emerald-400",
+    icon: <CheckCircle2 className="size-5" />,
+  },
+  TRAINING: {
+    label: "Training",
+    badge:
+      "rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-700 hover:bg-amber-100 dark:bg-amber-900/30 dark:text-amber-400",
+    bar: "border-amber-400/50",
+    iconColor: "text-amber-500 dark:text-amber-400",
+    icon: <Loader2 className="size-5 animate-spin" />,
+  },
+  SETTING_UP: {
+    label: "Setting Up",
+    badge:
+      "rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-700 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400",
+    bar: "border-blue-400/50",
+    iconColor: "text-blue-500 dark:text-blue-400",
+    icon: <Settings className="size-5" />,
+  },
+  CREATING_INSTANCE: {
+    label: "Setting Up",
+    badge:
+      "rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-700 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400",
+    bar: "border-blue-400/50",
+    iconColor: "text-blue-500 dark:text-blue-400",
+    icon: <Settings className="size-5" />,
+  },
+  FAILED: {
+    label: "Failed",
+    badge:
+      "rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-700 hover:bg-red-100 dark:bg-red-900/30 dark:text-red-400",
+    bar: "border-red-400/50",
+    iconColor: "text-red-500 dark:text-red-400",
+    icon: <AlertCircle className="size-5" />,
+  },
 };
 
-// Define status colors and styles
-const getStatusConfig = (status: string): StatusConfig => {
-  switch (status) {
-    case "DONE":
-      return {
-        iconColor: "text-emerald-500",
-        bgColor: "bg-emerald-50 dark:bg-emerald-950/20",
-        borderColor: "border-emerald-200 dark:border-emerald-700",
-        textColor: "text-emerald-700 dark:text-emerald-400",
-        icon: <CheckCircle className="h-6 w-6" />,
-        badge: "Completed",
-      };
-    case "TRAINING":
-      return {
-        iconColor: "text-amber-500",
-        bgColor: "bg-amber-50 dark:bg-amber-950/20",
-        borderColor: "border-amber-200 dark:border-amber-700",
-        textColor: "text-amber-700 dark:text-amber-400",
-        icon: <Loader2 className="h-6 w-6 animate-spin" />,
-        badge: "Training",
-      };
-    case "SETTING_UP":
-    case "CREATING_INSTANCE":
-      return {
-        iconColor: "text-blue-500",
-        bgColor: "bg-blue-50 dark:bg-blue-950/20",
-        borderColor: "border-blue-200 dark:border-blue-700",
-        textColor: "text-blue-700 dark:text-blue-400",
-        icon: <Settings className="h-6 w-6" />,
-        badge: "Setting Up",
-      };
-    case "FAILED":
-      return {
-        iconColor: "text-red-500",
-        bgColor: "bg-red-50 dark:bg-red-950/20",
-        borderColor: "border-red-200 dark:border-red-700",
-        textColor: "text-red-700 dark:text-red-400",
-        icon: <AlertCircle className="h-6 w-6" />,
-        badge: "Failed",
-      };
-    default:
-      return {
-        iconColor: "text-gray-500",
-        bgColor: "bg-gray-50 dark:bg-gray-950/20",
-        borderColor: "border-gray-200 dark:border-gray-700",
-        textColor: "text-gray-700 dark:text-gray-400",
-        icon: <Beaker className="h-6 w-6" />,
-        badge: "Unknown",
-      };
-  }
+const DEFAULT_STATUS = {
+  label: "Unknown",
+  badge:
+    "rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600 hover:bg-gray-100 dark:bg-white/10 dark:text-gray-400",
+  bar: "border-gray-200 dark:border-white/10",
+  iconColor: "text-gray-500 dark:text-gray-400",
+  icon: <Beaker className="size-5" />,
 };
 
 export default function ExperimentCard({
@@ -91,12 +88,12 @@ export default function ExperimentCard({
 }) {
   const { id, project_id, name, start_time, status, framework } = experiment;
   const navigate = useNavigate();
-  const statusConfig = getStatusConfig(status);
+  const cfg = STATUS_CONFIG[status] ?? DEFAULT_STATUS;
+  const isClickable = status !== "FAILED";
 
-  // Handle card click
   const handleCardClick = () => {
     if (status === "FAILED") {
-      toast.error("Failed experiment");
+      toast.error("This experiment failed and cannot be viewed.");
       return;
     }
     navigate(
@@ -108,42 +105,68 @@ export default function ExperimentCard({
 
   return (
     <div
-      className="group cursor-pointer rounded-2xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-slate-900 p-6 transition-all duration-300 hover:scale-105 hover:border-gray-400 dark:hover:border-gray-600"
+      className={`group flex flex-col overflow-hidden rounded-2xl border bg-white shadow transition duration-300 dark:bg-slate-900 ${cfg.bar} ${isClickable ? "cursor-pointer hover:-translate-y-1 hover:shadow-md" : "cursor-default opacity-75"}`}
       onClick={handleCardClick}
     >
-      <div className="flex justify-between items-start mb-4">
-        <div className={`rounded-xl p-3 ${statusConfig.bgColor}`}>
-          <div className={statusConfig.iconColor}>{statusConfig.icon}</div>
-        </div>
-        <div className="flex flex-col gap-2">
-          <div
-            className={`rounded-full border px-3 py-1 text-xs font-medium ${statusConfig.borderColor} ${statusConfig.bgColor} ${statusConfig.textColor}`}
-          >
-            {statusConfig.badge}
-          </div>
-          <div className="rounded bg-gray-100 dark:bg-slate-800 px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-400">
-            ID: {id}
-          </div>
-        </div>
-      </div>
+      {/* Top accent bar */}
+      <div
+        className={`h-1 w-full shrink-0 ${
+          status === "DONE"
+            ? "bg-gradient-to-r from-emerald-500 to-emerald-400"
+            : status === "FAILED"
+              ? "bg-gradient-to-r from-red-500 to-red-400"
+              : status === "TRAINING"
+                ? "bg-gradient-to-r from-amber-500 to-amber-400"
+                : "bg-gradient-to-r from-blue-500 to-blue-400"
+        }`}
+      />
 
-      <div className="pt-0">
-        <h3 className="mb-3 text-lg font-semibold text-gray-900 dark:text-white transition-colors">
+      <div className="flex flex-1 flex-col px-5 py-4">
+        {/* Icon + status */}
+        <div className="mb-4 flex items-start justify-between gap-2">
+          <div className="flex size-11 shrink-0 items-center justify-center rounded-xl border border-gray-200 bg-gradient-to-br from-blue-500/10 to-blue-600/5 dark:border-white/10 dark:from-blue-500/15 dark:to-blue-600/10">
+            <span className={cfg.iconColor}>{cfg.icon}</span>
+          </div>
+          <div className="flex flex-col items-end gap-1.5">
+            <Badge className={cfg.badge}>
+              {(status === "TRAINING" ||
+                status === "SETTING_UP" ||
+                status === "CREATING_INSTANCE") && (
+                <span className="mr-1 inline-block size-1.5 animate-pulse rounded-full bg-current" />
+              )}
+              {cfg.label}
+            </Badge>
+            <span className="rounded-md border border-gray-200 bg-gray-50 px-1.5 py-0.5 text-[11px] font-medium text-gray-500 dark:border-white/10 dark:bg-white/5 dark:text-gray-400">
+              ID: {id}
+            </span>
+          </div>
+        </div>
+
+        {/* Name */}
+        <h2 className="mb-1 truncate text-base font-bold leading-tight text-gray-900 dark:text-white">
           {name}
-        </h3>
+        </h2>
 
-        <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+        {/* Divider */}
+        <div className="my-3 h-px w-full bg-gradient-to-r from-transparent via-gray-200 to-transparent dark:via-white/10" />
+
+        {/* Meta */}
+        <div className="flex flex-col gap-2 text-xs">
           {start_time && (
-            <p className="flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-gray-400 dark:bg-gray-600"></span>
-              Created {dayjs(start_time).fromNow()}
-            </p>
+            <div className="flex items-center justify-between">
+              <span className="text-gray-400 dark:text-gray-500">Started</span>
+              <span className="font-semibold text-gray-800 dark:text-gray-200">
+                {dayjs(start_time).fromNow()}
+              </span>
+            </div>
           )}
           {framework && (
-            <p className="flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-gray-400 dark:bg-gray-600"></span>
-              Framework: {framework.toLowerCase()}
-            </p>
+            <div className="flex items-center justify-between">
+              <span className="text-gray-400 dark:text-gray-500">Framework</span>
+              <span className="font-semibold capitalize text-gray-800 dark:text-gray-200">
+                {framework.toLowerCase()}
+              </span>
+            </div>
           )}
         </div>
       </div>

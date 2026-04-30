@@ -1,26 +1,16 @@
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "src/components/ui/card";
-import { CustomSelect, Option } from "src/components/ui/custom-select";
-import { RadioGroup, RadioGroupItem } from "src/components/ui/radio-group";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "src/components/ui/select";
 import { Button } from "src/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "src/components/ui/tooltip";
-import {
-  ArrowRight,
-  Info,
-  Sliders,
-  Search,
-  ArrowUp,
-  ArrowDown,
-} from "lucide-react";
+import { Input } from "src/components/ui/input";
+import { ArrowRight, Sliders, Search, ArrowUp, ArrowDown } from "lucide-react";
+
+const selectItemClass =
+  "h-8 rounded-lg px-2.5 pr-8 text-sm text-gray-700 focus:bg-blue-50 focus:text-blue-700 dark:text-gray-200 dark:focus:bg-blue-500/15 dark:focus:text-blue-100";
 
 export function LabelProjectFiltersSidebar({
   searchQuery,
@@ -39,221 +29,194 @@ export function LabelProjectFiltersSidebar({
   onContinue,
 }) {
   return (
-    <Card className="rounded-2xl border border-gray-200 bg-white dark:border-white/10 dark:bg-slate-900/50 h-full w-full flex flex-col">
-      <CardHeader className="pb-4">
-        <CardTitle className="flex items-center gap-3 text-lg font-bold text-gray-900 dark:text-white">
-          <Sliders className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+    <div className="flex w-full flex-col gap-5 rounded-2xl border border-gray-200 bg-white p-5 dark:border-white/10 dark:bg-slate-900">
+      {/* Header */}
+      <div className="flex items-center gap-2 border-b border-gray-100 pb-4 dark:border-white/10">
+        <Sliders className="size-4 text-blue-600 dark:text-blue-400" />
+        <span className="text-sm font-semibold text-gray-900 dark:text-white">
           Filter Options
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Search Input */}
-        <div>
-          <label className="flex items-center gap-2 text-sm font-medium mb-3 text-gray-900 dark:text-white">
-            Search by Name
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className="h-4 w-4 cursor-help text-gray-400 dark:text-gray-500" />
-                </TooltipTrigger>
-                <TooltipContent>Search for projects by name</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </label>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
-            <input
-              type="text"
-              placeholder="Search projects..."
-              value={searchQuery}
-              onChange={(e) => onSearchChange(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 rounded-xl border border-gray-200 bg-white text-sm text-gray-900 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-500/30 dark:border-white/20 dark:bg-white/10 dark:text-white"
-            />
-          </div>
+        </span>
+      </div>
+
+      {/* Search */}
+      <div className="flex flex-col gap-1.5">
+        <label className="text-xs font-medium text-gray-600 dark:text-gray-400">
+          Search by Name
+        </label>
+        <div className="relative">
+          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-gray-400" />
+          <Input
+            type="text"
+            placeholder="Search projects..."
+            value={searchQuery}
+            onChange={(e) => onSearchChange(e.target.value)}
+            className="h-10 rounded-xl border-gray-200 bg-white pl-9 text-sm text-gray-900 placeholder:text-gray-400 focus-visible:border-blue-400 focus-visible:ring-blue-500/30 dark:border-white/20 dark:bg-white/10 dark:text-white dark:placeholder:text-gray-500"
+          />
         </div>
+      </div>
 
-        {/* Sort Options */}
-        <div>
-          <label className="flex items-center gap-2 text-sm font-medium mb-3 text-gray-900 dark:text-white">
-            Sort by
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className="h-4 w-4 cursor-help text-gray-400 dark:text-gray-500" />
-                </TooltipTrigger>
-                <TooltipContent>Choose how to sort the projects</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </label>
-          <div className="flex items-center gap-2 w-full">
-            <div className="flex-1">
-              <CustomSelect
-                value={sortBy}
-                onChange={onSortByChange}
-                placeholder="Sort by"
-                className="theme-dropdown w-full"
-              >
-                <Option value="name">Name</Option>
-                <Option value="date">Date Added</Option>
-              </CustomSelect>
-            </div>
-
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() =>
-                      onSortDirectionChange(
-                        sortDirection === "asc" ? "desc" : "asc",
-                      )
-                    }
-                    className="p-2 h-8 w-8 flex-shrink-0 border border-gray-200 bg-white text-gray-900 hover:bg-gray-50 dark:border-white/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
-                  >
-                    {sortDirection === "asc" ? (
-                      <ArrowUp className="h-4 w-4" />
-                    ) : (
-                      <ArrowDown className="h-4 w-4" />
-                    )}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  Sort {sortDirection === "asc" ? "Ascending" : "Descending"}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-        </div>
-
-        {/* Cloud Service Filter */}
-        <div>
-          <label className="flex items-center gap-2 text-sm font-medium mb-3 text-gray-900 dark:text-white">
-            Cloud Service
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className="h-4 w-4 cursor-help text-gray-400 dark:text-gray-500" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  Choose the cloud storage service where your label project is
-                  stored
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </label>
-          <CustomSelect
-            value={serviceFilter}
-            onChange={onServiceFilterChange}
-            placeholder="Select Service"
-            className="theme-dropdown"
+      {/* Sort by */}
+      <div className="flex flex-col gap-1.5">
+        <label className="text-xs font-medium text-gray-600 dark:text-gray-400">
+          Sort by
+        </label>
+        <div className="flex items-center gap-2">
+          <Select
+            value={sortBy ?? "__name__"}
+            onValueChange={(v) => onSortByChange(v === "__name__" ? "name" : v)}
           >
-            <Option value="">All Services</Option>
-            <Option value="AWS_S3">Amazon S3</Option>
-            <Option value="GCP_STORAGE">Google Cloud Storage</Option>
-          </CustomSelect>
-        </div>
-
-        {/* Storage Bucket Filter */}
-        <div>
-          <label className="flex items-center gap-2 text-sm font-medium mb-3 text-gray-900 dark:text-white">
-            Storage Bucket
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className="h-4 w-4 cursor-help text-gray-400 dark:text-gray-500" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  Select the specific storage bucket containing your label
-                  project
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </label>
-          <CustomSelect
-            value={bucketFilter}
-            onChange={onBucketFilterChange}
-            placeholder="Select Bucket"
-            className="theme-dropdown"
-          >
-            <Option value="">All Buckets</Option>
-            <Option value="user-private-project">User Private Project</Option>
-            <Option value="bucket-1">Bucket 1</Option>
-          </CustomSelect>
-        </div>
-
-        {/* Project Status Filter */}
-        <div>
-          <label className="flex items-center gap-2 text-sm font-medium mb-3 text-gray-900 dark:text-white">
-            Project Status
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className="h-4 w-4 cursor-help text-gray-400 dark:text-gray-500" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  Filter projects based on whether they're already labeled
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </label>
-          <RadioGroup
-            value={labeledFilter}
-            onValueChange={onLabeledFilterChange}
-            className="space-y-3"
-          >
-            <div
-              className="flex items-center space-x-3 cursor-pointer"
-              onClick={() => onLabeledFilterChange("")}
+            <SelectTrigger className="h-10 flex-1 rounded-xl border-gray-200 bg-white text-sm text-gray-900 focus-visible:border-blue-400 focus-visible:ring-blue-500/30 dark:border-white/20 dark:bg-white/10 dark:text-white">
+              <SelectValue placeholder="Sort by" />
+            </SelectTrigger>
+            <SelectContent
+              align="start"
+              position="popper"
+              className="z-[1100] rounded-xl border border-gray-200 bg-white p-1.5 dark:border-white/10 dark:bg-slate-950"
             >
-              <RadioGroupItem value="" id="all" />
-              <label
-                htmlFor="all"
-                className="cursor-pointer text-sm text-gray-700 dark:text-gray-300"
-              >
-                All Projects
-              </label>
-            </div>
-            <div
-              className="flex items-center space-x-3 cursor-pointer"
-              onClick={() => onLabeledFilterChange("yes")}
-            >
-              <RadioGroupItem value="yes" id="labeled" />
-              <label
-                htmlFor="labeled"
-                className="cursor-pointer text-sm text-gray-700 dark:text-gray-300"
-              >
-                Labeled Projects
-              </label>
-            </div>
-            <div
-              className="flex items-center space-x-3 cursor-pointer"
-              onClick={() => onLabeledFilterChange("no")}
-            >
-              <RadioGroupItem value="no" id="unlabeled" />
-              <label
-                htmlFor="unlabeled"
-                className="cursor-pointer text-sm text-gray-700 dark:text-gray-300"
-              >
-                Unlabeled Projects
-              </label>
-            </div>
-          </RadioGroup>
-        </div>
-
-        {/* Continue Button */}
-        {selectedRowKey && (
+              <SelectItem value="name" className={selectItemClass}>
+                Name
+              </SelectItem>
+              <SelectItem value="date" className={selectItemClass}>
+                Date Added
+              </SelectItem>
+            </SelectContent>
+          </Select>
           <Button
-            onClick={onContinue}
-            className="w-full font-semibold py-5 px-4 rounded-xl transition bg-blue-600 hover:bg-blue-700 text-white"
+            variant="outline"
+            size="icon"
+            onClick={() =>
+              onSortDirectionChange(sortDirection === "asc" ? "desc" : "asc")
+            }
+            className="size-10 shrink-0 rounded-xl border-gray-200 bg-white text-gray-700 hover:bg-gray-50 dark:border-white/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
+            aria-label={`Sort ${sortDirection === "asc" ? "descending" : "ascending"}`}
           >
-            <span className="flex items-center justify-center gap-2">
-              Go to Training
-              <ArrowRight className="h-4 w-4" />
-            </span>
+            {sortDirection === "asc" ? (
+              <ArrowUp className="size-4" />
+            ) : (
+              <ArrowDown className="size-4" />
+            )}
           </Button>
-        )}
-      </CardContent>
-    </Card>
+        </div>
+      </div>
+
+      {/* Cloud Service */}
+      <div className="flex flex-col gap-1.5">
+        <label className="text-xs font-medium text-gray-600 dark:text-gray-400">
+          Cloud Service
+        </label>
+        <Select
+          value={serviceFilter || "__all__"}
+          onValueChange={(v) => onServiceFilterChange(v === "__all__" ? "" : v)}
+        >
+          <SelectTrigger className="h-10 w-full rounded-xl border-gray-200 bg-white text-sm text-gray-900 focus-visible:border-blue-400 focus-visible:ring-blue-500/30 dark:border-white/20 dark:bg-white/10 dark:text-white">
+            <SelectValue placeholder="All Services" />
+          </SelectTrigger>
+          <SelectContent
+            align="start"
+            position="popper"
+            className="z-[1100] rounded-xl border border-gray-200 bg-white p-1.5 dark:border-white/10 dark:bg-slate-950"
+          >
+            <SelectItem value="__all__" className={selectItemClass}>
+              All Services
+            </SelectItem>
+            <SelectItem value="AWS_S3" className={selectItemClass}>
+              Amazon S3
+            </SelectItem>
+            <SelectItem value="GCP_STORAGE" className={selectItemClass}>
+              Google Cloud Storage
+            </SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Storage Bucket */}
+      <div className="flex flex-col gap-1.5">
+        <label className="text-xs font-medium text-gray-600 dark:text-gray-400">
+          Storage Bucket
+        </label>
+        <Select
+          value={bucketFilter || "__all__"}
+          onValueChange={(v) => onBucketFilterChange(v === "__all__" ? "" : v)}
+        >
+          <SelectTrigger className="h-10 w-full rounded-xl border-gray-200 bg-white text-sm text-gray-900 focus-visible:border-blue-400 focus-visible:ring-blue-500/30 dark:border-white/20 dark:bg-white/10 dark:text-white">
+            <SelectValue placeholder="All Buckets" />
+          </SelectTrigger>
+          <SelectContent
+            align="start"
+            position="popper"
+            className="z-[1100] rounded-xl border border-gray-200 bg-white p-1.5 dark:border-white/10 dark:bg-slate-950"
+          >
+            <SelectItem value="__all__" className={selectItemClass}>
+              All Buckets
+            </SelectItem>
+            <SelectItem
+              value="user-private-project"
+              className={selectItemClass}
+            >
+              User Private Project
+            </SelectItem>
+            <SelectItem value="bucket-1" className={selectItemClass}>
+              Bucket 1
+            </SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Project Status */}
+      <div className="flex flex-col gap-2">
+        <label className="text-xs font-medium text-gray-600 dark:text-gray-400">
+          Project Status
+        </label>
+        <div className="flex flex-col gap-2">
+          {[
+            { value: "", id: "all", label: "All Projects" },
+            { value: "yes", id: "labeled", label: "Labeled" },
+            { value: "no", id: "unlabeled", label: "Unlabeled" },
+          ].map(({ value, id, label }) => {
+            const isSelected = labeledFilter === value;
+            return (
+              <div
+                key={id}
+                className="flex cursor-pointer items-center gap-2.5"
+                onClick={() => onLabeledFilterChange(value)}
+              >
+                <button
+                  type="button"
+                  id={id}
+                  aria-checked={isSelected}
+                  role="radio"
+                  className={`inline-flex size-5 shrink-0 items-center justify-center rounded-full border transition-colors ${
+                    isSelected
+                      ? "border-blue-600 bg-blue-600 dark:border-blue-500 dark:bg-blue-500"
+                      : "border-gray-300 hover:border-blue-500 dark:border-gray-600 dark:hover:border-blue-400"
+                  }`}
+                >
+                  {isSelected && (
+                    <span className="block size-2 rounded-full bg-white" />
+                  )}
+                </button>
+                <label
+                  htmlFor={id}
+                  className="cursor-pointer text-sm text-gray-700 dark:text-gray-300"
+                >
+                  {label}
+                </label>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Continue */}
+      {selectedRowKey && (
+        <Button
+          onClick={onContinue}
+          className="h-10 w-full rounded-xl bg-blue-600 px-4 text-sm font-semibold text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400"
+        >
+          Go to Training
+          <ArrowRight className="size-4" />
+        </Button>
+      )}
+    </div>
   );
 }

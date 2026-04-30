@@ -1,13 +1,12 @@
-import { Alert, AlertDescription, AlertTitle } from "src/components/ui/alert";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "src/components/ui/tooltip";
-import { Card, CardContent } from "src/components/ui/card";
-import { Cloud, Info } from "lucide-react";
-import create_project from "src/assets/images/create_project.png";
+import { Cloud, Info, FolderOpen } from "lucide-react";
+import { Button } from "src/components/ui/button";
+import { Spinner } from "src/components/ui/spinner";
 import BuildPager from "src/features/project-build/pages/build/BuildPager";
 import {
   Table,
@@ -34,55 +33,51 @@ export function LabelProjectsTable({
   onShowCreateDatasetModal,
 }) {
   return (
-    <Card className="rounded-2xl border border-gray-200 bg-white dark:border-white/10 dark:bg-slate-900/50 h-full w-full flex flex-col">
-      <CardContent className="p-6 flex-1">
-        <Alert className="mb-6 border border-blue-200 bg-blue-50 dark:border-blue-900/30 dark:bg-blue-900/10 rounded-xl">
-          <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-          <AlertTitle className="font-medium text-gray-900 dark:text-white">
-            Need help choosing a label project?
-          </AlertTitle>
-          <AlertDescription className="mt-1 text-sm text-gray-700 dark:text-gray-300">
-            If you're unsure about which project to select, look for one that
-            matches your task type and is already labeled (marked with 'Yes').
-            This will help you get started faster.
-          </AlertDescription>
-        </Alert>
+    <div className="flex h-full w-full flex-col rounded-2xl border border-gray-200 bg-white dark:border-white/10 dark:bg-slate-900">
+      {/* Info banner */}
+      <div className="flex items-start gap-3 rounded-t-2xl border-b border-gray-100 bg-blue-50/60 px-5 py-3.5 dark:border-white/10 dark:bg-blue-900/10">
+        <Info className="mt-0.5 size-4 shrink-0 text-blue-600 dark:text-blue-400" />
+        <p className="text-sm text-gray-700 dark:text-gray-300">
+          Select a labeled project to use as training data. Projects without labels cannot be selected.
+        </p>
+      </div>
 
+      <div className="flex-1 p-5">
         {tableLoading ? (
-          <div className="flex items-center justify-center py-16">
-            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"></div>
-            <span className="ml-4 text-gray-600 dark:text-gray-400 text-sm">
-              Processing label project creation...
+          <div className="flex min-h-52 items-center justify-center gap-3">
+            <Spinner className="size-5 text-blue-500" />
+            <span className="text-sm text-gray-500 dark:text-gray-400">
+              Processing label project creation…
             </span>
           </div>
         ) : hasProjects ? (
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow className="border-b border-gray-200 dark:border-white/10">
-                  <TableHead className="w-12 text-center py-4 bg-gray-50 dark:bg-slate-800 font-semibold text-gray-900 dark:text-white" />
-                  <TableHead className="font-semibold text-left py-4 bg-gray-50 dark:bg-slate-800 text-gray-900 dark:text-white">
+                <TableRow className="border-b border-gray-100 dark:border-white/10">
+                  <TableHead className="w-12 bg-gray-50/80 py-3 text-center font-semibold text-gray-700 dark:bg-white/5 dark:text-gray-300" />
+                  <TableHead className="bg-gray-50/80 py-3 text-left font-semibold text-gray-700 dark:bg-white/5 dark:text-gray-300">
                     Title
                   </TableHead>
-                  <TableHead className="font-semibold text-center py-4 bg-gray-50 dark:bg-slate-800 text-gray-900 dark:text-white">
+                  <TableHead className="bg-gray-50/80 py-3 text-center font-semibold text-gray-700 dark:bg-white/5 dark:text-gray-300">
                     Service
                   </TableHead>
-                  <TableHead className="font-semibold text-center py-4 bg-gray-50 dark:bg-slate-800 text-gray-900 dark:text-white">
+                  <TableHead className="bg-gray-50/80 py-3 text-center font-semibold text-gray-700 dark:bg-white/5 dark:text-gray-300">
                     Bucket
                   </TableHead>
-                  <TableHead className="font-semibold text-center py-4 bg-gray-50 dark:bg-slate-800 text-gray-900 dark:text-white">
+                  <TableHead className="bg-gray-50/80 py-3 text-center font-semibold text-gray-700 dark:bg-white/5 dark:text-gray-300">
                     Labeled
                   </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredProjects.length === 0 ? (
-                  <TableRow className="border-b border-gray-200 dark:border-white/10">
-                    <TableCell colSpan={5} className="text-center py-16">
-                      <div className="text-gray-500 dark:text-gray-400">
-                        <Cloud className="h-16 w-16 mx-auto mb-4 opacity-30" />
+                  <TableRow>
+                    <TableCell colSpan={5} className="py-16 text-center">
+                      <div className="flex flex-col items-center gap-3 text-gray-400 dark:text-gray-500">
+                        <Cloud className="size-10 opacity-40" />
                         <p className="text-sm">
-                          No label projects match your current filters
+                          No label projects match your current filters.
                         </p>
                       </div>
                     </TableCell>
@@ -91,19 +86,17 @@ export function LabelProjectsTable({
                   paginatedProjects.map((project) => (
                     <TableRow
                       key={project.project_id}
-                      className={`border-b border-gray-200 dark:border-white/10 transition-all duration-200 ${
+                      className={`border-b border-gray-100 transition-colors dark:border-white/10 ${
                         project.isLabeled
-                          ? "cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-800/50"
-                          : "opacity-50 cursor-not-allowed"
+                          ? "cursor-pointer hover:bg-gray-50 dark:hover:bg-white/5"
+                          : "cursor-not-allowed opacity-50"
                       } ${
                         selectedRowKey === project.project_id
                           ? "bg-blue-50 dark:bg-blue-900/20"
                           : ""
                       }`}
                       onClick={() => {
-                        if (project.isLabeled) {
-                          onSelectRow(project.project_id);
-                        }
+                        if (project.isLabeled) onSelectRow(project.project_id);
                       }}
                     >
                       <TableCell className="py-4 text-center">
@@ -111,38 +104,36 @@ export function LabelProjectsTable({
                           type="button"
                           onClick={(e) => {
                             e.stopPropagation();
-                            if (project.isLabeled) {
-                              onSelectRow(project.project_id);
-                            }
+                            if (project.isLabeled) onSelectRow(project.project_id);
                           }}
-                          className={`inline-flex h-5 w-5 items-center justify-center rounded-full border transition-colors ${
+                          className={`inline-flex size-5 items-center justify-center rounded-full border transition-colors ${
                             project.isLabeled
                               ? selectedRowKey === project.project_id
                                 ? "border-blue-600 bg-blue-600 text-white"
-                                : "border-gray-400 text-gray-400 hover:border-blue-600 dark:border-gray-500 dark:hover:border-blue-400"
-                              : "border-gray-300 text-gray-300 cursor-not-allowed dark:border-gray-600"
+                                : "border-gray-300 hover:border-blue-500 dark:border-gray-600 dark:hover:border-blue-400"
+                              : "cursor-not-allowed border-gray-200 dark:border-gray-700"
                           }`}
                           aria-label={
                             selectedRowKey === project.project_id
-                              ? "Selected label project"
+                              ? "Selected"
                               : "Select label project"
                           }
                         >
                           {selectedRowKey === project.project_id && (
-                            <span className="block h-2.5 w-2.5 rounded-full bg-white" />
+                            <span className="block size-2.5 rounded-full bg-white" />
                           )}
                         </button>
                       </TableCell>
-                      <TableCell className="font-medium py-4 text-gray-900 dark:text-white">
+                      <TableCell className="py-4 font-medium text-gray-900 dark:text-white">
                         {project.title}
                       </TableCell>
-                      <TableCell className="text-center py-4">
+                      <TableCell className="py-4 text-center">
                         {renderServiceTag(project.service)}
                       </TableCell>
-                      <TableCell className="text-center py-4 text-gray-600 dark:text-gray-400 text-sm">
+                      <TableCell className="py-4 text-center text-sm text-gray-600 dark:text-gray-400">
                         {project.bucketName}
                       </TableCell>
-                      <TableCell className="text-center py-4">
+                      <TableCell className="py-4 text-center">
                         {project.isLabeled ? (
                           renderLabeledTag(project.isLabeled)
                         ) : (
@@ -154,8 +145,7 @@ export function LabelProjectsTable({
                                 </span>
                               </TooltipTrigger>
                               <TooltipContent>
-                                This project has no labeled data and cannot be
-                                selected
+                                No labeled data — cannot be selected
                               </TooltipContent>
                             </Tooltip>
                           </TooltipProvider>
@@ -168,32 +158,38 @@ export function LabelProjectsTable({
             </Table>
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-12">
-            <img
-              src={create_project}
-              alt="Create project"
-              className="w-[300px] max-w-[90%] cursor-pointer"
-              onClick={onShowCreateDatasetModal}
-            />
-            <div className="mt-6 text-center">
-              <div className="text-gray-900 dark:text-white text-xl font-semibold">
-                No Label Projects Yet
-              </div>
-              <div className="text-gray-500 dark:text-gray-400 text-sm mt-2">
-                Start by creating your Label Projects
-              </div>
+          <div className="flex min-h-[280px] flex-col items-center justify-center gap-4 text-center">
+            <div className="flex size-14 items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5">
+              <FolderOpen className="size-6 text-blue-500 dark:text-blue-400" />
             </div>
+            <div>
+              <p className="text-base font-semibold text-gray-900 dark:text-white">
+                No label projects yet
+              </p>
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                Create a label project to get started.
+              </p>
+            </div>
+            <Button
+              onClick={onShowCreateDatasetModal}
+              className="h-9 rounded-xl bg-blue-600 px-4 text-sm font-semibold text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400"
+            >
+              Create Label Project
+            </Button>
           </div>
         )}
-      </CardContent>
-      <div className="px-6 pb-6 pt-0 shrink-0 border-t border-gray-200 dark:border-white/10">
-        <BuildPager
-          currentPage={currentPage}
-          totalItems={totalItems}
-          pageSize={pageSize}
-          onPageChange={onPageChange}
-        />
       </div>
-    </Card>
+
+      {hasProjects && (
+        <div className="shrink-0 border-t border-gray-100 px-5 py-4 dark:border-white/10">
+          <BuildPager
+            currentPage={currentPage}
+            totalItems={totalItems}
+            pageSize={pageSize}
+            onPageChange={onPageChange}
+          />
+        </div>
+      )}
+    </div>
   );
 }
