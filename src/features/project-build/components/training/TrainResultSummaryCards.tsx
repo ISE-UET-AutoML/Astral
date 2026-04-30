@@ -1,4 +1,3 @@
-import React from "react";
 import { Trophy, Clock, FlaskConical } from "lucide-react";
 
 const StatCard = ({ icon: Icon, title, value, suffix }) => (
