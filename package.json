@@ -6,7 +6,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@headlessui/react": "latest",
     "@monaco-editor/react": "latest",
     "@react-spring/web": "latest",
     "axios": "latest",
