@@ -94,8 +94,9 @@ export default function Projects() {
 	)
 
 	return (
-		<div className="min-h-screen bg-gray-50 text-gray-900 dark:bg-slate-950 dark:text-white">
-			<main className="px-6 pb-20 pt-20">
+		<div className="fixed inset-0 bg-gray-50 text-gray-900 dark:bg-slate-950 dark:text-white">
+			{/* Scrollable area — starts below the fixed navbar */}
+			<main className="absolute top-16 left-0 right-0 bottom-0 overflow-y-auto overflow-x-hidden px-6 py-8">
 				<ContentContainer>
 					<ProjectHeader onNewProject={() => updateProjState({ showUploader: true })} />
 
@@ -152,64 +153,64 @@ export default function Projects() {
 						</div>
 					)}
 				</ContentContainer>
-
-				{/* Modals */}
-				<CreationMethodModal
-					open={projectState.showUploader}
-					onCancel={() => updateProjState({ showUploader: false })}
-					onSelectChatbot={() =>
-						updateProjState({
-							showUploader: false,
-							showUploaderChatbot: true,
-						})
-					}
-					onSelectManual={() =>
-						updateProjState({
-							showUploader: false,
-							showUploaderManual: true,
-						})
-					}
-				/>
-				<ManualCreationModal
-					open={projectState.showUploaderManual}
-					onCancel={() => updateProjState({ showUploaderManual: false })}
-					onSubmit={handleCreateProject}
-					initialProjectName={projectName}
-					initialDescription={description}
-					initialVisibility={visibility}
-					initialLicense="MIT"
-					initialExpectedAccuracy={75}
-					isSelected={isSelected}
-					onSelectType={selectType}
-				/>
-				<DatasetSelectionModal
-					open={projectState.showSelectData}
-					onCancel={() => updateProjState({ showSelectData: false })}
-					onConfirm={() => updateProjState({ showSelectData: false })}
-					datasets={datasets}
-					selectedDataset={selectedDataset}
-					onSelectDataset={setSelectedDataset}
-				/>
-				<AIAssistantModal
-					open={projectState.showUploaderChatbot}
-					onCancel={() => updateProjState({ showUploaderChatbot: false })}
-					messages={messages}
-					showTitle={showTitle}
-					showChatbotButtons={showChatbotButtons}
-					input={input}
-					setInput={setInput}
-					handleKeyPress={handleKeyPress}
-					selectedDataset={selectedDataset}
-					datasets={datasets}
-					getDatasets={() => getDatasets(updateProjState)}
-					newChat={newChat}
-					proceedFromChat={handleProceedFromChat}
-					chatContainerRef={chatContainerRef}
-					setShowTitle={setShowTitle}
-					setMessages={setMessages}
-					setShowChatbotButtons={setShowChatbotButtons}
-				/>
 			</main>
+
+			{/* Modals — portal-rendered, unaffected by scroll container */}
+			<CreationMethodModal
+				open={projectState.showUploader}
+				onCancel={() => updateProjState({ showUploader: false })}
+				onSelectChatbot={() =>
+					updateProjState({
+						showUploader: false,
+						showUploaderChatbot: true,
+					})
+				}
+				onSelectManual={() =>
+					updateProjState({
+						showUploader: false,
+						showUploaderManual: true,
+					})
+				}
+			/>
+			<ManualCreationModal
+				open={projectState.showUploaderManual}
+				onCancel={() => updateProjState({ showUploaderManual: false })}
+				onSubmit={handleCreateProject}
+				initialProjectName={projectName}
+				initialDescription={description}
+				initialVisibility={visibility}
+				initialLicense="MIT"
+				initialExpectedAccuracy={75}
+				isSelected={isSelected}
+				onSelectType={selectType}
+			/>
+			<DatasetSelectionModal
+				open={projectState.showSelectData}
+				onCancel={() => updateProjState({ showSelectData: false })}
+				onConfirm={() => updateProjState({ showSelectData: false })}
+				datasets={datasets}
+				selectedDataset={selectedDataset}
+				onSelectDataset={setSelectedDataset}
+			/>
+			<AIAssistantModal
+				open={projectState.showUploaderChatbot}
+				onCancel={() => updateProjState({ showUploaderChatbot: false })}
+				messages={messages}
+				showTitle={showTitle}
+				showChatbotButtons={showChatbotButtons}
+				input={input}
+				setInput={setInput}
+				handleKeyPress={handleKeyPress}
+				selectedDataset={selectedDataset}
+				datasets={datasets}
+				getDatasets={() => getDatasets(updateProjState)}
+				newChat={newChat}
+				proceedFromChat={handleProceedFromChat}
+				chatContainerRef={chatContainerRef}
+				setShowTitle={setShowTitle}
+				setMessages={setMessages}
+				setShowChatbotButtons={setShowChatbotButtons}
+			/>
 		</div>
 	)
 }

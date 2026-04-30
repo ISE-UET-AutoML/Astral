@@ -1,12 +1,13 @@
-import React from "react";
-import { Clock } from "lucide-react";
-import { Wrench } from "lucide-react";
+import { Clock, Wrench } from "lucide-react";
 import { InstanceMetricPill } from "./InstanceMetricPill";
 import { InstanceSummarySidebar } from "./InstanceSummarySidebar";
 import {
   INSTANCE_SIZE_DETAILS,
   InstanceSizeCard,
 } from "src/constants/clouldInstance";
+
+const panelClass =
+  "rounded-2xl border border-gray-200 bg-white p-6 dark:border-white/10 dark:bg-slate-900";
 
 export function AutomaticInstancePanel({
   formData,
@@ -16,17 +17,17 @@ export function AutomaticInstancePanel({
   handleTrainingTimeChange,
 }) {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div className="lg:col-span-2 space-y-6">
-        {/* Training Duration Section */}
-        <div className="rounded-2xl border border-gray-200 bg-white dark:border-white/10 dark:bg-slate-900 p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <Clock className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white">
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+      <div className="space-y-6 lg:col-span-2">
+        {/* Training Duration */}
+        <div className={panelClass}>
+          <div className="mb-4 flex items-center gap-2">
+            <Clock className="size-5 text-blue-600 dark:text-blue-400" />
+            <h2 className="text-base font-bold text-gray-900 dark:text-white">
               Training Duration
             </h2>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-3">
             <div className="flex items-center gap-4">
               <input
                 type="range"
@@ -44,21 +45,21 @@ export function AutomaticInstancePanel({
                 suffix="hours"
               />
             </div>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              Recommended: 1-24 hours for most models
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              Recommended: 1–24 hours for most models
             </p>
           </div>
         </div>
 
-        {/* Performance Level Section */}
-        <div className="rounded-2xl border border-gray-200 bg-white dark:border-white/10 dark:bg-slate-900 p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <Wrench className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white">
+        {/* Performance Level */}
+        <div className={panelClass}>
+          <div className="mb-4 flex items-center gap-2">
+            <Wrench className="size-5 text-blue-600 dark:text-blue-400" />
+            <h2 className="text-base font-bold text-gray-900 dark:text-white">
               Performance Level
             </h2>
           </div>
-          <div className="grid gap-4">
+          <div className="grid gap-3">
             {Object.entries(INSTANCE_SIZE_DETAILS).map(([size, details]) => (
               <InstanceSizeCard
                 key={size}
@@ -73,7 +74,6 @@ export function AutomaticInstancePanel({
                     "Super Strong": 8,
                     Rocket: 12,
                   };
-
                   setFormData((prev) => ({
                     ...prev,
                     gpuNumber: details.instanceDetails.gpuNumber,

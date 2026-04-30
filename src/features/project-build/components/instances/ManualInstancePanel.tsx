@@ -1,8 +1,21 @@
-import React from "react";
-import { Clock } from "lucide-react";
+import { Clock, SlidersHorizontal } from "lucide-react";
 import { InstanceMetricPill } from "./InstanceMetricPill";
 import { InstanceSummarySidebar } from "./InstanceSummarySidebar";
 import { SERVICES, GPU_LEVELS } from "src/constants/clouldInstance";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "src/components/ui/select";
+
+const panelClass =
+  "rounded-2xl border border-gray-200 bg-white p-6 dark:border-white/10 dark:bg-slate-900";
+const labelClass =
+  "mb-1.5 block text-xs font-medium text-gray-600 dark:text-gray-400";
+const selectItemClass =
+  "h-8 rounded-lg px-2.5 pr-8 text-sm text-gray-700 focus:bg-blue-50 focus:text-blue-700 dark:text-gray-200 dark:focus:bg-blue-500/15 dark:focus:text-blue-100";
 
 export function ManualInstancePanel({
   formData,
@@ -14,17 +27,17 @@ export function ManualInstancePanel({
   onStartTraining,
 }) {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div className="lg:col-span-2 space-y-6">
-        {/* Training Duration Section */}
-        <div className="rounded-2xl border border-gray-300 bg-white dark:border-gray-700 dark:bg-slate-900 p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <Clock className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white">
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+      <div className="space-y-6 lg:col-span-2">
+        {/* Training Duration */}
+        <div className={panelClass}>
+          <div className="mb-4 flex items-center gap-2">
+            <Clock className="size-5 text-blue-600 dark:text-blue-400" />
+            <h2 className="text-base font-bold text-gray-900 dark:text-white">
               Training Duration
             </h2>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-3">
             <div className="flex items-center gap-4">
               <input
                 type="range"
@@ -32,70 +45,77 @@ export function ManualInstancePanel({
                 max={24}
                 step={0.5}
                 value={formData.trainingTime || 0}
-                onChange={(e) =>
-                  handleTrainingTimeChange(Number(e.target.value))
-                }
+                onChange={(e) => handleTrainingTimeChange(Number(e.target.value))}
                 className="flex-1 accent-blue-600"
               />
-              <InstanceMetricPill
-                value={formData.trainingTime || 0}
-                suffix="hours"
-              />
+              <InstanceMetricPill value={formData.trainingTime || 0} suffix="hours" />
             </div>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              Recommended: 1-24 hours for most models
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              Recommended: 1–24 hours for most models
             </p>
           </div>
         </div>
 
-        {/* Manual Configuration Section */}
-        <div className="rounded-2xl border border-gray-300 bg-white dark:border-gray-700 dark:bg-slate-900 p-6">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
-            Manual Configuration
-          </h2>
+        {/* Manual Configuration */}
+        <div className={panelClass}>
+          <div className="mb-4 flex items-center gap-2">
+            <SlidersHorizontal className="size-5 text-blue-600 dark:text-blue-400" />
+            <h2 className="text-base font-bold text-gray-900 dark:text-white">
+              Manual Configuration
+            </h2>
+          </div>
           <div className="space-y-4">
+            {/* Service Provider */}
             <div>
-              <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
-                Service Provider
-              </label>
-              <select
+              <label className={labelClass}>Service Provider</label>
+              <Select
                 value={formData.service}
-                onChange={(e) =>
-                  handleManualConfigChange("service")(e.target.value)
-                }
-                className="w-full h-10 rounded-xl border border-gray-300 bg-white px-3 text-sm text-gray-900 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-500/30 dark:border-gray-700 dark:bg-slate-800 dark:text-white"
+                onValueChange={handleManualConfigChange("service")}
               >
-                {SERVICES.map((service) => (
-                  <option key={service.name} value={service.name}>
-                    {service.name} - {service.description}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="h-10 w-full rounded-xl border-gray-200 bg-white text-sm dark:border-white/10 dark:bg-slate-800">
+                  <SelectValue placeholder="Select service" />
+                </SelectTrigger>
+                <SelectContent className="z-[1100] rounded-xl border border-gray-200 bg-white p-1.5 dark:border-white/10 dark:bg-slate-950">
+                  {SERVICES.map((service) => (
+                    <SelectItem
+                      key={service.name}
+                      value={service.name}
+                      className={selectItemClass}
+                    >
+                      {service.name} — {service.description}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
+            {/* GPU Type */}
             <div>
-              <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
-                GPU Type
-              </label>
-              <select
+              <label className={labelClass}>GPU Type</label>
+              <Select
                 value={formData.gpuName}
-                onChange={(e) =>
-                  handleManualConfigChange("gpuName")(e.target.value)
-                }
-                className="w-full h-10 rounded-xl border border-gray-300 bg-white px-3 text-sm text-gray-900 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-500/30 dark:border-gray-700 dark:bg-slate-800 dark:text-white"
+                onValueChange={handleManualConfigChange("gpuName")}
               >
-                {GPU_LEVELS.map((gpu) => (
-                  <option key={gpu.name} value={gpu.name}>
-                    {gpu.name} ({gpu.memory})
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="h-10 w-full rounded-xl border-gray-200 bg-white text-sm dark:border-white/10 dark:bg-slate-800">
+                  <SelectValue placeholder="Select GPU" />
+                </SelectTrigger>
+                <SelectContent className="z-[1100] rounded-xl border border-gray-200 bg-white p-1.5 dark:border-white/10 dark:bg-slate-950">
+                  {GPU_LEVELS.map((gpu) => (
+                    <SelectItem
+                      key={gpu.name}
+                      value={gpu.name}
+                      className={selectItemClass}
+                    >
+                      {gpu.name} ({gpu.memory})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
+            {/* Number of GPUs */}
             <div>
-              <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
-                Number of GPUs
-              </label>
+              <label className={labelClass}>Number of GPUs</label>
               <div className="flex items-center gap-4">
                 <input
                   type="range"
@@ -103,19 +123,16 @@ export function ManualInstancePanel({
                   max={8}
                   step={1}
                   value={formData.gpuNumber}
-                  onChange={(e) =>
-                    handleGpuNumberChange(Number(e.target.value))
-                  }
+                  onChange={(e) => handleGpuNumberChange(Number(e.target.value))}
                   className="flex-1 accent-blue-600"
                 />
                 <InstanceMetricPill value={formData.gpuNumber} suffix="GPUs" />
               </div>
             </div>
 
+            {/* Disk Space */}
             <div>
-              <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
-                Disk Space
-              </label>
+              <label className={labelClass}>Disk Space</label>
               <div className="flex items-center gap-4">
                 <input
                   type="range"

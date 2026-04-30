@@ -30,9 +30,9 @@ export default function ProjectLayout() {
         className="shadow-[4px_0_24px_rgba(0,0,0,0.02)] dark:shadow-[4px_0_24px_rgba(0,0,0,0.2)]"
       />
 
-      {/* Main content — sits directly on the background, no card wrapper */}
+      {/* Main content — starts exactly below the fixed navbar */}
       <div
-        className={`h-screen pl-[120px] lg:pl-[140px] pt-14 ${shellOverflowClass}`}
+        className={`absolute top-16 left-0 right-0 bottom-0 pl-[120px] lg:pl-[140px] ${shellOverflowClass}`}
       >
         <Outlet />
       </div>

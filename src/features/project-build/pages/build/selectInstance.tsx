@@ -1,6 +1,5 @@
-import React from "react";
 import { useOutletContext, useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Zap, SlidersHorizontal, Building2 } from "lucide-react";
 import {
   Tabs,
   TabsContent,
@@ -62,79 +61,88 @@ const SelectInstance = () => {
   };
 
   return (
-    <div className="h-full overflow-y-auto bg-gray-50 dark:bg-slate-950 py-8 px-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="w-full px-6 py-8">
+      {/* Page Header */}
+      <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            Select Instance
+          </h1>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            Configure compute resources for your training run.
+          </p>
+        </div>
         {canGoBackToTrainingMode && (
-          <div className="mb-8">
-            <Button
-              type="button"
-              disabled={isProcessing}
-              onClick={handleBackToTrainingMode}
-              variant="outline"
-              className="gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back
-            </Button>
-          </div>
+          <Button
+            type="button"
+            variant="outline"
+            disabled={isProcessing}
+            onClick={handleBackToTrainingMode}
+            className="shrink-0 gap-1.5 rounded-xl border-gray-200 text-gray-700 hover:bg-gray-50 dark:border-white/10 dark:text-gray-300 dark:hover:bg-white/5"
+          >
+            <ArrowLeft className="size-4" />
+            Back
+          </Button>
         )}
-        <Tabs
-          defaultValue="automatic"
-          onValueChange={setActiveTab}
-          className="w-full"
-        >
-          <div className="rounded-2xl border border-gray-300 bg-white dark:border-gray-700 dark:bg-slate-900 overflow-hidden">
-            <TabsList
-              variant="line"
-              className="w-full justify-start rounded-none bg-transparent border-b border-gray-300 dark:border-gray-700 h-22"
-            >
-              <TabsTrigger value="automatic" className="text-base">
-                ⚡ Automatic Configuration
-              </TabsTrigger>
-              <TabsTrigger value="manual" className="text-base">
-                🛠️ Manual Configuration
-              </TabsTrigger>
-              <TabsTrigger value="userInfras" className="text-base">
-                🏗️ Your Infrastructure
-              </TabsTrigger>
-            </TabsList>
-            <div className="p-8">
-              <TabsContent value="automatic" className="mt-0">
-                <AutomaticInstancePanel
-                  formData={formData}
-                  setFormData={setFormData}
-                  isProcessing={isProcessing}
-                  onStartTraining={handleStartTraining}
-                  handleTrainingTimeChange={handleTrainingTimeChange}
-                />
-              </TabsContent>
-              <TabsContent value="manual" className="mt-0">
-                <ManualInstancePanel
-                  formData={formData}
-                  handleTrainingTimeChange={handleTrainingTimeChange}
-                  handleManualConfigChange={handleManualConfigChange}
-                  handleGpuNumberChange={handleGpuNumberChange}
-                  handleDiskChange={handleDiskChange}
-                  isProcessing={isProcessing}
-                  onStartTraining={handleStartTraining}
-                />
-              </TabsContent>
-              <TabsContent value="userInfras" className="mt-0">
-                <UserInfrastructurePanel
-                  formData={formData}
-                  handleTrainingTimeChange={handleTrainingTimeChange}
-                  sshKey={sshKey}
-                  onCopySshKey={handleCopyToClipboard}
-                  infrastructureData={infrastructureData}
-                  handleInfrastructureChange={handleInfrastructureChange}
-                  isProcessing={isProcessing}
-                  onStartTraining={handleStartTraining}
-                />
-              </TabsContent>
-            </div>
-          </div>
-        </Tabs>
       </div>
+
+      {/* Tabs */}
+      <Tabs
+        defaultValue="automatic"
+        onValueChange={setActiveTab}
+        className="w-full"
+      >
+        <TabsList
+          variant="line"
+          className="mb-6 h-auto w-full justify-start rounded-none border-b border-gray-200 bg-transparent dark:border-white/10"
+        >
+          <TabsTrigger value="automatic" className="flex items-center gap-2 text-sm">
+            <Zap className="size-4" />
+            Automatic
+          </TabsTrigger>
+          <TabsTrigger value="manual" className="flex items-center gap-2 text-sm">
+            <SlidersHorizontal className="size-4" />
+            Manual
+          </TabsTrigger>
+          <TabsTrigger value="userInfras" className="flex items-center gap-2 text-sm">
+            <Building2 className="size-4" />
+            Your Infrastructure
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="automatic" className="mt-0">
+          <AutomaticInstancePanel
+            formData={formData}
+            setFormData={setFormData}
+            isProcessing={isProcessing}
+            onStartTraining={handleStartTraining}
+            handleTrainingTimeChange={handleTrainingTimeChange}
+          />
+        </TabsContent>
+        <TabsContent value="manual" className="mt-0">
+          <ManualInstancePanel
+            formData={formData}
+            handleTrainingTimeChange={handleTrainingTimeChange}
+            handleManualConfigChange={handleManualConfigChange}
+            handleGpuNumberChange={handleGpuNumberChange}
+            handleDiskChange={handleDiskChange}
+            isProcessing={isProcessing}
+            onStartTraining={handleStartTraining}
+          />
+        </TabsContent>
+        <TabsContent value="userInfras" className="mt-0">
+          <UserInfrastructurePanel
+            formData={formData}
+            handleTrainingTimeChange={handleTrainingTimeChange}
+            sshKey={sshKey}
+            onCopySshKey={handleCopyToClipboard}
+            infrastructureData={infrastructureData}
+            handleInfrastructureChange={handleInfrastructureChange}
+            isProcessing={isProcessing}
+            onStartTraining={handleStartTraining}
+          />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
