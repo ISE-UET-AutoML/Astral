@@ -67,6 +67,10 @@ body {
   overscroll-behavior-x: none;
 }
 
+html {
+  scrollbar-gutter: stable;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

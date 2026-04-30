@@ -1,9 +1,7 @@
 import React from 'react'
 import AIAssistantModal from './AIAssistantModal'
 import ContentContainer from 'src/layouts/ContentContainer'
-import create_project from 'src/assets/images/create_project.png'
 import { useProjects, useChatbot, useDatasets } from 'src/shared/hooks'
-import { useTheme } from 'src/theme/ThemeProvider'
 import {
 	Pagination,
 	PaginationContent,
@@ -80,7 +78,6 @@ export default function Projects() {
 		}
 	}
 
-	const { theme } = useTheme()
 
 	React.useEffect(() => {
 		const total = projectState.projects?.length || 0
@@ -97,151 +94,122 @@ export default function Projects() {
 	)
 
 	return (
-		<div className="min-h-screen bg-gray-100 dark:bg-[#161616] text-gray-900 dark:text-white">
-			<div className="min-h-screen pt-12 bg-gray-100 dark:bg-[#161616]">
-				<main className="relative pt-20 px-6 pb-20">
-					<ContentContainer className="relative z-10">
-						{/* Header */}
-						<ProjectHeader onNewProject={() => updateProjState({ showUploader: true })} />
+		<div className="min-h-screen bg-gray-50 text-gray-900 dark:bg-slate-950 dark:text-white">
+			<main className="px-6 pb-20 pt-20">
+				<ContentContainer>
+					<ProjectHeader onNewProject={() => updateProjState({ showUploader: true })} />
 
-						{/* Filter */}
-						<TaskFilter
-							selectedTrainingTask={selectedTrainingTask}
-							onTaskChange={setSelectedTrainingTask}
-							onReset={resetFilters}
-							onSearch={handleSearch}
-							selectedSort={selectedSort}
-							onSortChange={handleSortChange}
-							isReset={isReset}
-							searchValue={searchValue}
-						/>
+					<TaskFilter
+						selectedTrainingTask={selectedTrainingTask}
+						onTaskChange={setSelectedTrainingTask}
+						onReset={resetFilters}
+						onSearch={handleSearch}
+						selectedSort={selectedSort}
+						onSortChange={handleSortChange}
+						isReset={isReset}
+						searchValue={searchValue}
+					/>
 
-						{/* Content */}
-						{hasProjects ? (
-							<>
-								<ProjectsGrid
-									projects={paginatedProjects}
-									getProjects={getProjects}
-									onCreateProject={() => updateProjState({ showUploaderManual: true })}
-								/>
-								<div className="mt-8">
-									<Pagination>
-										<PaginationContent className="gap-2">
-											<PaginationItem>
-												<PaginationPrevious
-													href="#"
-													text=""
-													onClick={(event) => {
-														event.preventDefault()
-														if (currentPage > 1) setCurrentPage(currentPage - 1)
-													}}
-													className={
-														currentPage <= 1 ? 'pointer-events-none opacity-50' : ''
-													}
-												/>
-											</PaginationItem>
-											<PaginationItem>
-												<div className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 dark:border-white/10 dark:bg-slate-950/70 dark:text-slate-200">
-													{currentPage} / {totalPages}
-												</div>
-											</PaginationItem>
-											<PaginationItem>
-												<PaginationNext
-													href="#"
-													text=""
-													onClick={(event) => {
-														event.preventDefault()
-														if (currentPage < totalPages) setCurrentPage(currentPage + 1)
-													}}
-													className={
-														currentPage >= totalPages
-															? 'pointer-events-none opacity-50'
-															: ''
-													}
-												/>
-											</PaginationItem>
-										</PaginationContent>
-									</Pagination>
-								</div>
-							</>
-						) : (
-							<div className="flex flex-col items-center justify-center py-12">
-								<img
-									src={create_project}
-									alt="Create project"
-									className="w-[360px] max-w-[90%] cursor-pointer drop-shadow-[0_10px_30px_rgba(0,0,0,0.25)]"
-									onClick={() => updateProjState({ showUploaderManual: true })}
-								/>
-								<div className="mt-6 text-center">
-									<div className="text-2xl font-semibold text-gray-900 dark:text-white">
-										No Projects Yet
-									</div>
-									<div className="mt-1.5 text-gray-500 dark:text-gray-400">
-										Start by creating your first AI project
-									</div>
-								</div>
-							</div>
-						)}
-					</ContentContainer>
+					<ProjectsGrid
+						projects={paginatedProjects}
+						getProjects={getProjects}
+						onCreateProject={() => updateProjState({ showUploaderManual: true })}
+					/>
 
-					{/* Modals */}
-					<CreationMethodModal
-						open={projectState.showUploader}
-						onCancel={() => updateProjState({ showUploader: false })}
-						onSelectChatbot={() =>
-							updateProjState({
-								showUploader: false,
-								showUploaderChatbot: true,
-							})
-						}
-						onSelectManual={() =>
-							updateProjState({
-								showUploader: false,
-								showUploaderManual: true,
-							})
-						}
-					/>
-					<ManualCreationModal
-						open={projectState.showUploaderManual}
-						onCancel={() => updateProjState({ showUploaderManual: false })}
-						onSubmit={handleCreateProject}
-						initialProjectName={projectName}
-						initialDescription={description}
-						initialVisibility={visibility}
-						initialLicense="MIT"
-						initialExpectedAccuracy={75}
-						isSelected={isSelected}
-						onSelectType={selectType}
-					/>
-					<DatasetSelectionModal
-						open={projectState.showSelectData}
-						onCancel={() => updateProjState({ showSelectData: false })}
-						onConfirm={() => updateProjState({ showSelectData: false })}
-						datasets={datasets}
-						selectedDataset={selectedDataset}
-						onSelectDataset={setSelectedDataset}
-					/>
-					<AIAssistantModal
-						open={projectState.showUploaderChatbot}
-						onCancel={() => updateProjState({ showUploaderChatbot: false })}
-						messages={messages}
-						showTitle={showTitle}
-						showChatbotButtons={showChatbotButtons}
-						input={input}
-						setInput={setInput}
-						handleKeyPress={handleKeyPress}
-						selectedDataset={selectedDataset}
-						datasets={datasets}
-						getDatasets={() => getDatasets(updateProjState)}
-						newChat={newChat}
-						proceedFromChat={handleProceedFromChat}
-						chatContainerRef={chatContainerRef}
-						setShowTitle={setShowTitle}
-						setMessages={setMessages}
-						setShowChatbotButtons={setShowChatbotButtons}
-					/>
-				</main>
-			</div>
+					{hasProjects && totalPages > 1 && (
+						<div className="mt-6">
+							<Pagination>
+								<PaginationContent className="gap-2">
+									<PaginationItem>
+										<PaginationPrevious
+											href="#"
+											text=""
+											onClick={(event) => {
+												event.preventDefault()
+												if (currentPage > 1) setCurrentPage(currentPage - 1)
+											}}
+											className={currentPage <= 1 ? 'pointer-events-none opacity-50' : ''}
+										/>
+									</PaginationItem>
+									<PaginationItem>
+										<div className="rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 dark:border-white/10 dark:bg-slate-900 dark:text-gray-200">
+											{currentPage} / {totalPages}
+										</div>
+									</PaginationItem>
+									<PaginationItem>
+										<PaginationNext
+											href="#"
+											text=""
+											onClick={(event) => {
+												event.preventDefault()
+												if (currentPage < totalPages) setCurrentPage(currentPage + 1)
+											}}
+											className={currentPage >= totalPages ? 'pointer-events-none opacity-50' : ''}
+										/>
+									</PaginationItem>
+								</PaginationContent>
+							</Pagination>
+						</div>
+					)}
+				</ContentContainer>
+
+				{/* Modals */}
+				<CreationMethodModal
+					open={projectState.showUploader}
+					onCancel={() => updateProjState({ showUploader: false })}
+					onSelectChatbot={() =>
+						updateProjState({
+							showUploader: false,
+							showUploaderChatbot: true,
+						})
+					}
+					onSelectManual={() =>
+						updateProjState({
+							showUploader: false,
+							showUploaderManual: true,
+						})
+					}
+				/>
+				<ManualCreationModal
+					open={projectState.showUploaderManual}
+					onCancel={() => updateProjState({ showUploaderManual: false })}
+					onSubmit={handleCreateProject}
+					initialProjectName={projectName}
+					initialDescription={description}
+					initialVisibility={visibility}
+					initialLicense="MIT"
+					initialExpectedAccuracy={75}
+					isSelected={isSelected}
+					onSelectType={selectType}
+				/>
+				<DatasetSelectionModal
+					open={projectState.showSelectData}
+					onCancel={() => updateProjState({ showSelectData: false })}
+					onConfirm={() => updateProjState({ showSelectData: false })}
+					datasets={datasets}
+					selectedDataset={selectedDataset}
+					onSelectDataset={setSelectedDataset}
+				/>
+				<AIAssistantModal
+					open={projectState.showUploaderChatbot}
+					onCancel={() => updateProjState({ showUploaderChatbot: false })}
+					messages={messages}
+					showTitle={showTitle}
+					showChatbotButtons={showChatbotButtons}
+					input={input}
+					setInput={setInput}
+					handleKeyPress={handleKeyPress}
+					selectedDataset={selectedDataset}
+					datasets={datasets}
+					getDatasets={() => getDatasets(updateProjState)}
+					newChat={newChat}
+					proceedFromChat={handleProceedFromChat}
+					chatContainerRef={chatContainerRef}
+					setShowTitle={setShowTitle}
+					setMessages={setMessages}
+					setShowChatbotButtons={setShowChatbotButtons}
+				/>
+			</main>
 		</div>
 	)
 }
