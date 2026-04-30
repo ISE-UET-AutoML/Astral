@@ -1,12 +1,23 @@
 import React, { useState, useRef, useEffect } from "react";
 import {
-  Folder as FolderOutlined,
-  File as FileOutlined,
-  Trash2 as DeleteOutlined,
-  CircleQuestionMark as QuestionCircleOutlined,
+  Folder,
+  File,
+  Trash2,
+  ChevronDown,
+  ChevronRight,
+  Info,
+  UploadCloud,
 } from "lucide-react";
-import { CustomSelect, Option } from "src/components/ui/custom-select";
-import clsx from "clsx";
+import { Input } from "src/components/ui/input";
+import { Textarea } from "src/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "src/components/ui/select";
+import { cn } from "src/lib/utils";
 import { DATASET_TYPES } from "src/constants/types";
 import {
   organizeFiles,
@@ -24,16 +35,6 @@ type UploadInputProps = React.InputHTMLAttributes<HTMLInputElement> &
     webkitdirectory?: string;
     directory?: string;
   };
-
-const Select = ({ options = [], ...props }) => (
-  <CustomSelect {...props}>
-    {options.map((option) => (
-      <Option key={option.value} value={option.value}>
-        {option.label}
-      </Option>
-    ))}
-  </CustomSelect>
-);
 
 export default function CreateDatasetForm({
   onNext,
@@ -62,6 +63,7 @@ export default function CreateDatasetForm({
   const [activeTab, setActiveTab] = useState("file"); // 'file' or 'url'
   const [errors, setErrors] = useState<DatasetFormErrors>({});
   const [isDragging, setIsDragging] = useState(false);
+  const [instructionsOpen, setInstructionsOpen] = useState(false);
 
   // File States
   const [files, setFiles] = useState(initialFiles);
@@ -199,14 +201,12 @@ export default function CreateDatasetForm({
     fileRefs.current.delete(fileId);
     setFiles(updatedFiles);
 
-    // Re-detect labels from remaining files
     const fileMap = organizeFiles(updatedFiles);
     const labels = Array.from(fileMap.keys()).filter(
       (label) => label !== "unlabeled",
     );
     setDetectedLabels(labels);
 
-    // Re-extract CSV metadata if CSV file still exists
     const csvFile = updatedFiles.find((f) =>
       (f.path || "").toLowerCase().endsWith(".csv"),
     );
@@ -315,7 +315,6 @@ export default function CreateDatasetForm({
     onNext(payload);
   };
 
-  // Chuẩn bị Props cho input file
   const isFolderUpload = ["IMAGE", "MULTIMODAL", "AUDIO", "VIDEO"].includes(
     datasetType,
   );
@@ -344,7 +343,6 @@ export default function CreateDatasetForm({
 
   const currentTaskInfo = TASK_TYPE_INFO[taskType];
 
-  // Tạo mảng Options cho Custom Select
   const dataTypeOptions = Object.entries(DATASET_TYPES).map(([key, value]) => ({
     label: value.type,
     value: key,
@@ -352,7 +350,7 @@ export default function CreateDatasetForm({
 
   const taskTypeOptions = datasetType
     ? getAvailableTaskTypes().map((task) => ({
-        label: `${task.displayName}`,
+        label: task.displayName,
         value: task.key,
       }))
     : [];
@@ -362,134 +360,183 @@ export default function CreateDatasetForm({
     { label: "bucket-2", value: "bucket-2" },
   ];
 
-  // CSS classes cho Input
-  const inputClass =
-    "w-full px-3 py-2 rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] text-[var(--input-color)] placeholder-[var(--placeholder-color)] focus:outline-none focus:border-[var(--input-focus-border)] focus:shadow-[var(--input-shadow)] transition-all disabled:opacity-50 disabled:cursor-not-allowed";
-  const labelClass =
-    "block mb-2 font-medium text-[var(--form-label-color)] text-sm";
-
   return (
     <form
       id="create-dataset-form-step0"
       onSubmit={handleSubmit}
-      className="flex flex-col gap-5 font-poppins"
+      className="flex flex-col gap-5"
     >
-      {/* Hàng 1: Title */}
+      {/* Title */}
       <div>
-        <label className={labelClass}>
+        <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
           Title <span className="text-red-500">*</span>
         </label>
-        <input
+        <Input
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="Enter dataset title (letters and numbers only)"
-          className={inputClass}
+          placeholder="Enter dataset title"
+          className={cn(
+            "h-10 w-full rounded-xl border-gray-200 bg-white px-3 text-sm text-gray-900 placeholder:text-gray-400 focus-visible:border-blue-400 focus-visible:ring-blue-500/30 dark:border-white/20 dark:bg-white/10 dark:text-white dark:placeholder:text-gray-500",
+            errors.title &&
+              "border-red-400 focus-visible:border-red-400 focus-visible:ring-red-400/30",
+          )}
         />
         {errors.title && (
-          <span className="text-red-500 text-xs mt-1 block">
-            {errors.title}
-          </span>
+          <p className="mt-1 text-xs text-red-500">{errors.title}</p>
         )}
       </div>
 
-      {/* Hàng 2: Data Type và Task Type */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {/* Data Type & Task Type */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className={labelClass}>
+          <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
             Data Type <span className="text-red-500">*</span>
           </label>
           <Select
-            value={datasetType || undefined} // Tránh lỗi controlled state ban đầu
-            onChange={(val) => {
+            value={datasetType || undefined}
+            onValueChange={(val) => {
               setDatasetType(val);
               setTaskType("");
               handleReset();
             }}
-            placeholder="Select dataset type"
-            options={dataTypeOptions}
-          />
+          >
+            <SelectTrigger
+              className={cn(
+                "h-10 w-full rounded-xl border-gray-200 bg-white text-sm text-gray-900 focus-visible:border-blue-400 focus-visible:ring-blue-500/30 dark:border-white/20 dark:bg-white/10 dark:text-white",
+                errors.datasetType && "border-red-400",
+              )}
+            >
+              <SelectValue placeholder="Select dataset type" />
+            </SelectTrigger>
+            <SelectContent
+              align="start"
+              position="popper"
+              className="z-[1100] rounded-xl border-gray-200 bg-white shadow-xl dark:border-white/10 dark:bg-slate-950"
+            >
+              {dataTypeOptions.map((opt) => (
+                <SelectItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           {errors.datasetType && (
-            <span className="text-red-500 text-xs mt-1 block">
-              {errors.datasetType}
-            </span>
+            <p className="mt-1 text-xs text-red-500">{errors.datasetType}</p>
           )}
         </div>
 
         <div>
-          <label className={labelClass}>
+          <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
             Task Type <span className="text-red-500">*</span>
           </label>
           <Select
             value={taskType || undefined}
-            onChange={(val) => setTaskType(val)}
+            onValueChange={(val) => setTaskType(val)}
             disabled={!datasetType}
-            placeholder={
-              !datasetType ? "-- Select Data Type first --" : "Select task type"
-            }
-            options={taskTypeOptions}
-          />
+          >
+            <SelectTrigger
+              className={cn(
+                "h-10 w-full rounded-xl border-gray-200 bg-white text-sm text-gray-900 focus-visible:border-blue-400 focus-visible:ring-blue-500/30 dark:border-white/20 dark:bg-white/10 dark:text-white",
+                !datasetType && "opacity-50 cursor-not-allowed",
+                errors.taskType && "border-red-400",
+              )}
+            >
+              <SelectValue
+                placeholder={
+                  !datasetType ? "Select Data Type first" : "Select task type"
+                }
+              />
+            </SelectTrigger>
+            <SelectContent
+              align="start"
+              position="popper"
+              className="z-[1100] rounded-xl border-gray-200 bg-white shadow-xl dark:border-white/10 dark:bg-slate-950"
+            >
+              {taskTypeOptions.map((opt) => (
+                <SelectItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           {errors.taskType && (
-            <span className="text-red-500 text-xs mt-1 block">
-              {errors.taskType}
-            </span>
+            <p className="mt-1 text-xs text-red-500">{errors.taskType}</p>
           )}
         </div>
       </div>
 
-      {/* Preparing Instructions */}
+      {/* Task Preparation Instructions */}
       {currentTaskInfo?.preparingInstructions && (
-        <details className="group border border-[#ddd] rounded-lg bg-[rgba(255,255,255,0.97)] overflow-hidden">
-          <summary className="flex items-center cursor-pointer p-3 font-medium text-green-600 outline-none list-none select-none">
-            <QuestionCircleOutlined className="mr-2" />
-            Task Preparation Instructions ({currentTaskInfo.displayName})
-            <span className="ml-auto transition-transform group-open:rotate-180">
-              ▼
+        <div className="overflow-hidden rounded-xl border border-blue-200 bg-blue-50/60 dark:border-blue-700/40 dark:bg-blue-900/10">
+          <button
+            type="button"
+            onClick={() => setInstructionsOpen((v) => !v)}
+            className="flex w-full items-center gap-2 px-4 py-3 text-left text-sm font-medium text-blue-700 transition-colors hover:bg-blue-100/60 dark:text-blue-400 dark:hover:bg-blue-900/20"
+          >
+            <Info className="size-4 shrink-0" />
+            <span>
+              Preparation Instructions — {currentTaskInfo.displayName}
             </span>
-          </summary>
-          <div className="p-4 pt-0 border-t border-[#ddd] whitespace-pre-line text-[var(--text)] text-sm mt-2">
-            {currentTaskInfo.preparingInstructions}
-          </div>
-        </details>
+            <ChevronDown
+              className={cn(
+                "ml-auto size-4 shrink-0 transition-transform",
+                instructionsOpen && "rotate-180",
+              )}
+            />
+          </button>
+          {instructionsOpen && (
+            <div className="border-t border-blue-200 px-4 py-3 text-sm text-gray-700 dark:border-blue-700/40 dark:text-gray-300">
+              <p className="whitespace-pre-line leading-relaxed">
+                {currentTaskInfo.preparingInstructions}
+              </p>
+            </div>
+          )}
+        </div>
       )}
 
-      {/* Hàng 3: Description */}
+      {/* Description */}
       <div>
-        <label className={labelClass}>Description</label>
-        <textarea
+        <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Description
+        </label>
+        <Textarea
           rows={2}
           maxLength={500}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className={`${inputClass} resize-none`}
+          placeholder="Briefly describe this dataset (optional)"
+          className="w-full resize-none rounded-xl border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus-visible:border-blue-400 focus-visible:ring-blue-500/30 dark:border-white/20 dark:bg-white/10 dark:text-white dark:placeholder:text-gray-500"
         />
-        <div className="text-right text-xs text-[var(--secondary-text)] mt-1">
+        <div className="mt-1 text-right text-xs text-gray-400 dark:text-gray-500">
           {description.length} / 500
         </div>
       </div>
 
-      {/* Hàng 4: Provider & Bucket */}
-      <div className="grid grid-cols-1 sm:grid-cols-[1fr_2fr] gap-4">
+      {/* Storage Provider & Bucket */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-[auto_1fr]">
         <div>
-          <label className={labelClass}>Storage Provider</label>
+          <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Storage Provider
+          </label>
           <div className="flex gap-4 mt-2">
-            <label className="flex items-center gap-2 cursor-pointer text-[var(--text)] text-sm">
+            <label className="flex cursor-pointer items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
               <input
                 type="radio"
                 value="AWS_S3"
                 checked={service === "AWS_S3"}
                 onChange={(e) => setService(e.target.value)}
-                className="accent-[var(--button-primary-bg)] w-4 h-4 cursor-pointer"
+                className="size-4 cursor-pointer accent-blue-600"
               />
               AWS S3
             </label>
-            <label className="flex items-center gap-2 cursor-pointer text-[var(--text)] text-sm">
+            <label className="flex cursor-pointer items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
               <input
                 type="radio"
                 value="GCP_STORAGE"
                 checked={service === "GCP_STORAGE"}
                 onChange={(e) => setService(e.target.value)}
-                className="accent-[var(--button-primary-bg)] w-4 h-4 cursor-pointer"
+                className="size-4 cursor-pointer accent-blue-600"
               />
               Google Cloud
             </label>
@@ -497,98 +544,131 @@ export default function CreateDatasetForm({
         </div>
 
         <div>
-          <label className={labelClass}>Bucket Name</label>
+          <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Bucket Name
+          </label>
           <Select
             value={bucketName}
-            onChange={(val) => setBucketName(val)}
-            options={bucketOptions}
-          />
+            onValueChange={(val) => setBucketName(val)}
+          >
+            <SelectTrigger className="h-10 w-full rounded-xl border-gray-200 bg-white text-sm text-gray-900 focus-visible:border-blue-400 focus-visible:ring-blue-500/30 dark:border-white/20 dark:bg-white/10 dark:text-white">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent
+              align="start"
+              position="popper"
+              className="z-[1100] rounded-xl border-gray-200 bg-white shadow-xl dark:border-white/10 dark:bg-slate-950"
+            >
+              {bucketOptions.map((opt) => (
+                <SelectItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
-      {/* Custom Tabs */}
-      <div className="mt-2">
-        <div className="flex border-b border-[var(--divider-color)] mb-4">
-          <button
-            type="button"
-            onClick={() => setActiveTab("file")}
-            className={`py-2 px-4 font-medium text-sm transition-colors border-b-2 ${
-              activeTab === "file"
-                ? "border-[var(--tabs-ink-bar)] text-[var(--tabs-active-text)]"
-                : "border-transparent text-[var(--tabs-text)] hover:text-[var(--tabs-active-text)]"
-            }`}
-          >
-            File Upload
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("url")}
-            className={`py-2 px-4 font-medium text-sm transition-colors border-b-2 ${
-              activeTab === "url"
-                ? "border-[var(--tabs-ink-bar)] text-[var(--tabs-active-text)]"
-                : "border-transparent text-[var(--tabs-text)] hover:text-[var(--tabs-active-text)]"
-            }`}
-          >
-            Remote URL
-          </button>
+      {/* Upload Tabs */}
+      <div>
+        {/* Tab Bar */}
+        <div className="flex border-b border-gray-200 dark:border-white/10">
+          {[
+            { id: "file", label: "File Upload" },
+            { id: "url", label: "Remote URL" },
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setActiveTab(tab.id)}
+              className={cn(
+                "border-b-2 px-4 py-2 text-sm font-medium transition-colors",
+                activeTab === tab.id
+                  ? "border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400"
+                  : "border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200",
+              )}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
 
-        {/* Tab Content: File Upload */}
+        {/* File Upload Tab */}
         {activeTab === "file" && (
-          <div>
+          <div className="mt-4 space-y-3">
             <label
               htmlFor="file"
-              className={clsx(
-                "mb-4 flex h-[120px] cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed transition-all duration-300",
+              className={cn(
+                "flex h-28 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed transition-all duration-200",
                 isDragging
-                  ? "border-[var(--modal-close-hover)] bg-[var(--hover-bg)]"
-                  : "border-[var(--upload-border)] bg-[var(--upload-bg)]",
+                  ? "border-blue-500 bg-blue-50 dark:border-blue-400 dark:bg-blue-900/20"
+                  : "border-gray-200 bg-gray-50/80 hover:border-blue-300 hover:bg-blue-50/40 dark:border-white/15 dark:bg-white/5 dark:hover:border-blue-500/50 dark:hover:bg-blue-900/10",
               )}
               onDragEnter={handleDragEnter}
               onDragLeave={handleDragLeave}
               onDragOver={handleDragOver}
               onDrop={handleDrop}
             >
-              <div className="text-center">
-                {isFolderUpload ? (
-                  <FolderOutlined className="text-[64px] text-[var(--upload-icon)]" />
-                ) : (
-                  <FileOutlined className="text-[64px] text-[var(--upload-icon)]" />
-                )}
-                <p className="mt-2 text-[var(--upload-text)] text-sm">
-                  {isFolderUpload
-                    ? "Drag and drop a folder or click to upload"
-                    : "Drag and drop files or click to upload"}
-                </p>
-              </div>
+              {isFolderUpload ? (
+                <Folder
+                  className={cn(
+                    "size-8 transition-colors",
+                    isDragging
+                      ? "text-blue-500 dark:text-blue-400"
+                      : "text-gray-400 dark:text-gray-500",
+                  )}
+                />
+              ) : (
+                <UploadCloud
+                  className={cn(
+                    "size-8 transition-colors",
+                    isDragging
+                      ? "text-blue-500 dark:text-blue-400"
+                      : "text-gray-400 dark:text-gray-500",
+                  )}
+                />
+              )}
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {isFolderUpload
+                  ? "Drag & drop a folder or click to upload"
+                  : "Drag & drop files or click to upload"}
+              </p>
               <input {...fileInputProps} />
             </label>
 
-            <div className="text-[var(--text)] text-sm">
-              <span className="font-medium">{files.length} Files</span>
-              <span className="ml-2 text-[var(--secondary-text)]">
+            {/* File Count Summary */}
+            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+              <File className="size-4 text-blue-500 dark:text-blue-400" />
+              <span className="font-medium text-gray-900 dark:text-white">
+                {files.length} {files.length === 1 ? "File" : "Files"}
+              </span>
+              <span className="text-gray-400 dark:text-gray-500">
                 ({totalKbytes} kB)
               </span>
             </div>
 
+            {/* File List */}
             {files.length > 0 && (
-              <div className="max-h-[120px] sm:max-h-[180px] overflow-y-auto bg-[var(--upload-bg)] rounded-lg p-2 mt-3 [scrollbar-width:thin]">
+              <div className="max-h-40 overflow-y-auto rounded-xl border border-gray-200 bg-gray-50/80 dark:border-white/10 dark:bg-white/5 [scrollbar-width:thin]">
                 {files.map((file) => (
                   <div
                     key={file.fileId ?? file.path}
-                    className="flex items-center border-b border-[var(--divider-color)] py-2 text-[var(--text)] text-sm last:border-0"
+                    className="flex items-center gap-2 border-b border-gray-100 px-3 py-2 text-sm last:border-0 dark:border-white/6"
                   >
-                    <FileOutlined className="mr-2 text-[var(--upload-icon)]" />
-                    <span className="flex-1 truncate">{file.path}</span>
-                    <span className="ml-2 text-[var(--secondary-text)] text-xs mr-2">
-                      ({(file.fileObject?.size / 1024 || 0).toFixed(2)} kB)
+                    <File className="size-4 shrink-0 text-blue-500 dark:text-blue-400" />
+                    <span className="flex-1 truncate text-gray-700 dark:text-gray-300">
+                      {file.path}
+                    </span>
+                    <span className="shrink-0 text-xs text-gray-400 dark:text-gray-500">
+                      {(file.fileObject?.size / 1024 || 0).toFixed(2)} kB
                     </span>
                     <button
                       type="button"
                       onClick={() => handleDeleteFile(file.fileId ?? file.path)}
-                      className="text-[var(--secondary-text)] hover:text-red-500 transition-colors bg-transparent border-none cursor-pointer px-2"
+                      aria-label="Remove file"
+                      className="ml-1 shrink-0 rounded-md p-1 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-950/30 dark:hover:text-red-400"
                     >
-                      <DeleteOutlined />
+                      <Trash2 className="size-3.5" />
                     </button>
                   </div>
                 ))}
@@ -597,23 +677,25 @@ export default function CreateDatasetForm({
           </div>
         )}
 
-        {/* Tab Content: URL */}
+        {/* Remote URL Tab */}
         {activeTab === "url" && (
-          <div>
-            <label className={labelClass}>
+          <div className="mt-4">
+            <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
               URL <span className="text-red-500">*</span>
             </label>
-            <input
+            <Input
               type="text"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              placeholder="Enter remote URL"
-              className={inputClass}
+              placeholder="https://example.com/dataset.zip"
+              className={cn(
+                "h-10 w-full rounded-xl border-gray-200 bg-white px-3 text-sm text-gray-900 placeholder:text-gray-400 focus-visible:border-blue-400 focus-visible:ring-blue-500/30 dark:border-white/20 dark:bg-white/10 dark:text-white dark:placeholder:text-gray-500",
+                errors.url &&
+                  "border-red-400 focus-visible:border-red-400 focus-visible:ring-red-400/30",
+              )}
             />
             {errors.url && (
-              <span className="text-red-500 text-xs mt-1 block">
-                {errors.url}
-              </span>
+              <p className="mt-1 text-xs text-red-500">{errors.url}</p>
             )}
           </div>
         )}

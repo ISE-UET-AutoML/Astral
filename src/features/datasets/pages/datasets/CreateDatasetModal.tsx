@@ -9,6 +9,8 @@ import { uploadToS3 } from "src/utils/s3";
 import { IMG_NUM_IN_ZIP } from "src/constants/file";
 import * as datasetAPI from "src/features/datasets/api/dataset";
 import { Spinner } from "src/components/ui/spinner";
+import { Button } from "src/components/ui/button";
+import { X } from "lucide-react";
 import { toast } from "sonner";
 import CreateDatasetForm from "./CreateDatasetForm";
 import CreateLabelProjectForm from "./CreateLabelProjectForm";
@@ -273,41 +275,84 @@ const CreateDatasetModal = ({ visible, onCancel, onCreate }) => {
 
   if (!visible) return null;
 
+  const isTabular = datasetFormValues?.dataset_type === "TABULAR";
+
   return (
     <>
       <div className="fixed inset-0 z-[1000] flex items-center justify-center overflow-hidden overscroll-contain">
+        {/* Backdrop */}
         <div
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm overflow-hidden touch-none"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm"
           onClick={handleCancel}
           aria-hidden="true"
         />
+
+        {/* Modal Panel */}
         <div
-          className={`relative z-[1001] w-full mx-4 sm:mx-6 lg:mx-8 flex flex-col max-h-[85dvh] sm:max-h-[90vh] [background:var(--modal-bg)] border border-[var(--modal-border)] rounded-2xl shadow-[0_25px_50px_rgba(0,0,0,0.4)] ${datasetFormValues?.dataset_type === "TABULAR" ? "max-w-[95vw] sm:max-w-[640px] lg:max-w-[900px]" : "max-w-[90vw] sm:max-w-[600px] lg:max-w-[800px]"}`}
+          className={`relative z-[1001] mx-4 flex w-full flex-col max-h-[88dvh] rounded-2xl border border-gray-200 bg-white dark:border-white/10 dark:bg-slate-900 sm:mx-6 lg:mx-8 ${
+            isTabular
+              ? "max-w-[95vw] sm:max-w-[640px] lg:max-w-[900px]"
+              : "max-w-[90vw] sm:max-w-[600px] lg:max-w-[800px]"
+          }`}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-6 py-4 shrink-0 bg-[var(--modal-header-bg)] border-b border-[var(--modal-header-border)] rounded-t-2xl">
-            <h2 className="m-0 text-lg font-semibold text-[var(--modal-title-color)] font-poppins">
+          <div className="flex shrink-0 items-center justify-between rounded-t-2xl border-b border-gray-200 bg-gray-50/80 px-6 py-4 dark:border-white/10 dark:bg-white/5">
+            <h2 className="text-base font-semibold text-gray-900 dark:text-white">
               Create New Dataset
             </h2>
             <button
               type="button"
               onClick={handleCancel}
-              className="flex items-center justify-center w-8 h-8 rounded-full transition-colors hover:bg-white/10 text-[var(--modal-close-color)] bg-transparent border-none cursor-pointer text-[18px]"
+              aria-label="Close dialog"
+              className="flex size-8 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:border-white/10 dark:bg-white/5 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white"
             >
-              ✕
+              <X className="size-4" />
             </button>
           </div>
 
-          {/* Body - flex-1 min-h-0 để phần này scroll được */}
+          {/* Step Indicator */}
+          <div className="shrink-0 flex items-center gap-2 px-6 py-3 border-b border-gray-100 dark:border-white/6">
+            {["Dataset Info", "Label Project"].map((label, idx) => (
+              <React.Fragment key={label}>
+                <div className="flex items-center gap-1.5">
+                  <span
+                    className={`flex size-5 items-center justify-center rounded-full text-xs font-semibold ${
+                      currentStep === idx
+                        ? "bg-blue-600 text-white dark:bg-blue-500"
+                        : idx < currentStep
+                          ? "bg-emerald-500 text-white"
+                          : "bg-gray-200 text-gray-500 dark:bg-white/15 dark:text-gray-400"
+                    }`}
+                  >
+                    {idx + 1}
+                  </span>
+                  <span
+                    className={`text-xs font-medium ${
+                      currentStep === idx
+                        ? "text-gray-900 dark:text-white"
+                        : "text-gray-400 dark:text-gray-500"
+                    }`}
+                  >
+                    {label}
+                  </span>
+                </div>
+                {idx < 1 && (
+                  <div className="h-px flex-1 bg-gray-200 dark:bg-white/10" />
+                )}
+              </React.Fragment>
+            ))}
+          </div>
+
+          {/* Body */}
           <div
-            className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden overscroll-contain p-6"
+            className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-contain p-6"
             style={{ scrollbarWidth: "thin" }}
           >
             {isLoading ? (
-              <div className="flex min-h-40 flex-col items-center justify-center gap-3 text-sm text-[var(--secondary-text)]">
-                <Spinner />
-                <span>Processing dataset, please wait...</span>
+              <div className="flex min-h-40 flex-col items-center justify-center gap-3 text-sm text-gray-500 dark:text-gray-400">
+                <Spinner className="size-6" />
+                <span>Processing dataset, please wait…</span>
               </div>
             ) : (
               <>
@@ -341,37 +386,39 @@ const CreateDatasetModal = ({ visible, onCancel, onCreate }) => {
             )}
           </div>
 
+          {/* Footer */}
           {!isLoading && (
-            <div className="shrink-0 flex justify-end gap-2 sm:gap-3 px-6 py-4 border-t border-[var(--modal-header-border)] bg-[var(--modal-header-bg)] rounded-b-2xl">
+            <div className="shrink-0 flex justify-end gap-2 rounded-b-2xl border-t border-gray-200 bg-gray-50/80 px-6 py-4 dark:border-white/10 dark:bg-white/5">
               {currentStep === 0 ? (
-                <button
+                <Button
                   type="submit"
                   form="create-dataset-form-step0"
-                  className="px-4 sm:px-6 py-2 rounded-xl text-sm font-medium text-white border-none bg-gradient-to-r from-blue-700 to-blue-600 hover:-translate-y-[1px] transition-all shadow-sm"
+                  className="h-9 rounded-xl bg-blue-600 px-5 text-sm font-semibold text-white hover:bg-blue-700 focus-visible:ring-blue-500/40 dark:bg-blue-500 dark:hover:bg-blue-400"
                 >
-                  Next
-                </button>
+                  Next →
+                </Button>
               ) : (
                 <>
-                  <button
+                  <Button
                     type="button"
+                    variant="outline"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
                       handleBack();
                     }}
-                    className="px-4 sm:px-6 py-2 rounded-xl text-sm font-medium bg-[var(--button-default-bg)] text-[var(--button-default-color)] border border-[var(--button-default-border)] hover:bg-[var(--hover-bg)] transition-colors"
+                    className="h-9 rounded-xl border-gray-200 bg-white px-5 text-sm font-semibold text-gray-700 hover:bg-gray-100 dark:border-white/15 dark:bg-slate-900/75 dark:text-gray-300 dark:hover:bg-white/10"
                   >
-                    Back
-                  </button>
-                  <button
+                    ← Back
+                  </Button>
+                  <Button
                     type="submit"
                     form="create-label-project-form-step1"
                     disabled={!canSubmitLabelForm}
-                    className={`px-6 sm:px-8 py-2 rounded-xl text-sm font-medium border border-blue-500 text-white bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 transition-colors shadow-lg font-poppins ${!canSubmitLabelForm ? "opacity-60 cursor-not-allowed" : "cursor-pointer"}`}
+                    className="h-9 rounded-xl bg-blue-600 px-5 text-sm font-semibold text-white hover:bg-blue-700 focus-visible:ring-blue-500/40 disabled:opacity-60 disabled:cursor-not-allowed dark:bg-blue-500 dark:hover:bg-blue-400"
                   >
-                    Create
-                  </button>
+                    Create Dataset
+                  </Button>
                 </>
               )}
             </div>
