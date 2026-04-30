@@ -67,19 +67,6 @@ body {
   overscroll-behavior-x: none;
 }
 
-/* Make Ant Design layout transparent by default */
-.ant-layout,
-.ant-layout-content,
-.ant-layout-header,
-.ant-layout-footer,
-.ant-layout-sider {
-  background: transparent !important;
-}
-
-.ant-layout {
-  min-height: 100vh;
-}
-
 @layer base {
   :root {
     --background: 0 0% 100%;

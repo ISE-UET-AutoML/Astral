@@ -52,28 +52,14 @@ const NavBar = () => {
   const logoSrc = theme === "light" ? "/BlackLogo.svg" : "/PrimaryLogo.svg";
 
   useEffect(() => {
-    const getScrollTop = () => {
-      const winY =
-        window.pageYOffset ||
-        document.documentElement.scrollTop ||
-        document.body.scrollTop ||
-        0;
-      const layoutEl = document.querySelector(".ant-layout");
-      const layoutY =
-        layoutEl && typeof layoutEl.scrollTop === "number"
-          ? layoutEl.scrollTop
-          : 0;
-      return Math.max(winY, layoutY);
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 0);
     };
-    const handleScroll = () => setScrolled(getScrollTop() > 0);
-    const layoutEl = document.querySelector(".ant-layout");
     window.addEventListener("scroll", handleScroll, { passive: true });
-    if (layoutEl)
-      layoutEl.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
+    handleScroll(); // Check initial state
+
     return () => {
       window.removeEventListener("scroll", handleScroll);
-      if (layoutEl) layoutEl.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
