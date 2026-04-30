@@ -10,7 +10,14 @@ import { getProjectById } from "src/features/projects/api/project";
 import { getLatestModelVersionByModelId } from "src/features/models/api/model_version";
 import { useGenApps } from "src/features/gen-apps/hooks/useGenApps";
 import { Button } from "src/components/ui/button";
-import { CustomSelect, Option } from "src/components/ui/custom-select";
+import { Input } from "src/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "src/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -18,17 +25,13 @@ import {
   DialogTitle,
   DialogFooter,
 } from "src/components/ui/dialog";
+import { Spinner } from "src/components/ui/spinner";
 import { toast } from "sonner";
 import { PATHS } from "src/constants/paths";
 import AppCard from "src/features/gen-apps/components/AppCard";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "src/components/ui/card";
-import { Grid3x3, Folder } from "lucide-react";
+import { Network, Rocket } from "lucide-react";
+
+const PAGE_SIZE = 8;
 
 export default function ProjectGenApp() {
   const { id: projectId } = useParams();
@@ -36,18 +39,20 @@ export default function ProjectGenApp() {
   const { apps, loading, error, total, page, setPage, refetch } = useGenApps(
     projectId,
     1,
-    8,
+    PAGE_SIZE,
   );
   const [projectInfo, setProjectInfo] = useState(null);
   const [deploys, setDeploys] = useState([]);
-  const [selectedDeployId, setSelectedDeployId] = useState(null);
+  const [selectedDeployId, setSelectedDeployId] = useState<string | null>(null);
   const selectedModelId =
-    deploys.find((d) => d.id === selectedDeployId)?.model_id ?? null;
+    deploys.find((d) => d.id === Number(selectedDeployId))?.model_id ?? null;
   const [genLoading, setGenLoading] = useState(false);
-  const [appName, setAppName] = useState(null);
+  const [appName, setAppName] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [modelMetadata, setModelMetadata] = useState(null);
   const [selectedDeploy, setSelectedDeploy] = useState(null);
+
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   const fetchDeploys = useCallback(async () => {
     try {
@@ -55,18 +60,15 @@ export default function ProjectGenApp() {
       const onlineDeploys = (data || []).filter((d) => d.status === "ONLINE");
       const sorted = onlineDeploys.sort((a, b) => (b.id ?? 0) - (a.id ?? 0));
       setDeploys(sorted);
-
       if (sorted.length > 0 && !selectedDeployId) {
-        setSelectedDeployId(sorted[0].id);
+        setSelectedDeployId(String(sorted[0].id));
       }
     } catch (e) {
       toast.error("Failed to fetch deploy list");
     }
   }, [projectId, selectedDeployId]);
 
-  useEffect(() => {
-    fetchDeploys();
-  }, [fetchDeploys]);
+  useEffect(() => { fetchDeploys(); }, [fetchDeploys]);
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -81,7 +83,6 @@ export default function ProjectGenApp() {
     fetchProject();
   }, [projectId]);
 
-  // Fetch model metadata when selectedDeployId changes
   useEffect(() => {
     const fetchMetadata = async () => {
       if (!selectedDeployId) {
@@ -89,16 +90,12 @@ export default function ProjectGenApp() {
         setSelectedDeploy(null);
         return;
       }
-
-      const deploy = deploys.find((d) => d.id === selectedDeployId);
+      const deploy = deploys.find((d) => d.id === Number(selectedDeployId));
       if (!deploy) return;
-
       try {
         setSelectedDeploy(deploy);
-
         const modelRes = await getLatestModelVersionByModelId(deploy.model_id);
         setModelMetadata(modelRes.data);
-
         const deployRes = await getDeployData(deploy.id);
         setSelectedDeploy(deployRes.data);
       } catch (e) {
@@ -108,34 +105,12 @@ export default function ProjectGenApp() {
     fetchMetadata();
   }, [selectedDeployId, deploys]);
 
-  // Log metadata when model changes
-  useEffect(() => {
-    if (selectedModelId && (modelMetadata || selectedDeploy || projectInfo)) {
-      console.log("Metadata to be passed to API:", {
-        projectName: projectInfo?.name,
-        projectDescription: projectInfo?.description,
-        taskType: projectInfo?.task_type,
-        labelsName: modelMetadata?.metadata?.label_column,
-        labelValues: modelMetadata?.metadata?.labels,
-        apiUrl: selectedDeploy?.api_base_url,
-        sampleData: modelMetadata?.metadata?.sample_data,
-        modelInfo: modelMetadata,
-      });
-    }
-  }, [selectedModelId, modelMetadata, selectedDeploy, projectInfo]);
-
   const resolveTaskType = () => {
     const raw = projectInfo?.task_type;
     if (!raw) return "image_classification";
     const upper = String(raw).toUpperCase();
-
-    if (upper.includes("OBJECT") || upper.includes("DETECT")) {
-      return "object_detection";
-    }
-    if (upper.includes("TEXT")) {
-      return "text_classification";
-    }
-    // Mặc định: image classification
+    if (upper.includes("OBJECT") || upper.includes("DETECT")) return "object_detection";
+    if (upper.includes("TEXT")) return "text_classification";
     return "image_classification";
   };
 
@@ -143,8 +118,7 @@ export default function ProjectGenApp() {
     projectName: projectInfo?.name,
     projectDescription: projectInfo?.description,
     taskType: projectInfo?.task_type,
-    description:
-      projectInfo?.description || `A model for ${projectInfo?.task_type}`,
+    description: projectInfo?.description || `A model for ${projectInfo?.task_type}`,
     labelsName: modelMetadata?.metadata?.label_column,
     labelValues: modelMetadata?.metadata?.labels,
     apiUrl: selectedDeploy?.api_base_url,
@@ -157,7 +131,6 @@ export default function ProjectGenApp() {
       toast.error("Please select a model");
       return;
     }
-
     setGenLoading(true);
     try {
       await genApp({
@@ -167,27 +140,21 @@ export default function ProjectGenApp() {
         taskType: resolveTaskType(),
         metadata: buildMetadata(),
       });
-      toast.success("Gen app successfully");
+      toast.success("App generated successfully");
       refetch();
       setIsFormOpen(false);
-      setAppName(null);
+      setAppName("");
     } catch (e) {
-      toast.error("Gen app failed");
+      toast.error("Failed to generate app");
     } finally {
       setGenLoading(false);
     }
   };
 
   const handleRetry = async (app) => {
-    if (!app?.model_id) {
-      toast.error("Cannot retry: missing model info");
-      return;
-    }
+    if (!app?.model_id) { toast.error("Cannot retry: missing model info"); return; }
     const deploy = deploys.find((d) => d.model_id === app.model_id);
-    if (!deploy) {
-      toast.error("Cannot retry: missing deploy info");
-      return;
-    }
+    if (!deploy) { toast.error("Cannot retry: missing deploy info"); return; }
     setGenLoading(true);
     try {
       const [modelRes, deployRes] = await Promise.all([
@@ -212,293 +179,271 @@ export default function ProjectGenApp() {
         taskType: app.task_type || resolveTaskType(),
         metadata,
       });
-      toast.success("Retry gen app thành công");
+      toast.success("App retry successful");
       refetch();
     } catch (e) {
-      toast.error("Retry gen app thất bại");
+      toast.error("App retry failed");
     } finally {
       setGenLoading(false);
     }
   };
 
+  const taskTypeLabel =
+    resolveTaskType() === "object_detection"
+      ? "Object Detection"
+      : resolveTaskType() === "text_classification"
+        ? "Text Classification"
+        : "Image Classification";
+
   return (
     <div className="h-full overflow-y-auto bg-white dark:bg-slate-950">
-      <div className="relative z-10 w-full px-3 py-6 sm:px-4 lg:px-6 lg:py-8">
-        {/* Header */}
-        <div className="mb-8 max-w-full mx-auto">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 rounded-xl bg-blue-600 dark:bg-blue-500">
-              <Grid3x3 className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                My Apps
-              </h1>
-              <p className="mt-1 text-gray-600 dark:text-gray-400">
-                {loading ? "..." : `${total} app generated`}
-              </p>
-            </div>
+      <div className="w-full px-6 py-8 flex flex-col gap-6">
+
+        {/* Page header */}
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              My Apps
+            </h1>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              {loading ? "Loading…" : `${total} app${total !== 1 ? "s" : ""} generated`}
+            </p>
           </div>
         </div>
 
-        <div className="max-w-full mx-auto">
-          {/* Gen App Card - chỉ hiện khi có model deploy */}
-          {deploys.length > 0 && (
-            <Card className="rounded-2xl border border-gray-300 dark:border-gray-700 mb-6 bg-white dark:bg-slate-900">
-              <CardContent className="pt-6 pb-6">
-                <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
-                  <div className="flex-1 min-w-0">
-                    <h3 className="flex items-center gap-2 text-xl font-semibold text-gray-900 dark:text-white mb-1">
-                      <span className="w-2 h-2 rounded-full bg-blue-500 dark:bg-blue-400" />
-                      Gen App
-                    </h3>
-                    <p className="text-gray-600 dark:text-gray-400 text-sm">
-                      Select a model and click Gen App to create an app from the
-                      model.
-                    </p>
-                  </div>
-                  <div className="flex flex-row items-center gap-3 shrink-0 flex-wrap sm:flex-nowrap">
-                    <label className="text-sm font-medium text-gray-900 dark:text-white whitespace-nowrap">
-                      Model
-                    </label>
-                    <CustomSelect
-                      value={selectedDeployId}
-                      onChange={(val) => {
-                        const deployId = val ?? null;
-                        setSelectedDeployId(deployId);
-                      }}
-                      placeholder="Select a model..."
-                      className="theme-dropdown h-10 min-w-[200px] sm:min-w-[220px]"
-                    >
-                      {deploys.map((d) => (
-                        <Option key={d.id} value={d.id}>
-                          {d.name ?? `Model #${d.model_id}`} (Model:{" "}
-                          {d.model_id}, Deploy id: {d.id})
-                        </Option>
-                      ))}
-                    </CustomSelect>
-                    <Button
-                      onClick={() => {
-                        setAppName(null);
-                        setIsFormOpen(true);
-                      }}
-                      disabled={!selectedModelId}
-                      className="h-10 px-6 shrink-0 bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 rounded-xl"
-                    >
-                      Gen App
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* List app đã gen */}
-          {error && (
-            <Card className="rounded-2xl mb-6 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800/50">
-              <CardContent className="py-4 text-red-600 dark:text-red-400">
-                Error loading app list: {error?.message ?? "Unknown"}
-              </CardContent>
-            </Card>
-          )}
-          {loading ? (
-            <Card className="rounded-2xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-slate-900">
-              <CardContent className="flex flex-col items-center justify-center py-16 text-gray-500 dark:text-gray-400">
-                Loading...
-              </CardContent>
-            </Card>
-          ) : apps.length > 0 ? (
-            <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {apps.map((app, i) => (
-                  <AppCard
-                    key={app.id ?? i}
-                    app={app}
-                    onViewDetails={async (app) => {
-                      try {
-                        await initDraft(app.id);
-                      } catch (e) {
-                        console.warn("[GenApp] initDraft before nav:", e);
-                      }
-                      navigate(
-                        `/app/project/${projectId}/my-apps/${app.id}/edit`,
-                      );
-                    }}
-                    onRetry={handleRetry}
-                    isRetrying={genLoading}
-                  />
-                ))}
+        {/* Gen App toolbar — only when deploys exist */}
+        {deploys.length > 0 && (
+          <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-white/10 dark:bg-slate-900">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div>
+                <h2 className="flex items-center gap-2 text-base font-semibold text-gray-900 dark:text-white">
+                  <span className="w-1 h-5 rounded-full bg-blue-500 shrink-0" />
+                  Generate App
+                </h2>
+                <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
+                  Select a deployed model and generate an app from it.
+                </p>
               </div>
+              <div className="flex flex-row flex-wrap items-center gap-3 sm:flex-nowrap">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                  Model
+                </label>
+                <Select
+                  value={selectedDeployId ?? ""}
+                  onValueChange={(val) => setSelectedDeployId(val)}
+                >
+                  <SelectTrigger className="h-10 min-w-[220px] rounded-xl border-gray-200 bg-white text-gray-900 focus-visible:border-blue-400 focus-visible:ring-blue-500/30 dark:border-white/20 dark:bg-white/10 dark:text-white">
+                    <SelectValue placeholder="Select a model…" />
+                  </SelectTrigger>
+                  <SelectContent align="start" position="popper" className="rounded-xl border-gray-200 bg-white shadow-xl dark:border-white/10 dark:bg-slate-950">
+                    {deploys.map((d) => (
+                      <SelectItem key={d.id} value={String(d.id)}>
+                        {d.name ?? `Model #${d.model_id}`} (Deploy {d.id})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Button
+                  onClick={() => { setAppName(""); setIsFormOpen(true); }}
+                  disabled={!selectedModelId}
+                  className="h-10 rounded-xl bg-blue-600 px-5 text-sm font-semibold text-white hover:bg-blue-700 focus-visible:ring-blue-500/40 disabled:opacity-50 dark:bg-blue-500 dark:hover:bg-blue-400"
+                >
+                  <Rocket className="size-4" />
+                  Gen App
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
 
-              {/* Pagination UI - Arrow & Oval Style */}
-              {total > 0 && (
-                <div className="mt-8 pb-10 flex items-center justify-center gap-3">
-                  {/* First Page */}
-                  <Button
-                    variant="outline"
-                    onClick={() => setPage(1)}
-                    disabled={page === 1 || loading}
-                    className="w-10 h-10 p-0 rounded-full border-gray-300 dark:border-white/10 bg-gray-200 dark:bg-gray-800 text-black dark:text-white hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
-                  >
-                    <span className="text-xs font-bold">«</span>
-                  </Button>
+        {/* Error banner */}
+        {error && (
+          <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-700/40 dark:bg-red-900/20 dark:text-red-400">
+            Error loading app list: {error?.message ?? "Unknown"}
+          </div>
+        )}
 
-                  {/* Previous Page */}
-                  <Button
-                    variant="outline"
-                    onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    disabled={page === 1 || loading}
-                    className="w-10 h-10 p-0 rounded-full border-gray-300 dark:border-white/10 bg-gray-200 dark:bg-gray-800 text-black dark:text-white hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
-                  >
-                    <span className="text-xs font-bold">‹</span>
-                  </Button>
+        {/* Content */}
+        {loading ? (
+          <div className="flex min-h-52 items-center justify-center">
+            <Spinner className="size-6 text-blue-500" />
+          </div>
+        ) : apps.length > 0 ? (
+          <>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {apps.map((app, i) => (
+                <AppCard
+                  key={app.id ?? i}
+                  app={app}
+                  onViewDetails={async (app) => {
+                    try { await initDraft(app.id); } catch (e) { console.warn("[GenApp] initDraft before nav:", e); }
+                    navigate(`/app/project/${projectId}/my-apps/${app.id}/edit`);
+                  }}
+                  onRetry={handleRetry}
+                  isRetrying={genLoading}
+                />
+              ))}
+            </div>
 
-                  {/* Page Indicator - Oval Style */}
-                  <div className="flex items-center justify-center h-10 px-6 rounded-full bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-bold text-sm shadow-sm border border-gray-400/30 dark:border-white/10 min-w-[70px]">
-                    {page} / {Math.max(1, Math.ceil(total / 8))}
-                  </div>
-
-                  {/* Next Page */}
-                  <Button
-                    variant="outline"
-                    onClick={() =>
-                      setPage((p) => Math.min(Math.ceil(total / 8), p + 1))
-                    }
-                    disabled={page === Math.ceil(total / 8) || loading}
-                    className="w-10 h-10 p-0 rounded-full border-gray-300 dark:border-white/10 bg-gray-200 dark:bg-gray-800 text-black dark:text-white hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
-                  >
-                    <span className="text-xs font-bold">›</span>
-                  </Button>
-
-                  {/* Last Page */}
-                  <Button
-                    variant="outline"
-                    onClick={() => setPage(Math.ceil(total / 8))}
-                    disabled={page === Math.ceil(total / 8) || loading}
-                    className="w-10 h-10 p-0 rounded-full border-gray-300 dark:border-white/10 bg-gray-200 dark:bg-gray-800 text-black dark:text-white hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
-                  >
-                    <span className="text-xs font-bold">»</span>
-                  </Button>
-                </div>
-              )}
-            </>
-          ) : (
-            <Card className="rounded-2xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-slate-900">
-              <CardContent className="flex flex-col items-center justify-center py-16">
-                <div className="p-4 rounded-full mb-4 bg-gray-100 dark:bg-slate-800">
-                  <Folder className="h-12 w-12 text-gray-400 dark:text-gray-500" />
-                </div>
-                {deploys.length === 0 ? (
-                  <>
-                    <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
-                      No model found. Please deploy a model first.
-                    </h3>
-                    <Button
-                      onClick={() => navigate(PATHS.PROJECT_DEPLOY(projectId))}
-                      className="mt-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl"
-                    >
-                      Go to Deploy page
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
-                      You haven't generated any apps yet
-                    </h3>
-                    <p className="text-center max-w-md text-gray-600 dark:text-gray-400">
-                      Select a model and click Gen App to create your first app.
-                    </p>
-                  </>
-                )}
-              </CardContent>
-            </Card>
-          )}
-        </div>
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="mt-4 flex items-center justify-center gap-2">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setPage(1)}
+                  disabled={page === 1 || loading}
+                  aria-label="First page"
+                  className="size-9 rounded-xl border-gray-200 bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-40 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10"
+                >
+                  «
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page === 1 || loading}
+                  aria-label="Previous page"
+                  className="size-9 rounded-xl border-gray-200 bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-40 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10"
+                >
+                  ‹
+                </Button>
+                <span className="flex h-9 min-w-[72px] items-center justify-center rounded-xl border border-gray-200 bg-white px-4 text-sm font-medium text-gray-700 dark:border-white/10 dark:bg-white/5 dark:text-gray-300">
+                  {page} / {totalPages}
+                </span>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages || loading}
+                  aria-label="Next page"
+                  className="size-9 rounded-xl border-gray-200 bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-40 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10"
+                >
+                  ›
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setPage(totalPages)}
+                  disabled={page === totalPages || loading}
+                  aria-label="Last page"
+                  className="size-9 rounded-xl border-gray-200 bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-40 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10"
+                >
+                  »
+                </Button>
+              </div>
+            )}
+          </>
+        ) : (
+          /* Empty state */
+          <div className="flex min-h-[320px] flex-col items-center justify-center gap-4 rounded-2xl border border-dashed border-gray-200 bg-white/70 text-center dark:border-white/10 dark:bg-white/5">
+            <div className="flex size-14 items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5">
+              <Network className="size-6 text-blue-500 dark:text-blue-400" />
+            </div>
+            {deploys.length === 0 ? (
+              <div>
+                <p className="text-base font-semibold text-gray-900 dark:text-white">
+                  No deployed model found
+                </p>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                  Deploy a model first before generating an app.
+                </p>
+                <Button
+                  onClick={() => navigate(PATHS.PROJECT_DEPLOY(projectId))}
+                  className="mt-4 h-10 rounded-xl bg-blue-600 px-5 text-sm font-semibold text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400"
+                >
+                  Go to Deploy
+                </Button>
+              </div>
+            ) : (
+              <div>
+                <p className="text-base font-semibold text-gray-900 dark:text-white">
+                  No apps yet
+                </p>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                  Select a model and click Gen App to create your first app.
+                </p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
-      {/* Dialog form để điền thông tin app */}
+      {/* Gen App Dialog */}
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-        <DialogContent>
+        <DialogContent className="rounded-2xl border-gray-200 bg-white dark:border-white/10 dark:bg-slate-900">
           <DialogHeader>
-            <DialogTitle>Gen App Configuration</DialogTitle>
+            <DialogTitle className="text-lg font-bold text-gray-900 dark:text-white">
+              Gen App Configuration
+            </DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
+          <div className="space-y-4 py-2">
             <div>
-              <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-white">
+              <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Model
               </label>
-              <CustomSelect
-                value={selectedDeployId}
-                onChange={(val) => {
-                  const deployId = val ?? null;
-                  setSelectedDeployId(deployId);
-                }}
-                placeholder="Select a model..."
-                className="theme-dropdown w-full"
+              <Select
+                value={selectedDeployId ?? ""}
+                onValueChange={(val) => setSelectedDeployId(val)}
               >
-                {deploys.map((d) => (
-                  <Option key={d.id} value={d.id}>
-                    {d.name ?? `Model #${d.model_id}`} (Model: {d.model_id},
-                    Deploy id: {d.id})
-                  </Option>
-                ))}
-              </CustomSelect>
+                <SelectTrigger className="h-10 w-full rounded-xl border-gray-200 bg-white text-gray-900 focus-visible:border-blue-400 focus-visible:ring-blue-500/30 dark:border-white/20 dark:bg-white/10 dark:text-white">
+                  <SelectValue placeholder="Select a model…" />
+                </SelectTrigger>
+                <SelectContent align="start" position="popper" className="rounded-xl border-gray-200 bg-white shadow-xl dark:border-white/10 dark:bg-slate-950">
+                  {deploys.map((d) => (
+                    <SelectItem key={d.id} value={String(d.id)}>
+                      {d.name ?? `Model #${d.model_id}`} (Deploy {d.id})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-white">
+              <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
                 App name
               </label>
-              <input
+              <Input
                 type="text"
-                value={appName ?? ""}
+                value={appName}
                 onChange={(e) => setAppName(e.target.value)}
-                placeholder="Please enter the app name"
-                className="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 text-sm focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-500/30 bg-white dark:bg-slate-900 text-gray-900 dark:text-white"
+                placeholder="Enter the app name"
+                className="h-10 w-full rounded-xl border-gray-200 bg-white text-gray-900 focus-visible:border-blue-400 focus-visible:ring-blue-500/30 dark:border-white/20 dark:bg-white/10 dark:text-white"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-white">
+              <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Task type
               </label>
-              <input
+              <Input
                 type="text"
-                value={
-                  resolveTaskType() === "object_detection"
-                    ? "Object Detection"
-                    : resolveTaskType() === "text_classification"
-                      ? "Text Classification"
-                      : "Image Classification"
-                }
+                value={taskTypeLabel}
                 readOnly
-                className="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-3 py-3 text-sm cursor-not-allowed bg-gray-100 dark:bg-slate-800 text-gray-900 dark:text-gray-400"
+                className="h-10 w-full rounded-xl border-gray-200 bg-gray-50 text-gray-500 cursor-not-allowed dark:border-white/20 dark:bg-white/5 dark:text-gray-400"
               />
-              <p className="mt-1 text-xs text-gray-600 dark:text-gray-400">
-                Task type is automatically determined from the project.
+              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                Automatically determined from the project.
               </p>
             </div>
-
-            <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setIsFormOpen(false);
-                  setAppName(null);
-                }}
-                size="sm"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleConfirmGenApp}
-                disabled={genLoading}
-                size="sm"
-              >
-                {genLoading ? "Processing..." : "Confirm"}
-              </Button>
-            </DialogFooter>
           </div>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => { setIsFormOpen(false); setAppName(""); }}
+              className="h-10 rounded-xl border-blue-200 bg-blue-50 px-5 text-sm font-semibold text-blue-700 hover:bg-blue-100 dark:border-blue-700/50 dark:bg-blue-900/20 dark:text-blue-300 dark:hover:bg-blue-900/40"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleConfirmGenApp}
+              disabled={genLoading}
+              className="h-10 rounded-xl bg-blue-600 px-5 text-sm font-semibold text-white hover:bg-blue-700 focus-visible:ring-blue-500/40 disabled:opacity-50 dark:bg-blue-500 dark:hover:bg-blue-400"
+            >
+              {genLoading ? <><Spinner className="size-4" /> Processing…</> : "Confirm"}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

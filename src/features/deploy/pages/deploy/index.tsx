@@ -4,14 +4,6 @@ import { getAllDeployedModel } from "src/features/deploy/api/deploy";
 import { useParams } from "react-router-dom";
 import { Button } from "src/components/ui/button";
 import { Layers, X, Search } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "src/components/ui/select";
-import { Input } from "src/components/ui/input";
 import { Spinner } from "src/components/ui/spinner";
 
 const ProjectDeploy = () => {

@@ -209,7 +209,7 @@ export default function Datasets() {
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 dark:bg-slate-950 dark:text-white">
-      <main className="px-6 pb-20 pt-20">
+      <main className="absolute top-16 left-0 right-0 bottom-0 overflow-y-auto overflow-x-hidden px-6 py-8">
         <ContentContainer>
           <DatasetHeader
             onNewDataset={() => updateDataState({ showCreator: true })}
