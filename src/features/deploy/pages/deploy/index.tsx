@@ -58,7 +58,7 @@ const ProjectDeploy = () => {
   };
 
   return (
-    <div className="h-full overflow-y-auto bg-gray-50 dark:bg-slate-950">
+    <div className="h-full overflow-y-auto bg-white dark:bg-slate-950">
       <div className="w-full px-6 py-8">
         {/* Page Header */}
         <div className="mb-6 flex flex-wrap items-start justify-between gap-4">

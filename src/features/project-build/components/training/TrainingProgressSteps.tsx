@@ -241,23 +241,22 @@ export function TrainingProgressSteps({
       </div>
 
       {status === "DONE" ? (
-        <div className="text-center py-8">
-          <div className="mb-4 flex justify-center">
-            <CheckCircle className="mb-4 block h-16 w-16 text-[#10b981]" />
+        <div className="flex flex-col items-center gap-4 py-8 text-center">
+          <CheckCircle className="size-14 text-emerald-500" />
+          <div>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+              Training Completed Successfully!
+            </h2>
+            <p className="mt-1.5 text-sm text-gray-500 dark:text-gray-400">
+              Your model has been trained and is ready for use.
+            </p>
           </div>
-          <h2 className="mb-2 text-2xl font-semibold font-poppins text-[var(--text)]">
-            Training Completed Successfully!
-          </h2>
-          <p className="text-[#94a3b8] font-poppins mb-6 text-base">
-            Your model has been trained and is ready for use. Click below to
-            view the results and performance metrics.
-          </p>
           <Button
             type="button"
             onClick={onViewResults}
-            className="h-auto rounded-xl border-0 bg-gradient-to-br from-[#3b82f6] to-[#22d3ee] px-8 py-3 text-lg font-semibold font-poppins shadow-[0_8px_32px_rgba(59,130,246,0.3)] transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+            className="h-10 rounded-xl bg-blue-600 px-6 text-sm font-semibold text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400"
           >
-            <CheckCircle className="mr-2" />
+            <CheckCircle className="size-4" />
             View Training Results
           </Button>
         </div>
@@ -296,10 +295,10 @@ export function TrainingProgressSteps({
       )}
 
       {currentStep === 1 && (
-        <div className="mt-7 overflow-hidden rounded-xl border border-gray-300 bg-white dark:border-gray-700 dark:bg-slate-900">
-          <div className="border-b border-gray-200 px-5 py-4 dark:border-gray-700">
-            <h3 className="m-0 flex items-center text-lg font-semibold text-gray-900 dark:text-white">
-              <Settings className="mr-2 size-5 text-gray-600 dark:text-gray-400" />
+        <div className="mt-7 overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-white/10 dark:bg-slate-900">
+          <div className="flex items-center gap-2 border-b border-gray-200 px-5 py-4 dark:border-white/10">
+            <Settings className="size-4 text-blue-600 dark:text-blue-400" />
+            <h3 className="text-sm font-bold text-gray-900 dark:text-white">
               Current Step Progress
             </h3>
           </div>

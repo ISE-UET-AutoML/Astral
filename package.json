@@ -13,7 +13,6 @@
     "clsx": "^2.1.1",
     "date-fns": "latest",
     "dayjs": "latest",
-    "framer-motion": "latest",
     "jszip": "latest",
     "katex": "latest",
     "lucide-react": "^1.11.0",

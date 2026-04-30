@@ -43,11 +43,7 @@ const NavBar = () => {
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const {
-    authed,
-    logout: authLogout,
-    user,
-  } = useAuth() as AuthState;
+  const { authed, logout: authLogout, user } = useAuth() as AuthState;
   const { theme, toggle } = useTheme();
   const logoSrc = theme === "light" ? "/BlackLogo.svg" : "/PrimaryLogo.svg";
 
@@ -119,7 +115,7 @@ const NavBar = () => {
   return (
     <header
       className={clsx(
-        "fixed top-0 w-screen z-[999] transition-all duration-300",
+        "fixed top-0 w-screen z-[20] transition-all duration-300",
         scrolled
           ? "bg-[var(--nav-bg)] backdrop-blur-xl border-b border-gray-200/50 dark:border-white/10 shadow-md dark:shadow-black/20"
           : "bg-[var(--nav-bg)] backdrop-blur-xl border-b border-gray-200/30 dark:border-white/5 shadow-sm",

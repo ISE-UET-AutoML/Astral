@@ -1,17 +1,12 @@
-import React from "react";
 import { useLocation, useOutletContext, useNavigate } from "react-router-dom";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "src/components/ui/card";
 import { Badge } from "src/components/ui/badge";
+import { Spinner } from "src/components/ui/spinner";
 import { useSpring, animated } from "@react-spring/web";
 import { PATHS } from "src/constants/paths";
 import { useTrainingPage } from "src/features/project-build/hooks/useTrainingPage";
 import { TrainingProgressSteps } from "src/features/project-build/components/training/TrainingProgressSteps";
 import { TrainingCharts } from "src/features/project-build/components/training/TrainingCharts";
+import React from "react";
 
 const parseExperiments = (searchParams) => {
   const experimentId = searchParams.get("experimentId");
@@ -21,18 +16,13 @@ const parseExperiments = (searchParams) => {
   if (rawExperiments) {
     try {
       const parsed = JSON.parse(rawExperiments);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed;
-      }
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
     } catch (error) {
       console.warn("Failed to parse experiments query param", error);
     }
   }
 
-  if (experimentId) {
-    return [{ experimentId, experimentName }];
-  }
-
+  if (experimentId) return [{ experimentId, experimentName }];
   return [];
 };
 
@@ -60,86 +50,84 @@ const Training = () => {
   };
 
   return (
-    <div className="min-h-0 bg-[var(--surface)] font-poppins">
-      <div className="relative z-10 w-full px-3 py-6 sm:px-4 lg:px-6 lg:py-8">
-        <animated.div
-          style={useSpring({
-            from: { opacity: 0, transform: "translateY(20px)" },
-            to: { opacity: 1, transform: "translateY(0)" },
-            config: { tension: 280, friction: 20 },
-          })}
-        >
-          <div className="flex w-full flex-col gap-6">
-            {experimentCards.map((experiment) => (
-              <Card
-                key={`${experiment.tag || "default"}-${experiment.experimentId}`}
-                className="rounded-xl border border-gray-200 bg-white py-0 font-poppins shadow-lg backdrop-blur-md dark:border-white/10 dark:bg-white/5 gap-0"
-              >
-                {experiment.tag && (
-                  <CardHeader className="border-b border-[var(--border)] py-4">
-                    <div className="flex items-center justify-between gap-3">
-                      <CardTitle className="text-lg font-semibold text-[var(--text)]">
-                        {experiment.experimentName === "loading"
-                          ? `Preparing ${String(
-                              experiment.tag || "training",
-                            ).toUpperCase()}`
-                          : experiment.experimentName}
-                      </CardTitle>
-                      <Badge
-                        variant="outline"
-                        className="h-6 rounded-full px-2 text-xs font-medium"
-                      >
-                        {experiment.tag}
-                      </Badge>
-                    </div>
-                  </CardHeader>
-                )}
-                <CardContent className="px-10 py-6">
-                  <TrainingProgressSteps
-                    currentStep={experiment.currentStep}
-                    status={experiment.status}
-                    experimentName={experiment.experimentName}
-                    maxTrainingTime={experiment.maxTrainingTime}
-                    elapsedTime={experiment.elapsedTime}
-                    onViewResults={() => handleViewResults(experiment)}
-                    currentSettingUpStep={experiment.currentSettingUpStep}
-                    settingUpProgress={settingUpProgress}
-                  />
-                </CardContent>
-              </Card>
-            ))}
-
-            {loading && experimentCards.length === 0 && (
-              <Card className="border border-[var(--border)] rounded-xl bg-[var(--card-gradient)]">
-                <p className="m-0 text-[var(--secondary-text)]">
-                  Preparing training status...
-                </p>
-              </Card>
-            )}
-
-            {isSingleExperiment &&
-              primaryExperiment &&
-              primaryExperiment.currentStep >= 3 && (
-                <TrainingCharts
-                  currentStep={primaryExperiment.currentStep}
-                  valMetric={primaryExperiment.valMetric}
-                  maxTrainingTime={primaryExperiment.maxTrainingTime}
-                  enhancedChartData={primaryExperiment.enhancedChartData}
-                  loading={loading}
-                  hasChartData={primaryExperiment.chartData?.length > 0}
-                  experimentId={primaryExperiment.experimentId}
-                  experimentName={primaryExperiment.experimentName}
-                  trainingInfo={primaryExperiment.trainingInfo}
-                  elapsedTime={primaryExperiment.elapsedTime}
-                  status={primaryExperiment.status}
-                  onViewResults={() => handleViewResults(primaryExperiment)}
-                  trainProgress={primaryExperiment.trainProgress}
-                  metricExplain={metricExplain}
-                />
+    <div className="w-full px-6 py-8">
+      <animated.div
+        style={useSpring({
+          from: { opacity: 0, transform: "translateY(16px)" },
+          to: { opacity: 1, transform: "translateY(0)" },
+          config: { tension: 280, friction: 22 },
+        })}
+      >
+        <div className="flex flex-col gap-6">
+          {/* Experiment progress cards */}
+          {experimentCards.map((experiment) => (
+            <div
+              key={`${experiment.tag || "default"}-${experiment.experimentId}`}
+              className="rounded-2xl border border-gray-200 bg-white dark:border-white/10 dark:bg-slate-900"
+            >
+              {experiment.tag && (
+                <div className="flex items-center justify-between gap-3 border-b border-gray-200 px-6 py-4 dark:border-white/10">
+                  <h2 className="text-base font-bold text-gray-900 dark:text-white">
+                    {experiment.experimentName === "loading"
+                      ? `Preparing ${String(experiment.tag || "training").toUpperCase()}`
+                      : experiment.experimentName}
+                  </h2>
+                  <Badge
+                    variant="outline"
+                    className="h-6 rounded-full px-2.5 text-xs font-medium"
+                  >
+                    {experiment.tag}
+                  </Badge>
+                </div>
               )}
-          </div>
-        </animated.div>
-      </div>
+              <div className="p-6">
+                <TrainingProgressSteps
+                  currentStep={experiment.currentStep}
+                  status={experiment.status}
+                  experimentName={experiment.experimentName}
+                  maxTrainingTime={experiment.maxTrainingTime}
+                  elapsedTime={experiment.elapsedTime}
+                  onViewResults={() => handleViewResults(experiment)}
+                  currentSettingUpStep={experiment.currentSettingUpStep}
+                  settingUpProgress={settingUpProgress}
+                />
+              </div>
+            </div>
+          ))}
+
+          {/* Loading placeholder */}
+          {loading && experimentCards.length === 0 && (
+            <div className="flex items-center gap-3 rounded-2xl border border-gray-200 bg-white p-6 dark:border-white/10 dark:bg-slate-900">
+              <Spinner className="size-4 text-blue-600 dark:text-blue-400" />
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Preparing training status…
+              </p>
+            </div>
+          )}
+
+          {/* Charts — single experiment only, once training is underway */}
+          {isSingleExperiment &&
+            primaryExperiment &&
+            primaryExperiment.currentStep >= 3 && (
+              <TrainingCharts
+                currentStep={primaryExperiment.currentStep}
+                valMetric={primaryExperiment.valMetric}
+                maxTrainingTime={primaryExperiment.maxTrainingTime}
+                enhancedChartData={primaryExperiment.enhancedChartData}
+                loading={loading}
+                hasChartData={primaryExperiment.chartData?.length > 0}
+                experimentId={primaryExperiment.experimentId}
+                experimentName={primaryExperiment.experimentName}
+                trainingInfo={primaryExperiment.trainingInfo}
+                elapsedTime={primaryExperiment.elapsedTime}
+                status={primaryExperiment.status}
+                onViewResults={() => handleViewResults(primaryExperiment)}
+                trainProgress={primaryExperiment.trainProgress}
+                metricExplain={metricExplain}
+              />
+            )}
+        </div>
+      </animated.div>
     </div>
   );
 };
