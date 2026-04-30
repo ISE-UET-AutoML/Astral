@@ -208,38 +208,35 @@ export default function Datasets() {
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-[var(--surface)] text-gray-900 dark:text-white">
-      <div className="min-h-screen pt-12 bg-white dark:bg-[var(--surface)]">
-        <main className="relative pt-20 px-6 pb-20">
-          <ContentContainer className="relative z-10">
-            {/* Header */}
-            <DatasetHeader
-              onNewDataset={() => updateDataState({ showCreator: true })}
-            />
+    <div className="min-h-screen bg-gray-50 text-gray-900 dark:bg-slate-950 dark:text-white">
+      <main className="px-6 pb-20 pt-20">
+        <ContentContainer>
+          <DatasetHeader
+            onNewDataset={() => updateDataState({ showCreator: true })}
+          />
 
-            {/* Filter */}
-            <DatasetFilter
-              selectedType={selectedType}
-              onTypeChange={setSelectedType}
-              onReset={handleResetFilters}
-              searchTerm={searchTerm}
-              onSearchChange={setSearchTerm}
-              sortBy={sortBy}
-              onSortChange={setSortBy}
-            />
+          <DatasetFilter
+            selectedType={selectedType}
+            onTypeChange={setSelectedType}
+            onReset={handleResetFilters}
+            searchTerm={searchTerm}
+            onSearchChange={setSearchTerm}
+            sortBy={sortBy}
+            onSortChange={setSortBy}
+          />
 
-            {/* Grid */}
-            <DatasetGrid
-              datasets={datasetState.datasets}
-              isLoading={datasetState.isLoading}
-              deletingIds={deletingIds}
-              onDelete={handleDelete}
-              onCreateDataset={() => updateDataState({ showCreator: true })}
-              getDatasets={getDatasets}
-            />
+          <DatasetGrid
+            datasets={datasetState.datasets}
+            isLoading={datasetState.isLoading}
+            deletingIds={deletingIds}
+            onDelete={handleDelete}
+            onCreateDataset={() => updateDataState({ showCreator: true })}
+            getDatasets={getDatasets}
+          />
 
-            {/* Pager */}
-            <div className="mt-8">
+          {/* Pagination */}
+          {!datasetState.isLoading && datasetState.datasets.length > 0 && (
+            <div className="mt-6">
               <Pagination>
                 <PaginationContent className="gap-2">
                   <PaginationItem>
@@ -250,11 +247,13 @@ export default function Datasets() {
                         event.preventDefault();
                         if (currentPage > 1) handlePageChange(currentPage - 1);
                       }}
-                      className={currentPage <= 1 ? "pointer-events-none opacity-50" : ""}
+                      className={
+                        currentPage <= 1 ? "pointer-events-none opacity-50" : ""
+                      }
                     />
                   </PaginationItem>
                   <PaginationItem>
-                    <div className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 dark:border-white/10 dark:bg-slate-950/70 dark:text-slate-200">
+                    <div className="rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 dark:border-white/10 dark:bg-slate-900 dark:text-gray-200">
                       {currentPage} / {totalPages}
                     </div>
                   </PaginationItem>
@@ -264,17 +263,22 @@ export default function Datasets() {
                       text=""
                       onClick={(event) => {
                         event.preventDefault();
-                        if (currentPage < totalPages) handlePageChange(currentPage + 1);
+                        if (currentPage < totalPages)
+                          handlePageChange(currentPage + 1);
                       }}
-                      className={currentPage >= totalPages ? "pointer-events-none opacity-50" : ""}
+                      className={
+                        currentPage >= totalPages
+                          ? "pointer-events-none opacity-50"
+                          : ""
+                      }
                     />
                   </PaginationItem>
                 </PaginationContent>
               </Pagination>
             </div>
-          </ContentContainer>
-        </main>
-      </div>
+          )}
+        </ContentContainer>
+      </main>
 
       <CreateDatasetModal
         visible={datasetState.showCreator}

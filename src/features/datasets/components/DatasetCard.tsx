@@ -1,7 +1,6 @@
 import type { ComponentType, MouseEvent, SVGProps } from "react";
 import {
   Database as CircleStackIcon,
-  Star as StarIcon,
   Trash as TrashIcon,
   Image as PhotoIcon,
   FileText as DocumentTextIcon,
@@ -9,40 +8,44 @@ import {
   Grid2x2 as Squares2X2Icon,
   ChartBar as ChartBarIcon,
   RefreshCw as ArrowPathIcon,
+  ExternalLink,
 } from "lucide-react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { Progress } from "src/components/ui/progress";
+import { Badge } from "src/components/ui/badge";
+import { Button } from "src/components/ui/button";
 import { toast } from "sonner";
 import type { Dataset } from "src/features/datasets/types";
 
 dayjs.extend(relativeTime);
 
+// Status badge config — mapped to semantic color set per design prompt
 const PROCESSING_STATUS = {
   COMPLETED: {
     text: "Completed",
     badge:
-      "bg-green-100 text-green-800 dark:text-white border-green-200 dark:bg-green-400/60 dark:text-green-400 dark:border-green-700",
+      "rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400",
   },
   CREATING_DATASET: {
-    text: "Creating Dataset...",
+    text: "Creating…",
     badge:
-      "bg-blue-50 text-blue-800 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-700",
+      "rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-700 hover:bg-amber-100 dark:bg-amber-900/30 dark:text-amber-400",
   },
   PROCESSING: {
     text: "Processing",
     badge:
-      "bg-blue-50 text-blue-800 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-700",
+      "rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-700 hover:bg-amber-100 dark:bg-amber-900/30 dark:text-amber-400",
   },
   CREATING_LABEL_PROJECT: {
-    text: "Creating Label Project...",
+    text: "Creating Label Project…",
     badge:
-      "bg-blue-50 text-blue-800 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-700",
+      "rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-700 hover:bg-amber-100 dark:bg-amber-900/30 dark:text-amber-400",
   },
   FAILED: {
     text: "Failed",
     badge:
-      "bg-red-50 text-red-800 border-red-200 dark:bg-red-900/20 dark:text-red-400 dark:border-red-700",
+      "rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-700 hover:bg-red-100 dark:bg-red-900/30 dark:text-red-400",
   },
 };
 
@@ -94,15 +97,26 @@ const resolveTypeFamily = (key: string): TypeFamily => {
   return "TEXT";
 };
 
-// Accent color per type family (for icon and progress bar)
-const TYPE_ACCENT_CLASS: Record<TypeFamily, string> = {
-  IMAGE: "text-violet-600",
-  TEXT: "text-indigo-500",
-  TABULAR: "text-blue-500",
-  TIME_SERIES: "text-sky-400",
-  MULTIMODAL: "text-purple-600",
-  OBJECT_DETECTION: "text-purple-500",
-  SEMANTIC_SEGMENTATION: "text-indigo-500",
+// All icon colors use the blue identity scale per design prompt
+const TYPE_ICON_CLASS: Record<TypeFamily, string> = {
+  IMAGE: "text-blue-500 dark:text-blue-400",
+  TEXT: "text-blue-500 dark:text-blue-400",
+  TABULAR: "text-blue-500 dark:text-blue-400",
+  TIME_SERIES: "text-blue-500 dark:text-blue-400",
+  MULTIMODAL: "text-blue-500 dark:text-blue-400",
+  OBJECT_DETECTION: "text-blue-500 dark:text-blue-400",
+  SEMANTIC_SEGMENTATION: "text-blue-500 dark:text-blue-400",
+};
+
+// Top accent bar color per type
+const TYPE_ACCENT_BAR: Record<TypeFamily, string> = {
+  IMAGE: "from-blue-500 to-blue-400",
+  TEXT: "from-blue-500 to-blue-400",
+  TABULAR: "from-blue-500 to-blue-400",
+  TIME_SERIES: "from-blue-500 to-blue-400",
+  MULTIMODAL: "from-blue-500 to-blue-400",
+  OBJECT_DETECTION: "from-blue-500 to-blue-400",
+  SEMANTIC_SEGMENTATION: "from-blue-500 to-blue-400",
 };
 
 export default function DatasetCard({
@@ -136,9 +150,11 @@ export default function DatasetCard({
     "CREATING_LABEL_PROJECT",
   ].includes(processingStatus);
   const isFailed = processingStatus === "FAILED";
+
   const statusConfig =
     PROCESSING_STATUS[processingStatus as DatasetStatus] ||
     PROCESSING_STATUS.PROCESSING;
+
   const lsProjectId = dataset.lsProject?.labelStudioId || null;
   const lsProject = dataset.lsProject || {};
   const annotatedCount = lsProject.annotatedNums || 0;
@@ -157,7 +173,8 @@ export default function DatasetCard({
   const TypeIcon = (TYPE_ICON_MAP[familyKey as DatasetTypeKey] ||
     TYPE_ICON_MAP[normalizedKey as DatasetTypeKey] ||
     CircleStackIcon) as IconComponent;
-  const accentClass = TYPE_ACCENT_CLASS[familyKey];
+  const iconClass = TYPE_ICON_CLASS[familyKey];
+  const accentBar = TYPE_ACCENT_BAR[familyKey];
 
   const handleCardClick = () => {
     if (isCompleted && lsProjectId) {
@@ -172,143 +189,166 @@ export default function DatasetCard({
     }
   };
 
-  const borderClass = isCompleted
-    ? "border-2 border-green-500/60 shadow-green-500/10"
-    : isFailed
-      ? "border-2 border-red-500/60 shadow-red-500/10"
-      : "border-2 border-blue-500/40 shadow-blue-500/10";
-
   return (
     <div
-      key={dataset.id}
-      className={`group rounded-2xl shadow-lg w-full min-h-[360px] overflow-hidden font-poppins transition-all duration-300 flex flex-col relative ${isProcessing ? "bg-blue-50/80 dark:bg-blue-900/30" : "bg-white dark:bg-slate-950"} ${borderClass} ${isCompleted ? "cursor-pointer hover:-translate-y-1 hover:shadow-xl" : "cursor-default"}`}
+      className={`group relative flex min-h-[360px] w-full cursor-pointer flex-col overflow-hidden rounded-2xl border bg-white transition duration-300 dark:bg-slate-900 ${
+        isCompleted
+          ? "border-gray-200 hover:-translate-y-1 hover:border-blue-200 hover:shadow-sm dark:border-white/10 dark:hover:border-blue-700/40"
+          : isFailed
+            ? "border-red-200 dark:border-red-700/40"
+            : "border-blue-200/60 dark:border-blue-700/30"
+      }`}
       onClick={handleCardClick}
     >
-      {/* Content - blurred when processing */}
+      {/* Top accent bar */}
       <div
-        className={`flex-1 flex flex-col min-h-0 ${isProcessing ? "blur-sm" : ""}`}
-      >
-        {/* Header Section */}
-        <div className="relative px-4 pt-4 pb-2">
-          {thumbnail && (
-            <div className="absolute inset-0">
-              <img
-                src={thumbnail}
-                alt="dataset thumbnail"
-                className="w-full h-full object-cover"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-black/10" />
-            </div>
-          )}
+        className={`h-1 w-full shrink-0 bg-gradient-to-r ${accentBar}`}
+      />
 
-          <div className="relative z-10">
-            {/* Top Row: Status + Actions */}
-            <div className="flex justify-between items-center mb-4">
+      {/* Blurred content when processing */}
+      <div className={`flex flex-1 flex-col ${isProcessing ? "blur-sm" : ""}`}>
+        {/* Header / Thumbnail Area */}
+        <div className="relative h-28 w-full shrink-0 overflow-hidden bg-gray-50/50 dark:bg-slate-800/30">
+          {thumbnail ? (
+            <img
+              src={thumbnail}
+              alt="dataset thumbnail"
+              className="h-full w-full object-cover"
+              loading="lazy"
+            />
+          ) : (
+            <>
               <div
-                className={`px-2.5 py-1 rounded-full text-xs font-medium border ${statusConfig.badge}`}
+                className="absolute inset-0 text-slate-900/[0.03] dark:text-white/[0.03]"
+                style={{
+                  backgroundImage:
+                    "radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)",
+                  backgroundSize: "16px 16px",
+                }}
+              />
+              <TypeIcon
+                className="absolute -bottom-4 -right-4 size-32 -rotate-12 text-blue-500/10 dark:text-blue-400/10"
+                aria-hidden="true"
+              />
+            </>
+          )}
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white/90 dark:to-slate-900/90" />
+        </div>
+
+        {/* Card body */}
+        <div className="flex flex-1 flex-col px-5 py-4">
+          {/* Top row: status badge + actions */}
+          <div className="mb-4 flex items-center justify-between gap-2">
+            <Badge className={statusConfig.badge}>
+              {isProcessing && (
+                <span className="mr-1 inline-block size-1.5 animate-pulse rounded-full bg-amber-500" />
+              )}
+              {statusConfig.text}
+            </Badge>
+            <div className="flex gap-1">
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                aria-label="Delete dataset"
+                onClick={(e) => handleDelete(e, dataset.id)}
+                className="size-7 rounded-lg border-gray-200 bg-white text-red-500 hover:bg-red-50 hover:text-red-600 dark:border-white/15 dark:bg-slate-900/75 dark:hover:bg-red-950/30"
               >
-                {isProcessing && (
-                  <span className="inline-block w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse mr-1.5" />
-                )}
-                {statusConfig.text}
-              </div>
-              <div className="flex gap-1.5">
-                <button className="w-7 h-7 rounded-full flex items-center justify-center transition-all duration-200 bg-white dark:bg-white/15 border border-gray-200 dark:border-white/25 hover:bg-gray-100 dark:hover:bg-white/25">
-                  <StarIcon className="h-3.5 w-3.5 text-yellow-500" />
-                </button>
-                <button
-                  className="w-7 h-7 rounded-full flex items-center justify-center transition-all duration-200 bg-white dark:bg-white/15 border border-gray-200 dark:border-white/25 hover:bg-red-50 dark:hover:bg-red-900/30"
-                  onClick={(e) => handleDelete(e, dataset.id)}
-                >
-                  <TrashIcon className="h-3.5 w-3.5 text-red-500" />
-                </button>
-              </div>
+                <TrashIcon className="size-3.5" />
+              </Button>
             </div>
+          </div>
 
-            {/* Icon */}
-            <div className="flex justify-left mb-3">
-              <div className="w-14 h-14 rounded-xl shadow-md flex items-center justify-center bg-white dark:bg-white/15 border border-gray-200 dark:border-white/25">
-                <TypeIcon
-                  className={`h-7 w-7 transition-transform duration-500 ease-out ${accentClass}`}
-                  aria-hidden="true"
-                />
-              </div>
+          {/* Icon + type tag */}
+          <div className="mb-4 flex items-center gap-3">
+            <div className="flex size-11 shrink-0 items-center justify-center rounded-xl border border-gray-200 bg-gradient-to-br from-blue-500/10 to-blue-600/5 dark:border-white/10 dark:from-blue-500/15 dark:to-blue-600/10">
+              <TypeIcon className={`size-5 ${iconClass}`} aria-hidden="true" />
             </div>
-
-            {/* Data Type Tag */}
-            <span className="px-2.5 py-1 text-xs font-medium rounded-full shadow-sm bg-gray-100 dark:bg-white/15 border border-gray-200 dark:border-white/25 text-gray-700 dark:text-gray-200">
+            <span className="rounded-full border border-gray-200 bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600 dark:border-white/10 dark:bg-white/10 dark:text-gray-400">
               {dataType.replace(/_/g, " ")}
             </span>
           </div>
-        </div>
 
-        {/* Content */}
-        <div className="flex-1 px-5 py-4 flex flex-col">
-          <h2 className="text-lg font-bold mb-2 truncate leading-tight text-gray-900 dark:text-white">
+          {/* Title */}
+          <h2 className="mb-3 truncate text-base font-bold leading-tight text-gray-900 dark:text-white">
             {dataset.title || "Untitled Dataset"}
           </h2>
 
-          <div className="w-full h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-white/10 to-transparent mb-3" />
+          {/* Divider */}
+          <div className="mb-3 h-px w-full bg-gradient-to-r from-transparent via-gray-200 to-transparent dark:via-white/10" />
 
-          <div className="grid grid-cols-3 gap-4 text-sm mb-3">
-            <div className="flex flex-col">
-              <span className="text-gray-500 dark:text-gray-300">Created</span>
-              <span className="font-semibold truncate mt-0.5 text-gray-900 dark:text-white">
+          {/* Metadata grid */}
+          <div className="grid grid-cols-3 gap-3 text-xs">
+            <div className="flex flex-col gap-0.5">
+              <span className="text-gray-400 dark:text-gray-500">Created</span>
+              <span className="font-semibold text-gray-800 dark:text-gray-200">
                 {createdAtDisplay}
               </span>
             </div>
-            <div className="flex flex-col">
-              <span className="text-gray-500 dark:text-gray-300">Files</span>
-              <span className="font-semibold truncate mt-0.5 text-gray-900 dark:text-white">
+            <div className="flex flex-col gap-0.5">
+              <span className="text-gray-400 dark:text-gray-500">Files</span>
+              <span className="font-semibold text-gray-800 dark:text-gray-200">
                 {totalFiles.toLocaleString()}
               </span>
             </div>
-            <div className="flex flex-col">
-              <span className="text-gray-500 dark:text-gray-300">Size</span>
-              <span className="font-semibold mt-0.5 text-gray-900 dark:text-white">
+            <div className="flex flex-col gap-0.5">
+              <span className="text-gray-400 dark:text-gray-500">Size</span>
+              <span className="font-semibold text-gray-800 dark:text-gray-200">
                 {totalSizeKb ? (totalSizeKb / 1024).toFixed(1) + " MB" : "N/A"}
               </span>
             </div>
           </div>
 
+          {/* Annotation progress */}
           {totalAnnotations > 0 && (
-            <div className="mt-2">
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-sm text-gray-500 dark:text-gray-300">
-                  Progress
+            <div className="mt-4">
+              <div className="mb-1.5 flex items-center justify-between text-xs">
+                <span className="text-gray-400 dark:text-gray-500">
+                  Annotations
                 </span>
-                <span className="text-sm font-bold text-gray-900 dark:text-white">
+                <span className="font-semibold text-gray-700 dark:text-gray-300">
                   {annotatedCount.toLocaleString()} /{" "}
                   {totalAnnotations.toLocaleString()}
                 </span>
               </div>
               <Progress
                 value={progress}
-                className="h-1.5 bg-gray-200 dark:bg-white/10"
+                className="h-1.5 bg-gray-200 dark:bg-white/10 [&>[data-slot=progress-indicator]]:bg-blue-500 dark:[&>[data-slot=progress-indicator]]:bg-blue-400"
               />
               <div
-                className={`mt-1 text-right text-sm font-semibold ${isCompleted ? "text-emerald-500" : "text-blue-500"}`}
+                className={`mt-1 text-right text-xs font-semibold ${
+                  isCompleted ? "text-emerald-600 dark:text-emerald-400" : "text-blue-600 dark:text-blue-400"
+                }`}
               >
                 {progress}%
+              </div>
+            </div>
+          )}
+
+          {/* Open in Label Studio hint */}
+          {isCompleted && lsProjectId && (
+            <div className="mt-auto pt-4">
+              <div className="flex items-center gap-1 text-xs text-blue-600 opacity-0 transition-opacity duration-200 group-hover:opacity-100 dark:text-blue-400">
+                <ExternalLink className="size-3" />
+                Open in Label Studio
               </div>
             </div>
           )}
         </div>
       </div>
 
-      {/* Loading overlay - centered when processing */}
+      {/* Processing overlay */}
       {isProcessing && (
-        <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
+        <div className="absolute inset-0 z-20 flex items-center justify-center">
           <div className="flex flex-col items-center gap-2">
-            <div className="w-14 h-14 rounded-full bg-white/90 dark:bg-white/10 flex items-center justify-center shadow-lg border border-blue-200/50 dark:border-white/20">
+            <div className="flex size-14 items-center justify-center rounded-full border border-blue-200/50 bg-white/90 shadow-lg dark:border-white/20 dark:bg-slate-900/90">
               <ArrowPathIcon
-                className="h-7 w-7 text-blue-500 dark:text-gray-300 animate-spin"
+                className="size-7 animate-spin text-blue-500"
                 aria-hidden="true"
               />
             </div>
-            <span className="text-xs font-medium text-blue-600 dark:text-gray-300">
-              Processing...
+            <span className="text-xs font-medium text-blue-600 dark:text-blue-400">
+              Processing…
             </span>
           </div>
         </div>
