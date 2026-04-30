@@ -4,12 +4,6 @@ import {
   AlertTitle,
 } from "src/components/ui/alert";
 import { Button } from "src/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "src/components/ui/card";
 import { CheckCircle, Rocket, StopCircle, Trash2 } from "lucide-react";
 
 export function DeployCloudServerCard({ deployData }) {
@@ -18,14 +12,15 @@ export function DeployCloudServerCard({ deployData }) {
   const isOnline = deployData.status === "ONLINE";
 
   return (
-    <Card className="rounded-2xl border border-gray-200 bg-white/95 shadow-lg dark:border-white/10 dark:bg-white/5">
-      <CardHeader className="border-b border-gray-200 px-5 py-4 dark:border-white/10">
-        <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white">
-          <Rocket className="size-5 text-blue-600 dark:text-blue-300" />
+    <div className="rounded-2xl border border-gray-200 bg-white dark:border-white/10 dark:bg-slate-900">
+      <div className="flex items-center gap-2 border-b border-gray-200 px-5 py-4 dark:border-white/10">
+        <span className="w-1 h-5 rounded-full bg-blue-500 shrink-0" />
+        <Rocket className="size-4 text-blue-500 dark:text-blue-400" />
+        <h2 className="text-base font-semibold text-gray-900 dark:text-white">
           Cloud Server
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="px-5 py-5">
+        </h2>
+      </div>
+      <div className="px-5 py-5">
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           <div className="flex flex-col gap-3">
             <Alert className="min-h-28 border-gray-200 bg-gray-50/80 dark:border-white/10 dark:bg-white/5">
@@ -45,13 +40,9 @@ export function DeployCloudServerCard({ deployData }) {
             </Alert>
             <Button
               type="button"
-              className="h-10 bg-blue-600 text-white hover:bg-blue-700"
+              className="h-10 rounded-xl bg-blue-600 px-4 text-sm font-semibold text-white hover:bg-blue-700 focus-visible:ring-blue-500/40 dark:bg-blue-500 dark:hover:bg-blue-400"
             >
-              {isOnline ? (
-                <StopCircle className="size-4" />
-              ) : (
-                <CheckCircle className="size-4" />
-              )}
+              {isOnline ? <StopCircle className="size-4" /> : <CheckCircle className="size-4" />}
               {isOnline ? "Shut down" : "Start"}
             </Button>
           </div>
@@ -68,13 +59,17 @@ export function DeployCloudServerCard({ deployData }) {
                 is irreversible.
               </AlertDescription>
             </Alert>
-            <Button type="button" variant="destructive" className="h-10">
+            <Button
+              type="button"
+              variant="destructive"
+              className="h-10 rounded-xl bg-red-600 px-4 text-sm font-semibold text-white hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-500"
+            >
               <Trash2 className="size-4" />
               Delete Server
             </Button>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

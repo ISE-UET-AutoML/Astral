@@ -1,12 +1,6 @@
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "src/components/ui/card";
-import {
   CloudDownload,
   Database,
   LoaderCircle,
@@ -143,7 +137,7 @@ function StepIcon({
   return (
     <span
       className={cx(
-        "mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full border bg-white text-gray-600 transition-colors dark:bg-white/5 dark:text-gray-300",
+        "mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full border bg-white text-gray-500 transition-colors dark:bg-slate-900 dark:text-gray-400",
         active &&
           "border-blue-300 bg-blue-50 text-blue-600 dark:border-blue-400/40 dark:bg-blue-500/10 dark:text-blue-300",
         completed &&
@@ -179,14 +173,14 @@ function PreparationSteps({
             </StepIcon>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-3">
-                <h3 className="whitespace-nowrap text-[15px] font-medium text-gray-900 dark:text-white">
+                <h3 className="whitespace-nowrap text-sm font-semibold text-gray-900 dark:text-white">
                   {step.title}
                 </h3>
                 {index < steps.length - 1 && (
-                  <div className="hidden h-px flex-1 bg-gray-200 dark:bg-white/10 xl:block" />
+                  <div className="hidden h-px flex-1 bg-gradient-to-r from-gray-200 to-transparent dark:from-white/10 xl:block" />
                 )}
               </div>
-              <p className="mt-1 max-w-44 text-sm leading-6 text-slate-500 dark:text-slate-400">
+              <p className="mt-1 max-w-44 text-sm leading-relaxed text-gray-500 dark:text-gray-400">
                 {step.description}
               </p>
             </div>
@@ -228,10 +222,10 @@ function ProgressSteps({
               )}
             </StepIcon>
             <div className="min-w-0 pb-0.5">
-              <div className="text-[15px] font-medium text-gray-900 dark:text-white">
+              <div className="text-sm font-semibold text-gray-900 dark:text-white">
                 {step.title}
               </div>
-              <p className="mt-1 text-sm leading-6 text-slate-500 dark:text-slate-400">
+              <p className="mt-1 text-sm leading-relaxed text-gray-500 dark:text-gray-400">
                 {step.description}
               </p>
             </div>
@@ -290,6 +284,7 @@ export default function DeploySettingUpView() {
     Math.max(currentSettingUpStep, 0),
     Math.max(progressSteps.length - 1, 0),
   );
+
   const preparationSteps: StepItem[] = [
     {
       key: "creating-instance",
@@ -318,37 +313,48 @@ export default function DeploySettingUpView() {
   ];
 
   return (
-    <div className="h-full overflow-y-auto bg-[var(--surface)] px-3 py-6 sm:px-4 lg:px-6 lg:py-8">
-      <Card className="mx-auto w-full rounded-2xl border border-gray-200 bg-white/95 shadow-xl dark:border-white/10 dark:bg-white/5">
-        <CardContent className="p-7 lg:p-10">
-          <div className="mb-7 flex items-center gap-2">
-            <Rocket className="size-5 text-gray-700 dark:text-gray-200" />
-            <h2 className="m-0 text-xl font-bold text-gray-900 dark:text-white">
-              Deployment Preparation
-            </h2>
-          </div>
+    <div className="h-full overflow-y-auto bg-gray-50 dark:bg-slate-950">
+      <div className="w-full px-6 py-8">
+        {/* Page header */}
+        <div className="mb-6">
+          <h1 className="flex items-center gap-3 text-3xl font-bold text-gray-900 dark:text-white">
+            <Rocket className="size-7 text-blue-600 dark:text-blue-400" />
+            Deployment Preparation
+          </h1>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            Your model is being prepared for deployment. This may take a few
+            minutes.
+          </p>
+        </div>
 
+        {/* Main panel */}
+        <div className="rounded-2xl border border-gray-200 bg-white p-6 dark:border-white/10 dark:bg-slate-900 lg:p-8">
           <PreparationSteps
             currentStep={currentStep}
             steps={preparationSteps}
           />
 
-          <Card className="mt-7 overflow-hidden rounded-xl border border-gray-200 bg-gray-50/80 shadow-lg dark:border-white/10 dark:bg-white/5">
-            <CardHeader className="border-b border-gray-200 px-5 py-4 dark:border-white/10">
-              <CardTitle className="m-0 flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white">
-                <Settings className="size-5 text-gray-600 dark:text-gray-300" />
+          {/* Divider */}
+          <div className="my-8 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent dark:via-white/10" />
+
+          {/* Step progress sub-panel */}
+          <div className="rounded-xl border border-gray-200 bg-gray-50/80 dark:border-white/10 dark:bg-white/5">
+            <div className="flex items-center gap-2 border-b border-gray-200 px-5 py-4 dark:border-white/10">
+              <span className="w-1 h-5 rounded-full bg-blue-500 shrink-0" />
+              <Settings className="size-4 text-blue-500 dark:text-blue-400" />
+              <h2 className="text-base font-semibold text-gray-900 dark:text-white">
                 Current Step Progress
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="px-5 py-5">
+              </h2>
+            </div>
+            <div className="px-5 py-5">
               <ProgressSteps
                 currentStep={boundedProgressStep}
                 steps={progressSteps}
               />
-            </CardContent>
-          </Card>
-        </CardContent>
-      </Card>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

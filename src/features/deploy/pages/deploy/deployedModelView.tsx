@@ -43,21 +43,17 @@ export default function DeployedModelView() {
   } = useDeployView({ deployId, projectId });
 
   return (
-    <div className="min-h-screen bg-gray-100 px-6 pb-20 pt-6 dark:bg-[#161616]">
+    <div className="w-full px-6 py-8 bg-white dark:bg-slate-950">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="flex size-12 items-center justify-center rounded-xl bg-blue-100 text-blue-600 dark:bg-blue-500/10 dark:text-blue-300">
-              <RocketLaunchIcon className="size-6" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Deployment View
-              </h1>
-              <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
-                Monitor and manage your deployed model
-              </p>
-            </div>
+        <div className="mb-2 flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h1 className="flex items-center gap-3 text-3xl font-bold text-gray-900 dark:text-white">
+              <RocketLaunchIcon className="size-7 text-blue-600 dark:text-blue-400" />
+              Deployment View
+            </h1>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              Monitor and manage your deployed model
+            </p>
           </div>
         </div>
 

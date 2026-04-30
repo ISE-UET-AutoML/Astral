@@ -1,10 +1,4 @@
 import { Button } from "src/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "src/components/ui/card";
 import { Input } from "src/components/ui/input";
 import { ChartLine, Copy, Gauge, Monitor } from "lucide-react";
 
@@ -38,20 +32,21 @@ export function DeployMonitoringPanel({
 
   return (
     <>
-      <Card className="rounded-2xl border border-gray-200 bg-white/95 shadow-lg dark:border-white/10 dark:bg-white/5">
-        <CardHeader className="border-b border-gray-200 px-5 py-4 dark:border-white/10">
-          <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white">
-            <Monitor className="size-5 text-blue-600 dark:text-blue-300" />
+      <div className="rounded-2xl border border-gray-200 bg-white dark:border-white/10 dark:bg-slate-900">
+        <div className="flex items-center gap-2 border-b border-gray-200 px-5 py-4 dark:border-white/10">
+          <span className="w-1 h-5 rounded-full bg-blue-500 shrink-0" />
+          <Monitor className="size-4 text-blue-500 dark:text-blue-400" />
+          <h2 className="text-base font-semibold text-gray-900 dark:text-white">
             Monitoring
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="px-5 py-5">
+          </h2>
+        </div>
+        <div className="px-5 py-5">
           <div className="mb-2 text-sm font-medium text-gray-900 dark:text-white">
             Monitor Endpoint URL
           </div>
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
             <Input
-              className="h-10 flex-1 rounded-xl border-gray-200 bg-white px-3 text-sm text-gray-900 dark:border-white/10 dark:bg-white/10 dark:text-white"
+              className="h-10 flex-1 rounded-xl border-gray-200 bg-white px-3 text-sm text-gray-900 focus-visible:border-blue-400 focus-visible:ring-blue-500/30 dark:border-white/20 dark:bg-white/10 dark:text-white"
               value={monitorUrl}
               readOnly
             />
@@ -59,8 +54,8 @@ export function DeployMonitoringPanel({
               <Button
                 type="button"
                 variant="outline"
-                size="lg"
                 onClick={() => copyToClipboard(monitorUrl)}
+                className="h-10 rounded-xl border-gray-200 bg-white px-4 text-sm font-semibold text-gray-700 hover:bg-gray-50 dark:border-white/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
               >
                 <Copy className="size-4" />
                 Copy URL
@@ -68,9 +63,9 @@ export function DeployMonitoringPanel({
               <Button
                 type="button"
                 variant="outline"
-                size="lg"
                 disabled={!deployData?.monitor_url}
                 onClick={() => openMonitoring("/d/rYdddlPWk/node-exporter-full")}
+                className="h-10 rounded-xl border-gray-200 bg-white px-4 text-sm font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-50 dark:border-white/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
               >
                 <ChartLine className="size-4" />
                 System Monitoring
@@ -78,17 +73,17 @@ export function DeployMonitoringPanel({
               <Button
                 type="button"
                 variant="outline"
-                size="lg"
                 disabled={!deployData?.monitor_url}
                 onClick={() => openMonitoring("/d/vlvPlrgnk/gpu-metrics")}
+                className="h-10 rounded-xl border-gray-200 bg-white px-4 text-sm font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-50 dark:border-white/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
               >
                 <Gauge className="size-4" />
                 GPU Monitoring
               </Button>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {taskConfig?.liveInferView &&
         (() => {

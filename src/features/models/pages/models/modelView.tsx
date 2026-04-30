@@ -17,20 +17,26 @@ import {
   FlaskConical as ExperimentOutlined,
   ChevronDown as DownOutlined,
 } from "lucide-react";
-import { CustomSelect, Option } from "src/components/ui/custom-select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "src/components/ui/select";
+import { Button } from "src/components/ui/button";
+import { Badge } from "src/components/ui/badge";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "src/components/ui/table";
 import * as mlServiceAPI from "src/features/project-build/api/mlService";
 import * as modelServiceAPI from "src/features/models/api/model";
 import * as modelVersionServiceAPI from "src/features/models/api/model_version";
-
-const Select = ({ options = [], ...props }) => (
-  <CustomSelect {...props}>
-    {options.map((option) => (
-      <Option key={option.value} value={option.value}>
-        {option.label}
-      </Option>
-    ))}
-  </CustomSelect>
-);
 
 const METRIC_MAP = {
   1: {
@@ -103,38 +109,28 @@ const METRIC_MAP = {
 };
 
 const getAccuracyStatus = (score) => {
-  const base =
-    "px-3 py-1 rounded text-xs font-medium inline-block text-center min-w-[90px] border";
   if (score >= 0.9)
     return (
-      <span
-        className={`${base} bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/30`}
-      >
+      <Badge className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400">
         Excellent
-      </span>
+      </Badge>
     );
   if (score >= 0.7)
     return (
-      <span
-        className={`${base} bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-500/30`}
-      >
+      <Badge className="rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-700 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400">
         Good
-      </span>
+      </Badge>
     );
   if (score >= 0.6)
     return (
-      <span
-        className={`${base} bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-500/30`}
-      >
+      <Badge className="rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-700 hover:bg-amber-100 dark:bg-amber-900/30 dark:text-amber-400">
         Medium
-      </span>
+      </Badge>
     );
   return (
-    <span
-      className={`${base} bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 border-red-200 dark:border-red-500/30`}
-    >
+    <Badge className="rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-700 hover:bg-red-100 dark:bg-red-900/30 dark:text-red-400">
       Bad
-    </span>
+    </Badge>
   );
 };
 
@@ -244,7 +240,8 @@ const ModelView = () => {
       (iteration) => iteration.iteration_name === selectedImlIterationName,
     ) ||
     imlIterations.find(
-      (iteration) => iteration.iteration_name === versionMetadata.selected_iteration,
+      (iteration) =>
+        iteration.iteration_name === versionMetadata.selected_iteration,
     ) ||
     imlIterations.find((iteration) => iteration.deployment_available) ||
     imlIterations[0];
@@ -273,11 +270,15 @@ const ModelView = () => {
       imlIterations[0]?.iteration_name ||
       "";
     setSelectedImlIterationName(preferred);
-  }, [selectedVersion?.id, versionMetadata.selected_iteration, imlIterations.length]);
+  }, [
+    selectedVersion?.id,
+    versionMetadata.selected_iteration,
+    imlIterations.length,
+  ]);
 
   return (
-    <div className="w-full min-h-0 bg-white dark:bg-[var(--surface)] font-poppins text-gray-900 dark:text-white mb-5">
-      <div className="w-full px-4 pt-6 pb-10 lg:px-6 lg:pt-8 lg:pb-12 flex flex-col gap-6">
+    <div className="w-full min-h-0 bg-white dark:bg-slate-950 text-gray-900 dark:text-white mb-5">
+      <div className="w-full px-6 pt-6 pb-10 lg:pt-8 lg:pb-12 flex flex-col gap-6 max-w-7xl mx-auto">
         {/* Version Selector */}
         {versions.length > 0 && (
           <div className="flex items-center gap-3">
@@ -285,17 +286,22 @@ const ModelView = () => {
               Model Version:
             </label>
             <Select
-              value={selectedVersion?.id}
-              onChange={(v) => handleVersionSelect(Number(v))}
-              placeholder="Select version"
-              options={[...versions]
-                .sort((a, b) => b.version - a.version)
-                .map((v) => ({
-                  value: v.id,
-                  label: `v${v.version}`,
-                }))}
-              className="w-[140px]"
-            />
+              value={selectedVersion?.id?.toString()}
+              onValueChange={(v) => handleVersionSelect(Number(v))}
+            >
+              <SelectTrigger className="h-10 w-[140px] rounded-xl border-gray-200 bg-white text-gray-900 focus-visible:border-blue-400 focus-visible:ring-blue-500/30 dark:border-white/20 dark:bg-white/10 dark:text-white">
+                <SelectValue placeholder="Select version" />
+              </SelectTrigger>
+              <SelectContent align="start" position="popper" className="rounded-xl border-gray-200 bg-white shadow-xl dark:border-white/10 dark:bg-slate-950">
+                {[...versions]
+                  .sort((a, b) => b.version - a.version)
+                  .map((v) => (
+                    <SelectItem key={v.id} value={v.id.toString()}>
+                      v{v.version}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
           </div>
         )}
 
@@ -351,13 +357,15 @@ const ModelView = () => {
                 iML Iteration Results
               </h2>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Choose which iML deployment bundle should be used for this model.
+                Choose which iML deployment bundle should be used for this
+                model.
               </p>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
               {imlIterations.map((iteration) => {
                 const isSelected =
-                  selectedImlIteration?.iteration_name === iteration.iteration_name;
+                  selectedImlIteration?.iteration_name ===
+                  iteration.iteration_name;
                 const accuracy = iteration.key_metrics?.accuracy;
                 return (
                   <button
@@ -367,7 +375,7 @@ const ModelView = () => {
                     onClick={() =>
                       setSelectedImlIterationName(iteration.iteration_name)
                     }
-                    className={`text-left rounded-xl border p-5 transition-colors bg-white dark:bg-[var(--surface)] ${
+                    className={`text-left rounded-xl border p-5 transition-colors bg-white dark:bg-slate-900 ${
                       isSelected
                         ? "border-blue-500 ring-2 ring-blue-500/20"
                         : "border-gray-200 dark:border-white/10 hover:border-blue-300 dark:hover:border-blue-500/50"
@@ -383,7 +391,9 @@ const ModelView = () => {
                           {formatImlIterationName(iteration.iteration_name)}
                         </div>
                         <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                          {iteration.rank ? `Rank #${iteration.rank}` : "Unranked"}
+                          {iteration.rank
+                            ? `Rank #${iteration.rank}`
+                            : "Unranked"}
                         </div>
                       </div>
                       <span
@@ -393,7 +403,9 @@ const ModelView = () => {
                             : "bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-300 border-red-200 dark:border-red-500/30"
                         }`}
                       >
-                        {iteration.deployment_available ? "Deployable" : "No bundle"}
+                        {iteration.deployment_available
+                          ? "Deployable"
+                          : "No bundle"}
                       </span>
                     </div>
                     <div className="grid grid-cols-3 gap-3 text-xs">
@@ -402,7 +414,9 @@ const ModelView = () => {
                           Accuracy
                         </div>
                         <div className="font-semibold text-gray-900 dark:text-white mt-1">
-                          {accuracy !== undefined ? Number(accuracy).toFixed(2) : "—"}
+                          {accuracy !== undefined
+                            ? Number(accuracy).toFixed(2)
+                            : "—"}
                         </div>
                       </div>
                       <div>
@@ -441,7 +455,7 @@ const ModelView = () => {
             Next Steps
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
-            <div className="flex flex-col h-full rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[var(--surface)]">
+            <div className="flex flex-col h-full rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-slate-900">
               <div className="p-5 flex flex-col gap-2 flex-1">
                 <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold">
                   <RocketOutlined /> Deploy Model
@@ -452,7 +466,7 @@ const ModelView = () => {
                 </div>
               </div>
               <div className="px-5 pb-5">
-                <button
+                <Button
                   onClick={() =>
                     navigate(
                       `/app/project/${id}/build/deployView?modelId=${modelId}&modelVersionId=${selectedVersion?.version}${
@@ -468,18 +482,14 @@ const ModelView = () => {
                     imlIterations.length > 0 &&
                     !selectedImlIteration?.deployment_available
                   }
-                  className="w-full py-2.5 rounded-xl font-semibold flex justify-center items-center gap-2 text-white text-sm hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
-                  style={{
-                    background:
-                      "linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)",
-                  }}
+                  className="w-full h-10 rounded-xl bg-blue-600 text-sm font-semibold text-white hover:bg-blue-700 focus-visible:ring-blue-500/40 dark:bg-blue-500 dark:hover:bg-blue-400 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <RocketOutlined /> Deploy Now
-                </button>
+                  <RocketOutlined className="size-4" /> Deploy Now
+                </Button>
               </div>
             </div>
 
-            <div className="flex flex-col h-full rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[var(--surface)]">
+            <div className="flex flex-col h-full rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-slate-900">
               <div className="p-5 flex flex-col gap-2 flex-1">
                 <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold">
                   <CloudDownloadOutlined /> Download Weights
@@ -490,21 +500,22 @@ const ModelView = () => {
                 </div>
               </div>
               <div className="px-5 pb-5">
-                <button
+                <Button
+                  variant="outline"
                   onClick={async () => {
                     const urlResponse = await mlServiceAPI.getModelUrl(modelId);
                     if (urlResponse.status !== 200)
                       toast.error("Failed to download model.");
                     else window.location.href = urlResponse.data;
                   }}
-                  className="w-full py-2.5 rounded-xl font-semibold flex justify-center items-center gap-2 text-sm border border-gray-200 dark:border-white/20 bg-white dark:bg-white/10 text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-white/15 transition-colors"
+                  className="w-full h-10 rounded-xl border-gray-200 bg-white text-sm font-semibold text-gray-700 hover:bg-gray-50 dark:border-white/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
                 >
-                  <CloudDownloadOutlined /> Download
-                </button>
+                  <CloudDownloadOutlined className="size-4" /> Download
+                </Button>
               </div>
             </div>
 
-            <div className="flex flex-col h-full rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[var(--surface)]">
+            <div className="flex flex-col h-full rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-slate-900">
               <div className="p-5 flex flex-col gap-2 flex-1">
                 <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold">
                   <HistoryOutlined /> Refine Model
@@ -515,14 +526,15 @@ const ModelView = () => {
                 </div>
               </div>
               <div className="px-5 pb-5">
-                <button
+                <Button
+                  variant="outline"
                   onClick={() =>
                     navigate(`/app/project/${id}/model/${modelId}/retrain`)
                   }
-                  className="w-full py-2.5 rounded-xl font-semibold flex justify-center items-center gap-2 text-sm border border-gray-200 dark:border-white/20 bg-white dark:bg-white/10 text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-white/15 transition-colors"
+                  className="w-full h-10 rounded-xl border-gray-200 bg-white text-sm font-semibold text-gray-700 hover:bg-gray-50 dark:border-white/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
                 >
-                  <HistoryOutlined /> Retrain Model
-                </button>
+                  <HistoryOutlined className="size-4" /> Retrain Model
+                </Button>
               </div>
             </div>
           </div>
@@ -542,7 +554,7 @@ const ModelView = () => {
           {isDetailsExpanded && (
             <div className="flex flex-col gap-5 mt-6">
               {/* Metadata */}
-              <div className="rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[var(--surface)]">
+              <div className="rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-slate-900">
                 <div className="px-6 py-4 border-b border-gray-100 dark:border-white/10 flex items-center gap-3">
                   <span className="w-1 h-5 rounded-full bg-blue-500 shrink-0" />
                   <div>
@@ -555,9 +567,7 @@ const ModelView = () => {
                   </div>
                 </div>
                 <div className="flex flex-col gap-1 p-3">
-                  {Object.entries(
-                    versionMetadata || {},
-                  ).map(([key, value]) => (
+                  {Object.entries(versionMetadata || {}).map(([key, value]) => (
                     <div
                       key={key}
                       className="flex flex-col sm:flex-row sm:items-start gap-3 px-4 py-3 rounded-xl bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
@@ -571,28 +581,28 @@ const ModelView = () => {
                           typeof value[0] === "object" &&
                           value[0] !== null ? (
                             <div className="rounded-xl overflow-hidden border border-gray-200 dark:border-white/10">
-                              <table className="w-full text-left border-collapse text-sm">
-                                <thead className="bg-gray-50 dark:bg-white/5 text-gray-600 dark:text-gray-300">
-                                  <tr>
+                              <Table className="text-sm">
+                                <TableHeader className="bg-gray-50 dark:bg-white/5">
+                                  <TableRow className="border-b border-gray-200 dark:border-white/10 hover:bg-transparent">
                                     {Object.keys(value[0]).map((colKey) => (
-                                      <th
+                                      <TableHead
                                         key={colKey}
-                                        className="px-4 py-2.5 font-semibold capitalize border-b border-gray-200 dark:border-white/10"
+                                        className="px-4 py-2.5 font-semibold capitalize text-gray-600 dark:text-gray-300"
                                       >
                                         {colKey}
-                                      </th>
+                                      </TableHead>
                                     ))}
-                                  </tr>
-                                </thead>
-                                <tbody>
+                                  </TableRow>
+                                </TableHeader>
+                                <TableBody>
                                   {value.map((row, idx) => (
-                                    <tr
+                                    <TableRow
                                       key={idx}
-                                      className="hover:bg-gray-50 dark:hover:bg-white/5 border-b border-gray-100 dark:border-white/10 last:border-0 transition-colors"
+                                      className="border-b border-gray-100 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
                                     >
                                       {Object.values(row).map(
                                         (cellVal, cIdx) => (
-                                          <td
+                                          <TableCell
                                             key={cIdx}
                                             className="px-4 py-2.5 text-gray-700 dark:text-gray-300"
                                           >
@@ -601,13 +611,13 @@ const ModelView = () => {
                                                 (empty)
                                               </em>
                                             )}
-                                          </td>
+                                          </TableCell>
                                         ),
                                       )}
-                                    </tr>
+                                    </TableRow>
                                   ))}
-                                </tbody>
-                              </table>
+                                </TableBody>
+                              </Table>
                             </div>
                           ) : (
                             <div className="flex flex-wrap gap-2">
@@ -673,7 +683,7 @@ const ModelView = () => {
               </div>
 
               {/* Metrics Table */}
-              <div className="rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[var(--surface)]">
+              <div className="rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-slate-900">
                 <div className="px-6 py-4 border-b border-gray-100 dark:border-white/10 flex items-center gap-3">
                   <span className="w-1 h-5 rounded-full bg-blue-500 shrink-0" />
                   <div>
@@ -685,28 +695,28 @@ const ModelView = () => {
                     </p>
                   </div>
                 </div>
-                <div className="overflow-x-auto rounded-b-xl">
-                  <table className="w-full text-left border-collapse whitespace-nowrap text-sm">
-                    <thead className="bg-gray-50 dark:bg-white/5 text-gray-600 dark:text-gray-400">
-                      <tr>
-                        <th className="px-6 py-3 font-semibold border-b border-gray-100 dark:border-white/10">
+                <div className="rounded-b-xl">
+                  <Table className="whitespace-nowrap text-sm">
+                    <TableHeader className="bg-gray-50 dark:bg-white/5">
+                      <TableRow className="border-b border-gray-100 dark:border-white/10 hover:bg-transparent">
+                        <TableHead className="px-6 py-3 font-semibold text-gray-600 dark:text-gray-400">
                           Metric
-                        </th>
-                        <th className="px-6 py-3 font-semibold border-b border-gray-100 dark:border-white/10">
+                        </TableHead>
+                        <TableHead className="px-6 py-3 font-semibold text-gray-600 dark:text-gray-400">
                           Value
-                        </th>
-                        <th className="px-6 py-3 font-semibold border-b border-gray-100 dark:border-white/10">
+                        </TableHead>
+                        <TableHead className="px-6 py-3 font-semibold text-gray-600 dark:text-gray-400">
                           Status
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="text-gray-700 dark:text-gray-300">
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody className="text-gray-700 dark:text-gray-300">
                       {displayedMetrics.map((record) => (
-                        <tr
+                        <TableRow
                           key={record.key}
-                          className="hover:bg-gray-50 dark:hover:bg-white/5 border-b border-gray-100 dark:border-white/10 last:border-0 transition-colors"
+                          className="border-b border-gray-100 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
                         >
-                          <td className="px-6 py-3">
+                          <TableCell className="px-6 py-3">
                             <TooltipProvider>
                               <Tooltip>
                                 <TooltipTrigger asChild>
@@ -714,7 +724,7 @@ const ModelView = () => {
                                     <span className="font-medium">
                                       {record.metric}
                                     </span>
-                                    <InfoCircleOutlined className="text-gray-400 ml-2 text-xs" />
+                                    <InfoCircleOutlined className="size-3.5 text-gray-400 ml-2" />
                                   </span>
                                 </TooltipTrigger>
                                 <TooltipContent>
@@ -722,15 +732,15 @@ const ModelView = () => {
                                 </TooltipContent>
                               </Tooltip>
                             </TooltipProvider>
-                          </td>
-                          <td className="px-6 py-3 font-semibold">
+                          </TableCell>
+                          <TableCell className="px-6 py-3 font-semibold">
                             {record.value}
-                          </td>
-                          <td className="px-6 py-3">{record.status}</td>
-                        </tr>
+                          </TableCell>
+                          <TableCell className="px-6 py-3">{record.status}</TableCell>
+                        </TableRow>
                       ))}
-                    </tbody>
-                  </table>
+                    </TableBody>
+                  </Table>
                 </div>
               </div>
             </div>

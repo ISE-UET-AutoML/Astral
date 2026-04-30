@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 
 function StatCard({ icon, label, value, sub, accentClass }) {
   return (
-    <div className="flex flex-1 items-center gap-4 rounded-2xl border border-gray-200 bg-white/95 px-5 py-5 shadow-lg dark:border-white/10 dark:bg-white/5">
+    <div className="flex flex-1 items-center gap-4 rounded-2xl border border-gray-200 bg-white px-5 py-5 dark:border-white/10 dark:bg-slate-900">
       <div
         className={`flex size-12 shrink-0 items-center justify-center rounded-xl ${accentClass}`}
       >

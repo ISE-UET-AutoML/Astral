@@ -1,52 +1,110 @@
-import React, { useState, ReactNode } from "react";
+import React, { useState } from "react";
 import { Button } from "src/components/ui/button";
+import { Badge } from "src/components/ui/badge";
 import {
   Rocket as RocketOutlined,
   Zap as ThunderboltOutlined,
   Database as DatabaseOutlined,
-  Cloud as CloudDownloadOutlined,
+  Cloud as CloudOutlined,
 } from "lucide-react";
-import { useSpring, animated } from "@react-spring/web";
 import * as modelAPI from "src/features/models/api/model";
 import { PATHS } from "src/constants/paths";
 import {
   useLocation,
-  useOutletContext,
   useNavigate,
   useParams,
 } from "react-router-dom";
 
-const AnimatedCard = ({
-  children,
-  onClick,
-  isSelected,
-}: {
-  children: ReactNode;
-  onClick: () => void;
-  isSelected: boolean;
-}) => {
-  const [isHovered, setIsHovered] = useState(false);
-  const styles = useSpring({
-    transform: isHovered ? "scale(1.02)" : "scale(1)",
-    config: { tension: 300, friction: 20 },
-  });
+type AccentKey = "amber" | "emerald" | "blue" | "indigo";
 
-  return (
-    <animated.div
-      style={{
-        ...styles,
-        borderRadius: 12,
-        overflow: "hidden",
-        cursor: "pointer",
-      }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      onClick={onClick}
-    >
-      {children}
-    </animated.div>
-  );
+interface AccentStyle {
+  icon: string;
+  iconBg: string;
+  tag: string;
+  tagBorder: string;
+  statText: string;
+  selectedBg: string;
+  selectedBorder: string;
+}
+
+const ACCENT_STYLES: Record<AccentKey, AccentStyle> = {
+  amber: {
+    icon: "text-amber-500 dark:text-amber-400",
+    iconBg: "bg-amber-100 dark:bg-amber-900/30",
+    tag: "text-amber-700 dark:text-amber-400",
+    tagBorder: "border-amber-200 dark:border-amber-700/50",
+    statText: "text-amber-600 dark:text-amber-400",
+    selectedBg: "bg-amber-50 dark:bg-amber-900/20",
+    selectedBorder: "border-amber-400 dark:border-amber-600/60",
+  },
+  emerald: {
+    icon: "text-emerald-500 dark:text-emerald-400",
+    iconBg: "bg-emerald-100 dark:bg-emerald-900/30",
+    tag: "text-emerald-700 dark:text-emerald-400",
+    tagBorder: "border-emerald-200 dark:border-emerald-700/50",
+    statText: "text-emerald-600 dark:text-emerald-400",
+    selectedBg: "bg-emerald-50 dark:bg-emerald-900/20",
+    selectedBorder: "border-emerald-400 dark:border-emerald-600/60",
+  },
+  blue: {
+    icon: "text-blue-500 dark:text-blue-400",
+    iconBg: "bg-blue-100 dark:bg-blue-900/30",
+    tag: "text-blue-700 dark:text-blue-400",
+    tagBorder: "border-blue-200 dark:border-blue-700/50",
+    statText: "text-blue-600 dark:text-blue-400",
+    selectedBg: "bg-blue-50 dark:bg-blue-900/20",
+    selectedBorder: "border-blue-400 dark:border-blue-600/60",
+  },
+  indigo: {
+    icon: "text-indigo-500 dark:text-indigo-400",
+    iconBg: "bg-indigo-100 dark:bg-indigo-900/30",
+    tag: "text-indigo-700 dark:text-indigo-400",
+    tagBorder: "border-indigo-200 dark:border-indigo-700/50",
+    statText: "text-indigo-600 dark:text-indigo-400",
+    selectedBg: "bg-indigo-50 dark:bg-indigo-900/20",
+    selectedBorder: "border-indigo-400 dark:border-indigo-600/60",
+  },
 };
+
+const deployOptions = [
+  {
+    id: "realtime",
+    title: "Realtime Inference",
+    description: "Deploy for immediate, real-time predictions",
+    icon: ThunderboltOutlined,
+    tags: ["Low Latency", "High Availability", "Auto Scaling"],
+    stats: { Latency: "< 100ms", Uptime: "99.99%", Scalability: "Automatic" },
+    badge: "RECOMMENDED",
+    accent: "amber" as AccentKey,
+  },
+  {
+    id: "async",
+    title: "Asynchronous Processing",
+    description: "Optimal for handling large batch requests",
+    icon: ThunderboltOutlined,
+    tags: ["High Throughput", "Cost Effective", "Durable"],
+    stats: { Throughput: "10K req/s", Durability: "99.999%", Cost: "Medium" },
+    accent: "emerald" as AccentKey,
+  },
+  {
+    id: "batch",
+    title: "Batch Transform",
+    description: "Process large datasets efficiently",
+    icon: DatabaseOutlined,
+    tags: ["Large Scale", "Cost Optimized", "Scheduled"],
+    stats: { Capacity: "Unlimited", Efficiency: "95%", Schedule: "Flexible" },
+    accent: "blue" as AccentKey,
+  },
+  {
+    id: "serverless",
+    title: "Serverless Deployment",
+    description: "Pay-per-use with zero infrastructure management",
+    icon: CloudOutlined,
+    tags: ["Zero Maintenance", "Auto Scaling", "Cost Efficient"],
+    stats: { Scaling: "Automatic", Maintenance: "Zero", Billing: "Per Request" },
+    accent: "indigo" as AccentKey,
+  },
+];
 
 const DeployView = () => {
   const navigate = useNavigate();
@@ -56,76 +114,15 @@ const DeployView = () => {
   const modelId = searchParams.get("modelId");
   const modelVersionId = searchParams.get("modelVersionId");
   const imlIteration = searchParams.get("imlIteration");
-  const [isDeploying, setIsDeploying] = useState(false);
   const [selectedOption, setSelectedOption] = useState("");
-
-  const deployOptions = [
-    {
-      id: "realtime",
-      title: "Realtime Inference",
-      description: "Deploy for immediate, real-time predictions",
-      icon: ThunderboltOutlined,
-      tags: ["Low Latency", "High Availability", "Auto Scaling"],
-      stats: {
-        latency: "< 100ms",
-        uptime: "99.99%",
-        scalability: "Automatic",
-      },
-      badge: "RECOMMENDED",
-      accentColor: "amber",
-    },
-    {
-      id: "async",
-      title: "Asynchronous Processing",
-      description: "Optimal for handling large batch requests",
-      icon: ThunderboltOutlined,
-      tags: ["High Throughput", "Cost Effective", "Durable"],
-      stats: {
-        throughput: "10K req/s",
-        durability: "99.999%",
-        cost: "Medium",
-      },
-      accentColor: "emerald",
-    },
-    {
-      id: "batch",
-      title: "Batch Transform",
-      description: "Process large datasets efficiently",
-      icon: DatabaseOutlined,
-      tags: ["Large Scale", "Cost Optimized", "Scheduled"],
-      stats: {
-        capacity: "Unlimited",
-        efficiency: "95%",
-        schedule: "Flexible",
-      },
-      accentColor: "blue",
-    },
-    {
-      id: "serverless",
-      title: "Serverless Deployment",
-      description: "Pay-per-use with zero infrastructure management",
-      icon: CloudDownloadOutlined,
-      tags: ["Zero Maintenance", "Auto Scaling", "Cost Efficient"],
-      stats: {
-        scaling: "Automatic",
-        maintenance: "Zero",
-        billing: "Per Request",
-      },
-      accentColor: "purple",
-    },
-  ];
 
   const startDeployment = async () => {
     try {
       navigate(PATHS.SETTING_UP_DEPLOY(projectId, "temp-deploy-id"));
-
       const deployRequest = await modelAPI.deployModel(modelId, modelVersionId, {
         iml_iteration_name: imlIteration || undefined,
       });
-      console.log(deployRequest);
-      if (deployRequest.status !== 200) {
-        throw new Error("Failed to deploy model");
-      }
+      if (deployRequest.status !== 200) throw new Error("Failed to deploy model");
       navigate(
         PATHS.SETTING_UP_DEPLOY(projectId, deployRequest.data?.model_deploy.id),
         { replace: true },
@@ -136,7 +133,6 @@ const DeployView = () => {
   };
 
   const handleCancel = () => {
-    setIsDeploying(false);
     setSelectedOption("");
     if (modelId) {
       navigate(PATHS.MODEL_VIEW(projectId, modelId));
@@ -147,144 +143,102 @@ const DeployView = () => {
 
   return (
     <div className="h-full overflow-y-auto bg-gray-50 dark:bg-slate-950">
-      <div className="relative z-10 w-full px-3 py-6 sm:px-4 lg:px-6 lg:py-8 mx-auto space-y-6">
-        <div className="rounded-2xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-slate-900 py-10 px-16">
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-3">
-              <RocketOutlined className="text-[28px] text-blue-600 dark:text-blue-400" />
-              <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                Deploy Model
-              </h1>
-            </div>
-            <p className="text-[16px] text-gray-700 dark:text-gray-300">
-              Choose your deployment option and launch your application with our
-              optimized infrastructure
+      <div className="mx-auto w-full max-w-7xl px-6 py-8 space-y-6">
+
+        {/* Page header */}
+        <div className="mb-2 flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h1 className="flex items-center gap-3 text-3xl font-bold text-gray-900 dark:text-white">
+              <RocketOutlined className="size-7 text-blue-600 dark:text-blue-400" />
+              Deploy Model
+            </h1>
+            <p className="mt-1 max-w-xl text-sm text-gray-500 dark:text-gray-400">
+              Choose your deployment strategy and launch your model with optimized infrastructure.
             </p>
           </div>
+        </div>
 
-          <div className="mt-6 grid gap-10 md:grid-cols-2 px-4 mb-10">
+        {/* Option cards */}
+        <div className="rounded-2xl border border-gray-200 bg-white p-6 dark:border-white/10 dark:bg-slate-900 lg:p-8">
+          <div className="grid gap-4 sm:grid-cols-2">
             {deployOptions.map((option) => {
               const Icon = option.icon;
               const isSelected = selectedOption === option.id;
-
-              const accentColors: Record<
-                string,
-                {
-                  icon: string;
-                  bg: string;
-                  darkBg: string;
-                  text: string;
-                  border: string;
-                }
-              > = {
-                amber: {
-                  icon: "text-amber-500",
-                  bg: "bg-amber-50",
-                  darkBg: "dark:bg-amber-950/20",
-                  text: "text-amber-600 dark:text-amber-400",
-                  border: "border-amber-200 dark:border-amber-700",
-                },
-                emerald: {
-                  icon: "text-emerald-500",
-                  bg: "bg-emerald-50",
-                  darkBg: "dark:bg-emerald-950/20",
-                  text: "text-emerald-600 dark:text-emerald-400",
-                  border: "border-emerald-200 dark:border-emerald-700",
-                },
-                blue: {
-                  icon: "text-blue-500",
-                  bg: "bg-blue-50",
-                  darkBg: "dark:bg-blue-950/20",
-                  text: "text-blue-600 dark:text-blue-400",
-                  border: "border-blue-200 dark:border-blue-700",
-                },
-                purple: {
-                  icon: "text-purple-500",
-                  bg: "bg-purple-50",
-                  darkBg: "dark:bg-purple-950/20",
-                  text: "text-purple-600 dark:text-purple-400",
-                  border: "border-purple-200 dark:border-purple-700",
-                },
-              };
-
-              const colors = accentColors[option.accentColor as string];
+              const colors = ACCENT_STYLES[option.accent];
 
               return (
-                <div key={option.id}>
-                  <AnimatedCard
-                    isSelected={isSelected}
-                    onClick={() => setSelectedOption(option.id)}
-                  >
-                    <div
-                      className={`h-full rounded-xl border p-6 transition-all duration-300 ${
-                        isSelected
-                          ? `${colors.bg} ${colors.darkBg} ${colors.border} border-2`
-                          : `border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-800 hover:border-gray-300 dark:hover:border-gray-600`
-                      }`}
-                    >
-                      <div className="flex flex-col gap-4">
-                        <div className="flex items-center justify-between gap-3">
-                          <div className="flex items-center gap-3">
-                            <div
-                              className={`rounded-lg p-3 ${colors.bg} ${colors.darkBg}`}
-                            >
-                              <Icon className={`text-2xl ${colors.icon}`} />
-                            </div>
-                            <h2 className="text-base font-semibold text-gray-900 dark:text-white">
-                              {option.title}
-                            </h2>
-                          </div>
-                          {option.badge && (
-                            <div
-                              className={`text-xs font-semibold px-2.5 py-1 rounded-full ${colors.bg} ${colors.text}`}
-                            >
-                              {option.badge}
-                            </div>
-                          )}
+                <button
+                  type="button"
+                  key={option.id}
+                  onClick={() => setSelectedOption(option.id)}
+                  className={`group text-left rounded-xl border p-6 transition-all duration-200 hover:-translate-y-0.5 ${
+                    isSelected
+                      ? `${colors.selectedBg} ${colors.selectedBorder} border-2 ring-2 ring-blue-500/20`
+                      : "border-gray-200 bg-white hover:border-blue-200 hover:shadow-sm dark:border-white/10 dark:bg-slate-800/50 dark:hover:border-blue-700/40"
+                  }`}
+                >
+                  <div className="flex flex-col gap-4">
+                    {/* Header row */}
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-3">
+                        <div className={`rounded-xl p-2.5 ${colors.iconBg}`}>
+                          <Icon className={`size-5 ${colors.icon}`} />
                         </div>
-
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                          {option.description}
-                        </p>
-
-                        <div className="flex flex-wrap gap-2">
-                          {option.tags.map((tag) => (
-                            <span
-                              key={tag}
-                              className={`text-xs font-medium px-2.5 py-1 rounded-lg border ${colors.bg} ${colors.border} ${colors.text}`}
-                            >
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-
-                        <div className="mt-2 grid grid-cols-3 gap-4 text-sm">
-                          {Object.entries(option.stats).map(([key, value]) => (
-                            <div key={key} className="space-y-1">
-                              <div className="font-medium text-gray-600 dark:text-gray-400 capitalize">
-                                {key}
-                              </div>
-                              <div className={`font-semibold ${colors.text}`}>
-                                {value}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
+                        <h2 className="text-base font-semibold text-gray-900 dark:text-white">
+                          {option.title}
+                        </h2>
                       </div>
+                      {option.badge && (
+                        <Badge className="rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-700 hover:bg-amber-100 dark:bg-amber-900/30 dark:text-amber-400">
+                          {option.badge}
+                        </Badge>
+                      )}
                     </div>
-                  </AnimatedCard>
-                </div>
+
+                    {/* Description */}
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {option.description}
+                    </p>
+
+                    {/* Tags */}
+                    <div className="flex flex-wrap gap-2">
+                      {option.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className={`rounded-lg border px-2.5 py-0.5 text-xs font-medium ${colors.tag} ${colors.tagBorder}`}
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+
+                    {/* Stats */}
+                    <div className="grid grid-cols-3 gap-3 text-sm">
+                      {Object.entries(option.stats).map(([key, value]) => (
+                        <div key={key}>
+                          <div className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                            {key}
+                          </div>
+                          <div className={`mt-0.5 font-semibold ${colors.statText}`}>
+                            {value}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </button>
               );
             })}
           </div>
         </div>
 
-        <div className="flex justify-center gap-3">
+        {/* Actions */}
+        <div className="flex justify-end gap-3">
           <Button
             type="button"
-            onClick={handleCancel}
             variant="outline"
-            className="rounded-xl px-6 py-5 font-semibold"
+            onClick={handleCancel}
+            className="h-10 rounded-xl border-blue-200 bg-blue-50 px-5 text-sm font-semibold text-blue-700 hover:bg-blue-100 dark:border-blue-700/50 dark:bg-blue-900/20 dark:text-blue-300 dark:hover:bg-blue-900/40"
           >
             Cancel
           </Button>
@@ -292,8 +246,9 @@ const DeployView = () => {
             type="button"
             onClick={startDeployment}
             disabled={!selectedOption}
-            className="rounded-xl px-6 py-5 font-semibold bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+            className="h-10 rounded-xl bg-blue-600 px-5 text-sm font-semibold text-white hover:bg-blue-700 focus-visible:ring-blue-500/40 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-blue-500 dark:hover:bg-blue-400"
           >
+            <RocketOutlined className="size-4" />
             Deploy Now
           </Button>
         </div>
