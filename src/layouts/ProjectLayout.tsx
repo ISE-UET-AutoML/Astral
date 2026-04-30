@@ -24,7 +24,7 @@ export default function ProjectLayout() {
     : "overflow-y-auto overflow-x-hidden";
 
   return (
-    <div className="relative h-screen bg-gray-50 dark:bg-slate-950">
+    <div className="relative h-screen bg-white dark:bg-slate-950">
       <ProjectSidebar
         projectID={params.id}
         className="shadow-[4px_0_24px_rgba(0,0,0,0.02)] dark:shadow-[4px_0_24px_rgba(0,0,0,0.2)]"

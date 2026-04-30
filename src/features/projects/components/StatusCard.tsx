@@ -1,32 +1,36 @@
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 
+type StatusCardColor = {
+  /** Tailwind bg class for the icon container, e.g. "bg-emerald-100 dark:bg-emerald-900/30" */
+  iconBg: string;
+  /** Tailwind text class for the icon, e.g. "text-emerald-600 dark:text-emerald-400" */
+  iconText: string;
+  /** Tailwind text class for the value label, e.g. "text-emerald-700 dark:text-emerald-400" */
+  valueText: string;
+};
+
 type StatusCardProps = {
   label: string;
   value: ReactNode;
   Icon: LucideIcon;
-  color?: {
-    bg: string;
-    border: string;
-    text: string;
-  };
+  color?: StatusCardColor;
 };
 
-const StatusCard = ({ label, value, Icon }: StatusCardProps) => (
-  <div className="group relative overflow-hidden rounded-2xl border border-[var(--border)] border-opacity-20 [background:linear-gradient(135deg,var(--hover-bg)_0%,rgba(255,255,255,0.02)_100%)] backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:border-opacity-40 hover:shadow-xl">
-    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-    <div className="relative flex items-center space-x-3 p-4 lg:p-5">
-      <div className="flex-shrink-0 rounded-xl bg-gradient-to-br from-white/10 to-white/5 p-2.5 backdrop-blur-sm">
-        <Icon className="text-xl text-[var(--accent-text)] transition-transform duration-300 group-hover:scale-110" />
-      </div>
-      <div className="min-w-0 flex-1">
-        <p className="mb-1 text-xs font-medium text-[var(--secondary-text)] lg:text-sm">
-          {label}
-        </p>
-        <p className="text-xl font-bold tracking-tight text-[var(--text)] lg:text-2xl">
-          {value}
-        </p>
-      </div>
+const DEFAULT_COLOR: StatusCardColor = {
+  iconBg: "bg-blue-100 dark:bg-blue-900/30",
+  iconText: "text-blue-600 dark:text-blue-400",
+  valueText: "text-gray-900 dark:text-white",
+};
+
+const StatusCard = ({ label, value, Icon, color = DEFAULT_COLOR }: StatusCardProps) => (
+  <div className="flex items-center gap-4 rounded-2xl border border-gray-200 bg-white px-4 py-4 transition-colors duration-200 hover:border-blue-200 hover:bg-blue-50/40 dark:border-white/10 dark:bg-slate-900 dark:hover:border-blue-700/40 dark:hover:bg-blue-950/20">
+    <div className={`flex-shrink-0 rounded-xl p-2.5 ${color.iconBg}`}>
+      <Icon className={`size-5 ${color.iconText}`} />
+    </div>
+    <div className="min-w-0 flex-1">
+      <p className="mb-0.5 text-xs font-medium text-gray-500 dark:text-gray-400">{label}</p>
+      <p className={`text-2xl font-bold tabular-nums ${color.valueText}`}>{value}</p>
     </div>
   </div>
 );

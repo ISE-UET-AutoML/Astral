@@ -6,17 +6,15 @@ import { getModels } from "src/features/models/api/model";
 import StatusCard from "src/features/projects/components/StatusCard";
 import MetaDataItem from "src/features/projects/components/MetaDataItem";
 import {
-  CircleCheck as CheckCircleOutlined,
-  RefreshCw as SyncOutlined,
-  CircleX as CloseCircleOutlined,
-  Server as CloudServerOutlined,
-  Settings as SettingOutlined,
-  FlaskConical as ExperimentOutlined,
-  Database as DatabaseOutlined,
-  Cloud as CloudOutlined,
+  CircleCheck,
+  RefreshCw,
+  CircleX,
+  Server,
+  Settings,
+  FlaskConical,
+  Database,
+  Cloud,
 } from "lucide-react";
-
-// Ant Design icons
 
 const ProjectInfo = () => {
   const { projectInfo } = useOutletContext();
@@ -28,7 +26,6 @@ const ProjectInfo = () => {
     const fetchData = async () => {
       try {
         const experimentsData = await getAllExperiments(projectInfo.id);
-
         const modelsData = await getModels(projectInfo.id);
         const deployedModelsData = await getAllDeployedModel(projectInfo.id);
 
@@ -45,7 +42,6 @@ const ProjectInfo = () => {
             ? deployedModelsData
             : deployedModelsData.data || [],
         );
-        console.log(projectInfo);
       } catch (error) {
         console.error("Error fetching project data:", error);
       }
@@ -54,220 +50,206 @@ const ProjectInfo = () => {
     if (projectInfo?.id) fetchData();
   }, [projectInfo]);
 
-  // Format created_at
-  const formattedDate = new Date(projectInfo?.created_at).toLocaleString(
-    "en-US",
-    {
-      weekday: "short",
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    },
-  );
+  const formattedDate = projectInfo?.created_at
+    ? new Date(projectInfo.created_at).toLocaleString("en-US", {
+        weekday: "short",
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    : "—";
+
+  const inProgressStatuses = new Set([
+    "TRAINING",
+    "SETTING_UP",
+    "CREATING_INSTANCE",
+    "DOWNLOADING_DATA",
+    "DOWNLOADING_DEPENDENCIES",
+  ]);
 
   return (
-    <>
-      <div className="h-full overflow-y-auto">
-        <div className="w-full px-6 py-8">
-          <div className="max-w-7xl mx-auto">
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                Project Overview
-              </h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                {projectInfo?.description ||
-                  "Comprehensive overview of your project metrics and deployment status"}
-              </p>
+    <div className="w-full px-6 py-8">
+      {/* Page Header */}
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          Project Overview
+        </h1>
+        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+          {projectInfo?.description ||
+            "Metrics and deployment status at a glance"}
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 items-start gap-6 xl:grid-cols-12">
+        {/* Project Details */}
+        <div className="xl:col-span-4">
+          <div className="rounded-2xl border border-gray-200 bg-white p-6 dark:border-white/10 dark:bg-slate-900">
+            <div className="mb-5 flex items-center gap-3">
+              <div className="flex size-9 items-center justify-center rounded-xl bg-blue-500/10">
+                <Settings className="size-5 text-blue-600 dark:text-blue-400" />
+              </div>
+              <h2 className="text-base font-bold text-gray-900 dark:text-white">
+                Project Details
+              </h2>
             </div>
+            <div className="space-y-3">
+              <MetaDataItem label="Project name" value={projectInfo?.name} />
+              <MetaDataItem label="Task Type" value={projectInfo?.task_type} />
+              <MetaDataItem
+                label="Expected Accuracy"
+                value={projectInfo?.expected_accuracy}
+              />
+              <MetaDataItem label="Visibility" value={projectInfo?.visibility} />
+              <MetaDataItem label="Created" value={formattedDate} />
+            </div>
+          </div>
+        </div>
 
-            <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
-              <div className="xl:col-span-4">
-                <div className="p-6 rounded-2xl border border-gray-200 bg-white dark:border-white/10 dark:bg-slate-900/50 flex flex-col">
-                  <div className="flex items-center space-x-3 mb-5">
-                    <div className="p-2 rounded-xl bg-blue-500/10">
-                      <SettingOutlined className="text-lg text-blue-600 dark:text-blue-400" />
-                    </div>
-                    <h2 className="text-lg font-bold text-gray-900 dark:text-white">
-                      Project Details
-                    </h2>
-                  </div>
-
-                  <div className="space-y-3">
-                    <MetaDataItem
-                      label="Project name"
-                      value={projectInfo?.name}
-                    />
-                    <MetaDataItem
-                      label="Task Type"
-                      value={projectInfo?.task_type}
-                    />
-                    <MetaDataItem
-                      label="Expected Accuracy"
-                      value={projectInfo?.expected_accuracy}
-                    />
-                    <MetaDataItem
-                      label="Visibility"
-                      value={projectInfo?.visibility}
-                    />
-                    <MetaDataItem label="Created" value={formattedDate} />
-                  </div>
-                </div>
+        {/* Right column: Experiments + Models + Deployed Models */}
+        <div className="flex flex-col gap-6 xl:col-span-8">
+          {/* Experiments */}
+          <div className="rounded-2xl border border-gray-200 bg-white p-6 dark:border-white/10 dark:bg-slate-900">
+            <div className="mb-5 flex items-center gap-3">
+              <div className="flex size-9 items-center justify-center rounded-xl bg-blue-500/10">
+                <FlaskConical className="size-5 text-blue-600 dark:text-blue-400" />
               </div>
-
-              <div className="xl:col-span-8 flex flex-col gap-6">
-                <div className="p-6 rounded-2xl border border-gray-200 bg-white dark:border-white/10 dark:bg-slate-900/50 flex flex-col">
-                  <div className="flex items-center space-x-3 mb-5">
-                    <div className="p-2.5 rounded-xl bg-blue-500/10">
-                      <ExperimentOutlined className="text-xl text-blue-600 dark:text-blue-400" />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                        Experiments
-                      </h3>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Training and validation status
-                      </p>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <StatusCard
-                      label="Completed"
-                      value={
-                        experiments.filter((e) => e.status === "DONE").length
-                      }
-                      color={{
-                        bg: "bg-green-500/10",
-                        border: "border-green-400/30",
-                        text: "text-green-300",
-                      }}
-                      Icon={CheckCircleOutlined}
-                    />
-                    <StatusCard
-                      label="In Progress"
-                      value={
-                        experiments.filter(
-                          (e) =>
-                            e.status === "TRAINING" ||
-                            e.status === "SETTING_UP" ||
-                            e.status === "CREATING_INSTANCE" ||
-                            e.status === "DOWNLOADING_DATA" ||
-                            e.status === "DOWNLOADING_DEPENDENCIES",
-                        ).length
-                      }
-                      color={{
-                        bg: "bg-blue-500/10",
-                        border: "border-blue-400/30",
-                        text: "text-blue-300",
-                      }}
-                      Icon={SyncOutlined}
-                    />
-                    <StatusCard
-                      label="Failed"
-                      value={
-                        experiments.filter((e) => e.status === "FAILED").length
-                      }
-                      color={{
-                        bg: "bg-red-500/10",
-                        border: "border-red-400/30",
-                        text: "text-red-300",
-                      }}
-                      Icon={CloseCircleOutlined}
-                    />
-                  </div>
-                </div>
-
-                <div className="p-6 rounded-2xl border border-gray-200 bg-white dark:border-white/10 dark:bg-slate-900/50 flex flex-col">
-                  <div className="flex items-center space-x-3 mb-5">
-                    <div className="p-2.5 rounded-xl bg-blue-500/10">
-                      <DatabaseOutlined className="text-xl text-blue-600 dark:text-blue-400" />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                        Models
-                      </h3>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Available trained models
-                      </p>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <StatusCard
-                      label="Ready"
-                      value={models.length}
-                      color={{
-                        bg: "bg-green-500/10",
-                        border: "border-green-400/30",
-                        text: "text-green-300",
-                      }}
-                      Icon={CheckCircleOutlined}
-                    />
-                  </div>
-                </div>
-
-                <div className="p-6 rounded-2xl border border-gray-200 bg-white dark:border-white/10 dark:bg-slate-900/50 flex flex-col">
-                  <div className="flex items-center space-x-3 mb-5">
-                    <div className="p-2.5 rounded-xl bg-blue-500/10">
-                      <CloudOutlined className="text-xl text-blue-600 dark:text-blue-400" />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                        Deployed Models
-                      </h3>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Production deployment status
-                      </p>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <StatusCard
-                      label="Online"
-                      value={
-                        deployedModels.filter((d) => d.status === "ONLINE")
-                          .length
-                      }
-                      color={{
-                        bg: "bg-green-500/10",
-                        border: "border-green-400/30",
-                        text: "text-green-300",
-                      }}
-                      Icon={CloudServerOutlined}
-                    />
-                    <StatusCard
-                      label="Setting Up"
-                      value={
-                        deployedModels.filter((d) => d.status === "SETTING_UP")
-                          .length
-                      }
-                      color={{
-                        bg: "bg-blue-500/10",
-                        border: "border-blue-400/30",
-                        text: "text-blue-300",
-                      }}
-                      Icon={SettingOutlined}
-                    />
-                    <StatusCard
-                      label="Offline"
-                      value={
-                        deployedModels.filter((d) => d.status === "OFFLINE")
-                          .length
-                      }
-                      color={{
-                        bg: "bg-red-500/10",
-                        border: "border-red-400/30",
-                        text: "text-red-300",
-                      }}
-                      Icon={CloseCircleOutlined}
-                    />
-                  </div>
-                </div>
+              <div>
+                <h3 className="text-base font-bold text-gray-900 dark:text-white">
+                  Experiments
+                </h3>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  Training and validation status
+                </p>
               </div>
+            </div>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <StatusCard
+                label="Completed"
+                value={experiments.filter((e) => e.status === "DONE").length}
+                color={{
+                  iconBg: "bg-emerald-100 dark:bg-emerald-900/30",
+                  iconText: "text-emerald-600 dark:text-emerald-400",
+                  valueText: "text-emerald-700 dark:text-emerald-400",
+                }}
+                Icon={CircleCheck}
+              />
+              <StatusCard
+                label="In Progress"
+                value={
+                  experiments.filter((e) => inProgressStatuses.has(e.status))
+                    .length
+                }
+                color={{
+                  iconBg: "bg-blue-100 dark:bg-blue-900/30",
+                  iconText: "text-blue-600 dark:text-blue-400",
+                  valueText: "text-blue-700 dark:text-blue-400",
+                }}
+                Icon={RefreshCw}
+              />
+              <StatusCard
+                label="Failed"
+                value={
+                  experiments.filter((e) => e.status === "FAILED").length
+                }
+                color={{
+                  iconBg: "bg-red-100 dark:bg-red-900/30",
+                  iconText: "text-red-600 dark:text-red-400",
+                  valueText: "text-red-700 dark:text-red-400",
+                }}
+                Icon={CircleX}
+              />
+            </div>
+          </div>
+
+          {/* Models */}
+          <div className="rounded-2xl border border-gray-200 bg-white p-6 dark:border-white/10 dark:bg-slate-900">
+            <div className="mb-5 flex items-center gap-3">
+              <div className="flex size-9 items-center justify-center rounded-xl bg-blue-500/10">
+                <Database className="size-5 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-gray-900 dark:text-white">
+                  Models
+                </h3>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  Available trained models
+                </p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <StatusCard
+                label="Ready"
+                value={models.length}
+                color={{
+                  iconBg: "bg-emerald-100 dark:bg-emerald-900/30",
+                  iconText: "text-emerald-600 dark:text-emerald-400",
+                  valueText: "text-emerald-700 dark:text-emerald-400",
+                }}
+                Icon={CircleCheck}
+              />
+            </div>
+          </div>
+
+          {/* Deployed Models */}
+          <div className="rounded-2xl border border-gray-200 bg-white p-6 dark:border-white/10 dark:bg-slate-900">
+            <div className="mb-5 flex items-center gap-3">
+              <div className="flex size-9 items-center justify-center rounded-xl bg-blue-500/10">
+                <Cloud className="size-5 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-gray-900 dark:text-white">
+                  Deployed Models
+                </h3>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  Production deployment status
+                </p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <StatusCard
+                label="Online"
+                value={
+                  deployedModels.filter((d) => d.status === "ONLINE").length
+                }
+                color={{
+                  iconBg: "bg-emerald-100 dark:bg-emerald-900/30",
+                  iconText: "text-emerald-600 dark:text-emerald-400",
+                  valueText: "text-emerald-700 dark:text-emerald-400",
+                }}
+                Icon={Server}
+              />
+              <StatusCard
+                label="Setting Up"
+                value={
+                  deployedModels.filter((d) => d.status === "SETTING_UP")
+                    .length
+                }
+                color={{
+                  iconBg: "bg-amber-100 dark:bg-amber-900/30",
+                  iconText: "text-amber-600 dark:text-amber-400",
+                  valueText: "text-amber-700 dark:text-amber-400",
+                }}
+                Icon={Settings}
+              />
+              <StatusCard
+                label="Offline"
+                value={
+                  deployedModels.filter((d) => d.status === "OFFLINE").length
+                }
+                color={{
+                  iconBg: "bg-red-100 dark:bg-red-900/30",
+                  iconText: "text-red-600 dark:text-red-400",
+                  valueText: "text-red-700 dark:text-red-400",
+                }}
+                Icon={CircleX}
+              />
             </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
