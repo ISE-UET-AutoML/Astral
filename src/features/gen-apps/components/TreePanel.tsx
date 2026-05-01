@@ -1,61 +1,113 @@
-/**
- * Recursive tree component for file navigation
- * @param {{node: object, path: string, onOpen: Function}} props
- */
-const Tree = ({ node, path, onOpen }) => {
-	const sortedEntries = Object.entries(node.children || {}).sort(([nameA, dataA], [nameB, dataB]) => {
-		if (dataA.type === 'dir' && dataB.type !== 'dir') return -1
-		if (dataA.type !== 'dir' && dataB.type === 'dir') return 1
-		return nameA.localeCompare(nameB, undefined, {
-			sensitivity: 'base',
-			numeric: true,
-			ignorePunctuation: true,
-		})
-	})
+import { ChevronRight, Folder, FileText } from "lucide-react";
+import { useState } from "react";
 
-	return (
-		<>
-			{sortedEntries.map(([name, data]) => {
-				const p = path ? `${path}/${name}` : name
-				return (
-					<div key={p} className="ml-3">
-						{data.type === 'dir' ? (
-							<details>
-								<summary className="cursor-pointer hover:bg-gray-100 dark:hover:bg-[#2a2d2e] px-2 py-1 rounded text-sm text-gray-700 dark:text-[#cccccc] marker:text-gray-500 dark:marker:text-[#888]">
-									📁 {name}
-								</summary>
-								<Tree node={data} path={p} onOpen={onOpen} />
-							</details>
-						) : (
-							<div
-								className="cursor-pointer py-1 px-2 hover:bg-gray-100 dark:hover:bg-[#2a2d2e] rounded text-sm flex items-center gap-2 text-gray-700 dark:text-[#cccccc]"
-								onClick={() => onOpen(p)}
-							>
-								📄 {name}
-							</div>
-						)}
-					</div>
-				)
-			})}
-		</>
-	)
-}
+const TreeNode = ({
+  name,
+  data,
+  path,
+  onOpen,
+}: {
+  name: string;
+  data: any;
+  path: string;
+  onOpen: (path: string) => void;
+}) => {
+  const [open, setOpen] = useState(false);
 
-/**
- * Tree panel – header pinned, file list scrollable.
- * @param {{tree: object|null, onOpen: Function}} props
- */
-const TreePanel = ({ tree, onOpen }) => {
-	return (
-		<div className="flex flex-col flex-1 min-h-0 overflow-hidden bg-white dark:bg-[#252526] border-r border-gray-200 dark:border-[#333]">
-			<div className="shrink-0 px-4 py-3 border-b border-gray-200 dark:border-[#333] bg-gray-50 dark:bg-[#252526] font-semibold text-gray-700 dark:text-[#cccccc]">
-				Files
-			</div>
-			<div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-3 text-sm text-gray-700 dark:text-[#cccccc] bg-gray-50 dark:bg-[#252526] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-[#555] [&::-webkit-scrollbar-thumb]:rounded-full">
-				{tree ? <Tree node={tree} path="" onOpen={onOpen} /> : 'Loading files...'}
-			</div>
-		</div>
-	)
-}
+  if (data.type === "dir") {
+    return (
+      <div>
+        <button
+          type="button"
+          onClick={() => setOpen((o) => !o)}
+          className="flex w-full items-center gap-1.5 rounded-lg px-2 py-1 text-left text-sm text-gray-700 transition hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/10"
+        >
+          <ChevronRight
+            className={`size-3.5 shrink-0 text-gray-400 transition-transform dark:text-gray-500 ${open ? "rotate-90" : ""}`}
+          />
+          <Folder className="size-3.5 shrink-0 text-amber-500" />
+          <span className="truncate">{name}</span>
+        </button>
+        {open && (
+          <div className="ml-3 border-l border-gray-200 pl-1 dark:border-white/10">
+            <Tree node={data} path={path} onOpen={onOpen} />
+          </div>
+        )}
+      </div>
+    );
+  }
 
-export default TreePanel
+  return (
+    <button
+      type="button"
+      onClick={() => onOpen(path)}
+      className="flex w-full items-center gap-1.5 rounded-lg px-2 py-1 text-left text-sm text-gray-600 transition hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/10"
+    >
+      <span className="size-3.5 shrink-0" />
+      <FileText className="size-3.5 shrink-0 text-blue-400 dark:text-blue-500" />
+      <span className="truncate">{name}</span>
+    </button>
+  );
+};
+
+const Tree = ({
+  node,
+  path,
+  onOpen,
+}: {
+  node: any;
+  path: string;
+  onOpen: (path: string) => void;
+}) => {
+  const sortedEntries = Object.entries(node.children || {}).sort(
+    ([nameA, dataA]: any, [nameB, dataB]: any) => {
+      if (dataA.type === "dir" && dataB.type !== "dir") return -1;
+      if (dataA.type !== "dir" && dataB.type === "dir") return 1;
+      return nameA.localeCompare(nameB, undefined, {
+        sensitivity: "base",
+        numeric: true,
+        ignorePunctuation: true,
+      });
+    },
+  );
+
+  return (
+    <div className="space-y-0.5">
+      {sortedEntries.map(([name, data]: any) => {
+        const p = path ? `${path}/${name}` : name;
+        return (
+          <TreeNode key={p} name={name} data={data} path={p} onOpen={onOpen} />
+        );
+      })}
+    </div>
+  );
+};
+
+const TreePanel = ({
+  tree,
+  onOpen,
+}: {
+  tree: any;
+  onOpen: (path: string) => void;
+}) => {
+  return (
+    <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-white dark:bg-slate-900">
+      <div className="shrink-0 border-b border-gray-200 px-4 py-2.5 dark:border-white/10">
+        <span className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+          Files
+        </span>
+      </div>
+      <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden p-2 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-200 dark:[&::-webkit-scrollbar-thumb]:bg-white/10 [&::-webkit-scrollbar-track]:bg-transparent">
+        {tree ? (
+          <Tree node={tree} path="" onOpen={onOpen} />
+        ) : (
+          <p className="px-2 py-4 text-xs text-gray-400 dark:text-gray-500">
+            Loading files…
+          </p>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default TreePanel;

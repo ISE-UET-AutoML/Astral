@@ -20,7 +20,6 @@ import {
   RefreshCw as ArrowPathIcon,
   SquareCode as CodeBracketSquareIcon,
   Monitor as ComputerDesktopIcon,
-  Folder as FolderIcon,
   TriangleAlert as ExclamationTriangleIcon,
   X as XMarkIcon,
 } from "lucide-react";
@@ -36,7 +35,6 @@ const EditAppPage = () => {
   const [isSnapshotting, setIsSnapshotting] = useState(false);
   const [isDeploying, setIsDeploying] = useState(false);
   const [streamingContent, setStreamingContent] = useState("");
-  /** Figma-style: 'code' | 'app' – bấm icon Code hiện editor, icon App hiện iframe. */
   const [activeMainView, setActiveMainView] = useState("app");
   const [errors, setErrors] = useState([]);
   const [app, setApp] = useState(null);
@@ -57,7 +55,6 @@ const EditAppPage = () => {
 
   const hasAutoLoadedRef = useRef(false);
 
-  // Disable global page scroll while edit app workspace is open
   useEffect(() => {
     const prevOverflow = document.documentElement.style.overflow;
     document.documentElement.style.overflow = "hidden";
@@ -66,7 +63,6 @@ const EditAppPage = () => {
     };
   }, []);
 
-  // All hooks must be called before any conditional returns
   const { tree, refetch: refetchTree } = useFileTree(appId);
   const { code, setCode, isSaving } = useFileEditor(
     appId,
@@ -97,7 +93,6 @@ const EditAppPage = () => {
 
   const handleModificationSuccess = useCallback(() => {
     refetchTree();
-    // Defer slightly to ensure Redis is fully populated before reading
     setTimeout(() => {
       if (currentFileRef.current) {
         loadFile(currentFileRef.current);
@@ -105,7 +100,6 @@ const EditAppPage = () => {
     }, 800);
   }, [refetchTree, loadFile]);
 
-  // --- AMTA Modify Hook ---
   const { chatInput, setChatInput, isStreaming, liveMessages, sendMessage } =
     useAmtaModify({
       appId,
@@ -117,7 +111,6 @@ const EditAppPage = () => {
       name: app?.name,
       onSuccess: handleModificationSuccess,
     });
-  // ------------------------
 
   const refreshCurrentVersion = useCallback(async () => {
     if (!appId) return;
@@ -129,19 +122,8 @@ const EditAppPage = () => {
     }
   }, [appId]);
 
-  // Ensure draft is initialized in versioning backend (idempotent)
   useEffect(() => {
-    if (!appId) {
-      console.warn("[EditAppPage] No appId, skipping draft init");
-      return;
-    }
-
-    console.log(
-      "[EditAppPage] Initializing draft and fetching app info for appId:",
-      appId,
-    );
-
-    // Fetch app info for dynamic URL
+    if (!appId) return;
     workspaceApi
       .getApp(appId)
       .then(setApp)
@@ -165,7 +147,6 @@ const EditAppPage = () => {
     refreshCurrentVersion();
   }, [refreshCurrentVersion]);
 
-  // Helper functions (must be defined before conditional return)
   const findIndexHtml = useCallback((node, currentPath = "") => {
     if (!node.children) return null;
     for (const [name, child] of Object.entries(node.children)) {
@@ -188,7 +169,6 @@ const EditAppPage = () => {
     return null;
   }, []);
 
-  // Auto-save vào Redis sau khi dừng gõ 1.5s
   const handleCodeChange = useCallback(
     (newCode) => {
       setCode(newCode);
@@ -201,7 +181,6 @@ const EditAppPage = () => {
     [appId, currentFile, setCode],
   );
 
-  // Ctrl+S: save Redis + Git snapshot
   const handleSaveFile = useCallback(async () => {
     if (!currentFile) {
       toast.warning("No file opened!");
@@ -225,10 +204,8 @@ const EditAppPage = () => {
       toast.error("Invalid app ID, cannot save snapshot");
       return;
     }
-
     const description = window.prompt("Snapshot description (optional):");
     if (description === null) return;
-
     setIsSnapshotting(true);
     const hide = toast.loading("Saving draft snapshot to S3...", 0);
     try {
@@ -254,10 +231,8 @@ const EditAppPage = () => {
         toast.error("Invalid app ID, cannot deploy");
         return;
       }
-
       const isRedeploy = versionNumber !== undefined;
       let description = "";
-
       if (isRedeploy) {
         if (!window.confirm(`Redeploy version v${versionNumber} to Vast.ai?`)) {
           return;
@@ -265,7 +240,6 @@ const EditAppPage = () => {
       } else {
         description = window.prompt("Version description (optional):");
         if (description === null) return;
-
         if (
           !window.confirm(
             "Deploy this draft as a new version and push to Vast.ai?",
@@ -274,7 +248,6 @@ const EditAppPage = () => {
           return;
         }
       }
-
       setIsDeploying(true);
       const hide = toast.loading(
         isRedeploy
@@ -286,7 +259,6 @@ const EditAppPage = () => {
         const result = isRedeploy
           ? await workspaceApi.deployVersion(appId, versionNumber)
           : await workspaceApi.deployDraft(appId, description || undefined);
-
         console.log("[EditAppPage] Deployment successful:", result);
         toast.success(
           result?.version_number
@@ -294,14 +266,10 @@ const EditAppPage = () => {
             : "Deployed successfully",
         );
         refreshCurrentVersion();
-
         if (isRedeploy) {
           refetchTree();
-          // We need to defer loadFile slightly since the backend might take a moment to clear Redis
           setTimeout(() => {
-            if (currentFile) {
-              loadFile(currentFile);
-            }
+            if (currentFile) loadFile(currentFile);
           }, 500);
         }
       } catch (err) {
@@ -325,7 +293,6 @@ const EditAppPage = () => {
 
   useSaveShortcut(currentFile, code, handleSaveFile);
 
-  // Init draft workspace when entering edit page (covers: Details click + direct URL)
   useEffect(() => {
     if (!appId) return;
     initDraft(appId).catch((err) => {
@@ -342,13 +309,13 @@ const EditAppPage = () => {
     }
   }, [tree, currentFile, findIndexHtml, loadFile]);
 
-  // sendChatMessage from useAmtaChat handles the LLM streaming
-
   if (!appId) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex h-screen items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-600 mb-4">Invalid app ID</p>
+          <p className="mb-4 text-gray-600 dark:text-gray-400">
+            Invalid app ID
+          </p>
           <Button onClick={() => navigate(`/app/project/${projectId}/my-apps`)}>
             Go Back
           </Button>
@@ -358,10 +325,10 @@ const EditAppPage = () => {
   }
 
   return (
-    <div className="flex flex-col h-full min-h-0 bg-gray-100 dark:bg-slate-950 overflow-hidden">
-      <div className="grid grid-cols-[360px_1fr] flex-1 min-h-0 overflow-hidden">
-        {/* Cột 1: Chat – flex để panel có chiều cao cố định, scroll bên trong */}
-        <div className="min-w-0 min-h-0 overflow-hidden flex flex-col">
+    <div className="flex h-full min-h-0 flex-col overflow-hidden bg-gray-100 dark:bg-slate-950">
+      <div className="grid min-h-0 flex-1 grid-cols-[360px_1fr] overflow-hidden">
+        {/* Left: Chat panel */}
+        <div className="flex min-h-0 min-w-0 flex-col overflow-hidden">
           <ChatPanel
             appId={appId}
             input={chatInput}
@@ -373,74 +340,82 @@ const EditAppPage = () => {
             onDeployVersion={handleDeploy}
           />
         </div>
-        {/* Cột 2: Workspace – bấm Code hiện Tree + Editor cùng khu vực (Figma-style), bấm App chỉ hiện preview */}
-        <div className="min-w-0 min-h-0 overflow-hidden flex flex-col bg-gray-50 dark:bg-[#1e1e1e]">
-          {/* Một hàng: Code, App bên trái; Save, Deploy cố định ở cuối bên phải */}
-          <div className="shrink-0 h-14 flex items-center justify-between gap-2 px-2 border-b border-gray-200 dark:border-[#333] bg-gray-50 dark:bg-[#252526]">
-            <div className="flex items-center gap-2">
-              {/* Segmented control – App / Code */}
-              <div className="relative grid grid-cols-2 rounded-full bg-gray-100 dark:bg-[#2d2d2d] w-[178px] h-11 border border-gray-200/80 dark:border-[#404040] overflow-hidden">
+
+        {/* Right: Workspace */}
+        <div className="flex min-h-0 min-w-0 flex-col overflow-hidden bg-gray-50 dark:bg-slate-900">
+          {/* Toolbar */}
+          <div className="flex h-12 shrink-0 items-center justify-between gap-2 border-b border-gray-200 bg-white px-3 dark:border-white/10 dark:bg-slate-900">
+            {/* App / Code segmented control */}
+            <div className="flex items-center gap-3">
+              <div className="relative grid h-9 w-[168px] grid-cols-2 overflow-hidden rounded-full border border-gray-200 bg-gray-100 dark:border-white/10 dark:bg-white/5">
                 <button
                   type="button"
                   onClick={() => {
                     setActiveMainView("app");
                     setPreviewKey((k) => k + 1);
                   }}
-                  title="App"
-                  className={`relative z-10 flex items-center justify-center gap-2 h-full rounded-full text-sm font-medium transition-colors duration-200 ${activeMainView === "app" ? "text-blue-600 dark:text-white" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"}`}
+                  className={`relative z-10 flex h-full items-center justify-center gap-1.5 rounded-full text-sm font-medium transition-colors ${
+                    activeMainView === "app"
+                      ? "text-blue-600 dark:text-white"
+                      : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                  }`}
                 >
-                  <ComputerDesktopIcon className="w-4 h-4 shrink-0" />
-                  <span>App</span>
+                  <ComputerDesktopIcon className="size-4 shrink-0" />
+                  App
                 </button>
                 <button
                   type="button"
                   onClick={() => setActiveMainView("code")}
-                  title="Code"
-                  className={`relative z-10 flex items-center justify-center gap-2 h-full rounded-full text-sm font-medium transition-colors duration-200 ${activeMainView === "code" ? "text-blue-600 dark:text-white" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"}`}
+                  className={`relative z-10 flex h-full items-center justify-center gap-1.5 rounded-full text-sm font-medium transition-colors ${
+                    activeMainView === "code"
+                      ? "text-blue-600 dark:text-white"
+                      : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                  }`}
                 >
-                  <CodeBracketSquareIcon className="w-4 h-4 shrink-0" />
-                  <span>Code</span>
+                  <CodeBracketSquareIcon className="size-4 shrink-0" />
+                  Code
                 </button>
                 {/* Sliding pill */}
                 <div
-                  className={`absolute top-0.5 bottom-0.5 rounded-full bg-white dark:bg-[#404040] shadow-sm ring-1 ring-gray-200/60 dark:ring-[#555] transition-all duration-200 ease-out ${
+                  aria-hidden
+                  className={`absolute bottom-0.5 top-0.5 rounded-full bg-white ring-1 ring-gray-200/60 transition-all duration-200 ease-out dark:bg-white/15 dark:ring-white/10 ${
                     activeMainView === "app"
                       ? "left-0.5 right-[calc(50%+0.5px)]"
                       : "left-[calc(50%+0.5px)] right-0.5"
                   }`}
-                  aria-hidden
                 />
               </div>
+
               {currentVersionNumber !== null && (
-                <span className="ml-14 text-sm font-semibold px-3 py-1.5 rounded-full border border-green-600 dark:text-white bg-green-500/20 text-green-900">
-                  Current v{currentVersionNumber}
+                <span className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-900/20 dark:text-emerald-300">
+                  v{currentVersionNumber} deployed
                 </span>
               )}
             </div>
-            <div className="flex items-center gap-2 shrink-0">
-              <button
-                type="button"
-                onClick={() => handleDeploy()}
-                disabled={isDeploying}
-                className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl disabled:opacity-50 disabled:pointer-events-none transition-all shadow-sm"
-              >
-                {isDeploying ? (
-                  <ArrowPathIcon className="w-4 h-4 shrink-0 animate-spin" />
-                ) : (
-                  <ArrowUpTrayIcon className="w-4 h-4 shrink-0" />
-                )}
-                {isDeploying ? "Deploying..." : "Deploy"}
-              </button>
-            </div>
+
+            {/* Deploy button */}
+            <button
+              type="button"
+              onClick={() => handleDeploy()}
+              disabled={isDeploying}
+              className="flex h-9 items-center gap-2 rounded-xl bg-blue-600 px-4 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:pointer-events-none disabled:opacity-50 dark:bg-blue-500 dark:hover:bg-blue-400"
+            >
+              {isDeploying ? (
+                <ArrowPathIcon className="size-4 shrink-0 animate-spin" />
+              ) : (
+                <ArrowUpTrayIcon className="size-4 shrink-0" />
+              )}
+              {isDeploying ? "Deploying…" : "Deploy"}
+            </button>
           </div>
-          {/* Khi Code: TreePanel + Editor cạnh nhau trong cùng workspace */}
+
+          {/* Code view: Tree + Editor */}
           {activeMainView === "code" && (
-            <div className="flex-1 min-h-0 flex overflow-hidden">
-              {/* Tree: scroll riêng bên trong TreePanel, không scroll theo layout */}
-              <div className="w-[240px] shrink-0 min-h-0 flex flex-col overflow-hidden border-r border-gray-200 dark:border-[#333] bg-gray-50 dark:bg-[#252526]">
+            <div className="flex min-h-0 flex-1 overflow-hidden">
+              <div className="flex min-h-0 w-60 shrink-0 flex-col overflow-hidden border-r border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-slate-900">
                 <TreePanel tree={tree} onOpen={loadFile} />
               </div>
-              <div className="flex-1 min-w-0 min-h-0 overflow-hidden flex flex-col">
+              <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
                 <CodeEditorPanel
                   currentFile={currentFile}
                   code={code}
@@ -452,37 +427,42 @@ const EditAppPage = () => {
               </div>
             </div>
           )}
+
+          {/* App preview */}
           {activeMainView === "app" && (
-            <div className="flex flex-col flex-1 min-h-0">
-              <div className="shrink-0 px-3 py-2 border-b border-gray-200 dark:border-[#333] bg-gray-50 dark:bg-[#252526]">
+            <div className="flex min-h-0 flex-1 flex-col">
+              {/* URL bar */}
+              <div className="shrink-0 border-b border-gray-200 bg-gray-50 px-3 py-2 dark:border-white/10 dark:bg-slate-900">
                 {app?.host && app?.ports?.frontend && (
-                  <div className="w-full flex items-center rounded-full bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-[#444] hover:border-gray-300 dark:hover:border-[#555] hover:shadow-sm transition-all">
+                  <div className="flex w-full items-center rounded-xl border border-gray-200 bg-white transition hover:border-gray-300 dark:border-white/10 dark:bg-white/5 dark:hover:border-white/20">
                     <button
                       type="button"
                       onClick={() => setPreviewKey((k) => k + 1)}
-                      className="shrink-0 ml-1 p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-[#2f2f2f] text-gray-500 dark:text-[#888] transition-colors"
-                      title="Reload Preview"
+                      className="ml-1 shrink-0 rounded-lg p-1.5 text-gray-500 transition hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/10"
+                      title="Reload preview"
                     >
-                      <ArrowPathIcon className="w-4 h-4" />
+                      <ArrowPathIcon className="size-4" />
                     </button>
                     <a
                       href={`http://${app.host}:${app.ports.frontend}`}
                       target="_blank"
                       rel="noreferrer"
-                      className="min-w-0 flex-1 flex items-center px-3 py-2 text-sm text-gray-700 dark:text-gray-300"
+                      className="flex min-w-0 flex-1 items-center px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200"
                     >
                       <span className="truncate">{`http://${app.host}:${app.ports.frontend}`}</span>
                     </a>
                   </div>
                 )}
               </div>
-              <div className="flex-1 min-h-0 relative">
+
+              {/* iframe / placeholder */}
+              <div className="relative min-h-0 flex-1">
                 {app?.host && app?.ports?.frontend ? (
                   <iframe
                     key={previewKey}
                     title="App Preview"
                     src={`http://${app.host}:${app.ports.frontend}`}
-                    className="absolute inset-0 w-full h-full border-0 bg-white dark:bg-slate-950"
+                    className="absolute inset-0 h-full w-full border-0 bg-white dark:bg-slate-950"
                     sandbox="allow-scripts allow-same-origin allow-forms"
                     referrerPolicy="no-referrer"
                   />
@@ -490,19 +470,19 @@ const EditAppPage = () => {
                   <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
                     {app ? (
                       <>
-                        <ExclamationTriangleIcon className="w-10 h-10 text-yellow-500 mb-3" />
-                        <p className="text-gray-600 dark:text-gray-400 font-medium">
-                          Instance scaling or not yet available
+                        <ExclamationTriangleIcon className="mb-3 size-10 text-amber-500" />
+                        <p className="font-medium text-gray-700 dark:text-gray-300">
+                          Instance not yet available
                         </p>
-                        <p className="text-sm text-gray-500 dark:text-gray-500 mt-1">
-                          Please wait a moment while the instance starts up.
+                        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                          Please wait while the instance starts up.
                         </p>
                       </>
                     ) : (
                       <>
-                        <ArrowPathIcon className="w-8 h-8 text-blue-500 animate-spin mb-3" />
-                        <p className="text-gray-600 dark:text-gray-400">
-                          Fetching instance info...
+                        <ArrowPathIcon className="mb-3 size-8 animate-spin text-blue-500" />
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Fetching instance info…
                         </p>
                       </>
                     )}
@@ -513,18 +493,19 @@ const EditAppPage = () => {
           )}
         </div>
       </div>
-      {/* Thanh lỗi ngang kiểu Figma – hiển thị ngang phía dưới */}
+
+      {/* Error bar */}
       {errors.length > 0 && (
-        <div className="shrink-0 flex items-center gap-2 px-3 py-2 bg-red-50 dark:bg-red-950/30 border-t border-red-200 dark:border-red-900/50 overflow-x-auto">
-          <span className="text-xs font-medium text-red-700 dark:text-red-400 shrink-0 flex items-center gap-1">
-            <ExclamationTriangleIcon className="w-4 h-4" />
-            {errors.length} Errors
+        <div className="flex shrink-0 items-center gap-2 overflow-x-auto border-t border-red-200 bg-red-50 px-3 py-2 dark:border-red-500/20 dark:bg-red-900/20">
+          <span className="flex shrink-0 items-center gap-1 text-xs font-medium text-red-700 dark:text-red-400">
+            <ExclamationTriangleIcon className="size-4" />
+            {errors.length} error{errors.length !== 1 ? "s" : ""}
           </span>
-          <div className="flex items-center gap-2 min-w-0 flex-1 overflow-x-auto mt-5">
+          <div className="flex min-w-0 flex-1 items-center gap-2 overflow-x-auto">
             {errors.map((e) => (
               <div
                 key={e.id}
-                className="shrink-0 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-300 text-sm"
+                className="flex shrink-0 items-center gap-2 rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs text-red-700 dark:border-red-500/20 dark:bg-red-900/30 dark:text-red-300"
               >
                 <span className="max-w-[280px] truncate" title={e.message}>
                   {e.message}
@@ -532,10 +513,10 @@ const EditAppPage = () => {
                 <button
                   type="button"
                   onClick={() => dismissError(e.id)}
-                  className="p-0.5 rounded hover:bg-red-200 dark:hover:bg-red-800/60 text-red-600 dark:text-red-400"
-                  title="Đóng"
+                  className="rounded p-0.5 text-red-500 hover:bg-red-100 dark:hover:bg-red-800/40"
+                  title="Dismiss"
                 >
-                  <XMarkIcon className="w-4 h-4" />
+                  <XMarkIcon className="size-3.5" />
                 </button>
               </div>
             ))}
@@ -543,9 +524,9 @@ const EditAppPage = () => {
           <button
             type="button"
             onClick={clearAllErrors}
-            className="shrink-0 text-xs font-medium text-red-600 dark:text-red-400 hover:underline"
+            className="shrink-0 text-xs font-medium text-red-600 hover:underline dark:text-red-400"
           >
-            Xóa tất cả
+            Clear all
           </button>
         </div>
       )}
