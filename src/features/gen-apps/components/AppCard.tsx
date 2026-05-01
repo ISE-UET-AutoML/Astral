@@ -1,5 +1,5 @@
 import { Button } from "src/components/ui/button";
-import { RefreshCw, ExternalLink } from "lucide-react";
+import { RefreshCw, ExternalLink, ScanSearch, AlignLeft, ImageIcon } from "lucide-react";
 
 const cx = (...classes: Array<string | false | null | undefined>) =>
   classes.filter(Boolean).join(" ");
@@ -75,27 +75,12 @@ const StatusBadge = ({ status }: { status: string }) => {
 
 const AppIcon = ({ taskType }: { taskType?: string }) => {
   if (taskType?.includes("object")) {
-    return (
-      <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-        <rect x="3" y="3" width="18" height="18" rx="2" strokeWidth="2" />
-        <circle cx="12" cy="12" r="3" strokeWidth="2" />
-      </svg>
-    );
+    return <ScanSearch className="size-5" />;
   }
   if (taskType?.includes("text")) {
-    return (
-      <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-        <path d="M4 7h16M4 12h16M4 17h10" strokeWidth="2" strokeLinecap="round" />
-      </svg>
-    );
+    return <AlignLeft className="size-5" />;
   }
-  return (
-    <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-      <rect x="3" y="3" width="18" height="18" rx="2" strokeWidth="2" />
-      <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor" />
-      <path d="M21 15l-5-5L5 21" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
+  return <ImageIcon className="size-5" />;
 };
 
 const BLOCKING_STATUSES = ["pending", "running", "generating", "deploying"];
