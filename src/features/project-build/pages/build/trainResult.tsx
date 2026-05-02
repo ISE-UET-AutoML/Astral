@@ -7,7 +7,7 @@ import { TrainResultSummaryCards } from "src/features/project-build/components/t
 import { TrainResultPerformanceCharts } from "src/features/project-build/components/training/TrainResultPerformanceCharts";
 import { TrainResultMetricsTable } from "src/features/project-build/components/training/TrainResultMetricsTable";
 import { PageHeading } from "src/layouts/page-heading";
-import { projectPageShellClass } from "src/layouts/project-page-shell";
+import { projectPageShellClass } from "src/shared/hooks/project-page-shell";
 
 const TrainResult = () => {
   const { projectInfo } = useOutletContext();

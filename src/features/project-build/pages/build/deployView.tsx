@@ -18,7 +18,7 @@ import { cn } from "src/lib/utils";
 import {
   projectPageShellGrayScrollClass,
   projectPageStackClass,
-} from "src/layouts/project-page-shell";
+} from "src/shared/hooks/project-page-shell";
 
 type AccentKey = "amber" | "emerald" | "blue" | "indigo";
 

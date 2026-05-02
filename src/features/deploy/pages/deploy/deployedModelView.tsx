@@ -12,7 +12,7 @@ import {
 import {
   projectPageShellClass,
   projectPageStackClass,
-} from "src/layouts/project-page-shell";
+} from "src/shared/hooks/project-page-shell";
 import { cn } from "src/lib/utils";
 
 export default function DeployedModelView() {
