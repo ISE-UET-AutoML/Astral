@@ -25,7 +25,7 @@ export const useLabelProjectsTable = ({ projectInfo, updateFields, navigate }) =
 	const [isExporting, setIsExporting] = useState(false)
 	const [currentPage, setCurrentPage] = useState(1)
 	const [showCreateDatasetModal, setShowCreateDatasetModal] = useState(false)
-	const pageSize = 8
+	const pageSize = 10
 
 	const pollExportStatus = (taskId) => {
 		return new Promise((resolve, reject) => {
