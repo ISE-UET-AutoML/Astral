@@ -22,14 +22,17 @@ const SORT_OPTIONS = [
   { value: "name_desc", label: "Name (Z–A)" },
 ];
 
+const fieldLabelClass =
+  "text-[11px] font-medium uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400";
+
 const triggerClass =
-  "h-10 w-full rounded-xl border-gray-200 bg-white text-sm text-gray-900 hover:border-blue-200 focus-visible:border-blue-400 focus-visible:ring-blue-500/30 dark:border-white/20 dark:bg-white/10 dark:text-white dark:hover:border-blue-400/40";
+  "flex h-9 w-full min-w-0 items-center justify-between gap-2 rounded-lg border border-slate-200/90 bg-white px-2.5 text-sm text-slate-900 shadow-none outline-none transition-colors data-[size=default]:h-9 hover:border-slate-300 focus-visible:border-blue-500 focus-visible:ring-2 focus-visible:ring-blue-500/20 dark:border-slate-600/70 dark:bg-slate-800/30 dark:text-slate-100 dark:hover:border-slate-500 [&_svg]:size-4";
 
 const contentClass =
-  "z-[1100] rounded-xl border border-gray-200 bg-white p-1.5 text-gray-900 dark:border-white/10 dark:bg-slate-950 dark:text-white";
+  "z-[1100] rounded-lg border border-slate-200/90 bg-white p-1 text-sm text-slate-900 shadow-lg dark:border-slate-600/80 dark:bg-slate-950 dark:text-slate-100";
 
 const itemClass =
-  "h-8 rounded-lg px-2.5 pr-8 text-sm text-gray-700 focus:bg-blue-50 focus:text-blue-700 data-[state=checked]:bg-blue-50 data-[state=checked]:font-medium data-[state=checked]:text-blue-700 dark:text-gray-200 dark:focus:bg-blue-500/15 dark:focus:text-blue-100 dark:data-[state=checked]:bg-blue-500/15 dark:data-[state=checked]:text-blue-100";
+  "min-h-9 rounded-md py-2 pl-2.5 pr-8 text-sm text-slate-700 focus:bg-blue-50 focus:text-blue-800 data-[state=checked]:bg-blue-50 data-[state=checked]:font-medium data-[state=checked]:text-blue-800 dark:text-slate-200 dark:focus:bg-blue-500/15 dark:focus:text-blue-100 dark:data-[state=checked]:bg-blue-500/15 dark:data-[state=checked]:text-blue-100";
 
 type TaskFilterProps = {
   selectedTrainingTask: string | null;
@@ -49,7 +52,7 @@ const TaskFilter = ({
   onSearch,
   selectedSort,
   onSortChange,
-  isReset,
+  isReset: _isReset,
   searchValue,
 }: TaskFilterProps) => {
   const hasActiveFilters =
@@ -58,83 +61,97 @@ const TaskFilter = ({
     (selectedSort ?? "latest") !== "latest";
 
   return (
-    <div className="mb-6 rounded-2xl border border-gray-200 bg-gray-50/80 p-4 backdrop-blur-sm dark:border-white/10 dark:bg-white/5">
-      <div className="flex flex-wrap items-end gap-3">
-        {/* Search */}
-        <div className="min-w-64 flex-1">
-          <label className="mb-1.5 block text-sm font-medium text-gray-600 dark:text-gray-300">
-            Search
-          </label>
-          <div className="relative">
-            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
-            <Input
-              type="text"
-              placeholder="Search projects..."
-              value={searchValue || ""}
-              onChange={(e) => onSearch(e.target.value)}
-              className="h-10 rounded-xl border-gray-200 bg-white pl-9 pr-3 text-sm text-gray-900 placeholder:text-gray-400 focus-visible:border-blue-400 focus-visible:ring-blue-500/30 dark:border-white/20 dark:bg-white/10 dark:text-white dark:placeholder:text-gray-500"
-            />
+    <section className="mb-8" aria-labelledby="projects-filter-heading">
+      <div className="rounded-2xl border border-gray-200/90 bg-white shadow-md ring-1 ring-black/[0.04] dark:border-slate-700/80 dark:bg-slate-900 dark:shadow-lg dark:shadow-black/30 dark:ring-white/[0.06]">
+        <div className="flex items-center justify-between gap-3 border-b border-slate-100 px-4 py-2.5 dark:border-slate-700/50">
+          <h2
+            id="projects-filter-heading"
+            className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-600 dark:text-slate-400"
+          >
+            Search & filter
+          </h2>
+          {hasActiveFilters && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={onReset}
+              className="h-7 gap-1 border border-blue-200/80 bg-blue-400/15 px-2.5 text-xs font-semibold text-blue-700 shadow-none backdrop-blur-md hover:bg-blue-400/25 focus-visible:ring-blue-500/30 dark:border-blue-400/25 dark:bg-blue-400/10 dark:text-blue-300 dark:hover:bg-blue-400/20"
+            >
+              <X className="size-3" />
+              Clear
+            </Button>
+          )}
+        </div>
+
+        <div className="grid grid-cols-1 gap-3 p-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(10rem,12rem)_minmax(8.5rem,10rem)] lg:items-end lg:gap-3">
+          <div className="flex flex-col gap-1 sm:col-span-2 lg:col-span-1">
+            <label htmlFor="projects-search" className={fieldLabelClass}>
+              Name
+            </label>
+            <div className="relative">
+              <Search
+                className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-slate-400 dark:text-slate-500"
+                aria-hidden
+              />
+              <Input
+                id="projects-search"
+                type="text"
+                placeholder="Filter projects…"
+                value={searchValue || ""}
+                onChange={(e) => onSearch(e.target.value)}
+                className="h-9 rounded-lg border-slate-200/90 bg-white pl-8 pr-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus-visible:border-blue-500 focus-visible:ring-2 focus-visible:ring-blue-500/20 dark:border-slate-600/70 dark:bg-slate-800/30 dark:text-slate-100 dark:placeholder:text-slate-500"
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <span id="projects-filter-type-label" className={fieldLabelClass}>
+              Type
+            </span>
+            <Select
+              value={selectedTrainingTask ?? ""}
+              onValueChange={(v) => onTaskChange(v)}
+            >
+              <SelectTrigger
+                className={triggerClass}
+                aria-labelledby="projects-filter-type-label"
+              >
+                <SelectValue placeholder="All types" />
+              </SelectTrigger>
+              <SelectContent align="start" position="popper" className={contentClass}>
+                {trainingTaskOptions.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value} className={itemClass}>
+                    {opt.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <span id="projects-filter-sort-label" className={fieldLabelClass}>
+              Sort
+            </span>
+            <Select value={selectedSort ?? "latest"} onValueChange={(v) => onSortChange(v)}>
+              <SelectTrigger
+                className={triggerClass}
+                aria-labelledby="projects-filter-sort-label"
+              >
+                <SelectValue placeholder="Latest" />
+              </SelectTrigger>
+              <SelectContent align="start" position="popper" className={contentClass}>
+                {SORT_OPTIONS.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value} className={itemClass}>
+                    {opt.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
-
-        {/* Task type */}
-        <div className="w-full sm:w-52">
-          <label className="mb-1.5 block text-sm font-medium text-gray-600 dark:text-gray-300">
-            Type
-          </label>
-          <Select
-            value={selectedTrainingTask ?? ""}
-            onValueChange={(v) => onTaskChange(v)}
-          >
-            <SelectTrigger className={triggerClass}>
-              <SelectValue placeholder="All types" />
-            </SelectTrigger>
-            <SelectContent align="start" position="popper" className={contentClass}>
-              {trainingTaskOptions.map((opt) => (
-                <SelectItem key={opt.value} value={opt.value} className={itemClass}>
-                  {opt.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* Sort */}
-        <div className="w-full sm:w-44">
-          <label className="mb-1.5 block text-sm font-medium text-gray-600 dark:text-gray-300">
-            Sort by
-          </label>
-          <Select
-            value={selectedSort ?? "latest"}
-            onValueChange={(v) => onSortChange(v)}
-          >
-            <SelectTrigger className={triggerClass}>
-              <SelectValue placeholder="Sort by" />
-            </SelectTrigger>
-            <SelectContent align="start" position="popper" className={contentClass}>
-              {SORT_OPTIONS.map((opt) => (
-                <SelectItem key={opt.value} value={opt.value} className={itemClass}>
-                  {opt.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* Reset */}
-        {hasActiveFilters && (
-          <Button
-            type="button"
-            variant="outline"
-            onClick={onReset}
-            className="h-10 rounded-xl border-gray-200 bg-white px-3 text-gray-700 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 dark:border-white/10 dark:bg-white/10 dark:text-gray-200 dark:hover:border-blue-400/30 dark:hover:bg-blue-400/10 dark:hover:text-blue-200"
-          >
-            <X className="size-4" />
-            Reset
-          </Button>
-        )}
       </div>
-    </div>
+    </section>
   );
 };
 

@@ -111,11 +111,12 @@ export default function Projects() {
 						searchValue={searchValue}
 					/>
 
-					<ProjectsGrid
-						projects={paginatedProjects}
-						getProjects={getProjects}
-						onCreateProject={() => updateProjState({ showUploaderManual: true })}
-					/>
+					<div className="border-t border-gray-200 pt-10 dark:border-white/10">
+						<ProjectsGrid
+							projects={paginatedProjects}
+							getProjects={getProjects}
+							onCreateProject={() => updateProjState({ showUploaderManual: true })}
+						/>
 
 					{hasProjects && totalPages > 1 && (
 						<div className="mt-6">
@@ -152,6 +153,7 @@ export default function Projects() {
 							</Pagination>
 						</div>
 					)}
+					</div>
 				</ContentContainer>
 			</main>
 

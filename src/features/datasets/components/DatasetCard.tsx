@@ -191,9 +191,9 @@ export default function DatasetCard({
 
   return (
     <div
-      className={`group relative flex min-h-[360px] w-full cursor-pointer flex-col overflow-hidden rounded-2xl border bg-white transition duration-300 dark:bg-slate-900 ${
+      className={`group relative flex min-h-[360px] w-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-sm ring-1 ring-black/[0.04] transition-[transform,box-shadow] duration-300 dark:border-slate-700/80 dark:bg-slate-900 dark:shadow-lg dark:shadow-black/40 dark:ring-white/[0.06] dark:hover:shadow-2xl ${
         isCompleted
-          ? "border-gray-200 hover:-translate-y-1 hover:border-blue-200 hover:shadow-sm dark:border-white/10 dark:hover:border-blue-700/40"
+          ? "hover:-translate-y-1 hover:shadow-xl"
           : isFailed
             ? "border-red-200 dark:border-red-700/40"
             : "border-blue-200/60 dark:border-blue-700/30"
@@ -202,19 +202,19 @@ export default function DatasetCard({
     >
       {/* Top accent bar */}
       <div
-        className={`h-1 w-full shrink-0 bg-gradient-to-r ${accentBar}`}
+        className={`h-0.5 w-full shrink-0 bg-gradient-to-r ${accentBar}`}
       />
 
       {/* Blurred content when processing */}
       <div className={`flex flex-1 flex-col ${isProcessing ? "blur-sm" : ""}`}>
-        {/* Header / Thumbnail Area */}
-        <div className="relative h-28 w-full shrink-0 overflow-hidden bg-gray-50/50 dark:bg-slate-800/30">
+        <div className="relative aspect-[5/2] w-full min-h-[128px] max-h-[200px] shrink-0 overflow-hidden bg-slate-100 dark:bg-slate-900 sm:aspect-[2/1] sm:max-h-[220px]">
           {thumbnail ? (
             <img
               src={thumbnail}
               alt="dataset thumbnail"
-              className="h-full w-full object-cover"
+              className="block h-full w-full object-cover object-center"
               loading="lazy"
+              decoding="async"
             />
           ) : (
             <>
@@ -232,68 +232,72 @@ export default function DatasetCard({
               />
             </>
           )}
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white/90 dark:to-slate-900/90" />
-        </div>
+          <div
+            className="pointer-events-none absolute inset-0 bg-gradient-to-t from-white via-white/35 to-transparent dark:from-slate-900 dark:via-slate-900/40 dark:to-transparent"
+            aria-hidden="true"
+          />
 
-        {/* Card body */}
-        <div className="flex flex-1 flex-col px-5 py-4">
-          {/* Top row: status badge + actions */}
-          <div className="mb-4 flex items-center justify-between gap-2">
-            <Badge className={statusConfig.badge}>
+          <div className="absolute inset-x-3 top-3 z-10 flex items-start justify-between gap-2">
+            <Badge className={`border-0 shadow-md ring-1 ring-black/5 dark:ring-white/10 ${statusConfig.badge}`}>
               {isProcessing && (
                 <span className="mr-1 inline-block size-1.5 animate-pulse rounded-full bg-amber-500" />
               )}
               {statusConfig.text}
             </Badge>
-            <div className="flex gap-1">
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                aria-label="Delete dataset"
-                onClick={(e) => handleDelete(e, dataset.id)}
-                className="size-7 rounded-lg border-gray-200 bg-white text-red-500 hover:bg-red-50 hover:text-red-600 dark:border-white/15 dark:bg-slate-900/75 dark:hover:bg-red-950/30"
-              >
-                <TrashIcon className="size-3.5" />
-              </Button>
-            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              aria-label="Delete dataset"
+              onClick={(e) => handleDelete(e, dataset.id)}
+              className="size-8 shrink-0 rounded-xl border-white/25 bg-white/92 text-red-500 shadow-md backdrop-blur-md hover:bg-red-50 hover:text-red-600 dark:border-white/15 dark:bg-slate-950/65 dark:text-red-400 dark:hover:bg-red-950/40"
+            >
+              <TrashIcon className="size-3.5" />
+            </Button>
           </div>
 
-          {/* Icon + type tag */}
-          <div className="mb-4 flex items-center gap-3">
-            <div className="flex size-11 shrink-0 items-center justify-center rounded-xl border border-gray-200 bg-gradient-to-br from-blue-500/10 to-blue-600/5 dark:border-white/10 dark:from-blue-500/15 dark:to-blue-600/10">
+          <div className="absolute inset-x-0 bottom-0 z-10 flex items-center gap-3 px-5 pb-3 pt-10">
+            <div className="flex size-11 shrink-0 items-center justify-center rounded-xl border border-slate-300/80 bg-white shadow-sm dark:border-white/10 dark:bg-slate-800/90 dark:shadow-md dark:shadow-black/30">
               <TypeIcon className={`size-5 ${iconClass}`} aria-hidden="true" />
             </div>
-            <span className="rounded-full border border-gray-200 bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600 dark:border-white/10 dark:bg-white/10 dark:text-gray-400">
+            <span className="rounded-full border border-slate-300/90 bg-slate-200/80 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-slate-800 shadow-sm dark:border-white/10 dark:bg-white/[0.08] dark:text-slate-200">
               {dataType.replace(/_/g, " ")}
             </span>
           </div>
+        </div>
 
-          {/* Title */}
-          <h2 className="mb-3 truncate text-base font-bold leading-tight text-gray-900 dark:text-white">
+        {/* Card body */}
+        <div className="relative z-[1] flex flex-1 flex-col bg-white px-5 pb-4 pt-4 dark:bg-slate-900">
+          <h2 className="mb-3 truncate text-base font-bold leading-snug tracking-tight text-slate-900 dark:text-white">
             {dataset.title || "Untitled Dataset"}
           </h2>
 
           {/* Divider */}
-          <div className="mb-3 h-px w-full bg-gradient-to-r from-transparent via-gray-200 to-transparent dark:via-white/10" />
+          <div className="mb-3 h-px w-full bg-gradient-to-r from-transparent via-slate-200 to-transparent dark:via-white/[0.12]" />
 
           {/* Metadata grid */}
-          <div className="grid grid-cols-3 gap-3 text-xs">
-            <div className="flex flex-col gap-0.5">
-              <span className="text-gray-400 dark:text-gray-500">Created</span>
-              <span className="font-semibold text-gray-800 dark:text-gray-200">
+          <div className="grid grid-cols-3 gap-3 text-[11px]">
+            <div className="flex min-w-0 flex-col gap-1">
+              <span className="text-[10px] font-medium uppercase tracking-wide text-slate-500 dark:text-slate-500">
+                Created
+              </span>
+              <span className="truncate font-semibold tabular-nums text-slate-800 dark:text-slate-100">
                 {createdAtDisplay}
               </span>
             </div>
-            <div className="flex flex-col gap-0.5">
-              <span className="text-gray-400 dark:text-gray-500">Files</span>
-              <span className="font-semibold text-gray-800 dark:text-gray-200">
+            <div className="flex min-w-0 flex-col gap-1">
+              <span className="text-[10px] font-medium uppercase tracking-wide text-slate-500 dark:text-slate-500">
+                Files
+              </span>
+              <span className="font-semibold tabular-nums text-slate-800 dark:text-slate-100">
                 {totalFiles.toLocaleString()}
               </span>
             </div>
-            <div className="flex flex-col gap-0.5">
-              <span className="text-gray-400 dark:text-gray-500">Size</span>
-              <span className="font-semibold text-gray-800 dark:text-gray-200">
+            <div className="flex min-w-0 flex-col gap-1">
+              <span className="text-[10px] font-medium uppercase tracking-wide text-slate-500 dark:text-slate-500">
+                Size
+              </span>
+              <span className="font-semibold tabular-nums text-slate-800 dark:text-slate-100">
                 {totalSizeKb ? (totalSizeKb / 1024).toFixed(1) + " MB" : "N/A"}
               </span>
             </div>
