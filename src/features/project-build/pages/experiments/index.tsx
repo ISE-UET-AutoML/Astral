@@ -4,7 +4,7 @@ import { getAllExperiments } from "src/features/project-build/api/experiment";
 import { useParams } from "react-router-dom";
 import { Beaker, FlaskConical } from "lucide-react";
 import { Spinner } from "src/components/ui/spinner";
-import { PageHeading } from "src/components/ui/page-heading";
+import { PageHeading } from "src/layouts/page-heading";
 
 type Experiment = {
   id: number;

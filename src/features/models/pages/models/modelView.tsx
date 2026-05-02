@@ -34,7 +34,7 @@ import {
   TableHead,
   TableCell,
 } from "src/components/ui/table";
-import { PageHeading } from "src/components/ui/page-heading";
+import { PageHeading } from "src/layouts/page-heading";
 import { projectPageShellClass } from "src/layouts/project-page-shell";
 import * as mlServiceAPI from "src/features/project-build/api/mlService";
 import * as modelServiceAPI from "src/features/models/api/model";

@@ -7,7 +7,7 @@ import { LabelProjectFiltersSidebar } from "src/features/labels/components/Label
 import { LabelProjectsTable } from "src/features/labels/components/LabelProjectsTable";
 import { ExportProgressModal } from "src/features/labels/components/ExportProgressModal";
 import { Tags } from "lucide-react";
-import { PageHeading } from "src/components/ui/page-heading";
+import { PageHeading } from "src/layouts/page-heading";
 
 const UploadData = () => {
   const { updateFields, projectInfo } = useOutletContext();

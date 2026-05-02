@@ -25,7 +25,7 @@ export function PageHeading({
       <div className="flex items-start gap-3 sm:gap-4">
         <span
           className={cn(
-            "flex size-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500/[0.14] via-violet-500/[0.1] to-indigo-600/[0.12] ring-1 ring-blue-500/20 shadow-sm dark:from-blue-400/20 dark:via-violet-500/15 dark:to-indigo-500/15 dark:ring-blue-400/30",
+            "flex size-10 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-blue-500/[0.14] via-violet-500/10 to-indigo-600/12 ring-1 ring-blue-500/20 shadow-sm dark:from-blue-400/20 dark:via-violet-500/15 dark:to-indigo-500/15 dark:ring-blue-400/30",
             iconClassName,
           )}
           aria-hidden

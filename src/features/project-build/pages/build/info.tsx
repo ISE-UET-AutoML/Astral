@@ -17,7 +17,7 @@ import {
   LayoutDashboard,
   Info,
 } from "lucide-react";
-import { PageHeading } from "src/components/ui/page-heading";
+import { PageHeading } from "src/layouts/page-heading";
 import {
   Tooltip,
   TooltipContent,

@@ -30,7 +30,7 @@ import { toast } from "sonner";
 import { PATHS } from "src/constants/paths";
 import AppCard from "src/features/gen-apps/components/AppCard";
 import { Network, Rocket, Sparkles } from "lucide-react";
-import { PageHeading } from "src/components/ui/page-heading";
+import { PageHeading } from "src/layouts/page-heading";
 
 const PAGE_SIZE = 8;
 

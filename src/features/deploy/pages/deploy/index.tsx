@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import { Button } from "src/components/ui/button";
 import { Rocket, Search, Layers } from "lucide-react";
 import { Spinner } from "src/components/ui/spinner";
-import { PageHeading } from "src/components/ui/page-heading";
+import { PageHeading } from "src/layouts/page-heading";
 import { projectPageShellScrollClass } from "src/layouts/project-page-shell";
 
 const ProjectDeploy = () => {

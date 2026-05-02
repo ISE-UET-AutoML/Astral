@@ -4,7 +4,7 @@ import { getModels } from "src/features/models/api/model";
 import { useParams } from "react-router-dom";
 import { Network, Brain } from "lucide-react";
 import { Spinner } from "src/components/ui/spinner";
-import { PageHeading } from "src/components/ui/page-heading";
+import { PageHeading } from "src/layouts/page-heading";
 
 export default function ProjectModels() {
   const { id: projectId } = useParams();

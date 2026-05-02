@@ -6,7 +6,7 @@ import { useTrainResultPage } from "src/features/project-build/hooks/useTrainRes
 import { TrainResultSummaryCards } from "src/features/project-build/components/training/TrainResultSummaryCards";
 import { TrainResultPerformanceCharts } from "src/features/project-build/components/training/TrainResultPerformanceCharts";
 import { TrainResultMetricsTable } from "src/features/project-build/components/training/TrainResultMetricsTable";
-import { PageHeading } from "src/components/ui/page-heading";
+import { PageHeading } from "src/layouts/page-heading";
 import { projectPageShellClass } from "src/layouts/project-page-shell";
 
 const TrainResult = () => {
