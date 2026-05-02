@@ -1,18 +1,20 @@
 import { Trophy, Clock, FlaskConical } from "lucide-react";
 
 const StatCard = ({ icon: Icon, title, value, suffix }) => (
-  <div className="rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 p-6 backdrop-blur-sm transition hover:border-gray-300 dark:hover:border-white/15">
-    <div className="flex items-start gap-4">
-      <div className="rounded-xl bg-blue-100 dark:bg-blue-950/40 p-3">
-        <Icon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+  <div className="rounded-2xl border border-gray-200 bg-white px-5 py-4 backdrop-blur-sm transition dark:border-white/10 dark:bg-white/5 hover:border-gray-300 dark:hover:border-white/15">
+    <div className="flex items-start gap-3">
+      <div className="rounded-xl bg-blue-100 p-2 dark:bg-blue-950/40">
+        <Icon className="size-5 text-blue-600 dark:text-blue-400" />
       </div>
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
+      <div className="min-w-0 flex-1">
+        <p className="mb-0.5 text-xs font-medium text-gray-600 dark:text-gray-400">
           {title}
         </p>
-        <p className="text-2xl font-bold text-gray-900 dark:text-white truncate">
+        <p className="truncate text-2xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white">
           {value}
-          {suffix && <span className="text-lg ml-1">{suffix}</span>}
+          {suffix && (
+            <span className="ml-1 text-base font-semibold">{suffix}</span>
+          )}
         </p>
       </div>
     </div>
@@ -37,13 +39,11 @@ export function TrainResultSummaryCards({ metrics, experiment, epoch }) {
         value={metricValue}
         suffix="%"
       />
-
       <StatCard
         icon={Clock}
         title="Training Duration"
         value={`${mins}m ${secs}s`}
       />
-
       <StatCard icon={FlaskConical} title="Total Epochs" value={epoch ?? 0} />
     </div>
   );
