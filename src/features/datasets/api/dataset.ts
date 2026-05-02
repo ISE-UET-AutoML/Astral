@@ -5,6 +5,7 @@ import Cookies from 'universal-cookie'
 
 const URL = `${API_BASE_URL}/api/data`
 const URL_SERVICE = `${API_BASE_URL}/api/service/data`
+const MONITOR_SERVICE_URL = `${API_BASE_URL}/api/service/monitor`
 
 const createDataset = (payload) => {
     const cookies = new Cookies();
@@ -141,6 +142,16 @@ const createRetrainingDataset = (payload) => {
     return instance.post(`${URL_SERVICE}/datasets/create-retraining-dataset`, payload);
 }
 
+const getDriftRecommendation = (modelId) => {
+    return instance.get(`${MONITOR_SERVICE_URL}/api/data_drift/recommendations/${modelId}`)
+}
+
+const prepareRecommendedDriftRetrain = (modelId, selectedImages) => {
+    return instance.post(`${MONITOR_SERVICE_URL}/api/data_drift/recommendations/${modelId}/prepare-retrain`, {
+        selectedImages,
+    })
+}
+
 export {
     createDataset,
     getDatasets,
@@ -161,5 +172,7 @@ export {
     getVersionCount,
     getAllDeployData,
     getPresignedUrlsForImages,
-    createRetrainingDataset
+    createRetrainingDataset,
+    getDriftRecommendation,
+    prepareRecommendedDriftRetrain
 }

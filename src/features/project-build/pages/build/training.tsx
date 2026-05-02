@@ -22,6 +22,20 @@ const parseExperiments = (searchParams) => {
     }
   }
 
+  if (experimentId?.startsWith("model-version-")) {
+    const modelVersionId = Number(experimentId.replace("model-version-", ""));
+    return [
+      {
+        tag: "retrain",
+        type: "retrain",
+        modelVersionId: Number.isFinite(modelVersionId)
+          ? modelVersionId
+          : undefined,
+        experimentName,
+      },
+    ];
+  }
+
   if (experimentId) return [{ experimentId, experimentName }];
   return [];
 };
@@ -40,6 +54,11 @@ const Training = () => {
   const isSingleExperiment = experimentCards.length <= 1;
 
   const handleViewResults = (experiment) => {
+    if (experiment.type === "retrain" && experiment.modelId) {
+      navigate(PATHS.MODEL_VIEW(projectInfo.id, experiment.modelId));
+      return;
+    }
+
     navigate(
       PATHS.PROJECT_TRAININGRESULT(
         projectInfo.id,
@@ -108,6 +127,7 @@ const Training = () => {
           {/* Charts — single experiment only, once training is underway */}
           {isSingleExperiment &&
             primaryExperiment &&
+            primaryExperiment.type !== "retrain" &&
             primaryExperiment.currentStep >= 3 && (
               <TrainingCharts
                 currentStep={primaryExperiment.currentStep}

@@ -2,6 +2,7 @@ import * as React from 'react'
 import { toast } from 'sonner'
 import { getExperimentById } from 'src/features/project-build/api/experiment'
 import { getExperimentConfig } from 'src/features/project-build/api/experiment_config'
+import { getModelVersionById } from 'src/features/models/api/model_version'
 
 const { useState, useEffect, useMemo } = React
 
@@ -67,6 +68,47 @@ const buildExperimentCard = (item, responseData, configData) => {
 		trainProgress,
 		currentStep: getCurrentStep(status),
 		currentSettingUpStep: 0,
+	}
+}
+
+const normalizeModelVersionStatus = (status) => {
+	switch (status) {
+		case 'READY':
+			return 'DONE'
+		case 'FAILED':
+			return 'FAILED'
+		case 'TRAINING':
+			return 'TRAINING'
+		case 'PENDING':
+		default:
+			return 'SETTING_UP'
+	}
+}
+
+const buildRetrainCard = (item, modelVersion) => {
+	const status = normalizeModelVersionStatus(modelVersion?.status)
+	return {
+		tag: item.tag || 'retrain',
+		type: 'retrain',
+		experimentId: item.experimentId,
+		experimentName:
+			modelVersion?.version != null
+				? `Model ${modelVersion.model_id} retrain v${modelVersion.version}`
+				: item.experimentName || 'Retraining',
+		status,
+		maxTrainingTime: null,
+		chartData: [],
+		valMetric: 'Accuracy',
+		trainingInfo: {
+			latestEpoch: 0,
+			accuracy: 0,
+		},
+		elapsedTime: calculateElapsedTime(modelVersion?.created_at),
+		trainProgress: status === 'DONE' ? 100 : 0,
+		currentStep: getCurrentStep(status),
+		currentSettingUpStep: 0,
+		modelId: item.modelId || modelVersion?.model_id,
+		modelVersionId: item.modelVersionId || modelVersion?.id,
 	}
 }
 
@@ -152,6 +194,18 @@ export const useTrainingPage = ({ experiments = [] }) => {
 			try {
 				const results = await Promise.all(
 					experiments.map(async (item) => {
+						if (item?.type === 'retrain') {
+							if (!item?.modelVersionId) {
+								return buildRetrainCard(item, null)
+							}
+							const modelVersionResponse =
+								await getModelVersionById(item.modelVersionId)
+							return buildRetrainCard(
+								item,
+								modelVersionResponse.data
+							)
+						}
+
 						if (
 							!item?.experimentId ||
 							item.experimentId === 'loading'
@@ -178,7 +232,12 @@ export const useTrainingPage = ({ experiments = [] }) => {
 				setExperimentCards(results)
 				setLoading(false)
 
-				if (results.some((item) => item.status !== 'DONE')) {
+				if (
+					results.some(
+						(item) =>
+							item.status !== 'DONE' && item.status !== 'FAILED'
+					)
+				) {
 					timeoutId = setTimeout(fetchExperiments, 30000)
 				}
 			} catch (err) {

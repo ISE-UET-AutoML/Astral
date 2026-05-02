@@ -34,6 +34,12 @@ const trainCloudModel = (projectId, payload) => {
     )
 }
 
+const retrainCloudModel = (projectId, modelId, payload) => {
+    return instance.post(
+        `${URL}/project/${projectId}/model/${modelId}/generic-cloud-retraining`, payload
+    )
+}
+
 const getFitHistory = (projectId, experimentName) => {
     console.log(`${URL}/experiment/${experimentName}/fit-history?projectId=${projectId}`)
     return instance.get(
@@ -61,6 +67,7 @@ export {
     getTrainingMetrics,
     getFinalMetrics,
     trainCloudModel,
+    retrainCloudModel,
     getFitHistory,
     getUnfinishedExperiment,
     GetUnfinishedDeployment,
