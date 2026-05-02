@@ -225,6 +225,7 @@ export default function Datasets() {
             onSortChange={setSortBy}
           />
 
+          <div className="border-t border-gray-200 pt-10 dark:border-white/10">
           <DatasetGrid
             datasets={datasetState.datasets}
             isLoading={datasetState.isLoading}
@@ -277,6 +278,7 @@ export default function Datasets() {
               </Pagination>
             </div>
           )}
+          </div>
         </ContentContainer>
       </main>
 

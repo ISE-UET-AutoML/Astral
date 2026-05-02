@@ -9,6 +9,11 @@ import {
   DeployPredictionViewerModal,
   DeployCloudServerCard,
 } from "src/features/deploy/components";
+import {
+  projectPageShellClass,
+  projectPageStackClass,
+} from "src/shared/hooks/project-page-shell";
+import { cn } from "src/lib/utils";
 
 export default function DeployedModelView() {
   const { deployId, id: projectId } = useParams();
@@ -43,8 +48,7 @@ export default function DeployedModelView() {
   } = useDeployView({ deployId, projectId });
 
   return (
-    <div className="w-full px-6 py-8 bg-white dark:bg-slate-950">
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
+    <div className={cn(projectPageShellClass, projectPageStackClass)}>
         <div className="mb-2 flex flex-wrap items-start justify-between gap-4">
           <div>
             <h1 className="flex items-center gap-3 text-3xl font-bold text-gray-900 dark:text-white">
@@ -130,7 +134,6 @@ export default function DeployedModelView() {
         />
 
         <DeployCloudServerCard deployData={deployData} />
-      </div>
     </div>
   );
 }

@@ -14,8 +14,7 @@
       "src/*": ["./src/*"]
     },
     "skipLibCheck": true,
-    "target": "ES2020",
-    "types": ["vite/client"]
+    "target": "ES2020"
   },
-  "include": ["src", "lib", "components"]
+  "include": ["src", "lib", "components", "vite.config.ts"]
 }

@@ -1,40 +1,36 @@
-# Stage 1: 'base' - Lớp nền chung cho cả hai môi trường
+# Stage 1: base — dependency manifest layer for cache reuse
 # ----------------------------------------------------------------
 FROM node:20-alpine AS base
 
-# Đặt thư mục làm việc
 WORKDIR /app
 
-# Copy các file quản lý package để tận dụng cache của Docker
-COPY package*.json ./
+COPY package.json package-lock.json ./
 
 
-# Stage 2: 'development' - Dành riêng cho môi trường Development
+# Stage 2: development — Vite dev server + named volume for node_modules
 # ----------------------------------------------------------------
 FROM base AS development
 
-# Cài đặt tất cả dependencies, bao gồm cả devDependencies
-RUN npm install
+COPY docker-entrypoint-dev.sh /docker-entrypoint-dev.sh
+RUN chmod +x /docker-entrypoint-dev.sh
 
-# Copy toàn bộ mã nguồn
+# Install all deps (including devDependencies: vite, typescript, @vitejs/plugin-react, …)
+RUN npm ci
+
 COPY . .
 
-# Lệnh mặc định để khởi động dev server (thường có hot-reload)
-# Giả sử trong package.json của bạn có script "start" hoặc "dev"
-CMD ["npm", "run", "start"]
+ENTRYPOINT ["/docker-entrypoint-dev.sh"]
+CMD []
 
 
-# Stage 3: 'builder' - Dùng để build ra các file tĩnh cho Production
+# Stage 3: builder — static assets for production (Vite outputs to dist/)
 # ----------------------------------------------------------------
 FROM base AS builder
 
-# Cài tất cả deps
-RUN npm install
+RUN npm ci
 
-# Copy source
 COPY . .
 
-# Truyền biến build-time từ docker-compose vào React
 ARG VITE_API_URL
 ARG VITE_LABEL_STUDIO_URL
 
@@ -44,19 +40,14 @@ ENV VITE_LABEL_STUDIO_URL=$VITE_LABEL_STUDIO_URL
 RUN npm run build
 
 
-# Stage 4: 'production' - Image cuối cùng, siêu nhẹ cho Production
+# Stage 4: production — nginx serves dist/
 # ----------------------------------------------------------------
-FROM nginx:1.27-alpine
+FROM nginx:1.27-alpine AS production
 
-# Copy các file tĩnh đã được build từ stage 'builder' vào thư mục của Nginx
-COPY --from=builder /app/build /usr/share/nginx/html
+COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Sao chép file cấu hình Nginx để xử lý routing cho React
-# Bạn cần tạo file này trong cùng thư mục với Dockerfile
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Expose port 80 mặc định của Nginx
 EXPOSE 80
 
-# Khởi động Nginx
 CMD ["nginx", "-g", "daemon off;"]

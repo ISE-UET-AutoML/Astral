@@ -29,7 +29,8 @@ import { Spinner } from "src/components/ui/spinner";
 import { toast } from "sonner";
 import { PATHS } from "src/constants/paths";
 import AppCard from "src/features/gen-apps/components/AppCard";
-import { Network, Rocket } from "lucide-react";
+import { Network, Rocket, Sparkles } from "lucide-react";
+import { PageHeading } from "src/layouts/page-heading";
 
 const PAGE_SIZE = 8;
 
@@ -201,14 +202,14 @@ export default function ProjectGenApp() {
 
         {/* Page header */}
         <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              My Apps
-            </h1>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              {loading ? "Loading…" : `${total} app${total !== 1 ? "s" : ""} generated`}
-            </p>
-          </div>
+          <PageHeading
+            className="mb-0"
+            icon={Sparkles}
+            title="My Apps"
+            description={
+              loading ? "Loading…" : `${total} app${total !== 1 ? "s" : ""} generated`
+            }
+          />
         </div>
 
         {/* Gen App toolbar — only when deploys exist */}

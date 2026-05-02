@@ -34,6 +34,8 @@ import {
   TableHead,
   TableCell,
 } from "src/components/ui/table";
+import { PageHeading } from "src/layouts/page-heading";
+import { projectPageShellClass } from "src/shared/hooks/project-page-shell";
 import * as mlServiceAPI from "src/features/project-build/api/mlService";
 import * as modelServiceAPI from "src/features/models/api/model";
 import * as modelVersionServiceAPI from "src/features/models/api/model_version";
@@ -143,6 +145,28 @@ const formatImlIterationName = (name = "") =>
 
 const formatMetricLabel = (name = "") =>
   name.toString().replace(/_/g, " ").toUpperCase();
+
+const basenamePath = (p: string) => {
+  if (!p || typeof p !== "string") return p;
+  const normalized = p.replace(/\\/g, "/");
+  const i = normalized.lastIndexOf("/");
+  return i >= 0 ? normalized.slice(i + 1) : normalized;
+};
+
+const looksLikeFilePath = (s: string) =>
+  /^(\/|[A-Za-z]:[\\/]|\\\\)/.test(s) ||
+  (s.includes("/") && /\.[a-z0-9]{2,8}$/i.test(s));
+
+const formatMetadataPrimitive = (key: string, value: unknown) => {
+  if (
+    key === "model_size" &&
+    (typeof value === "number" ||
+      (typeof value === "string" && value.trim() !== "" && !Number.isNaN(Number(value))))
+  ) {
+    return `${Number(value).toFixed(2)} MB`;
+  }
+  return null;
+};
 
 const ModelView = () => {
   const navigate = useNavigate();
@@ -276,34 +300,54 @@ const ModelView = () => {
     imlIterations.length,
   ]);
 
+  const versionSelect =
+    versions.length > 0 ? (
+      <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-3 shrink-0">
+        <label
+          htmlFor="model-version-select"
+          className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400 whitespace-nowrap"
+        >
+          Version
+        </label>
+        <Select
+          value={selectedVersion?.id?.toString()}
+          onValueChange={(v) => handleVersionSelect(Number(v))}
+        >
+          <SelectTrigger
+            id="model-version-select"
+            className="h-10 w-full min-w-[140px] sm:w-[160px] rounded-xl border-gray-200 bg-white text-gray-900 focus-visible:border-blue-400 focus-visible:ring-blue-500/30 dark:border-white/20 dark:bg-white/10 dark:text-white"
+          >
+            <SelectValue placeholder="Select version" />
+          </SelectTrigger>
+          <SelectContent
+            align="end"
+            position="popper"
+            className="rounded-xl border-gray-200 bg-white shadow-xl dark:border-white/10 dark:bg-slate-950"
+          >
+            {[...versions]
+              .sort((a, b) => b.version - a.version)
+              .map((v) => (
+                <SelectItem key={v.id} value={v.id.toString()}>
+                  v{v.version}
+                </SelectItem>
+              ))}
+          </SelectContent>
+        </Select>
+      </div>
+    ) : null;
+
   return (
-    <div className="w-full min-h-0 bg-white dark:bg-slate-950 text-gray-900 dark:text-white mb-5">
-      <div className="w-full px-6 pt-6 pb-10 lg:pt-8 lg:pb-12 flex flex-col gap-6 max-w-7xl mx-auto">
-        {/* Version Selector */}
-        {versions.length > 0 && (
-          <div className="flex items-center gap-3">
-            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              Model Version:
-            </label>
-            <Select
-              value={selectedVersion?.id?.toString()}
-              onValueChange={(v) => handleVersionSelect(Number(v))}
-            >
-              <SelectTrigger className="h-10 w-[140px] rounded-xl border-gray-200 bg-white text-gray-900 focus-visible:border-blue-400 focus-visible:ring-blue-500/30 dark:border-white/20 dark:bg-white/10 dark:text-white">
-                <SelectValue placeholder="Select version" />
-              </SelectTrigger>
-              <SelectContent align="start" position="popper" className="rounded-xl border-gray-200 bg-white shadow-xl dark:border-white/10 dark:bg-slate-950">
-                {[...versions]
-                  .sort((a, b) => b.version - a.version)
-                  .map((v) => (
-                    <SelectItem key={v.id} value={v.id.toString()}>
-                      v{v.version}
-                    </SelectItem>
-                  ))}
-              </SelectContent>
-            </Select>
-          </div>
-        )}
+    <div className={projectPageShellClass}>
+      <div className="w-full flex flex-col gap-6">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between lg:gap-8">
+          <PageHeading
+            className="mb-0 min-w-0 flex-1"
+            icon={ExperimentOutlined}
+            title={model.name || "Model"}
+            description="Scores, metadata, and actions for this trained model."
+          />
+          {versionSelect}
+        </div>
 
         {/* 1. TOP METRICS CARDS */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -331,10 +375,13 @@ const ModelView = () => {
             </div>
             <div className="text-4xl font-bold flex items-center gap-3 text-gray-900 dark:text-white">
               <CloudDownloadOutlined className="text-gray-400 dark:text-gray-500 text-3xl" />
-              {selectedVersion?.metadata?.model_size?.toFixed(2) ||
-                model.metadata?.model_size?.toFixed(2) ||
-                0}{" "}
-              MB
+              {selectedVersion?.metadata?.model_size != null ||
+              model.metadata?.model_size != null
+                ? `${Number(
+                    selectedVersion?.metadata?.model_size ??
+                      model.metadata?.model_size,
+                  ).toFixed(2)} MB`
+                : "—"}
             </div>
           </div>
 
@@ -350,7 +397,7 @@ const ModelView = () => {
         </div>
 
         {imlIterations.length > 0 && (
-          <div className="rounded-2xl border border-gray-200 dark:border-white/10 p-6 lg:p-8 bg-gray-50 dark:bg-white/5">
+          <div className="rounded-2xl border border-gray-200 dark:border-white/10 p-6 bg-gray-50 dark:bg-white/5">
             <div className="flex flex-col gap-1 mb-5">
               <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                 <span className="w-1 h-5 rounded-full bg-blue-500 inline-block" />
@@ -449,9 +496,9 @@ const ModelView = () => {
         )}
 
         {/* 2. NEXT STEPS SECTION */}
-        <div className="rounded-2xl border border-gray-200 dark:border-white/10 p-6 lg:p-8 bg-gray-50 dark:bg-white/5">
+        <div className="rounded-2xl border border-gray-200 dark:border-white/10 p-6 bg-gray-50 dark:bg-white/5">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
-            <span className="w-1 h-5 rounded-full bg-blue-500 inline-block" />
+            <span className="w-1 h-5 rounded-full bg-blue-500 inline-block shrink-0" />
             Next Steps
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
@@ -491,8 +538,9 @@ const ModelView = () => {
 
             <div className="flex flex-col h-full rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-slate-900">
               <div className="p-5 flex flex-col gap-2 flex-1">
-                <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold">
-                  <CloudDownloadOutlined /> Download Weights
+                <div className="flex items-center gap-2 text-gray-900 dark:text-white font-semibold">
+                  <CloudDownloadOutlined className="text-blue-600 dark:text-blue-400" />{" "}
+                  Download Weights
                 </div>
                 <div className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
                   Securely export and preserve your model's learned parameters
@@ -508,7 +556,7 @@ const ModelView = () => {
                       toast.error("Failed to download model.");
                     else window.location.href = urlResponse.data;
                   }}
-                  className="w-full h-10 rounded-xl border-gray-200 bg-white text-sm font-semibold text-gray-700 hover:bg-gray-50 dark:border-white/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
+                  className="w-full h-10 rounded-xl border-2 border-blue-500/35 bg-blue-50/90 text-sm font-semibold text-blue-700 shadow-sm hover:bg-blue-100/90 hover:border-blue-500/55 dark:border-blue-400/45 dark:bg-blue-500/15 dark:text-blue-100 dark:hover:bg-blue-500/25"
                 >
                   <CloudDownloadOutlined className="size-4" /> Download
                 </Button>
@@ -517,8 +565,9 @@ const ModelView = () => {
 
             <div className="flex flex-col h-full rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-slate-900">
               <div className="p-5 flex flex-col gap-2 flex-1">
-                <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold">
-                  <HistoryOutlined /> Refine Model
+                <div className="flex items-center gap-2 text-gray-900 dark:text-white font-semibold">
+                  <HistoryOutlined className="text-violet-600 dark:text-violet-400" />{" "}
+                  Refine Model
                 </div>
                 <div className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
                   Continuously improve your model's performance by initiating a
@@ -531,7 +580,7 @@ const ModelView = () => {
                   onClick={() =>
                     navigate(`/app/project/${id}/model/${modelId}/retrain`)
                   }
-                  className="w-full h-10 rounded-xl border-gray-200 bg-white text-sm font-semibold text-gray-700 hover:bg-gray-50 dark:border-white/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
+                  className="w-full h-10 rounded-xl border-2 border-gray-300 bg-white text-sm font-semibold text-gray-800 hover:bg-gray-50 dark:border-white/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
                 >
                   <HistoryOutlined className="size-4" /> Retrain Model
                 </Button>
@@ -540,31 +589,29 @@ const ModelView = () => {
           </div>
         </div>
 
-        {/* 3. EXPANDABLE DETAILS SECTION */}
-        <div className="rounded-2xl border border-gray-200 dark:border-white/10 p-6 lg:p-8 bg-gray-50 dark:bg-white/5">
+        {/* 3. EXPANDABLE DETAILS SECTION — padding matches trainResult / Show Detailed Results */}
+        <div className="rounded-2xl border border-gray-200 bg-gray-50/50 backdrop-blur-sm dark:border-white/10 dark:bg-white/5">
           <button
+            type="button"
             onClick={() => setIsDetailsExpanded(!isDetailsExpanded)}
-            className="text-base font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-2 w-fit"
+            className="flex w-full items-center gap-2 rounded-t-2xl px-6 py-4 text-left text-base font-semibold text-gray-900 transition hover:bg-gray-100/50 dark:text-white dark:hover:bg-white/10"
           >
-            <span className="w-1 h-5 rounded-full bg-blue-500 inline-block" />
+            <span className="w-1 h-5 shrink-0 rounded-full bg-blue-500" />
             <BarChartOutlined className="text-blue-500 dark:text-blue-400" />
             {isDetailsExpanded ? "Hide Details" : "Show Details"}
           </button>
 
           {isDetailsExpanded && (
-            <div className="flex flex-col gap-5 mt-6">
+            <div className="flex flex-col gap-5 border-t border-gray-200 px-6 py-6 dark:border-white/10">
               {/* Metadata */}
               <div className="rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-slate-900">
-                <div className="px-6 py-4 border-b border-gray-100 dark:border-white/10 flex items-center gap-3">
-                  <span className="w-1 h-5 rounded-full bg-blue-500 shrink-0" />
-                  <div>
-                    <h3 className="text-base font-semibold text-gray-900 dark:text-white">
-                      Metadata
-                    </h3>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                      Details about the model and its expected input, output
-                    </p>
-                  </div>
+                <div className="px-6 py-4 border-b border-gray-100 dark:border-white/10">
+                  <h3 className="text-base font-semibold text-gray-900 dark:text-white">
+                    Metadata
+                  </h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                    Details about the model and its expected input, output
+                  </p>
                 </div>
                 <div className="flex flex-col gap-1 p-3">
                   {Object.entries(versionMetadata || {}).map(([key, value]) => (
@@ -580,45 +627,88 @@ const ModelView = () => {
                           key === "sample_data" &&
                           typeof value[0] === "object" &&
                           value[0] !== null ? (
-                            <div className="rounded-xl overflow-hidden border border-gray-200 dark:border-white/10">
-                              <Table className="text-sm">
-                                <TableHeader className="bg-gray-50 dark:bg-white/5">
-                                  <TableRow className="border-b border-gray-200 dark:border-white/10 hover:bg-transparent">
-                                    {Object.keys(value[0]).map((colKey) => (
-                                      <TableHead
-                                        key={colKey}
-                                        className="px-4 py-2.5 font-semibold capitalize text-gray-600 dark:text-gray-300"
-                                      >
-                                        {colKey}
-                                      </TableHead>
-                                    ))}
-                                  </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                  {value.map((row, idx) => (
-                                    <TableRow
-                                      key={idx}
-                                      className="border-b border-gray-100 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
-                                    >
-                                      {Object.values(row).map(
-                                        (cellVal, cIdx) => (
-                                          <TableCell
-                                            key={cIdx}
-                                            className="px-4 py-2.5 text-gray-700 dark:text-gray-300"
-                                          >
-                                            {cellVal?.toString() || (
-                                              <em className="text-gray-400">
-                                                (empty)
-                                              </em>
-                                            )}
-                                          </TableCell>
-                                        ),
-                                      )}
+                            <TooltipProvider delayDuration={400}>
+                              <div className="rounded-xl overflow-hidden border border-gray-200 dark:border-white/10">
+                                <Table className="text-sm">
+                                  <TableHeader className="bg-gray-50 dark:bg-white/5">
+                                    <TableRow className="border-b border-gray-200 dark:border-white/10 hover:bg-transparent">
+                                      {Object.keys(value[0]).map((colKey) => (
+                                        <TableHead
+                                          key={colKey}
+                                          className="px-4 py-2.5 font-semibold capitalize text-gray-600 dark:text-gray-300"
+                                        >
+                                          {colKey}
+                                        </TableHead>
+                                      ))}
                                     </TableRow>
-                                  ))}
-                                </TableBody>
-                              </Table>
-                            </div>
+                                  </TableHeader>
+                                  <TableBody>
+                                    {value.map((row, idx) => {
+                                      const colKeys = Object.keys(value[0]);
+                                      return (
+                                        <TableRow
+                                          key={idx}
+                                          className="border-b border-gray-100 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+                                        >
+                                          {colKeys.map((colKey) => {
+                                            const cellVal = row[colKey];
+                                            const str =
+                                              cellVal === null ||
+                                              cellVal === undefined
+                                                ? ""
+                                                : String(cellVal);
+                                            const isPathCol =
+                                              /image|path|file|uri|url/i.test(
+                                                colKey,
+                                              ) ||
+                                              (typeof cellVal === "string" &&
+                                                looksLikeFilePath(str));
+                                            const short =
+                                              typeof cellVal === "string" &&
+                                              isPathCol
+                                                ? basenamePath(str)
+                                                : str;
+                                            const showTip =
+                                              typeof cellVal === "string" &&
+                                              isPathCol &&
+                                              str.length > short.length;
+
+                                            return (
+                                              <TableCell
+                                                key={colKey}
+                                                className="px-4 py-2.5 text-gray-700 dark:text-gray-300 max-w-[min(100%,320px)]"
+                                              >
+                                                {str === "" ? (
+                                                  <em className="text-gray-400">
+                                                    (empty)
+                                                  </em>
+                                                ) : showTip ? (
+                                                  <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                      <span className="cursor-help truncate inline-block max-w-full align-bottom border-b border-dotted border-gray-400 dark:border-gray-500">
+                                                        {short}
+                                                      </span>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent
+                                                      side="top"
+                                                      className="max-w-lg break-all text-xs font-mono"
+                                                    >
+                                                      {str}
+                                                    </TooltipContent>
+                                                  </Tooltip>
+                                                ) : (
+                                                  str
+                                                )}
+                                              </TableCell>
+                                            );
+                                          })}
+                                        </TableRow>
+                                      );
+                                    })}
+                                  </TableBody>
+                                </Table>
+                              </div>
+                            </TooltipProvider>
                           ) : (
                             <div className="flex flex-wrap gap-2">
                               {value.map((item, idx) =>
@@ -658,11 +748,35 @@ const ModelView = () => {
                                       {subKey}
                                     </span>
                                     <span className="text-sm text-gray-700 dark:text-gray-300">
-                                      {subValue?.toString() || (
-                                        <em className="text-gray-400">
-                                          (empty)
-                                        </em>
-                                      )}
+                                      {(() => {
+                                        const formatted =
+                                          formatMetadataPrimitive(
+                                            subKey,
+                                            subValue,
+                                          );
+                                        if (formatted !== null) return formatted;
+                                        if (
+                                          subValue === null ||
+                                          subValue === undefined
+                                        ) {
+                                          return (
+                                            <em className="text-gray-400">
+                                              (empty)
+                                            </em>
+                                          );
+                                        }
+                                        if (
+                                          typeof subValue === "string" &&
+                                          subValue.trim() === ""
+                                        ) {
+                                          return (
+                                            <em className="text-gray-400">
+                                              (empty)
+                                            </em>
+                                          );
+                                        }
+                                        return String(subValue);
+                                      })()}
                                     </span>
                                   </div>
                                 ),
@@ -671,9 +785,27 @@ const ModelView = () => {
                           </details>
                         ) : (
                           <span className="text-sm text-gray-700 dark:text-gray-300">
-                            {value?.toString() || (
-                              <em className="text-gray-400">(empty)</em>
-                            )}
+                            {(() => {
+                              const formatted = formatMetadataPrimitive(
+                                key,
+                                value,
+                              );
+                              if (formatted !== null) return formatted;
+                              if (value === null || value === undefined) {
+                                return (
+                                  <em className="text-gray-400">(empty)</em>
+                                );
+                              }
+                              if (
+                                typeof value === "string" &&
+                                value.trim() === ""
+                              ) {
+                                return (
+                                  <em className="text-gray-400">(empty)</em>
+                                );
+                              }
+                              return String(value);
+                            })()}
                           </span>
                         )}
                       </div>
@@ -684,16 +816,13 @@ const ModelView = () => {
 
               {/* Metrics Table */}
               <div className="rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-slate-900">
-                <div className="px-6 py-4 border-b border-gray-100 dark:border-white/10 flex items-center gap-3">
-                  <span className="w-1 h-5 rounded-full bg-blue-500 shrink-0" />
-                  <div>
-                    <h3 className="text-base font-semibold text-gray-900 dark:text-white">
-                      Model Metrics
-                    </h3>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                      Detail about how well the model make predictions
-                    </p>
-                  </div>
+                <div className="px-6 py-4 border-b border-gray-100 dark:border-white/10">
+                  <h3 className="text-base font-semibold text-gray-900 dark:text-white">
+                    Model Metrics
+                  </h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                    Detail about how well the model make predictions
+                  </p>
                 </div>
                 <div className="rounded-b-xl">
                   <Table className="whitespace-nowrap text-sm">

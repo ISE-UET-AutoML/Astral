@@ -56,17 +56,17 @@ const STATUS_CONFIG = {
   Pending: {
     badge:
       "rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-700 hover:bg-amber-100 dark:bg-amber-900/30 dark:text-amber-400",
-    bar: "border-amber-400/50",
+    topAccent: "bg-amber-400/90",
   },
   Training: {
     badge:
       "rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-700 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400",
-    bar: "border-blue-400/50",
+    topAccent: "bg-blue-400/90",
   },
   Completed: {
     badge:
       "rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400",
-    bar: "border-emerald-400/50",
+    topAccent: "bg-emerald-400/90",
   },
 };
 
@@ -109,29 +109,39 @@ export default function ProjectCard({ project, getProjects }) {
   if (runningCount > 0) projectStatus = "Training";
   else if (doneCount > 0) projectStatus = "Completed";
 
-  const { badge: badgeClass, bar: barClass } = STATUS_CONFIG[projectStatus];
+  const { badge: badgeClass, topAccent: topAccentClass } =
+    STATUS_CONFIG[projectStatus];
 
   return (
     <div className="relative">
       <div
-        className={`group flex min-h-[360px] w-full cursor-pointer flex-col overflow-hidden rounded-2xl border bg-white shadow transition duration-300 hover:-translate-y-1 hover:shadow-md dark:bg-slate-900 ${barClass}`}
+        className="flex min-h-[360px] w-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-sm ring-1 ring-black/[0.04] transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-xl dark:border-slate-700/80 dark:bg-slate-900 dark:shadow-lg dark:shadow-black/40 dark:ring-white/[0.06] dark:hover:shadow-2xl"
         onClick={() => {
           window.location.href = PATHS.PROJECT_INFO(project?.id);
         }}
       >
-        {/* Task image header */}
-        <div className="relative h-28 w-full shrink-0 overflow-hidden">
+        <div
+          className={`h-0.5 w-full shrink-0 ${topAccentClass}`}
+          aria-hidden="true"
+        />
+        {/* Hero: image + overlays + icon row in one layer (no negative margin / sibling seam) */}
+        <div className="relative aspect-[5/2] w-full min-h-[128px] max-h-[200px] shrink-0 overflow-hidden bg-slate-100 dark:bg-slate-900 sm:aspect-[2/1] sm:max-h-[220px]">
           <img
             src={taskImage}
             alt={taskType || "project type"}
-            className="h-full w-full object-cover"
+            loading="lazy"
+            decoding="async"
+            className="block h-full w-full object-cover object-center"
           />
-          <div className="absolute inset-0 bg-black/25 dark:bg-black/45" />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white/80 dark:to-slate-900/80" />
+          <div
+            className="pointer-events-none absolute inset-0 bg-gradient-to-t from-white via-white/35 to-transparent dark:from-slate-900 dark:via-slate-900/40 dark:to-transparent"
+            aria-hidden="true"
+          />
 
-          {/* Overlay controls */}
-          <div className="absolute inset-x-3 top-3 flex items-start justify-between">
-            <Badge className={badgeClass}>
+          <div className="absolute inset-x-3 top-3 z-10 flex items-start justify-between gap-2">
+            <Badge
+              className={`border-0 shadow-md ring-1 ring-black/5 dark:ring-white/10 ${badgeClass}`}
+            >
               {projectStatus === "Training" && (
                 <span className="mr-1 inline-block size-1.5 animate-pulse rounded-full bg-blue-500" />
               )}
@@ -144,58 +154,64 @@ export default function ProjectCard({ project, getProjects }) {
               aria-label="Delete project"
               onClick={(e) => handleDelete(e, project.id)}
               disabled={isDeleting}
-              className="size-7 rounded-lg border-white/20 bg-white/90 text-red-500 backdrop-blur-sm hover:bg-red-50 hover:text-red-600 dark:bg-slate-900/75 dark:hover:bg-red-950/30"
+              className="size-8 shrink-0 rounded-xl border-white/25 bg-white/92 text-red-500 shadow-md backdrop-blur-md hover:bg-red-50 hover:text-red-600 dark:border-white/15 dark:bg-slate-950/65 dark:text-red-400 dark:hover:bg-red-950/40"
             >
               <TrashIcon className="size-3.5" />
             </Button>
           </div>
-        </div>
 
-        {/* Card body */}
-        <div className="flex flex-1 flex-col px-5 py-4">
-          {/* Icon + type tag */}
-          <div className="mb-4 flex items-center gap-3">
-            <div className="flex size-11 shrink-0 items-center justify-center rounded-xl border border-gray-200 bg-gradient-to-br from-blue-500/10 to-blue-600/5 dark:border-white/10 dark:from-blue-500/15 dark:to-blue-600/10">
+          {/* Icon + task type — pinned to hero bottom so body below is a clean rectangle */}
+          <div className="absolute inset-x-0 bottom-0 z-10 flex items-center gap-3 px-5 pb-3 pt-10">
+            <div className="flex size-11 shrink-0 items-center justify-center rounded-xl border border-slate-300/80 bg-white shadow-sm dark:border-white/10 dark:bg-slate-800/90 dark:shadow-md dark:shadow-black/30">
               <IconComponent
                 className="size-5 text-blue-500 dark:text-blue-400"
                 aria-hidden="true"
               />
             </div>
-            <span className="rounded-full border border-gray-200 bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600 dark:border-white/10 dark:bg-white/10 dark:text-gray-400">
+            <span className="rounded-full border border-slate-300/90 bg-slate-200/80 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-slate-800 shadow-sm dark:border-white/10 dark:bg-white/[0.08] dark:text-slate-200">
               {taskType?.replace(/_/g, " ")}
             </span>
           </div>
+        </div>
 
+        {/* Card body — overlap hero by 1px to mask subpixel gap between stacked blocks */}
+        <div className="relative z-[1] flex flex-1 flex-col bg-white px-5 pb-4 pt-4 dark:bg-slate-900">
           {/* Title + description */}
           <div className="flex-1">
-            <h2 className="mb-1 truncate text-base font-bold leading-tight text-gray-900 dark:text-white">
+            <h2 className="mb-1 truncate text-base font-bold leading-snug tracking-tight text-slate-900 dark:text-white">
               {project?.name}
             </h2>
-            <p className="mb-4 line-clamp-2 min-h-[40px] text-sm leading-relaxed text-gray-500 dark:text-gray-400">
+            <p className="mb-3 line-clamp-2 min-h-[40px] text-sm leading-relaxed text-slate-600 dark:text-slate-400">
               {project?.description || "No description"}
             </p>
           </div>
 
           {/* Divider */}
-          <div className="mb-3 h-px w-full bg-gradient-to-r from-transparent via-gray-200 to-transparent dark:via-white/10" />
+          <div className="mb-3 h-px w-full bg-gradient-to-r from-transparent via-slate-200 to-transparent dark:via-white/[0.12]" />
 
           {/* Meta */}
-          <div className="grid grid-cols-3 gap-3 text-xs">
-            <div className="flex flex-col gap-0.5">
-              <span className="text-gray-400 dark:text-gray-500">Created</span>
-              <span className="font-semibold text-gray-800 dark:text-gray-200">
+          <div className="grid grid-cols-3 gap-3 text-[11px]">
+            <div className="flex min-w-0 flex-col gap-1">
+              <span className="text-[10px] font-medium uppercase tracking-wide text-slate-500 dark:text-slate-500">
+                Created
+              </span>
+              <span className="truncate font-semibold tabular-nums text-slate-800 dark:text-slate-100">
                 {dayjs(project?.created_at).format("MMM DD, YYYY")}
               </span>
             </div>
-            <div className="flex flex-col gap-0.5">
-              <span className="text-gray-400 dark:text-gray-500">Runs</span>
-              <span className="font-semibold text-gray-800 dark:text-gray-200">
+            <div className="flex min-w-0 flex-col gap-1">
+              <span className="text-[10px] font-medium uppercase tracking-wide text-slate-500 dark:text-slate-500">
+                Runs
+              </span>
+              <span className="font-semibold tabular-nums text-slate-800 dark:text-slate-100">
                 {totalExperiments}
               </span>
             </div>
-            <div className="flex flex-col gap-0.5">
-              <span className="text-gray-400 dark:text-gray-500">Done</span>
-              <span className="font-semibold text-gray-800 dark:text-gray-200">
+            <div className="flex min-w-0 flex-col gap-1">
+              <span className="text-[10px] font-medium uppercase tracking-wide text-slate-500 dark:text-slate-500">
+                Done
+              </span>
+              <span className="font-semibold tabular-nums text-slate-800 dark:text-slate-100">
                 {doneCount}
               </span>
             </div>
