@@ -2,8 +2,9 @@ import ExperimentCard from "./card";
 import { useEffect, useState, useCallback } from "react";
 import { getAllExperiments } from "src/features/project-build/api/experiment";
 import { useParams } from "react-router-dom";
-import { Beaker } from "lucide-react";
+import { Beaker, FlaskConical } from "lucide-react";
 import { Spinner } from "src/components/ui/spinner";
+import { PageHeading } from "src/components/ui/page-heading";
 
 type Experiment = {
   id: number;
@@ -37,16 +38,16 @@ export default function ProjectExperiments() {
     <div className="w-full px-6 py-8">
       {/* Page Header */}
       <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Experiments
-          </h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            {experiments.length > 0
+        <PageHeading
+          className="mb-0"
+          icon={FlaskConical}
+          title="Experiments"
+          description={
+            experiments.length > 0
               ? `${experiments.length} experiment${experiments.length !== 1 ? "s" : ""}`
-              : "Run training jobs to see experiments here"}
-          </p>
-        </div>
+              : "Run training jobs to see experiments here"
+          }
+        />
       </div>
 
       {/* Content */}

@@ -3,8 +3,9 @@ import { useEffect, useState, useCallback } from "react";
 import { getAllDeployedModel } from "src/features/deploy/api/deploy";
 import { useParams } from "react-router-dom";
 import { Button } from "src/components/ui/button";
-import { Layers, X, Search } from "lucide-react";
+import { Rocket, Search, Layers } from "lucide-react";
 import { Spinner } from "src/components/ui/spinner";
+import { PageHeading } from "src/components/ui/page-heading";
 
 const ProjectDeploy = () => {
   const { id: projectId } = useParams();
@@ -54,16 +55,16 @@ const ProjectDeploy = () => {
       <div className="w-full px-6 py-8">
         {/* Page Header */}
         <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              Deployments
-            </h1>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              {deployedModels.length > 0
+          <PageHeading
+            className="mb-0"
+            icon={Rocket}
+            title="Deployments"
+            description={
+              deployedModels.length > 0
                 ? `${deployedModels.length} deployed model${deployedModels.length !== 1 ? "s" : ""}`
-                : "Manage your deployed models"}
-            </p>
-          </div>
+                : "Manage your deployed models"
+            }
+          />
         </div>
 
         {/* Content */}

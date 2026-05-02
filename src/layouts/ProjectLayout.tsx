@@ -11,8 +11,8 @@ export default function ProjectLayout() {
         className="shadow-[4px_0_24px_rgba(0,0,0,0.02)] dark:shadow-[4px_0_24px_rgba(0,0,0,0.2)]"
       />
 
-      {/* Main content — ml/mt match sidebar's fixed w-[120px] and top-[67px] */}
-      <div className="ml-[120px] mt-[67px] flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-y-auto">
+      {/* Main content — ml/mt match sidebar; horizontal padding so content isn’t flush to the sidebar edge */}
+      <div className="ml-[120px] mt-[67px] flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-y-auto px-4 sm:px-6 lg:px-8">
         <Outlet />
       </div>
     </div>

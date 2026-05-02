@@ -6,6 +6,8 @@ import { useLabelProjectsTable } from "src/features/labels/hooks/useLabelProject
 import { LabelProjectFiltersSidebar } from "src/features/labels/components/LabelProjectFiltersSidebar";
 import { LabelProjectsTable } from "src/features/labels/components/LabelProjectsTable";
 import { ExportProgressModal } from "src/features/labels/components/ExportProgressModal";
+import { Tags } from "lucide-react";
+import { PageHeading } from "src/components/ui/page-heading";
 
 const UploadData = () => {
   const { updateFields, projectInfo } = useOutletContext();
@@ -50,15 +52,11 @@ const UploadData = () => {
     <>
       <div className="w-full px-6 py-8">
         {/* Page Header */}
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Choose Your Label Project
-          </h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            Select an existing label project or create a new one for your
-            labeling task.
-          </p>
-        </div>
+        <PageHeading
+          icon={Tags}
+          title="Choose Your Label Project"
+          description="Select an existing label project or create a new one for your labeling task."
+        />
 
         {/* Two-column layout: sidebar + table */}
         <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-4">

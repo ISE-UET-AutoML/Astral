@@ -14,7 +14,9 @@ import {
   FlaskConical,
   Database,
   Cloud,
+  LayoutDashboard,
 } from "lucide-react";
+import { PageHeading } from "src/components/ui/page-heading";
 
 const ProjectInfo = () => {
   const { projectInfo } = useOutletContext();
@@ -72,15 +74,14 @@ const ProjectInfo = () => {
   return (
     <div className="w-full px-6 py-8">
       {/* Page Header */}
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          Project Overview
-        </h1>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-          {projectInfo?.description ||
-            "Metrics and deployment status at a glance"}
-        </p>
-      </div>
+      <PageHeading
+        icon={LayoutDashboard}
+        title="Project Overview"
+        description={
+          projectInfo?.description ||
+          "Metrics and deployment status at a glance"
+        }
+      />
 
       <div className="grid grid-cols-1 items-start gap-6 xl:grid-cols-12">
         {/* Project Details */}

@@ -2,8 +2,9 @@ import ModelCard from "./card";
 import { useEffect, useState, useCallback } from "react";
 import { getModels } from "src/features/models/api/model";
 import { useParams } from "react-router-dom";
-import { Network, FolderOpen } from "lucide-react";
+import { Network, Brain } from "lucide-react";
 import { Spinner } from "src/components/ui/spinner";
+import { PageHeading } from "src/components/ui/page-heading";
 
 export default function ProjectModels() {
   const { id: projectId } = useParams();
@@ -30,16 +31,16 @@ export default function ProjectModels() {
     <div className="w-full px-6 py-8">
       {/* Page Header */}
       <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Models
-          </h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            {models.length > 0
+        <PageHeading
+          className="mb-0"
+          icon={Brain}
+          title="Models"
+          description={
+            models.length > 0
               ? `${models.length} model${models.length !== 1 ? "s" : ""}`
-              : "Train experiments to generate models"}
-          </p>
-        </div>
+              : "Train experiments to generate models"
+          }
+        />
       </div>
 
       {/* Content */}
