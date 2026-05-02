@@ -12,7 +12,7 @@ export default function ProjectLayout() {
       />
 
       {/* Main content — ml/mt match sidebar; horizontal padding so content isn’t flush to the sidebar edge */}
-      <div className="ml-[120px] mt-[67px] flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-y-auto px-4 sm:px-6 lg:px-8">
+      <div className="ml-[120px] mt-[67px] flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-y-auto px-6 sm:px-8 lg:px-10">
         <Outlet />
       </div>
     </div>
