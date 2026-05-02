@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Outlet, useParams } from 'react-router-dom'
+import { Outlet, useLocation, useParams } from 'react-router-dom'
 import * as projectAPI from 'src/features/projects/api/project'
 import { useTheme } from 'src/theme/ThemeProvider'
 
@@ -7,6 +7,7 @@ const buildDraftKey = (projectId) => `astral:build:draft:${projectId}`
 
 export default function ProjectBuild() {
 	const { id: projectID } = useParams()
+	const location = useLocation()
 	const [projectInfo, setProjectInfo] = useState(null)
 	const [data, setData] = useState({})
 
@@ -22,6 +23,18 @@ export default function ProjectBuild() {
 
 		fetchProjectInfo()
 	}, [projectID])
+
+	useEffect(() => {
+		const selectedProject = location.state?.selectedProject
+		if (!selectedProject?.dataset_id) return
+		setData((prev) => ({
+			...prev,
+			selectedProject,
+			...(Array.isArray(location.state?.trainingTags)
+				? { trainingTags: location.state.trainingTags }
+				: {}),
+		}))
+	}, [location.state])
 
 	// Restore label-project + training mode draft after full page refresh (session only).
 	useEffect(() => {

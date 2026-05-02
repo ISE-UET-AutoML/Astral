@@ -1,6 +1,6 @@
 import * as React from "react";
 import { toast } from "sonner";
-import { trainCloudModel } from "src/features/project-build/api/mlService";
+import { retrainCloudModel, trainCloudModel } from "src/features/project-build/api/mlService";
 import { createDownZipPU } from "src/features/datasets/api/dataset";
 import {
   SERVICES,
@@ -174,6 +174,31 @@ export const useSelectInstance = ({
     };
   };
 
+  const buildRetrainPayload = async () => {
+    const selectedGPU = getAutomaticGpuConfig();
+
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    setFormData((prev) => ({
+      ...prev,
+      service: SERVICES[0].name,
+      gpuNumber: selectedGPU.gpuNumber,
+      gpuName: selectedGPU.name,
+      disk: selectedGPU.disk,
+      budget: (selectedGPU.cost * formData.trainingTime).toFixed(2),
+      cost: selectedGPU.cost,
+    }));
+
+    const presignUrl = await createDownZipPU(selectedProject.dataset_id);
+    return {
+      cost: selectedGPU.cost * formData.trainingTime,
+      trainingTime: formData.trainingTime * 3600,
+      presets: "medium_quality",
+      trainDataId: selectedProject.dataset_id,
+      datasetUrl: presignUrl.data,
+      sourceVersion: selectedProject.meta_data?.source_version || null,
+    };
+  };
+
   const launchAutomaticTrainingRuns = async () => {
     const sharedPayload = await buildSharedTrainingPayload();
 
@@ -208,7 +233,7 @@ export const useSelectInstance = ({
     const params = new URLSearchParams();
     params.set("experiments", JSON.stringify(experiments));
 
-    if (experiments.length === 1) {
+    if (experiments.length === 1 && experiments[0]?.type !== "retrain") {
       params.set("experimentId", experiments[0].experimentId);
       params.set("experimentName", experiments[0].experimentName);
     }
@@ -234,6 +259,79 @@ export const useSelectInstance = ({
       );
       return;
     }
+
+    const retrainModelId =
+      selectedProject.meta_data?.model_id || selectedProject.model_id;
+    const isRetraining = Boolean(
+      selectedProject.meta_data?.source === "drift_recommendation" &&
+        retrainModelId,
+    );
+
+    if (isRetraining) {
+      setIsProcessing(true);
+      const loadingRetrain = [
+        {
+          tag: "retrain",
+          type: "retrain",
+          experimentId: "loading",
+          experimentName: "Preparing retraining",
+        },
+      ];
+
+      navigate(
+        `/app/project/${projectInfo.id}/build/training?${buildTrainingQuery(loadingRetrain)}`,
+        { replace: true },
+      );
+
+      try {
+        const payload = await buildRetrainPayload();
+        const response = await retrainCloudModel(
+          projectInfo.id,
+          retrainModelId,
+          payload,
+        );
+        const retrainJob = response.data;
+        if (!retrainJob.model_version_id) {
+          throw new Error(
+            "Retrain response is missing model_version_id. Restart backend-gateway and ml-service, then try again.",
+          );
+        }
+
+        const retrainProgress = [
+          {
+            tag: "retrain",
+            type: "retrain",
+            modelId: retrainModelId,
+            modelVersionId: retrainJob.model_version_id,
+            newVersion: retrainJob.new_version,
+            experimentId: retrainJob.experiment_id,
+            experimentName:
+              retrainJob.experiment_name ||
+              selectedProject.meta_data?.experiment_name ||
+              "Retraining",
+          },
+        ];
+
+        navigate(
+          `/app/project/${projectInfo.id}/build/training?${buildTrainingQuery(retrainProgress)}`,
+          { replace: true },
+        );
+      } catch (error) {
+        console.error("Retraining error", error);
+        toast.error(
+          error.response?.data?.error ||
+            error.response?.data?.detail ||
+            "Failed to start retraining.",
+        );
+        navigate(`/app/project/${projectInfo.id}/build/selectInstance`, {
+          replace: true,
+        });
+      } finally {
+        setIsProcessing(false);
+      }
+      return;
+    }
+
     setIsProcessing(true);
 
     const loadingExperiments = selectedTrainingTags.map((tag) => ({
