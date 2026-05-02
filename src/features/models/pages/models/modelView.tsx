@@ -35,6 +35,7 @@ import {
   TableCell,
 } from "src/components/ui/table";
 import { PageHeading } from "src/components/ui/page-heading";
+import { projectPageShellClass } from "src/layouts/project-page-shell";
 import * as mlServiceAPI from "src/features/project-build/api/mlService";
 import * as modelServiceAPI from "src/features/models/api/model";
 import * as modelVersionServiceAPI from "src/features/models/api/model_version";
@@ -336,7 +337,7 @@ const ModelView = () => {
     ) : null;
 
   return (
-    <div className="w-full min-h-0 bg-white dark:bg-slate-950 px-6 py-8 text-gray-900 dark:text-white">
+    <div className={projectPageShellClass}>
       <div className="w-full flex flex-col gap-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between lg:gap-8">
           <PageHeading

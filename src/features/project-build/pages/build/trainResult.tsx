@@ -7,6 +7,7 @@ import { TrainResultSummaryCards } from "src/features/project-build/components/t
 import { TrainResultPerformanceCharts } from "src/features/project-build/components/training/TrainResultPerformanceCharts";
 import { TrainResultMetricsTable } from "src/features/project-build/components/training/TrainResultMetricsTable";
 import { PageHeading } from "src/components/ui/page-heading";
+import { projectPageShellClass } from "src/layouts/project-page-shell";
 
 const TrainResult = () => {
   const { projectInfo } = useOutletContext();
@@ -30,7 +31,7 @@ const TrainResult = () => {
   });
 
   return (
-    <div className="w-full px-6 py-8">
+    <div className={projectPageShellClass}>
       <div className="mb-6 flex flex-col gap-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between lg:gap-6">
           <PageHeading

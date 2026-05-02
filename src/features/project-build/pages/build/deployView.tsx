@@ -14,6 +14,11 @@ import {
   useNavigate,
   useParams,
 } from "react-router-dom";
+import { cn } from "src/lib/utils";
+import {
+  projectPageShellGrayScrollClass,
+  projectPageStackClass,
+} from "src/layouts/project-page-shell";
 
 type AccentKey = "amber" | "emerald" | "blue" | "indigo";
 
@@ -142,9 +147,9 @@ const DeployView = () => {
   };
 
   return (
-    <div className="h-full overflow-y-auto bg-gray-50 dark:bg-slate-950">
-      <div className="mx-auto w-full max-w-7xl px-6 py-8 space-y-6">
-
+    <div
+      className={cn(projectPageShellGrayScrollClass, projectPageStackClass)}
+    >
         {/* Page header */}
         <div className="mb-2 flex flex-wrap items-start justify-between gap-4">
           <div>
@@ -252,7 +257,6 @@ const DeployView = () => {
             Deploy Now
           </Button>
         </div>
-      </div>
     </div>
   );
 };
