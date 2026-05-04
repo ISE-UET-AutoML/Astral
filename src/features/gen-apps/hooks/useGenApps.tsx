@@ -1,5 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getGenAppsList } from 'src/features/deploy/api/deploy';
+import {
+    USE_GEN_APP_MOCKS,
+    mockGeneratedAppsList,
+} from 'src/features/gen-apps/mocks';
 
 /**
  * Hook gọi GET /api/service/adaptive_model_to_app để lấy list app đã gen.
@@ -20,6 +24,12 @@ export function useGenApps(projectId, initialPage = 1, limit = 8) {
         if (!isBackground) setLoading(true);
         setError(null);
         try {
+            if (USE_GEN_APP_MOCKS) {
+                setApps(mockGeneratedAppsList.items);
+                setTotal(mockGeneratedAppsList.total);
+                return;
+            }
+
             const offset = (page - 1) * limit;
             const { data } = await getGenAppsList(projectId, limit, offset);
             console.log('[useGenApps] Raw response:', data);

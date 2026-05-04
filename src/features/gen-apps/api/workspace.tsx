@@ -1,9 +1,21 @@
 import axiosClient from 'src/api/axios'
+import {
+	USE_GEN_APP_MOCKS,
+	getMockAppVersionsSummary,
+	mockFileTree,
+	mockFilesByPath,
+	mockGeneratedApp,
+	mockGeneratedAppsById,
+} from 'src/features/gen-apps/mocks'
 
 /**
  * Init draft workspace – call when entering edit page or clicking Details
  */
 export async function initDraft(appId) {
+	if (USE_GEN_APP_MOCKS) {
+		return { status: 'ready', app_id: appId }
+	}
+
 	const res = await axiosClient.post(
 		`/api/service/adaptive_model_to_app/apps/${appId}/draft/init`
 	)
@@ -17,6 +29,10 @@ export async function initDraft(appId) {
 export const workspaceApi = {
 	// Initialize draft for an app (idempotent)
 	async initDraft(appId) {
+		if (USE_GEN_APP_MOCKS) {
+			return { status: 'ready', app_id: appId }
+		}
+
 		const response = await axiosClient.post(
 			`/api/service/adaptive_model_to_app/apps/${appId}/draft/init`
 		)
@@ -29,6 +45,10 @@ export const workspaceApi = {
 	 * @returns {Promise<TreeNode>} File tree structure
 	 */
 	async getTree(appId) {
+		if (USE_GEN_APP_MOCKS) {
+			return mockFileTree
+		}
+
 		const response = await axiosClient.get(
 			`/api/service/adaptive_model_to_app/apps/${appId}/draft/tree`
 		)
@@ -42,6 +62,15 @@ export const workspaceApi = {
 	 * @returns {Promise<{content: string}>} File content
 	 */
 	async getFile(appId, path) {
+		if (USE_GEN_APP_MOCKS) {
+			return {
+				content:
+					mockFilesByPath[appId]?.[path] ||
+					mockFilesByPath[mockGeneratedApp.id]?.[path] ||
+					`// File not found: ${path}\n`,
+			}
+		}
+
 		const response = await axiosClient.get(
 			`/api/service/adaptive_model_to_app/apps/${appId}/draft/files/${path}`,
 		)
@@ -57,6 +86,10 @@ export const workspaceApi = {
 	 * @returns {Promise<void>}
 	 */
 	async saveFile(appId, path, content) {
+		if (USE_GEN_APP_MOCKS) {
+			return
+		}
+
 		await axiosClient.put(
 			`/api/service/adaptive_model_to_app/apps/${appId}/draft/files/${path.split('/').map(encodeURIComponent).join('/')}`,
 			{ content, user_id: 'default' }
@@ -65,6 +98,14 @@ export const workspaceApi = {
 
 	/** Save draft snapshot (commit to Git) */
 	async saveDraftSnapshot(appId, description) {
+		if (USE_GEN_APP_MOCKS) {
+			return {
+				status: 'saved',
+				app_id: appId,
+				description: description || 'Draft snapshot',
+			}
+		}
+
 		const res = await axiosClient.post(
 			`/api/service/adaptive_model_to_app/apps/${appId}/draft/save`,
 			{ description: description || 'Draft snapshot' }
@@ -154,6 +195,10 @@ export const workspaceApi = {
 
 	/** List versions + current_version (deployed). Use when displaying version selector. */
 	async getVersionsSummary(appId) {
+		if (USE_GEN_APP_MOCKS) {
+			return getMockAppVersionsSummary(appId)
+		}
+
 		const res = await axiosClient.get(
 			`/api/service/adaptive_model_to_app/apps/${appId}/versions/summary`
 		)
@@ -162,6 +207,14 @@ export const workspaceApi = {
 
 	/** Deploy a specific version via versions/{version_number}/deploy */
 	async deployVersion(appId, versionNumber) {
+		if (USE_GEN_APP_MOCKS) {
+			return {
+				status: 'deployed',
+				app_id: appId,
+				version_number: versionNumber,
+			}
+		}
+
 		const res = await axiosClient.post(
 			`/api/service/adaptive_model_to_app/apps/${appId}/versions/${versionNumber}/deploy`
 		)
@@ -174,6 +227,15 @@ export const workspaceApi = {
 	 * @param {Object} [files] - Optional: { [path]: content } to merge unsaved editor content
 	 */
 	async deployDraft(appId, files = {}) {
+		if (USE_GEN_APP_MOCKS) {
+			const versionsSummary = getMockAppVersionsSummary(appId)
+			return {
+				status: 'deployed',
+				app_id: appId,
+				version_number: versionsSummary.current_version + 1,
+			}
+		}
+
 		const res = await axiosClient.post(
 			`/api/service/adaptive_model_to_app/apps/${appId}/draft/deploy`,
 			{ files: Object.keys(files).length ? files : undefined }
@@ -183,6 +245,12 @@ export const workspaceApi = {
 
 	/** Get app details (including host/ports) */
 	async getApp(appId) {
+		if (USE_GEN_APP_MOCKS) {
+			return {
+				...(mockGeneratedAppsById[appId] || mockGeneratedApp),
+			}
+		}
+
 		const res = await axiosClient.get(
 			`/api/service/adaptive_model_to_app/generated_app/${appId}`
 		)

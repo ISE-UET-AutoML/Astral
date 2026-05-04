@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TerraView · Satellite Environmental Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: { sans:['Inter','ui-sans-serif','system-ui'], mono:['JetBrains Mono','ui-monospace'] },
+        colors: {
+          brand:  { 50:'#f0fdfa', 100:'#ccfbf1', 200:'#99f6e4', 300:'#5eead4', 400:'#2dd4bf', 500:'#0f766e', 600:'#115e59', 700:'#134e4a' },
+          accent: { 500:'#ea580c', 600:'#c2410c' },
+          fire:   { 500:'#dc2626' },
+          ink:    { 50:'#f8fafc',100:'#f1f5f9',200:'#e2e8f0',300:'#cbd5e1',400:'#94a3b8',500:'#64748b',600:'#475569',700:'#334155',800:'#1e293b',900:'#0f172a' },
+          ok:{500:'#16a34a'}, warn:{500:'#f59e0b'},
+        },
+      },
+    },
+  };
+</script>
+<style>
+  :root { color-scheme: light; }
+  body {
+    background:
+      radial-gradient(900px 400px at 5% -10%, rgba(15,118,110,.08), transparent 60%),
+      radial-gradient(700px 360px at 105% 0%, rgba(234,88,12,.06), transparent 60%),
+      #f6faf9;
+    font-family: 'Inter', system-ui, sans-serif;
+    color: #1f2937;
+  }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+
+  .card { background:#fff; border:1px solid #eef0f3; box-shadow:0 1px 2px rgba(16,24,40,.04), 0 8px 24px -12px rgba(16,24,40,.06); }
+  .soft-border { border:1px solid #eef0f3; }
+
+  .pill-tab { transition:all .18s ease; color:#64748b; }
+  .pill-tab[data-active="true"] { background:#fff; color:#0f766e; box-shadow:0 1px 2px rgba(16,24,40,.06), 0 0 0 1px #99f6e4; }
+  .pill-tab:not([data-active="true"]):hover { color:#0f172a; }
+
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; padding:.55rem .9rem; border-radius:.6rem; font-size:.875rem; font-weight:600; border:1px solid transparent; transition:all .15s ease; white-space:nowrap; }
+  .btn:disabled { opacity:.55; cursor:not-allowed; }
+  .btn:not(:disabled):hover { transform: translateY(-1px); }
+  .btn-primary { background:#0f766e; color:#fff; box-shadow:0 1px 2px rgba(15,118,110,.25), 0 8px 20px -8px rgba(15,118,110,.35); }
+  .btn-primary:not(:disabled):hover { background:#115e59; }
+  .btn-accent  { background:#ea580c; color:#fff; box-shadow:0 1px 2px rgba(234,88,12,.25), 0 8px 20px -8px rgba(234,88,12,.35); }
+  .btn-accent:not(:disabled):hover { background:#c2410c; }
+  .btn-ghost   { background:#fff; color:#334155; border-color:#e5e7eb; }
+  .btn-ghost:not(:disabled):hover { background:#f8fafc; border-color:#d1d5db; }
+  .btn-success { background:#16a34a; color:#fff; box-shadow:0 1px 2px rgba(22,163,74,.25), 0 8px 20px -8px rgba(22,163,74,.35); }
+  .btn-success:not(:disabled):hover { background:#15803d; }
+  .btn-danger  { background:#dc2626; color:#fff; box-shadow:0 1px 2px rgba(220,38,38,.25), 0 8px 20px -8px rgba(220,38,38,.35); }
+  .btn-danger:not(:disabled):hover { background:#b91c1c; }
+
+  .chip { display:inline-flex; align-items:center; gap:.35rem; padding:.22rem .6rem; border-radius:999px; font-size:.72rem; font-weight:600; border:1px solid #e5e7eb; color:#475569; background:#f8fafc; }
+  .chip-ok    { color:#15803d; border-color:#bbf7d0; background:#f0fdf4; }
+  .chip-warn  { color:#a16207; border-color:#fde68a; background:#fffbeb; }
+  .chip-danger{ color:#b91c1c; border-color:#fecaca; background:#fef2f2; }
+  .chip-info  { color:#0f766e; border-color:#99f6e4; background:#f0fdfa; }
+  .chip-fire  { color:#9a3412; border-color:#fed7aa; background:#fff7ed; }
+
+  .dot { width:8px; height:8px; border-radius:999px; display:inline-block; }
+  .dot-ok{background:#16a34a;box-shadow:0 0 0 3px rgba(22,163,74,.18);}
+  .dot-warn{background:#f59e0b;box-shadow:0 0 0 3px rgba(245,158,11,.18);}
+  .dot-fire{background:#ea580c;box-shadow:0 0 0 3px rgba(234,88,12,.18);}
+  .dot-err{background:#dc2626;box-shadow:0 0 0 3px rgba(220,38,38,.18);}
+
+  /* Satellite viewer — single fused preview */
+  .sat-wrap { position: relative; aspect-ratio: 4/3; background: #0e1f1c; border-radius: 12px; overflow: hidden; user-select: none; }
+  .sat-main-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
+  #satEmpty { z-index: 5; }
+
+  .progress-bar { position:relative; height:6px; background:#f1f5f9; border-radius:999px; overflow:hidden; }
+  .progress-bar > span { position:absolute; left:0; top:0; bottom:0; background:linear-gradient(90deg,#0f766e,#5eead4); border-radius:999px; transition:width .8s; }
+  .progress-bar.warn > span { background:linear-gradient(90deg,#ea580c,#fdba74); }
+  .progress-bar.fire > span { background:linear-gradient(90deg,#dc2626,#fb923c); }
+
+  .toast { position:fixed; right:16px; bottom:16px; z-index:60; padding:10px 14px; border-radius:12px; background:#fff; color:#1f2937; border:1px solid #e5e7eb; box-shadow:0 16px 40px -12px rgba(16,24,40,.18); display:flex; align-items:center; gap:10px; transform:translateY(16px); opacity:0; transition:all .25s ease; }
+  .toast[data-show="true"] { transform:translateY(0); opacity:1; }
+
+  @keyframes logoPulse { 0%,100%{ box-shadow:0 0 0 0 rgba(15,118,110,0); } 50%{ box-shadow:0 0 0 6px rgba(15,118,110,.10); } }
+  .logo-pulse { animation: logoPulse 3s ease-in-out infinite; }
+
+  input:focus-visible { box-shadow:0 0 0 3px rgba(15,118,110,.15); border-color:#0f766e !important; outline:none; }
+
+  .row-hover:hover { background:#f8fafc; }
+</style>
+</head>
+<body class="text-ink-800 antialiased">
+
+<div class="min-h-screen max-w-[1500px] mx-auto px-4 md:px-6 py-5">
+
+  <!-- HEADER -->
+  <header class="card rounded-2xl px-4 md:px-5 py-3 flex items-center justify-between gap-4">
+    <div class="flex items-center gap-3 min-w-0">
+      <div class="logo-pulse flex items-center justify-center w-10 h-10 rounded-xl bg-brand-500 text-white">
+        <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a13 13 0 0 1 0 18M12 3a13 13 0 0 0 0 18"/>
+        </svg>
+      </div>
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="font-extrabold tracking-tight text-ink-900 text-[16px]">TerraView</div>
+        <div class="h-4 w-px bg-ink-200"></div>
+        <div class="truncate text-ink-500 text-[13px] md:text-sm">Satellite Environmental Intelligence</div>
+        <span class="chip chip-info hidden md:inline-flex"><span class="dot dot-ok"></span>SAR + OPTICAL</span>
+      </div>
+    </div>
+
+    <nav class="hidden md:flex items-center gap-1 rounded-full bg-ink-100 p-1">
+      <button data-tab="explorer" class="pill-tab rounded-full px-3.5 py-1.5 text-sm flex items-center gap-2" data-active="true">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        Explorer
+      </button>
+      <button data-tab="alerts" class="pill-tab rounded-full px-3.5 py-1.5 text-sm flex items-center gap-2">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10 21a2 2 0 0 0 4 0"/></svg>
+        Alerts
+      </button>
+      <button data-tab="trends" class="pill-tab rounded-full px-3.5 py-1.5 text-sm flex items-center gap-2">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 3 5-7"/></svg>
+        Trends
+      </button>
+      <button data-tab="reports" class="pill-tab rounded-full px-3.5 py-1.5 text-sm flex items-center gap-2">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+        Reports
+      </button>
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <button class="btn btn-ghost relative" title="Critical alerts">
+        <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10 21a2 2 0 0 0 4 0"/></svg>
+        <span class="hidden md:inline">Alerts</span>
+        <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-accent-500 text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-white">12</span>
+      </button>
+      <button class="flex items-center gap-2 pl-1 pr-2 py-1 rounded-full soft-border bg-white hover:bg-ink-50 transition">
+        <img src="https://i.pravatar.cc/64?img=47" alt="Analyst" class="w-7 h-7 rounded-full ring-2 ring-brand-100" />
+        <div class="hidden md:block text-left leading-tight">
+          <div class="text-[10px] uppercase tracking-wider text-ink-500">GIS Analyst</div>
+          <div class="text-xs font-semibold text-ink-800">Dr. M. Vu</div>
+        </div>
+      </button>
+    </div>
+  </header>
+
+  <div class="md:hidden mt-3 flex items-center gap-1 rounded-full bg-ink-100 p-1 w-fit mx-auto overflow-x-auto">
+    <button data-tab="explorer" class="pill-tab rounded-full px-3 py-1.5 text-sm" data-active="true">Explorer</button>
+    <button data-tab="alerts" class="pill-tab rounded-full px-3 py-1.5 text-sm">Alerts</button>
+    <button data-tab="trends" class="pill-tab rounded-full px-3 py-1.5 text-sm">Trends</button>
+    <button data-tab="reports" class="pill-tab rounded-full px-3 py-1.5 text-sm">Reports</button>
+  </div>
+
+  <main class="mt-5 space-y-5">
+
+    <!-- ============= EXPLORER ============= -->
+    <section id="tab-explorer" class="space-y-5">
+
+      <!-- Upload -->
+      <div id="uploadBlock" class="card rounded-2xl p-6">
+        <div class="text-sm font-semibold text-ink-800 mb-2">Upload Satellite Image</div>
+        <div class="text-xs text-ink-500 mb-3">Upload one image to run fast change prediction.</div>
+        <div class="flex flex-wrap items-center gap-2">
+          <button id="satUploadBtn" class="btn btn-primary">Upload Image</button>
+          <input id="satUploadInput" type="file" accept="image/*" class="hidden" />
+        </div>
+        <div id="satUploadMeta" class="mt-2 text-xs text-ink-500">Supported formats: JPG, PNG, WEBP</div>
+      </div>
+
+      <!-- Main viewer + side panel -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+
+        <!-- Viewer -->
+        <div class="card rounded-2xl overflow-hidden lg:col-span-2">
+          <div class="flex items-center gap-2 px-4 py-3 border-b border-ink-100">
+            <svg class="w-4 h-4 text-ink-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a13 13 0 0 1 0 18"/></svg>
+            <h3 class="text-sm font-semibold text-ink-800" id="sceneTitle">—</h3>
+            <span id="sceneTypeChip" class="chip">—</span>
+          </div>
+
+          <!-- Metadata strip -->
+          <div class="px-4 py-2 border-b border-ink-100 bg-ink-50 flex flex-wrap gap-x-5 gap-y-1 text-[12px]">
+            <div><span class="text-ink-500">Sensor:</span> <span id="m-sensor" class="text-ink-800 font-medium">—</span></div>
+            <div><span class="text-ink-500">Resolution:</span> <span id="m-res" class="text-ink-800">—</span></div>
+            <div><span class="text-ink-500">Before:</span> <span id="m-before" class="text-ink-800 font-mono">—</span></div>
+            <div><span class="text-ink-500">After:</span> <span id="m-after" class="text-ink-800 font-mono">—</span></div>
+          </div>
+
+          <!-- Image preview -->
+          <div class="p-3">
+            <div id="satWrap" class="sat-wrap">
+              <img id="satMain" class="sat-main-img" alt="Satellite preview" />
+              <div id="satEmpty" class="absolute inset-0 flex flex-col items-center justify-center text-white/60 text-sm">
+                <svg class="w-10 h-10 mb-2 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/></svg>
+                Upload an image above to begin analysis
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI report panel -->
+        <div class="card rounded-2xl flex flex-col">
+          <div class="flex items-center justify-between px-4 py-3 border-b border-ink-100">
+            <div class="flex items-center gap-2">
+              <div class="w-7 h-7 rounded-lg bg-brand-50 text-brand-500 flex items-center justify-center">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              </div>
+              <h3 class="text-sm font-semibold text-ink-800">Change Detection Report</h3>
+            </div>
+            <div id="statusChip" class="chip chip-info">Awaiting image</div>
+          </div>
+
+          <div class="p-4 space-y-4 flex-1">
+            <!-- headline change -->
+            <div>
+              <div class="text-[11px] tracking-[.14em] font-semibold text-ink-400 uppercase">Detected Change</div>
+              <div class="mt-1 flex items-baseline gap-2 flex-wrap">
+                <div id="changeHeadline" class="text-2xl font-extrabold text-brand-500 tracking-tight">—</div>
+                <span id="confidenceChip" class="chip chip-info">Confidence —</span>
+              </div>
+              <div id="changeSummary" class="mt-1 text-xs text-ink-500">Upload an image to see results.</div>
+            </div>
+
+            <!-- KPI grid -->
+            <div class="grid grid-cols-2 gap-3">
+              <div class="rounded-xl soft-border bg-ink-50 p-3">
+                <div class="text-[11px] text-ink-500 font-semibold uppercase tracking-wider">Affected Area</div>
+                <div id="affectedArea" class="text-lg font-bold text-ink-800 mt-1 tabular-nums">—</div>
+                <div class="text-[11px] text-ink-500" id="affectedHint">vs baseline</div>
+              </div>
+              <div class="rounded-xl soft-border bg-ink-50 p-3">
+                <div class="text-[11px] text-ink-500 font-semibold uppercase tracking-wider" id="impactLabel">Impact</div>
+                <div id="impactValue" class="text-lg font-bold text-ink-800 mt-1 tabular-nums">—</div>
+                <div class="text-[11px] text-ink-500" id="impactHint">—</div>
+              </div>
+            </div>
+
+            <!-- Feedback -->
+            <div>
+              <div class="text-[11px] tracking-[.14em] font-semibold text-ink-400 uppercase mb-2">Feedback</div>
+              <div class="grid grid-cols-2 gap-2">
+                <button id="satVerifyBtn" class="btn btn-success" disabled>
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                  Verify prediction
+                </button>
+                <button id="satFlagBtn" class="btn btn-danger" disabled>
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 14V2M9 19l1-5H3l2-10a2 2 0 0 1 2-2h10"/></svg>
+                  Flag incorrect
+                </button>
+              </div>
+              <input id="satFlagNote" class="mt-2 w-full text-sm bg-white soft-border rounded-lg px-3 py-2 placeholder:text-ink-400 text-ink-800 transition" placeholder="Optional note for reviewers" />
+            </div>
+
+            <div>
+              <button id="exportBtn" class="btn btn-primary w-full" disabled>
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+                Export GeoJSON
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============= ALERTS ============= -->
+    <section id="tab-alerts" class="hidden card rounded-2xl">
+      <div class="px-4 py-3 border-b border-ink-100 flex items-center justify-between gap-3 flex-wrap">
+        <h3 class="text-sm font-semibold text-ink-800">Active Environmental Alerts</h3>
+        <div class="flex items-center gap-2">
+          <select class="text-xs px-2 py-1.5 rounded-md soft-border bg-white text-ink-700">
+            <option>All severities</option><option>Critical only</option><option>High+</option>
+          </select>
+          <button class="btn btn-primary"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>Export</button>
+        </div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="text-xs uppercase text-ink-400 tracking-wider bg-ink-50">
+            <tr class="border-b border-ink-100">
+              <th class="text-left px-4 py-2.5 font-semibold">Alert</th>
+              <th class="text-left px-4 py-2.5 font-semibold">Type</th>
+              <th class="text-left px-4 py-2.5 font-semibold">Region</th>
+              <th class="text-left px-4 py-2.5 font-semibold">Detected</th>
+              <th class="text-right px-4 py-2.5 font-semibold">Area (km²)</th>
+              <th class="text-left px-4 py-2.5 font-semibold">Confidence</th>
+              <th class="text-left px-4 py-2.5 font-semibold">Severity</th>
+              <th class="text-left px-4 py-2.5 font-semibold">Status</th>
+            </tr>
+          </thead>
+          <tbody id="alertBody" class="divide-y divide-ink-100"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============= TRENDS ============= -->
+    <section id="tab-trends" class="hidden space-y-5">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <div class="card rounded-2xl p-3.5">
+          <div class="text-xs text-ink-500">Forest cover (Vietnam)</div>
+          <div class="mt-1 text-2xl font-extrabold text-brand-500 tabular-nums">42.1%</div>
+          <div class="text-[11px] text-accent-500">▼ 0.8% YoY</div>
+        </div>
+        <div class="card rounded-2xl p-3.5">
+          <div class="text-xs text-ink-500">Active fires (24h)</div>
+          <div class="mt-1 text-2xl font-extrabold text-accent-500 tabular-nums">37</div>
+          <div class="text-[11px] text-accent-500">▲ 12 vs avg</div>
+        </div>
+        <div class="card rounded-2xl p-3.5">
+          <div class="text-xs text-ink-500">Flooded area (Mekong)</div>
+          <div class="mt-1 text-2xl font-extrabold text-ink-900 tabular-nums">1,284 km²</div>
+          <div class="text-[11px] text-ink-500">▲ 8% vs last week</div>
+        </div>
+        <div class="card rounded-2xl p-3.5">
+          <div class="text-xs text-ink-500">Air quality index</div>
+          <div class="mt-1 text-2xl font-extrabold text-warn-500 tabular-nums">142</div>
+          <div class="text-[11px] text-ink-500">PM2.5 · Unhealthy</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div class="card rounded-2xl p-4 lg:col-span-2">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-sm font-semibold text-ink-800">Deforestation rate (5 years)</h3>
+            <div class="flex gap-1">
+              <span class="chip chip-info"><span class="dot dot-ok"></span>Forest gain</span>
+              <span class="chip chip-fire"><span class="dot dot-fire"></span>Forest loss</span>
+            </div>
+          </div>
+          <div class="relative h-[260px]"><canvas id="deforChart"></canvas></div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <div class="card rounded-2xl p-4">
+          <h3 class="text-sm font-semibold text-ink-800 mb-2">Wildfire season heatmap</h3>
+          <div class="relative h-[230px]"><canvas id="fireChart"></canvas></div>
+        </div>
+        <div class="card rounded-2xl p-4">
+          <h3 class="text-sm font-semibold text-ink-800 mb-2">Ground-truth vs AI agreement</h3>
+          <div class="relative h-[230px]"><canvas id="agreeChart"></canvas></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============= REPORTS ============= -->
+    <section id="tab-reports" class="hidden">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="reportGrid"></div>
+    </section>
+
+  </main>
+
+</div>
+
+<div id="toast" class="toast" data-show="false">
+  <svg class="w-4 h-4 text-ok-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+  <span id="toastMsg">Ready</span>
+</div>
+
+<script>
+/* =====  Generated SVG "satellite" tiles (no external assets) ===== */
+function tileForest(after = false) {
+  // green canopy with brown patches if after
+  const browns = after
+    ? Array.from({length:5},() => `<ellipse cx='${rand(15,85)}%' cy='${rand(20,80)}%' rx='${rand(6,14)}%' ry='${rand(4,10)}%' fill='#a06a2a' opacity='0.85' filter='url(%23b)' />`).join('')
+    : '';
+  const roads = after
+    ? `<path d='M-10,${rand(30,60)} Q400,${rand(20,60)} 810,${rand(30,70)}' stroke='#c8a878' stroke-width='4' fill='none' opacity='0.85' />`
+    : '';
+  return wrapSvg(`
+    <defs>
+      <radialGradient id='g' cx='50%' cy='50%' r='80%'>
+        <stop offset='0%' stop-color='#2a6a32'/><stop offset='60%' stop-color='#1f5a2a'/><stop offset='100%' stop-color='#0e3a1d'/>
+      </radialGradient>
+      <filter id='b'><feGaussianBlur stdDeviation='3'/></filter>
+      <filter id='n'><feTurbulence baseFrequency='1.2' numOctaves='2'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.18 0'/><feComposite in2='SourceGraphic' operator='in'/></filter>
+    </defs>
+    <rect width='100%' height='100%' fill='url(%23g)'/>
+    ${Array.from({length:80},() => `<circle cx='${rand(0,100)}%' cy='${rand(0,100)}%' r='${rand(6,18)}' fill='#3a8442' opacity='${rand(.3,.6)}' filter='url(%23b)'/>`).join('')}
+    ${browns}
+    ${roads}
+    <rect width='100%' height='100%' filter='url(%23n)'/>
+  `);
+}
+function tileFire(after = false) {
+  return wrapSvg(`
+    <defs>
+      <radialGradient id='g' cx='50%' cy='50%' r='80%'>
+        <stop offset='0%' stop-color='${after?'#5a3018':'#2f6b34'}'/><stop offset='100%' stop-color='${after?'#1a0f08':'#0e3a1d'}'/>
+      </radialGradient>
+      <filter id='b'><feGaussianBlur stdDeviation='3'/></filter>
+      <filter id='n'><feTurbulence baseFrequency='1.0' numOctaves='2'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.18 0'/><feComposite in2='SourceGraphic' operator='in'/></filter>
+    </defs>
+    <rect width='100%' height='100%' fill='url(%23g)'/>
+    ${Array.from({length:50},() => `<circle cx='${rand(0,100)}%' cy='${rand(0,100)}%' r='${rand(6,16)}' fill='${after?'#7a4622':'#3a8442'}' opacity='${rand(.3,.6)}' filter='url(%23b)'/>`).join('')}
+    ${after ? Array.from({length:18},() => `<circle cx='${rand(20,90)}%' cy='${rand(15,85)}%' r='${rand(8,18)}' fill='#ea580c' opacity='0.7' filter='url(%23b)'/>`).join('') + Array.from({length:8},() => `<circle cx='${rand(25,85)}%' cy='${rand(20,80)}%' r='${rand(4,8)}' fill='#facc15' opacity='0.8'/>`).join('') : ''}
+    ${after ? `<g opacity='0.55'>${Array.from({length:6},() => `<path d='M${rand(20,80)}%,${rand(15,40)}% q${rand(-10,10)},20 ${rand(-30,30)},80' stroke='#cbd5e1' stroke-width='${rand(8,16)}' fill='none' opacity='${rand(.25,.5)}' filter='url(%23b)'/>`).join('')}</g>` : ''}
+    <rect width='100%' height='100%' filter='url(%23n)'/>
+  `);
+}
+function tileFlood(after = false) {
+  return wrapSvg(`
+    <defs>
+      <linearGradient id='g' x1='0' x2='1' y1='0' y2='1'>
+        <stop offset='0%' stop-color='${after?'#1c4a6e':'#3a6a3a'}'/><stop offset='100%' stop-color='${after?'#0c2a44':'#1a3a1a'}'/>
+      </linearGradient>
+      <filter id='b'><feGaussianBlur stdDeviation='3'/></filter>
+      <filter id='n'><feTurbulence baseFrequency='1.3' numOctaves='2'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.16 0'/><feComposite in2='SourceGraphic' operator='in'/></filter>
+    </defs>
+    <rect width='100%' height='100%' fill='url(%23g)'/>
+    ${after ? Array.from({length:22},() => `<ellipse cx='${rand(5,95)}%' cy='${rand(5,95)}%' rx='${rand(8,30)}%' ry='${rand(5,15)}%' fill='#2563eb' opacity='${rand(.45,.75)}' filter='url(%23b)'/>`).join('') : Array.from({length:6},() => `<path d='M${rand(0,100)}%,${rand(20,80)}% q60,${rand(-20,20)} 120,${rand(-30,30)}' stroke='#1d4ed8' stroke-width='${rand(6,12)}' fill='none' opacity='0.5' filter='url(%23b)'/>`).join('')}
+    ${Array.from({length:30},() => `<circle cx='${rand(0,100)}%' cy='${rand(0,100)}%' r='${rand(4,10)}' fill='#3a8442' opacity='${rand(.2,.4)}'/>`).join('')}
+    <rect width='100%' height='100%' filter='url(%23n)'/>
+  `);
+}
+function tileUrban(after = false) {
+  return wrapSvg(`
+    <defs>
+      <radialGradient id='g' cx='50%' cy='50%' r='80%'>
+        <stop offset='0%' stop-color='${after?'#6a6f74':'#3a6a3a'}'/><stop offset='100%' stop-color='${after?'#2a2e34':'#1a3a1a'}'/>
+      </radialGradient>
+      <filter id='n'><feTurbulence baseFrequency='1.0' numOctaves='2'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.16 0'/><feComposite in2='SourceGraphic' operator='in'/></filter>
+    </defs>
+    <rect width='100%' height='100%' fill='url(%23g)'/>
+    ${after
+      ? Array.from({length:120},() => `<rect x='${rand(0,100)}%' y='${rand(0,100)}%' width='${rand(8,18)}' height='${rand(8,22)}' fill='#cbd5e1' opacity='${rand(.6,.95)}'/>`).join('')
+        + Array.from({length:10},() => `<rect x='${rand(0,95)}%' y='${rand(0,95)}%' width='${rand(40,80)}' height='4' fill='#94a3b8' opacity='0.85'/>`).join('')
+      : Array.from({length:30},() => `<circle cx='${rand(0,100)}%' cy='${rand(0,100)}%' r='${rand(8,16)}' fill='#3a8442' opacity='${rand(.4,.7)}' />`).join('')}
+    <rect width='100%' height='100%' filter='url(%23n)'/>
+  `);
+}
+function tileGlacier(after = false) {
+  return wrapSvg(`
+    <defs>
+      <radialGradient id='g' cx='50%' cy='50%' r='80%'>
+        <stop offset='0%' stop-color='${after?'#6a8a9a':'#dde6ec'}'/><stop offset='100%' stop-color='${after?'#2a3a4a':'#94a3b8'}'/>
+      </radialGradient>
+      <filter id='b'><feGaussianBlur stdDeviation='3'/></filter>
+      <filter id='n'><feTurbulence baseFrequency='1.1' numOctaves='2'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.16 0'/><feComposite in2='SourceGraphic' operator='in'/></filter>
+    </defs>
+    <rect width='100%' height='100%' fill='url(%23g)'/>
+    ${Array.from({length:14},() => `<ellipse cx='${rand(5,95)}%' cy='${rand(5,95)}%' rx='${rand(10,28)}%' ry='${rand(6,16)}%' fill='${after?'#88a8bc':'#f1f5f9'}' opacity='${rand(.55,.85)}' filter='url(%23b)'/>`).join('')}
+    ${after ? Array.from({length:8},() => `<ellipse cx='${rand(20,80)}%' cy='${rand(20,80)}%' rx='${rand(8,18)}%' ry='${rand(5,12)}%' fill='#1c4a6e' opacity='0.55' filter='url(%23b)'/>`).join('') : ''}
+    <rect width='100%' height='100%' filter='url(%23n)'/>
+  `);
+}
+function rand(a,b){ return a + Math.random()*(b-a); }
+function wrapSvg(inner){ return 'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'>${inner}</svg>`); }
+
+/* ===== Scenes ===== */
+const SCENES = [
+  {
+    id:'amazon', label:'Amazon Basin · Brazil', type:'deforestation',
+    headline:'DEFORESTATION', summary:'New clearing detected in primary forest, ~37% canopy loss.',
+    sensor:'Sentinel-2 L2A', res:'10 m / pixel', before:'2025-04-12', after:'2026-04-15',
+    bbox:'-2.84, -54.21 / -2.61, -53.98',
+    affected:'128.4 km²', impact:'CO₂ emissions', impactValue:'~ 462 kt',
+    impactHint:'≈ 92,000 cars / year', conf:.961, sev:'fire',
+    lulc:[['Forest',.42],['Cleared land',.34],['Bare soil',.16],['Water',.05],['Other',.03]],
+    boxes:[[12,24,28,30],[58,40,22,26]],
+    before_img: tileForest(false), after_img: tileForest(true),
+  },
+  {
+    id:'australia', label:'NSW Bushfire Zone · Australia', type:'wildfire',
+    headline:'ACTIVE WILDFIRE', summary:'Multiple thermal anomalies; smoke plume drifting NE.',
+    sensor:'MODIS Terra · VIIRS', res:'375 m thermal', before:'2026-01-12', after:'2026-01-19',
+    bbox:'-33.81, 150.12 / -33.42, 150.58',
+    affected:'342 km²', impact:'Estimated structures', impactValue:'~ 248',
+    impactHint:'within 3 km of front', conf:.918, sev:'fire',
+    lulc:[['Burned area',.39],['Forest',.34],['Smoke-covered',.18],['Grassland',.06],['Other',.03]],
+    boxes:[[28,30,28,28],[18,58,18,18]],
+    before_img: tileFire(false), after_img: tileFire(true),
+  },
+  {
+    id:'mekong', label:'Mekong Delta · Vietnam', type:'flood',
+    headline:'FLOOD INUNDATION', summary:'Sudden water expansion across rice paddies after heavy rainfall.',
+    sensor:'Sentinel-1 SAR (VV)', res:'20 m / pixel', before:'2026-09-08', after:'2026-09-15',
+    bbox:'9.81, 105.60 / 10.12, 106.05',
+    affected:'1,284 km²', impact:'Rice farmland affected', impactValue:'~ 920 km²',
+    impactHint:'4 districts impacted', conf:.892, sev:'warn',
+    lulc:[['Water (new)',.46],['Rice paddy',.32],['Built-up',.10],['Vegetation',.08],['Other',.04]],
+    boxes:[[10,18,40,30],[50,55,32,28]],
+    before_img: tileFlood(false), after_img: tileFlood(true),
+  },
+  {
+    id:'shenzhen', label:'Shenzhen Outskirts · China', type:'urban',
+    headline:'URBAN EXPANSION', summary:'Rapid built-up growth replacing agriculture and woodland.',
+    sensor:'Landsat-9 OLI', res:'30 m / pixel', before:'2024-03-18', after:'2026-03-22',
+    bbox:'22.71, 113.84 / 22.92, 114.11',
+    affected:'58.2 km²', impact:'Population added', impactValue:'~ 218k',
+    impactHint:'estimated', conf:.944, sev:'warn',
+    lulc:[['Built-up',.62],['Cropland',.18],['Forest',.12],['Water',.05],['Other',.03]],
+    boxes:[[15,22,32,30],[55,55,28,22]],
+    before_img: tileUrban(false), after_img: tileUrban(true),
+  },
+  {
+    id:'greenland', label:'Greenland Ice Sheet', type:'melt',
+    headline:'GLACIER RETREAT', summary:'Tongue retreated by 1.4 km · meltwater pools expanded.',
+    sensor:'Sentinel-2 + ICESat-2', res:'10 m / pixel', before:'2024-07-01', after:'2026-07-01',
+    bbox:'69.18, -49.62 / 69.41, -49.21',
+    affected:'14.6 km²', impact:'Sea-level contribution', impactValue:'+0.04 mm/yr',
+    impactHint:'glacier-attributed', conf:.886, sev:'warn',
+    lulc:[['Ice / snow',.58],['Meltwater',.18],['Bare rock',.16],['Sediment',.06],['Other',.02]],
+    boxes:[[20,40,30,30]],
+    before_img: tileGlacier(false), after_img: tileGlacier(true),
+  },
+];
+
+/* ===== State ===== */
+const state = { current:null };
+
+/* ===== Tabs ===== */
+document.querySelectorAll('[data-tab]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tab = btn.dataset.tab;
+    document.querySelectorAll('[data-tab]').forEach(b => b.setAttribute('data-active', b.dataset.tab === tab ? 'true' : 'false'));
+    ['explorer','alerts','trends','reports'].forEach(t => document.getElementById('tab-'+t).classList.toggle('hidden', t !== tab));
+    if (tab === 'alerts') renderAlerts();
+    if (tab === 'trends') initTrends();
+    if (tab === 'reports') renderReports();
+  });
+});
+
+/* ===== Simple upload flow ===== */
+document.getElementById('satUploadBtn').addEventListener('click', () => document.getElementById('satUploadInput').click());
+document.getElementById('satUploadInput').addEventListener('change', e => {
+  const file = e.target.files?.[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+    document.getElementById('satUploadMeta').innerHTML = `<span class="text-ink-700 font-medium">${file.name}</span> · ${sizeMB} MB · <span class="text-ok-500 font-semibold">Uploaded</span>`;
+    const base = SCENES[0];
+    loadScene({
+      ...base,
+      id: 'upload-' + Date.now(),
+      label: 'Uploaded Area',
+      summary: 'Detected change from uploaded scene.',
+      before_img: reader.result,
+      after_img: reader.result,
+      conf: 0.91,
+    });
+  };
+  reader.readAsDataURL(file);
+});
+
+/* ===== Load scene ===== */
+function loadScene(s) {
+  state.current = s;
+  document.getElementById('satEmpty').style.display = 'none';
+  applyImages(s);
+
+  // metadata
+  document.getElementById('sceneTitle').textContent = s.label;
+  const typeName = s.type === 'deforestation' ? 'Deforestation' : s.type === 'wildfire' ? 'Wildfire' : s.type === 'flood' ? 'Flood' : s.type === 'urban' ? 'Urban growth' : 'Glacier melt';
+  const typeChip = document.getElementById('sceneTypeChip');
+  typeChip.className = 'chip ' + (s.sev==='fire'?'chip-fire':s.sev==='warn'?'chip-warn':'chip-info');
+  typeChip.textContent = typeName;
+  document.getElementById('m-sensor').textContent = s.sensor;
+  document.getElementById('m-res').textContent = s.res;
+  document.getElementById('m-before').textContent = s.before;
+  document.getElementById('m-after').textContent = s.after;
+
+  // status
+  const status = document.getElementById('statusChip');
+  status.className = 'chip ' + (s.sev==='fire'?'chip-danger':s.sev==='warn'?'chip-warn':'chip-info');
+  status.innerHTML = `<span class="dot ${s.sev==='fire'?'dot-err':s.sev==='warn'?'dot-warn':'dot-ok'}"></span>${typeName} detected`;
+
+  // Headline
+  const h = document.getElementById('changeHeadline');
+  h.textContent = s.headline;
+  h.classList.remove('text-brand-500','text-warn-500','text-accent-500','text-fire-500');
+  h.classList.add(s.sev==='fire'?'text-accent-500':s.sev==='warn'?'text-warn-500':'text-brand-500');
+  const cc = document.getElementById('confidenceChip');
+  cc.className = 'chip ' + (s.sev==='fire'?'chip-fire':s.sev==='warn'?'chip-warn':'chip-info');
+  cc.textContent = 'Confidence ' + (s.conf*100).toFixed(1) + '%';
+  document.getElementById('changeSummary').textContent = s.summary;
+
+  // KPIs
+  document.getElementById('affectedArea').textContent = s.affected;
+  document.getElementById('impactLabel').textContent = s.impact;
+  document.getElementById('impactValue').textContent = s.impactValue;
+  document.getElementById('impactHint').textContent = s.impactHint;
+
+  ['satVerifyBtn','satFlagBtn','exportBtn'].forEach(id => document.getElementById(id).disabled = false);
+  toast(`${typeName} detected · ${s.affected} · ${(s.conf*100).toFixed(1)}%`);
+}
+
+function applyImages(s) {
+  document.getElementById('satMain').src = s.after_img;
+}
+
+document.getElementById('satVerifyBtn').addEventListener('click', () => toast('Prediction verified — feedback recorded.'));
+document.getElementById('satFlagBtn').addEventListener('click', () => {
+  const note = document.getElementById('satFlagNote').value.trim();
+  toast('Flagged for analyst review.' + (note ? ' Note saved.' : ''));
+});
+document.getElementById('exportBtn').addEventListener('click', () => toast('GeoJSON export prepared (3 features).'));
+
+/* ===== Toast ===== */
+let toastTimer;
+function toast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.setAttribute('data-show','true');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.setAttribute('data-show','false'), 2700);
+}
+
+/* ===== Alerts table ===== */
+const ALERTS = [
+  { id:'AL-204', type:'wildfire', region:'NSW · Australia', date:'2026-01-19 06:12', area:342, conf:.918, sev:'Critical', status:'open' },
+  { id:'AL-203', type:'flood', region:'Mekong Delta · VN', date:'2026-09-15 14:08', area:1284, conf:.892, sev:'High', status:'monitoring' },
+  { id:'AL-202', type:'deforestation', region:'Amazon · BR', date:'2026-04-15 09:42', area:128, conf:.961, sev:'High', status:'reported' },
+  { id:'AL-201', type:'urban', region:'Shenzhen · CN', date:'2026-03-22 11:31', area:58, conf:.944, sev:'Medium', status:'reported' },
+  { id:'AL-200', type:'glacier', region:'Greenland', date:'2026-07-01 08:00', area:14, conf:.886, sev:'Medium', status:'archived' },
+  { id:'AL-199', type:'wildfire', region:'California · US', date:'2026-08-04 18:52', area:208, conf:.937, sev:'Critical', status:'open' },
+  { id:'AL-198', type:'flood', region:'Pakistan · Sindh', date:'2026-08-22 11:14', area:2410, conf:.901, sev:'Critical', status:'open' },
+  { id:'AL-197', type:'deforestation', region:'Borneo · ID', date:'2026-05-30 09:08', area:88, conf:.952, sev:'High', status:'monitoring' },
+];
+function renderAlerts() {
+  const body = document.getElementById('alertBody');
+  if (body.children.length) return;
+  body.innerHTML = ALERTS.map(a => {
+    const sevChip = a.sev === 'Critical' ? 'chip-danger' : a.sev === 'High' ? 'chip-fire' : a.sev === 'Medium' ? 'chip-warn' : 'chip-ok';
+    const typeIcon = a.type==='wildfire'?'🔥':a.type==='flood'?'🌊':a.type==='deforestation'?'🌳':a.type==='urban'?'🏙️':'❄️';
+    const typeName = a.type==='wildfire'?'Wildfire':a.type==='flood'?'Flood':a.type==='deforestation'?'Deforestation':a.type==='urban'?'Urban growth':'Glacier melt';
+    const statusChip = a.status==='open'?'<span class="chip chip-danger"><span class="dot dot-err"></span>Open</span>'
+      :a.status==='monitoring'?'<span class="chip chip-warn"><span class="dot dot-warn"></span>Monitoring</span>'
+      :a.status==='reported'?'<span class="chip chip-info"><span class="dot dot-ok"></span>Reported</span>'
+      :'<span class="chip"><span class="dot"></span>Archived</span>';
+    return `<tr class="row-hover">
+      <td class="px-4 py-2.5 font-mono text-xs text-ink-700">${a.id}</td>
+      <td class="px-4 py-2.5 text-ink-800"><span class="mr-1">${typeIcon}</span>${typeName}</td>
+      <td class="px-4 py-2.5 text-ink-700">${a.region}</td>
+      <td class="px-4 py-2.5 text-ink-700 text-xs font-mono">${a.date}</td>
+      <td class="px-4 py-2.5 text-right tabular-nums text-ink-900 font-semibold">${a.area.toLocaleString()}</td>
+      <td class="px-4 py-2.5">
+        <div class="flex items-center gap-2">
+          <div class="progress-bar w-16"><span style="width:${a.conf*100}%"></span></div>
+          <span class="text-xs font-mono text-ink-700">${(a.conf*100).toFixed(0)}%</span>
+        </div>
+      </td>
+      <td class="px-4 py-2.5"><span class="chip ${sevChip}">${a.sev}</span></td>
+      <td class="px-4 py-2.5">${statusChip}</td>
+    </tr>`;
+  }).join('');
+}
+
+/* ===== Trends ===== */
+let trendsReady = false;
+function initTrends() {
+  if (trendsReady) return; trendsReady = true;
+  Chart.defaults.color='#64748b'; Chart.defaults.font.family='Inter';
+  const grid='#eef0f3';
+  const yrs = ['2022','2023','2024','2025','2026'];
+
+  new Chart(document.getElementById('deforChart'), {
+    type:'bar', data:{ labels:yrs, datasets:[
+      { label:'Forest gain (km²)', data:[420,380,460,510,470], backgroundColor:'rgba(15,118,110,.7)', borderRadius:6 },
+      { label:'Forest loss (km²)', data:[890,1020,1180,1340,1452], backgroundColor:'rgba(234,88,12,.7)', borderRadius:6 },
+    ]},
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:10,font:{size:11}}}}, scales:{x:{grid:{color:grid}}, y:{grid:{color:grid}}}}
+  });
+
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  new Chart(document.getElementById('fireChart'), {
+    type:'bar', data:{ labels:months, datasets:[{ data:[5,8,12,28,42,68,92,118,82,42,18,8], backgroundColor:'rgba(234,88,12,.75)', borderRadius:6 }]},
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{x:{grid:{color:grid}}, y:{grid:{color:grid}}}}
+  });
+
+  new Chart(document.getElementById('agreeChart'), {
+    type:'radar',
+    data:{ labels:['Deforestation','Wildfire','Flood','Urban','Glacier','Crop'], datasets:[
+      { label:'AI score', data:[92,89,86,94,82,88], borderColor:'#0f766e', backgroundColor:'rgba(15,118,110,.2)' },
+      { label:'Ground truth', data:[88,90,84,91,80,85], borderColor:'#ea580c', backgroundColor:'rgba(234,88,12,.2)' },
+    ]},
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:10,font:{size:11}}}}, scales:{r:{angleLines:{color:grid},grid:{color:grid},suggestedMin:60,suggestedMax:100,ticks:{display:false}}}}
+  });
+}
+
+/* ===== Reports ===== */
+const REPORTS = [
+  { title:'Q1 2026 Deforestation Brief — SE Asia', tag:'Deforestation', date:'Apr 5, 2026', size:'2.4 MB', author:'Dr. M. Vu' },
+  { title:'Mekong Flood Response Memo', tag:'Flood', date:'Sep 16, 2025', size:'1.1 MB', author:'GIS Team' },
+  { title:'Annual Wildfire Risk Map · APAC', tag:'Wildfire', date:'Jan 22, 2026', size:'5.8 MB', author:'Dr. M. Vu' },
+  { title:'Urban Sprawl Trends · GBA Region', tag:'Urban', date:'Mar 30, 2026', size:'3.2 MB', author:'Planning Bureau' },
+  { title:'Cryosphere Update · Greenland 2026', tag:'Glacier', date:'Jul 12, 2026', size:'4.1 MB', author:'Climate Lab' },
+  { title:'Carbon Stock Inventory · Borneo', tag:'Forestry', date:'Jun 02, 2026', size:'6.7 MB', author:'Forest Inst.' },
+];
+function renderReports() {
+  const g = document.getElementById('reportGrid');
+  if (g.children.length) return;
+  g.innerHTML = REPORTS.map(r => `
+    <div class="card rounded-2xl p-4 hover:shadow-lg transition cursor-pointer">
+      <div class="flex items-start justify-between gap-2">
+        <div class="w-10 h-10 rounded-lg bg-brand-50 text-brand-500 flex items-center justify-center">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+        </div>
+        <span class="chip chip-info">${r.tag}</span>
+      </div>
+      <div class="mt-2 text-sm font-semibold text-ink-900 leading-snug">${r.title}</div>
+      <div class="mt-2 flex items-center justify-between text-[11.5px] text-ink-500">
+        <span>${r.author}</span>
+        <span>${r.date} · ${r.size}</span>
+      </div>
+      <div class="mt-3 flex gap-2">
+        <button class="btn btn-primary !py-1.5 !px-2.5 text-xs flex-1">Open</button>
+        <button class="btn btn-ghost !py-1.5 !px-2.5 text-xs">PDF</button>
+      </div>
+    </div>`).join('');
+}
+
+/* ===== Init ===== */
+toast('TerraView ready — upload an image to start prediction.');
+</script>
+</body>
+</html>

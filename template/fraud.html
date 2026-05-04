@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FinGuard · Real-Time Fraud Detection</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: { sans:['Inter','ui-sans-serif','system-ui'], mono:['JetBrains Mono','ui-monospace'] },
+        colors: {
+          brand:  { 50:'#eef2ff', 100:'#e0e7ff', 200:'#c7d2fe', 300:'#a5b4fc', 400:'#818cf8', 500:'#1e3a8a', 600:'#1e40af', 700:'#1d4ed8' },
+          accent: { 500:'#dc2626', 600:'#b91c1c' },
+          warn:   { 400:'#fbbf24', 500:'#f59e0b' },
+          ok:     { 500:'#16a34a' },
+          ink:    { 50:'#f8fafc',100:'#f1f5f9',200:'#e2e8f0',300:'#cbd5e1',400:'#94a3b8',500:'#64748b',600:'#475569',700:'#334155',800:'#1e293b',900:'#0f172a' },
+        },
+      },
+    },
+  };
+</script>
+<style>
+  :root { color-scheme: light; }
+  body {
+    background:
+      radial-gradient(900px 400px at 5% -10%, rgba(30,58,138,.07), transparent 60%),
+      radial-gradient(700px 360px at 105% 0%, rgba(220,38,38,.06), transparent 60%),
+      #f7f9fc;
+    font-family: 'Inter', system-ui, sans-serif;
+    color: #1f2937;
+  }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+
+  .card { background:#fff; border:1px solid #eef0f3; box-shadow:0 1px 2px rgba(16,24,40,.04), 0 8px 24px -12px rgba(16,24,40,.06); }
+  .soft-border { border:1px solid #eef0f3; }
+
+  .pill-tab { transition:all .18s ease; color:#64748b; }
+  .pill-tab[data-active="true"] { background:#fff; color:#1e3a8a; box-shadow:0 1px 2px rgba(16,24,40,.06), 0 0 0 1px #c7d2fe; }
+  .pill-tab:not([data-active="true"]):hover { color:#0f172a; }
+
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; padding:.55rem .9rem; border-radius:.6rem; font-size:.875rem; font-weight:600; border:1px solid transparent; transition:all .15s ease; white-space:nowrap; }
+  .btn:disabled { opacity:.55; cursor:not-allowed; }
+  .btn:not(:disabled):hover { transform: translateY(-1px); }
+  .btn-primary { background:#1e3a8a; color:#fff; box-shadow:0 1px 2px rgba(30,58,138,.25), 0 8px 20px -8px rgba(30,58,138,.35); }
+  .btn-primary:not(:disabled):hover { background:#1e40af; }
+  .btn-danger  { background:#dc2626; color:#fff; box-shadow:0 1px 2px rgba(220,38,38,.25), 0 8px 20px -8px rgba(220,38,38,.35); }
+  .btn-danger:not(:disabled):hover { background:#b91c1c; }
+  .btn-success { background:#16a34a; color:#fff; box-shadow:0 1px 2px rgba(22,163,74,.25), 0 8px 20px -8px rgba(22,163,74,.35); }
+  .btn-success:not(:disabled):hover { background:#15803d; }
+  .btn-ghost   { background:#fff; color:#334155; border-color:#e5e7eb; }
+  .btn-ghost:not(:disabled):hover { background:#f8fafc; border-color:#d1d5db; }
+  .btn-warn    { background:#fffbeb; color:#a16207; border-color:#fde68a; }
+  .btn-warn:not(:disabled):hover { background:#fef3c7; }
+
+  .chip { display:inline-flex; align-items:center; gap:.35rem; padding:.22rem .6rem; border-radius:999px; font-size:.72rem; font-weight:600; border:1px solid #e5e7eb; color:#475569; background:#f8fafc; }
+  .chip-ok    { color:#15803d; border-color:#bbf7d0; background:#f0fdf4; }
+  .chip-warn  { color:#a16207; border-color:#fde68a; background:#fffbeb; }
+  .chip-danger{ color:#b91c1c; border-color:#fecaca; background:#fef2f2; }
+  .chip-info  { color:#1e40af; border-color:#c7d2fe; background:#eef2ff; }
+
+  .dot { width:8px; height:8px; border-radius:999px; display:inline-block; }
+  .dot-ok   { background:#16a34a; box-shadow:0 0 0 3px rgba(22,163,74,.18); }
+  .dot-warn { background:#f59e0b; box-shadow:0 0 0 3px rgba(245,158,11,.18); }
+  .dot-err  { background:#dc2626; box-shadow:0 0 0 3px rgba(220,38,38,.18); }
+  .dot-info { background:#1e3a8a; box-shadow:0 0 0 3px rgba(30,58,138,.18); }
+
+  /* Live pulse */
+  @keyframes pulseLive { 0%,100% { box-shadow:0 0 0 0 rgba(220,38,38,.5); } 50% { box-shadow:0 0 0 6px rgba(220,38,38,0); } }
+  .live-dot { width:10px; height:10px; border-radius:999px; background:#dc2626; animation: pulseLive 1.4s ease-in-out infinite; }
+
+  /* Risk gauge */
+  .gauge-track { stroke:#eef0f3; }
+  .gauge-arc   { transition: stroke-dashoffset .5s cubic-bezier(.2,.8,.2,1), stroke .5s; }
+
+  /* Transaction row */
+  .tx-row { transition: background .25s, transform .25s; }
+  .tx-row.new { background: rgba(30,58,138,.05); }
+  .tx-row.danger { background: rgba(220,38,38,.04); }
+  .tx-row:hover { background:#f8fafc; }
+
+  @keyframes slideIn { from { opacity:0; transform: translateY(-8px); } to { opacity:1; transform: translateY(0); } }
+  .tx-row.anim { animation: slideIn .35s ease-out; }
+
+  .progress-bar { position:relative; height:6px; background:#f1f5f9; border-radius:999px; overflow:hidden; }
+  .progress-bar > span { position:absolute; left:0; top:0; bottom:0; background:linear-gradient(90deg,#1e3a8a,#818cf8); border-radius:999px; transition:width .6s; }
+  .progress-bar.warn > span { background:linear-gradient(90deg,#f59e0b,#fbbf24); }
+  .progress-bar.danger > span { background:linear-gradient(90deg,#dc2626,#f87171); }
+
+  /* World map (simple SVG dots) */
+  .map-wrap { position:relative; aspect-ratio:2/1; background:#f8fafc; border-radius:10px; overflow:hidden; }
+  @keyframes ripple { 0% { transform: scale(.4); opacity:1; } 100% { transform: scale(2.4); opacity:0; } }
+  .map-dot { position:absolute; width:10px; height:10px; border-radius:999px; transform:translate(-50%,-50%); }
+  .map-dot::after { content:''; position:absolute; inset:0; border-radius:999px; background: inherit; animation: ripple 1.6s ease-out infinite; }
+
+  .toast { position:fixed; right:16px; bottom:16px; z-index:60; padding:10px 14px; border-radius:12px; background:#fff; color:#1f2937; border:1px solid #e5e7eb; box-shadow:0 16px 40px -12px rgba(16,24,40,.18); display:flex; align-items:center; gap:10px; transform:translateY(16px); opacity:0; transition:all .25s ease; }
+  .toast[data-show="true"] { transform:translateY(0); opacity:1; }
+
+  @keyframes logoPulse { 0%,100%{ box-shadow:0 0 0 0 rgba(30,58,138,0); } 50%{ box-shadow:0 0 0 6px rgba(30,58,138,.10); } }
+  .logo-pulse { animation: logoPulse 3s ease-in-out infinite; }
+
+  input:focus-visible, select:focus-visible { box-shadow:0 0 0 3px rgba(30,58,138,.15); border-color:#1e3a8a !important; outline:none; }
+
+  .row-hover:hover { background:#f8fafc; }
+  details>summary{list-style:none;cursor:pointer;}
+  details>summary::-webkit-details-marker{display:none;}
+</style>
+</head>
+<body class="text-ink-800 antialiased">
+
+<div class="min-h-screen max-w-[1500px] mx-auto px-4 md:px-6 py-5">
+
+  <!-- HEADER -->
+  <header class="card rounded-2xl px-4 md:px-5 py-3 flex items-center justify-between gap-4">
+    <div class="flex items-center gap-3 min-w-0">
+      <div class="logo-pulse flex items-center justify-center w-10 h-10 rounded-xl bg-brand-500 text-white">
+        <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2L3 7v6c0 5 3.8 9.5 9 10 5.2-.5 9-5 9-10V7l-9-5z"/><path d="M9 12l2 2 4-4"/>
+        </svg>
+      </div>
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="font-extrabold tracking-tight text-ink-900 text-[16px]">FinGuard</div>
+        <div class="h-4 w-px bg-ink-200"></div>
+        <div class="truncate text-ink-500 text-[13px] md:text-sm">Real-Time Fraud Detection</div>
+        <span class="chip chip-danger hidden md:inline-flex"><span class="live-dot"></span>LIVE</span>
+      </div>
+    </div>
+
+    <nav class="hidden md:flex items-center gap-1 rounded-full bg-ink-100 p-1">
+      <button data-tab="monitor" class="pill-tab rounded-full px-3.5 py-1.5 text-sm flex items-center gap-2" data-active="true">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        Live Monitor
+      </button>
+      <button data-tab="rules" class="pill-tab rounded-full px-3.5 py-1.5 text-sm flex items-center gap-2">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        Rules Engine
+      </button>
+      <button data-tab="cases" class="pill-tab rounded-full px-3.5 py-1.5 text-sm flex items-center gap-2">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H4a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+        Investigations
+      </button>
+      <button data-tab="analytics" class="pill-tab rounded-full px-3.5 py-1.5 text-sm flex items-center gap-2">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-6 4 3 5-8"/></svg>
+        Analytics
+      </button>
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <!-- <button id="pauseBtn" class="btn btn-ghost" title="Pause stream">
+        <svg id="pauseIcon" class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+        <span id="pauseLabel" class="hidden md:inline">Pause stream</span>
+      </button> -->
+      <button class="btn btn-ghost relative" title="Alerts">
+        <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10 21a2 2 0 0 0 4 0"/></svg>
+        <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-accent-500 text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-white" id="alertBadge">3</span>
+      </button>
+      <button class="flex items-center gap-2 pl-1 pr-2 py-1 rounded-full soft-border bg-white hover:bg-ink-50 transition">
+        <img src="https://i.pravatar.cc/64?img=33" alt="Analyst" class="w-7 h-7 rounded-full ring-2 ring-brand-100" />
+        <div class="hidden md:block text-left leading-tight">
+          <div class="text-[10px] uppercase tracking-wider text-ink-500">Risk Analyst</div>
+          <div class="text-xs font-semibold text-ink-800">L. Pham</div>
+        </div>
+      </button>
+    </div>
+  </header>
+
+  <div class="md:hidden mt-3 flex items-center gap-1 rounded-full bg-ink-100 p-1 w-fit mx-auto overflow-x-auto">
+    <button data-tab="monitor" class="pill-tab rounded-full px-3 py-1.5 text-sm" data-active="true">Monitor</button>
+    <button data-tab="rules" class="pill-tab rounded-full px-3 py-1.5 text-sm">Rules</button>
+    <button data-tab="cases" class="pill-tab rounded-full px-3 py-1.5 text-sm">Cases</button>
+    <button data-tab="analytics" class="pill-tab rounded-full px-3 py-1.5 text-sm">Analytics</button>
+  </div>
+
+  <main class="mt-5 space-y-5">
+
+    <!-- ============= LIVE MONITOR ============= -->
+    <section id="tab-monitor" class="space-y-5">
+      <div id="fraudUploadFlow" class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <div class="card rounded-2xl p-5">
+          <div class="text-sm font-semibold text-ink-800 mb-2">Upload Transaction File</div>
+          <div class="text-xs text-ink-500 mb-3">Upload CSV/JSON and run instant fraud prediction.</div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button id="fraudUploadBtn" class="btn btn-primary">Upload File</button>
+            <!-- <button id="fraudDemoBtn" class="btn btn-ghost">Use demo transaction</button> -->
+            <input id="fraudUploadInput" type="file" accept=".csv,.json,text/csv,application/json" class="hidden" />
+          </div>
+          <div id="fraudUploadMeta" class="mt-2 text-xs text-ink-500">Supported formats: CSV, JSON</div>
+        </div>
+        <div class="card rounded-2xl p-5">
+          <div class="text-sm font-semibold text-ink-800 mb-2">Prediction</div>
+          <div id="fraudPrediction" class="text-3xl font-extrabold text-ink-900">Awaiting upload</div>
+          <div id="fraudConfidence" class="mt-2 text-sm text-ink-600">Confidence: —</div>
+          <div id="fraudReason" class="mt-3 text-[13px] text-ink-600 leading-relaxed">Upload a file to see fraud risk prediction.</div>
+        </div>
+      </div>
+
+      <!-- KPI cards -->
+      <div class="hidden grid grid-cols-2 md:grid-cols-5 gap-3">
+        <div class="card rounded-2xl p-3.5">
+          <div class="flex items-center justify-between text-xs text-ink-500"><span>Tx / sec</span><span class="dot dot-info"></span></div>
+          <div class="mt-1 text-2xl font-extrabold text-ink-900 tabular-nums" id="kpiTps">42</div>
+          <div class="text-[11px] text-ok-500">▲ steady</div>
+        </div>
+        <div class="card rounded-2xl p-3.5">
+          <div class="flex items-center justify-between text-xs text-ink-500"><span>Today's volume</span></div>
+          <div class="mt-1 text-2xl font-extrabold text-ink-900 tabular-nums" id="kpiVolume">$4.82M</div>
+          <div class="text-[11px] text-ink-500">142,310 txs</div>
+        </div>
+        <div class="card rounded-2xl p-3.5">
+          <div class="flex items-center justify-between text-xs text-ink-500"><span>Blocked today</span><span class="dot dot-err"></span></div>
+          <div class="mt-1 text-2xl font-extrabold text-accent-500 tabular-nums" id="kpiBlocked">87</div>
+          <div class="text-[11px] text-accent-500">$128.4K saved</div>
+        </div>
+        <div class="card rounded-2xl p-3.5">
+          <div class="flex items-center justify-between text-xs text-ink-500"><span>For review</span><span class="dot dot-warn"></span></div>
+          <div class="mt-1 text-2xl font-extrabold text-warn-500 tabular-nums" id="kpiReview">14</div>
+          <div class="text-[11px] text-ink-500">avg wait 1m 22s</div>
+        </div>
+        <div class="card rounded-2xl p-3.5 col-span-2 md:col-span-1">
+          <div class="flex items-center justify-between text-xs text-ink-500"><span>Model precision</span></div>
+          <div class="mt-1 text-2xl font-extrabold text-ink-900 tabular-nums">96.2%</div>
+          <div class="text-[11px] text-ok-500">FP rate 0.41%</div>
+        </div>
+      </div>
+
+      <!-- Main grid: Stream + Detail panel -->
+      <div class="grid grid-cols-1 xl:grid-cols-3 gap-5">
+
+        <!-- Live Stream -->
+        <div class="card rounded-2xl overflow-hidden xl:col-span-2 flex flex-col">
+          <div class="flex items-center justify-between px-4 py-3 border-b border-ink-100">
+            <div class="flex items-center gap-2">
+              <span class="live-dot"></span>
+              <h3 class="text-sm font-semibold text-ink-800">Transaction Stream</h3>
+              <span class="chip chip-info" id="streamCount">0 txs</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <select id="riskFilter" class="text-xs px-2 py-1 rounded-md soft-border bg-white text-ink-700">
+                <option value="all">All risk levels</option>
+                <option value="high">High risk only (≥70)</option>
+                <option value="medium">Medium+ (≥40)</option>
+              </select>
+              <button id="clearStream" class="btn btn-ghost !py-1 !px-2 text-xs">Clear</button>
+            </div>
+          </div>
+          <div class="overflow-x-auto flex-1">
+            <table class="w-full text-sm">
+              <thead class="text-[11px] uppercase text-ink-400 tracking-wider bg-ink-50 sticky top-0">
+                <tr class="border-b border-ink-100">
+                  <th class="text-left px-3 py-2 font-semibold">Time</th>
+                  <th class="text-left px-3 py-2 font-semibold">Tx ID</th>
+                  <th class="text-left px-3 py-2 font-semibold">Customer</th>
+                  <th class="text-left px-3 py-2 font-semibold">Merchant</th>
+                  <th class="text-left px-3 py-2 font-semibold">Country</th>
+                  <th class="text-right px-3 py-2 font-semibold">Amount</th>
+                  <th class="text-left px-3 py-2 font-semibold">Risk</th>
+                  <th class="text-left px-3 py-2 font-semibold">Decision</th>
+                </tr>
+              </thead>
+              <tbody id="txBody" class="divide-y divide-ink-100"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Detail / Risk panel -->
+        <div class="card rounded-2xl flex flex-col">
+          <div class="flex items-center justify-between px-4 py-3 border-b border-ink-100">
+            <div class="flex items-center gap-2">
+              <div class="w-7 h-7 rounded-lg bg-brand-50 text-brand-500 flex items-center justify-center">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+              </div>
+              <h3 class="text-sm font-semibold text-ink-800">Risk</h3>
+            </div>
+            <div id="detailStatus" class="chip chip-info">Select tx</div>
+          </div>
+
+          <div class="p-4 space-y-4 flex-1">
+            <!-- Tx header -->
+            <div>
+              <div class="text-[11px] tracking-[.14em] font-semibold text-ink-400 uppercase">Selected Tx</div>
+              <div class="mt-1 flex items-baseline gap-2 flex-wrap">
+                <div id="detailAmount" class="text-3xl font-extrabold text-ink-900 tabular-nums">—</div>
+                <div id="detailMerchant" class="text-sm text-ink-500">—</div>
+              </div>
+              <div class="mt-1 text-xs text-ink-500"><span id="detailId" class="font-mono">—</span> · <span id="detailTime">—</span></div>
+            </div>
+
+            <!-- Risk gauge -->
+            <div class="flex items-center justify-center">
+              <div class="relative w-[200px] h-[120px]">
+                <svg viewBox="0 0 200 120" class="w-full h-full">
+                  <defs>
+                    <linearGradient id="gG" x1="0" x2="1">
+                      <stop offset="0%" stop-color="#16a34a"/>
+                      <stop offset="50%" stop-color="#f59e0b"/>
+                      <stop offset="100%" stop-color="#dc2626"/>
+                    </linearGradient>
+                  </defs>
+                  <path class="gauge-track" d="M15,105 A85,85 0 0 1 185,105" fill="none" stroke-width="14" stroke-linecap="round"/>
+                  <path id="riskArc" class="gauge-arc" d="M15,105 A85,85 0 0 1 185,105" fill="none" stroke="url(#gG)" stroke-width="14" stroke-linecap="round" stroke-dasharray="267" stroke-dashoffset="267"/>
+                  <g id="riskNeedle" transform="translate(100 105) rotate(-90)">
+                    <line x1="0" y1="0" x2="0" y2="-75" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round"/>
+                    <circle cx="0" cy="0" r="6" fill="#fff" stroke="#1e3a8a" stroke-width="2"/>
+                  </g>
+                  <text x="20" y="120" fill="#94a3b8" font-size="10">Safe</text>
+                  <text x="155" y="120" fill="#94a3b8" font-size="10">Critical</text>
+                </svg>
+                <div id="riskScore" class="absolute left-1/2 bottom-1 -translate-x-1/2 text-2xl font-extrabold tabular-nums text-ink-400">—</div>
+              </div>
+            </div>
+
+            <!-- Risk factors -->
+            <div class="hidden">
+              <div class="text-[11px] tracking-[.14em] font-semibold text-ink-400 uppercase mb-2">Risk Factors</div>
+              <div id="factorList" class="space-y-2">
+                <div class="text-xs text-ink-400 italic">Select tx to view factors.</div>
+              </div>
+            </div>
+
+            <!-- Customer profile mini -->
+            <div class="hidden rounded-xl soft-border bg-ink-50 p-3 text-xs space-y-1.5">
+              <div class="flex justify-between"><span class="text-ink-500">Customer</span><span class="text-ink-800 font-semibold" id="custName">—</span></div>
+              <div class="flex justify-between"><span class="text-ink-500">Account age</span><span class="text-ink-700" id="custAge">—</span></div>
+              <div class="flex justify-between"><span class="text-ink-500">Avg monthly spend</span><span class="text-ink-700 tabular-nums" id="custSpend">—</span></div>
+              <div class="flex justify-between"><span class="text-ink-500">Tx in last hour</span><span class="text-ink-700 tabular-nums" id="custVel">—</span></div>
+            </div>
+
+            <!-- Actions -->
+            <div class="grid grid-cols-3 gap-2">
+              <button id="approveBtn" class="btn btn-success" disabled>
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                Approve
+              </button>
+              <button id="reviewBtn" class="btn btn-warn" disabled>
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.86L1.82 18a2 2 0 0 0 1.7 3h16.9a2 2 0 0 0 1.7-3L13.7 3.86a2 2 0 0 0-3.4 0z"/></svg>
+                Review
+              </button>
+              <button id="blockBtn" class="btn btn-danger" disabled>
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M4.93 4.93l14.14 14.14"/></svg>
+                Block
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- World map + flow chart -->
+      <div class="hidden grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div class="card rounded-2xl p-4 lg:col-span-2">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-sm font-semibold text-ink-800">Live Geographic Flow</h3>
+            <div class="flex items-center gap-2 text-[11px]">
+              <span class="chip chip-ok"><span class="dot dot-ok"></span>Approved</span>
+              <span class="chip chip-warn"><span class="dot dot-warn"></span>Review</span>
+              <span class="chip chip-danger"><span class="dot dot-err"></span>Blocked</span>
+            </div>
+          </div>
+          <div id="mapWrap" class="map-wrap">
+            <!-- world map (silhouette) -->
+            <svg viewBox="0 0 1000 500" preserveAspectRatio="none" class="w-full h-full opacity-30">
+              <path fill="#1e3a8a" d="M150 200 q40 -60 100 -50 q40 8 60 30 q30 -10 50 0 q40 30 80 25 q60 -20 100 0 q50 30 60 60 q5 30 -20 50 q-30 25 -80 30 q-60 5 -100 -10 q-50 30 -100 20 q-50 -5 -90 -30 q-30 -25 -40 -60 q-10 -30 -20 -65z" />
+              <path fill="#1e3a8a" d="M620 130 q60 -20 120 -10 q40 5 70 25 q40 30 60 70 q10 40 -10 70 q-30 40 -80 50 q-60 10 -110 -10 q-50 -25 -70 -65 q-15 -40 0 -80 q10 -30 20 -50z" />
+              <path fill="#1e3a8a" d="M450 350 q30 -20 70 -10 q30 8 50 25 q15 20 5 40 q-15 25 -50 30 q-40 5 -65 -10 q-20 -15 -25 -35 q-5 -20 15 -40z" />
+              <path fill="#1e3a8a" d="M770 320 q40 -10 70 5 q30 15 30 40 q0 25 -30 40 q-40 15 -70 0 q-25 -15 -25 -40 q0 -25 25 -45z" />
+            </svg>
+            <div id="mapDots" class="absolute inset-0"></div>
+          </div>
+        </div>
+
+        <div class="card rounded-2xl p-4">
+          <h3 class="text-sm font-semibold text-ink-800 mb-2">Risk Score Distribution (last 1k txs)</h3>
+          <div class="relative h-[210px]"><canvas id="riskHist"></canvas></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============= RULES ENGINE ============= -->
+    <section id="tab-rules" class="hidden space-y-5">
+      <div class="card rounded-2xl p-4">
+        <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+          <h3 class="text-sm font-semibold text-ink-800">Active Rules</h3>
+          <button class="btn btn-primary"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>New Rule</button>
+        </div>
+        <div id="ruleList" class="space-y-2"></div>
+      </div>
+    </section>
+
+    <!-- ============= INVESTIGATIONS ============= -->
+    <section id="tab-cases" class="hidden card rounded-2xl">
+      <div class="px-4 py-3 border-b border-ink-100 flex items-center justify-between gap-3 flex-wrap">
+        <h3 class="text-sm font-semibold text-ink-800">Open Investigations</h3>
+        <div class="flex gap-2">
+          <button class="btn btn-ghost">Filter</button>
+          <button class="btn btn-primary">Assign</button>
+        </div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="text-xs uppercase text-ink-400 tracking-wider bg-ink-50">
+            <tr class="border-b border-ink-100">
+              <th class="text-left px-4 py-2.5 font-semibold">Case</th>
+              <th class="text-left px-4 py-2.5 font-semibold">Customer</th>
+              <th class="text-left px-4 py-2.5 font-semibold">Type</th>
+              <th class="text-right px-4 py-2.5 font-semibold">Exposure</th>
+              <th class="text-left px-4 py-2.5 font-semibold">Severity</th>
+              <th class="text-left px-4 py-2.5 font-semibold">Assigned</th>
+              <th class="text-left px-4 py-2.5 font-semibold">Status</th>
+              <th class="text-left px-4 py-2.5 font-semibold">Opened</th>
+            </tr>
+          </thead>
+          <tbody id="caseBody" class="divide-y divide-ink-100"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============= ANALYTICS ============= -->
+    <section id="tab-analytics" class="hidden space-y-5">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <div class="card rounded-2xl p-4">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-sm font-semibold text-ink-800">Decisions over 24h</h3>
+            <span class="chip chip-info">Auto-refresh 30s</span>
+          </div>
+          <div class="relative h-[260px]"><canvas id="decisionChart"></canvas></div>
+        </div>
+        <div class="card rounded-2xl p-4">
+          <h3 class="text-sm font-semibold text-ink-800 mb-2">Fraud Types Breakdown</h3>
+          <div class="relative h-[260px]"><canvas id="typeChart"></canvas></div>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div class="card rounded-2xl p-4 lg:col-span-2">
+          <h3 class="text-sm font-semibold text-ink-800 mb-2">Model Performance vs Ground Truth (rolling 30d)</h3>
+          <div class="relative h-[230px]"><canvas id="perfChart"></canvas></div>
+        </div>
+        <div class="card rounded-2xl p-4">
+          <h3 class="text-sm font-semibold text-ink-800 mb-2">Top Fraud Vectors</h3>
+          <div id="vectorList" class="space-y-2 mt-1"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+</div>
+
+<div id="toast" class="toast" data-show="false">
+  <svg class="w-4 h-4 text-ok-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+  <span id="toastMsg">Ready</span>
+</div>
+
+<script>
+/* ===== Sample transaction generator ===== */
+const FIRST_NAMES = ['Linh','Minh','Anh','Khoa','Tuan','Mai','Phong','Huong','Hung','Quang','Trang','Bao','Nhat','Ha','Long','Dao','Vy','Thu','Son','Yen'];
+const LAST_NAMES  = ['Nguyen','Tran','Le','Pham','Hoang','Vu','Bui','Do','Dang','Phan','Mai','Cao'];
+const MERCHANTS = [
+  {n:'Apple Store',         cat:'electronics',  rng:[100,2400]},
+  {n:'Shopee',              cat:'marketplace',  rng:[15,300]},
+  {n:'Highlands Coffee',    cat:'food',         rng:[3,12]},
+  {n:'Vinmart',             cat:'grocery',      rng:[20,180]},
+  {n:'Grab',                cat:'transport',    rng:[2,30]},
+  {n:'CGV Cinemas',         cat:'entertainment',rng:[8,40]},
+  {n:'Jollibee',            cat:'food',         rng:[5,25]},
+  {n:'Crypto.com',          cat:'crypto',       rng:[200,12000]},
+  {n:'Binance',             cat:'crypto',       rng:[300,18000]},
+  {n:'Vietnam Airlines',    cat:'travel',       rng:[150,2500]},
+  {n:'Booking.com',         cat:'travel',       rng:[60,900]},
+  {n:'AliExpress (CN)',     cat:'marketplace',  rng:[8,400]},
+  {n:'Steam Wallet',        cat:'gaming',       rng:[10,200]},
+  {n:'Unknown POS · Lagos', cat:'cash',         rng:[100,5000]},
+  {n:'ATM Withdrawal · Bucharest', cat:'cash',  rng:[200,2000]},
+  {n:'OnlyFans',            cat:'subscription', rng:[5,50]},
+  {n:'PayPal · USD',        cat:'p2p',          rng:[10,3000]},
+  {n:'Wise Transfer',       cat:'p2p',          rng:[50,8000]},
+];
+const COUNTRIES = [
+  {c:'VN', x:78, y:55, name:'Vietnam'},
+  {c:'US', x:22, y:38, name:'United States'},
+  {c:'CN', x:75, y:42, name:'China'},
+  {c:'JP', x:84, y:42, name:'Japan'},
+  {c:'SG', x:76, y:62, name:'Singapore'},
+  {c:'GB', x:48, y:30, name:'United Kingdom'},
+  {c:'DE', x:51, y:33, name:'Germany'},
+  {c:'AE', x:60, y:50, name:'UAE'},
+  {c:'NG', x:50, y:62, name:'Nigeria'},
+  {c:'RU', x:60, y:25, name:'Russia'},
+  {c:'BR', x:32, y:70, name:'Brazil'},
+  {c:'AU', x:85, y:78, name:'Australia'},
+];
+const RISK_FACTORS_POOL = [
+  {n:'Unusual location',       w:25, t:'High distance from home country'},
+  {n:'Late-night transaction', w:12, t:'03:42 local time'},
+  {n:'High amount',            w:22, t:'8.4× average ticket size'},
+  {n:'Velocity anomaly',       w:18, t:'5 txs in last 90s'},
+  {n:'New device',             w:16, t:'First seen 4 minutes ago'},
+  {n:'Merchant blacklist',     w:35, t:'Tied to 23 historical chargebacks'},
+  {n:'Merchant category risk', w:14, t:'High-risk MCC (crypto)'},
+  {n:'Card BIN mismatch',      w:20, t:'Issuer country ≠ swipe country'},
+  {n:'IP / Card mismatch',     w:18, t:'IP from VPN exit node'},
+  {n:'Behavioral drift',       w:10, t:'Login pattern unusual'},
+];
+
+const state = {
+  paused:false,
+  txs: [],         // newest first
+  selected: null,
+  alertCount: 3,
+  totalTxs: 0,
+  blocked: 87,
+  review: 14,
+  saved: 128400,
+  filter: 'all',
+};
+
+/* ===== Tabs ===== */
+document.querySelectorAll('[data-tab]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tab = btn.dataset.tab;
+    document.querySelectorAll('[data-tab]').forEach(b => b.setAttribute('data-active', b.dataset.tab === tab ? 'true' : 'false'));
+    ['monitor','rules','cases','analytics'].forEach(t => document.getElementById('tab-'+t).classList.toggle('hidden', t !== tab));
+    if (tab === 'rules') renderRules();
+    if (tab === 'cases') renderCases();
+    if (tab === 'analytics') initAnalytics();
+  });
+});
+
+/* ===== Simple upload flow ===== */
+document.getElementById('fraudUploadBtn').addEventListener('click', () => document.getElementById('fraudUploadInput').click());
+document.getElementById('fraudDemoBtn')?.addEventListener('click', () => showFraudPrediction({ name: 'demo-transaction.csv', size: 0 }));
+document.getElementById('fraudUploadInput').addEventListener('change', e => {
+  const file = e.target.files?.[0];
+  if (!file) return;
+  const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+  document.getElementById('fraudUploadMeta').innerHTML = `<span class="text-ink-700 font-medium">${file.name}</span> · ${sizeMB} MB · <span class="text-ok-500 font-semibold">Uploaded</span>`;
+  showFraudPrediction(file);
+});
+
+function showFraudPrediction(file) {
+  const outcomes = [
+    { label: 'Low Risk', confidence: 96.4, reason: 'Normal velocity, trusted device, consistent location pattern.', cls: 'text-ok-500' },
+    { label: 'Medium Risk', confidence: 82.1, reason: 'Amount is above user baseline with unusual merchant category.', cls: 'text-warn-500' },
+    { label: 'High Risk', confidence: 91.7, reason: 'Device first seen + cross-border anomaly + high amount in short interval.', cls: 'text-accent-500' }
+  ];
+  const pick = outcomes[Math.floor(Math.random() * outcomes.length)];
+  const pred = document.getElementById('fraudPrediction');
+  pred.textContent = pick.label;
+  pred.className = `text-3xl font-extrabold ${pick.cls}`;
+  document.getElementById('fraudConfidence').textContent = `Confidence: ${pick.confidence.toFixed(1)}%`;
+  document.getElementById('fraudReason').textContent = pick.reason;
+  toast(`Prediction ready for ${file.name}`);
+}
+
+/* ===== Helpers ===== */
+function rand(a,b){ return a + Math.random()*(b-a); }
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function fmt$(n){ return '$' + n.toLocaleString(undefined, { minimumFractionDigits:2, maximumFractionDigits:2 }); }
+function fmtTime(d){ const h = String(d.getHours()).padStart(2,'0'); const m = String(d.getMinutes()).padStart(2,'0'); const s = String(d.getSeconds()).padStart(2,'0'); return `${h}:${m}:${s}`; }
+function id6(){ return 'TX' + Math.floor(100000 + Math.random()*899999); }
+
+function genTx(){
+  const m = pick(MERCHANTS);
+  let amount = rand(m.rng[0], m.rng[1]);
+  const cu = pick(FIRST_NAMES) + ' ' + pick(LAST_NAMES);
+  let country = pick(COUNTRIES);
+
+  // pick risk factors
+  const facs = [];
+  let score = rand(2, 22);
+  // base risks for some categories
+  if (m.cat === 'crypto') { score += 18; facs.push(RISK_FACTORS_POOL[6]); }
+  if (m.cat === 'cash') { score += 22; facs.push(RISK_FACTORS_POOL[0]); facs.push(RISK_FACTORS_POOL[1]); }
+  if (Math.random() < .35) { score += 8; facs.push(RISK_FACTORS_POOL[3]); }
+  if (Math.random() < .2)  { score += 16; facs.push(RISK_FACTORS_POOL[4]); }
+  if (Math.random() < .1)  { score += 28; facs.push(RISK_FACTORS_POOL[5]); }
+  if (country.c !== 'VN' && Math.random() < .55) { score += 14; facs.push(RISK_FACTORS_POOL[7]); }
+  if (amount > 1500) { score += 12; facs.push(RISK_FACTORS_POOL[2]); }
+  // Random amount inflation for "rare" big fraud
+  if (Math.random() < .04) { amount *= 5; score += 25; facs.push(RISK_FACTORS_POOL[2]); }
+
+  score = Math.max(0, Math.min(100, score + rand(-6, 6)));
+
+  const decision = score >= 75 ? 'blocked' : score >= 45 ? 'review' : 'approved';
+
+  // de-dupe factors
+  const dedup = [...new Map(facs.map(f => [f.n, f])).values()];
+
+  return {
+    id: id6(),
+    time: new Date(),
+    customer: cu,
+    merchant: m.n,
+    category: m.cat,
+    country,
+    amount: Math.round(amount * 100) / 100,
+    score: Math.round(score),
+    decision,
+    factors: dedup,
+    custAge: Math.floor(rand(1, 14)) + 'y',
+    custSpend: '$' + Math.floor(rand(800, 6500)).toLocaleString(),
+    custVel: Math.floor(rand(0, 9)),
+  };
+}
+
+/* ===== Stream ===== */
+const txBody = document.getElementById('txBody');
+const streamCount = document.getElementById('streamCount');
+function pushTx() {
+  if (state.paused) return;
+  const tx = genTx();
+  state.txs.unshift(tx);
+  if (state.txs.length > 60) state.txs.pop();
+  state.totalTxs++;
+  if (tx.decision === 'blocked') { state.blocked++; state.saved += tx.amount; }
+  if (tx.decision === 'review') state.review++;
+  renderTxRow(tx, true);
+  // trim DOM
+  while (txBody.children.length > 60) txBody.removeChild(txBody.lastChild);
+  streamCount.textContent = state.txs.length + ' txs';
+  updateKpis();
+  if (tx.decision === 'blocked') {
+    addMapDot(tx.country, '#dc2626');
+    state.alertCount++;
+    document.getElementById('alertBadge').textContent = state.alertCount;
+  } else if (tx.decision === 'review') {
+    addMapDot(tx.country, '#f59e0b');
+  } else if (Math.random() < .25) {
+    addMapDot(tx.country, '#16a34a');
+  }
+}
+
+function renderTxRow(tx, isNew) {
+  const decisionChip =
+    tx.decision === 'approved' ? '<span class="chip chip-ok"><span class="dot dot-ok"></span>Approved</span>'
+    : tx.decision === 'review' ? '<span class="chip chip-warn"><span class="dot dot-warn"></span>Review</span>'
+    : '<span class="chip chip-danger"><span class="dot dot-err"></span>Blocked</span>';
+  const scoreColor = tx.score >= 75 ? 'text-accent-500' : tx.score >= 45 ? 'text-warn-500' : 'text-ok-500';
+  const barClass = tx.score >= 75 ? 'progress-bar danger' : tx.score >= 45 ? 'progress-bar warn' : 'progress-bar';
+
+  // filter
+  if (state.filter === 'high' && tx.score < 70) return;
+  if (state.filter === 'medium' && tx.score < 40) return;
+
+  const tr = document.createElement('tr');
+  tr.className = 'tx-row anim cursor-pointer ' + (tx.decision === 'blocked' ? 'danger' : isNew ? 'new' : '');
+  tr.dataset.id = tx.id;
+  tr.innerHTML = `
+    <td class="px-3 py-2 font-mono text-[11px] text-ink-500 tabular-nums">${fmtTime(tx.time)}</td>
+    <td class="px-3 py-2 font-mono text-[11px] text-ink-700">${tx.id}</td>
+    <td class="px-3 py-2 text-ink-800">${tx.customer}</td>
+    <td class="px-3 py-2 text-ink-700">${tx.merchant}</td>
+    <td class="px-3 py-2"><span class="font-mono text-[11px] text-ink-700">${tx.country.c}</span> <span class="text-ink-500 text-xs">${tx.country.name}</span></td>
+    <td class="px-3 py-2 text-right font-mono tabular-nums text-ink-900 font-semibold">${fmt$(tx.amount)}</td>
+    <td class="px-3 py-2">
+      <div class="flex items-center gap-2">
+        <div class="${barClass} w-16"><span style="width:${tx.score}%"></span></div>
+        <span class="font-mono text-xs ${scoreColor} font-semibold w-7 text-right">${tx.score}</span>
+      </div>
+    </td>
+    <td class="px-3 py-2">${decisionChip}</td>
+  `;
+  tr.addEventListener('click', () => selectTx(tx));
+  txBody.insertBefore(tr, txBody.firstChild);
+  // remove "new" highlight
+  setTimeout(() => tr.classList.remove('new'), 1200);
+}
+
+function selectTx(tx) {
+  state.selected = tx;
+  document.getElementById('detailAmount').textContent = fmt$(tx.amount);
+  document.getElementById('detailMerchant').textContent = `at ${tx.merchant} (${tx.country.name})`;
+  document.getElementById('detailId').textContent = tx.id;
+  document.getElementById('detailTime').textContent = tx.time.toLocaleString();
+  document.getElementById('custName').textContent = tx.customer;
+  document.getElementById('custAge').textContent = tx.custAge;
+  document.getElementById('custSpend').textContent = tx.custSpend;
+  document.getElementById('custVel').textContent = tx.custVel;
+
+  // gauge
+  const arc = document.getElementById('riskArc');
+  const needle = document.getElementById('riskNeedle');
+  const full = 267;
+  const norm = tx.score / 100;
+  arc.setAttribute('stroke-dashoffset', (full * (1 - norm)).toFixed(1));
+  needle.setAttribute('transform', `translate(100 105) rotate(${-90 + 180*norm})`);
+  const sc = document.getElementById('riskScore');
+  sc.textContent = tx.score;
+  sc.classList.remove('text-accent-500','text-warn-500','text-ok-500','text-ink-400');
+  sc.classList.add(tx.score >= 75 ? 'text-accent-500' : tx.score >= 45 ? 'text-warn-500' : 'text-ok-500');
+
+  // status chip
+  const ds = document.getElementById('detailStatus');
+  if (tx.decision === 'approved') { ds.className='chip chip-ok'; ds.innerHTML='<span class="dot dot-ok"></span>Approved'; }
+  else if (tx.decision === 'review') { ds.className='chip chip-warn'; ds.innerHTML='<span class="dot dot-warn"></span>For review'; }
+  else { ds.className='chip chip-danger'; ds.innerHTML='<span class="dot dot-err"></span>Blocked'; }
+
+  // factors
+  const fl = document.getElementById('factorList');
+  if (tx.factors.length === 0) {
+    fl.innerHTML = '<div class="text-xs text-ink-500 italic">No significant risk factors detected. Transaction looks normal.</div>';
+  } else {
+    fl.innerHTML = tx.factors.map(f => `
+      <div class="flex items-start gap-2">
+        <div class="w-1.5 h-1.5 rounded-full bg-accent-500 mt-1.5"></div>
+        <div class="flex-1">
+          <div class="flex items-center justify-between text-xs">
+            <span class="text-ink-800 font-semibold">${f.n}</span>
+            <span class="font-mono text-accent-500 font-semibold">+${f.w}</span>
+          </div>
+          <div class="text-[11px] text-ink-500">${f.t}</div>
+        </div>
+      </div>`).join('');
+  }
+
+  ['approveBtn','reviewBtn','blockBtn'].forEach(id => document.getElementById(id).disabled = false);
+}
+
+document.getElementById('approveBtn').addEventListener('click', () => { if(state.selected){ toast(`Approved ${state.selected.id}`); }});
+document.getElementById('reviewBtn').addEventListener('click', () => { if(state.selected){ toast(`Sent ${state.selected.id} to investigation queue`); }});
+document.getElementById('blockBtn').addEventListener('click', () => { if(state.selected){ toast(`Blocked ${state.selected.id} · customer notified`); }});
+
+function updateKpis() {
+  document.getElementById('kpiTps').textContent = (35 + Math.floor(Math.random()*20));
+  document.getElementById('kpiBlocked').textContent = state.blocked;
+  document.getElementById('kpiReview').textContent = state.review;
+}
+
+/* ===== Map dots ===== */
+const mapDots = document.getElementById('mapDots');
+function addMapDot(country, color) {
+  const d = document.createElement('div');
+  d.className = 'map-dot';
+  d.style.background = color;
+  d.style.left = country.x + '%';
+  d.style.top = country.y + '%';
+  mapDots.appendChild(d);
+  setTimeout(() => d.remove(), 1700);
+}
+
+/* ===== Filter & pause ===== */
+document.getElementById('riskFilter').addEventListener('change', e => {
+  state.filter = e.target.value;
+  txBody.innerHTML = '';
+  state.txs.forEach(tx => renderTxRow(tx, false));
+});
+document.getElementById('clearStream').addEventListener('click', () => {
+  state.txs = [];
+  txBody.innerHTML = '';
+  streamCount.textContent = '0 txs';
+});
+document.getElementById('pauseBtn')?.addEventListener('click', () => {
+  state.paused = !state.paused;
+  const pauseLabel = document.getElementById('pauseLabel');
+  const pauseIcon = document.getElementById('pauseIcon');
+  if (pauseLabel) pauseLabel.textContent = state.paused ? 'Resume stream' : 'Pause stream';
+  if (pauseIcon) {
+    pauseIcon.innerHTML = state.paused
+      ? '<polygon points="5 3 19 12 5 21 5 3"/>'
+      : '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+  }
+  toast(state.paused ? 'Stream paused' : 'Stream resumed');
+});
+
+/* ===== Toast ===== */
+let toastTimer;
+function toast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.setAttribute('data-show','true');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.setAttribute('data-show','false'), 2500);
+}
+
+/* ===== Histogram (live monitor) ===== */
+let histChart;
+function initHist() {
+  Chart.defaults.color = '#64748b'; Chart.defaults.font.family = 'Inter';
+  histChart = new Chart(document.getElementById('riskHist'), {
+    type:'bar',
+    data: {
+      labels: ['0-10','10-20','20-30','30-40','40-50','50-60','60-70','70-80','80-90','90-100'],
+      datasets: [{ label:'count', data:[420,318,162,82,47,28,18,14,8,3],
+        backgroundColor: ['#16a34a','#16a34a','#16a34a','#22c55e','#fbbf24','#fbbf24','#f59e0b','#dc2626','#dc2626','#b91c1c'],
+        borderRadius:6 }]
+    },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{x:{grid:{color:'#eef0f3'}}, y:{grid:{color:'#eef0f3'}}}}
+  });
+}
+
+/* ===== Rules ===== */
+const RULES = [
+  { name:'High amount + unknown device', cond:'amount > $2000 AND device.first_seen < 1h', action:'BLOCK', hits:18, status:'on' },
+  { name:'Crypto exchange + new account', cond:'merchant.cat = crypto AND account.age < 30d', action:'REVIEW', hits:42, status:'on' },
+  { name:'Velocity > 5 in 60s', cond:'tx_count(60s) > 5', action:'BLOCK', hits:67, status:'on' },
+  { name:'Country mismatch + ATM', cond:'merchant.cat = cash AND country ≠ home_country', action:'REVIEW', hits:31, status:'on' },
+  { name:'Blacklisted merchant', cond:'merchant.id IN blacklist', action:'BLOCK', hits:9, status:'on' },
+  { name:'Late-night high amount', cond:'hour BETWEEN 1..5 AND amount > $500', action:'REVIEW', hits:24, status:'off' },
+  { name:'IP via VPN/Proxy', cond:'ip.is_vpn = true', action:'REVIEW', hits:88, status:'on' },
+];
+function renderRules() {
+  const list = document.getElementById('ruleList');
+  if (list.children.length) return;
+  list.innerHTML = RULES.map(r => {
+    const actionChip = r.action === 'BLOCK' ? 'chip-danger' : 'chip-warn';
+    const statusChip = r.status === 'on' ? 'chip-ok' : 'chip';
+    return `
+      <div class="rounded-xl soft-border bg-white p-3 flex items-start gap-3 hover:shadow-sm transition">
+        <div class="flex-1">
+          <div class="flex items-center gap-2 flex-wrap">
+            <div class="text-sm font-semibold text-ink-900">${r.name}</div>
+            <span class="chip ${actionChip}">${r.action}</span>
+            <span class="chip ${statusChip}"><span class="dot ${r.status==='on'?'dot-ok':'dot-warn'}"></span>${r.status==='on'?'Active':'Disabled'}</span>
+          </div>
+          <code class="block mt-1.5 text-[11.5px] font-mono text-ink-600 bg-ink-50 px-2 py-1 rounded">${r.cond}</code>
+        </div>
+        <div class="text-right">
+          <div class="text-xs text-ink-500">Hits today</div>
+          <div class="text-lg font-extrabold text-ink-900 tabular-nums">${r.hits}</div>
+        </div>
+        <button class="btn btn-ghost !py-1 !px-2 text-xs">Edit</button>
+      </div>`;
+  }).join('');
+}
+
+/* ===== Cases ===== */
+const CASES = [
+  { id:'CSE-1042', name:'Anh Nguyen',  type:'Account takeover', exposure:8420, sev:'High',     by:'L. Pham', status:'investigating', opened:'2h ago' },
+  { id:'CSE-1041', name:'Phong Tran',  type:'Card cloning',     exposure:2980, sev:'Critical', by:'Unassigned', status:'new', opened:'4h ago' },
+  { id:'CSE-1040', name:'Mai Le',      type:'Friendly fraud',   exposure:480,  sev:'Low',      by:'D. Vo',  status:'awaiting customer', opened:'6h ago' },
+  { id:'CSE-1039', name:'Khoa Bui',    type:'Synthetic ID',     exposure:14200,sev:'Critical', by:'L. Pham', status:'investigating', opened:'1d ago' },
+  { id:'CSE-1038', name:'Tuan Hoang',  type:'Phishing victim',  exposure:1150, sev:'Medium',   by:'D. Vo',  status:'resolved', opened:'2d ago' },
+];
+function renderCases() {
+  const body = document.getElementById('caseBody');
+  if (body.children.length) return;
+  body.innerHTML = CASES.map(c => {
+    const sevChip = c.sev === 'Critical' ? 'chip-danger' : c.sev === 'High' ? 'chip-warn' : c.sev === 'Medium' ? 'chip-info' : 'chip-ok';
+    const statusChip = c.status === 'resolved' ? 'chip-ok' : c.status === 'new' ? 'chip-info' : 'chip-warn';
+    return `<tr class="row-hover">
+      <td class="px-4 py-2.5 font-mono text-xs text-ink-700">${c.id}</td>
+      <td class="px-4 py-2.5 text-ink-800 font-medium">${c.name}</td>
+      <td class="px-4 py-2.5 text-ink-700">${c.type}</td>
+      <td class="px-4 py-2.5 text-right font-mono tabular-nums text-ink-900">${fmt$(c.exposure)}</td>
+      <td class="px-4 py-2.5"><span class="chip ${sevChip}">${c.sev}</span></td>
+      <td class="px-4 py-2.5 text-ink-700 text-xs">${c.by}</td>
+      <td class="px-4 py-2.5"><span class="chip ${statusChip}">${c.status}</span></td>
+      <td class="px-4 py-2.5 text-ink-500 text-xs">${c.opened}</td>
+    </tr>`;
+  }).join('');
+}
+
+/* ===== Analytics ===== */
+let analyticsReady = false;
+function initAnalytics() {
+  if (analyticsReady) return; analyticsReady = true;
+  Chart.defaults.color = '#64748b'; Chart.defaults.font.family = 'Inter';
+  const grid = '#eef0f3';
+  const hours = Array.from({length:24}, (_,i) => i + ':00');
+
+  new Chart(document.getElementById('decisionChart'), {
+    type:'line',
+    data:{ labels:hours, datasets:[
+      { label:'Approved', data:hours.map(()=> Math.floor(rand(800,1400))), borderColor:'#16a34a', backgroundColor:'rgba(22,163,74,.1)', fill:true, tension:.35, pointRadius:0, borderWidth:2 },
+      { label:'Review',   data:hours.map(()=> Math.floor(rand(40,120))),   borderColor:'#f59e0b', backgroundColor:'rgba(245,158,11,.1)', fill:true, tension:.35, pointRadius:0, borderWidth:2 },
+      { label:'Blocked',  data:hours.map(()=> Math.floor(rand(10,60))),    borderColor:'#dc2626', backgroundColor:'rgba(220,38,38,.1)', fill:true, tension:.35, pointRadius:0, borderWidth:2 },
+    ]},
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:10,font:{size:11}}}}, scales:{x:{grid:{color:grid}}, y:{grid:{color:grid}}}}
+  });
+
+  new Chart(document.getElementById('typeChart'), {
+    type:'doughnut',
+    data:{ labels:['Card cloning','Account takeover','Phishing','Synthetic ID','Friendly fraud','Other'],
+      datasets:[{ data:[42,28,18,15,12,8], backgroundColor:['#dc2626','#1e3a8a','#f59e0b','#8b5cf6','#0891b2','#94a3b8'], borderColor:'#fff', borderWidth:3 }]
+    },
+    options:{ responsive:true, maintainAspectRatio:false, cutout:'62%', plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:10,font:{size:11}}}}}
+  });
+
+  const days = Array.from({length:30}, (_,i) => 'D-' + (29-i));
+  new Chart(document.getElementById('perfChart'), {
+    type:'line',
+    data:{ labels:days, datasets:[
+      { label:'Precision', data:days.map(()=> 92+Math.random()*6), borderColor:'#1e3a8a', backgroundColor:'rgba(30,58,138,.1)', fill:true, tension:.35, pointRadius:0, borderWidth:2 },
+      { label:'Recall',    data:days.map(()=> 88+Math.random()*8), borderColor:'#16a34a', backgroundColor:'rgba(22,163,74,.1)',  fill:true, tension:.35, pointRadius:0, borderWidth:2 },
+    ]},
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:10,font:{size:11}}}}, scales:{x:{grid:{color:grid}}, y:{grid:{color:grid},min:80,max:100,ticks:{callback:v=>v+'%'}}}}
+  });
+
+  const vectors = [
+    {n:'Skimming attacks (POS)', v:32}, {n:'SIM swap attacks', v:24},
+    {n:'Phishing kits', v:18}, {n:'Account takeover via leak', v:14}, {n:'Mule networks', v:12},
+  ];
+  document.getElementById('vectorList').innerHTML = vectors.map(v => `
+    <div>
+      <div class="flex items-center justify-between text-xs mb-1">
+        <span class="text-ink-700">${v.n}</span>
+        <span class="font-mono text-ink-700">${v.v}%</span>
+      </div>
+      <div class="progress-bar danger"><span style="width:${v.v*3}%"></span></div>
+    </div>`).join('');
+}
+
+/* ===== Init ===== */
+initHist();
+for (let i = 0; i < 6; i++) pushTx();
+toast('FinGuard ready — upload file or review existing tabs.');
+</script>
+</body>
+</html>

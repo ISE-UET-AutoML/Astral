@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MedAI · Ambulance X-Ray Triage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+          mono: ['JetBrains Mono', 'ui-monospace'],
+        },
+        colors: {
+          brand: {
+            50:  '#eff6ff',
+            100: '#dbeafe',
+            200: '#bfdbfe',
+            300: '#93c5fd',
+            400: '#5b9cf5',
+            500: '#0063d8',
+            600: '#0057bf',
+            700: '#0049a0',
+          },
+          accent: {
+            50:  '#fff5ed',
+            100: '#ffe8d4',
+            200: '#ffcfa8',
+            300: '#ffb070',
+            400: '#ff8f40',
+            500: '#f77224',
+            600: '#e0601a',
+            700: '#b84a13',
+          },
+          ink: {
+            50:  '#f8fafc',
+            100: '#f1f5f9',
+            200: '#e2e8f0',
+            300: '#cbd5e1',
+            400: '#94a3b8',
+            500: '#64748b',
+            600: '#475569',
+            700: '#334155',
+            800: '#1e293b',
+            900: '#0f172a',
+          },
+          ok:    { 500: '#16a34a', 600: '#15803d' },
+          warn:  { 500: '#f59e0b' },
+          danger:{ 500: '#e11d48' },
+        },
+      },
+    },
+  };
+</script>
+<style>
+  :root { color-scheme: light; }
+  html, body { height: 100%; }
+  body {
+    background:
+      radial-gradient(900px 400px at 10% -10%, rgba(0,99,216,.07), transparent 60%),
+      radial-gradient(800px 400px at 110% 0%, rgba(247,114,36,.07), transparent 60%),
+      #f7f9fc;
+    color: #1f2937;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+  ::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+
+  .card {
+    background: #ffffff;
+    border: 1px solid #eef0f3;
+    box-shadow: 0 1px 2px rgba(16,24,40,.04), 0 8px 24px -12px rgba(16,24,40,.06);
+  }
+  .soft-border { border: 1px solid #eef0f3; }
+
+  .pill-tab {
+    transition: all .18s ease;
+    color: #64748b;
+  }
+  .pill-tab[data-active="true"] {
+    background: #ffffff;
+    color: #0063d8;
+    box-shadow: 0 1px 2px rgba(16,24,40,.06), 0 0 0 1px #e6eefc;
+  }
+  .pill-tab:not([data-active="true"]):hover { color: #0f172a; background: rgba(255,255,255,.6); }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+    padding: .55rem .9rem; border-radius: .6rem;
+    font-size: .875rem; font-weight: 600;
+    border: 1px solid transparent;
+    transition: all .15s ease;
+    white-space: nowrap;
+  }
+  .btn:disabled { opacity: .55; cursor: not-allowed; }
+  .btn:not(:disabled):hover { transform: translateY(-1px); }
+
+  .btn-primary {
+    background: #0063d8; color: #ffffff;
+    box-shadow: 0 1px 2px rgba(0,99,216,.25), 0 8px 20px -8px rgba(0,99,216,.35);
+  }
+  .btn-primary:not(:disabled):hover { background: #0057bf; }
+
+  .btn-accent {
+    background: #f77224; color: #ffffff;
+    box-shadow: 0 1px 2px rgba(247,114,36,.25), 0 8px 20px -8px rgba(247,114,36,.4);
+  }
+  .btn-accent:not(:disabled):hover { background: #e0601a; }
+
+  .btn-ghost {
+    background: #ffffff; color: #334155;
+    border-color: #e5e7eb;
+  }
+  .btn-ghost:not(:disabled):hover { background: #f8fafc; border-color: #d1d5db; }
+
+  .btn-success {
+    background: #ecfdf5; color: #047857;
+    border-color: #a7f3d0;
+  }
+  .btn-success:not(:disabled):hover { background: #d1fae5; }
+
+  .btn-danger {
+    background: #fff1f2; color: #be123c;
+    border-color: #fecdd3;
+  }
+  .btn-danger:not(:disabled):hover { background: #ffe4e6; }
+
+  .chip {
+    display: inline-flex; align-items: center; gap: .35rem;
+    padding: .22rem .55rem; border-radius: 999px;
+    font-size: .72rem; font-weight: 600;
+    border: 1px solid #e5e7eb;
+    color: #475569; background: #f8fafc;
+  }
+  .chip-ok    { color: #047857; border-color: #a7f3d0; background: #ecfdf5; }
+  .chip-info  { color: #0057bf; border-color: #bfdbfe; background: #eff6ff; }
+  .chip-accent{ color: #b84a13; border-color: #ffcfa8; background: #fff5ed; }
+  .chip-warn  { color: #a16207; border-color: #fde68a; background: #fffbeb; }
+  .chip-danger{ color: #be123c; border-color: #fecdd3; background: #fff1f2; }
+
+  .dot { width: 8px; height: 8px; border-radius: 999px; display: inline-block; }
+  .dot-ok    { background: #16a34a; box-shadow: 0 0 0 3px rgba(22,163,74,.15); }
+  .dot-warn  { background: #f59e0b; box-shadow: 0 0 0 3px rgba(245,158,11,.15); }
+  .dot-err   { background: #e11d48; box-shadow: 0 0 0 3px rgba(225,29,72,.15); }
+  .dot-info  { background: #0063d8; box-shadow: 0 0 0 3px rgba(0,99,216,.15); }
+
+  .dropzone {
+    border: 1.5px dashed #cbd5e1;
+    background: #ffffff;
+    transition: all .2s ease;
+  }
+  .dropzone.dragover {
+    border-color: #0063d8;
+    background: #f5f9ff;
+    box-shadow: 0 0 0 4px rgba(0,99,216,.08);
+  }
+
+  .xray-wrap {
+    background: #0f172a;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+  }
+  .xray-img {
+    display: block; width: 100%; height: 100%;
+    object-fit: contain;
+    transform-origin: center center;
+    transition: transform .2s ease, filter .2s ease;
+    filter: contrast(1.05) brightness(1.02);
+    user-select: none;
+  }
+
+  .progress-bar {
+    position: relative; height: 6px; background: #f1f5f9;
+    border-radius: 999px; overflow: hidden;
+  }
+  .progress-bar > span {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    background: linear-gradient(90deg, #0063d8, #5b9cf5);
+    border-radius: 999px;
+    transition: width .8s cubic-bezier(.2,.8,.2,1);
+  }
+  .progress-bar.accent > span {
+    background: linear-gradient(90deg, #f77224, #ffb070);
+  }
+
+  details > summary { list-style: none; cursor: pointer; }
+  details > summary::-webkit-details-marker { display: none; }
+
+  .row-hover:hover { background: #f8fafc; }
+
+  /* Animated logo pulse (subtle) */
+  @keyframes logoPulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(0,99,216,.0); }
+    50%     { box-shadow: 0 0 0 6px rgba(0,99,216,.08); }
+  }
+  .logo-pulse { animation: logoPulse 3s ease-in-out infinite; }
+
+  input:focus, button:focus { outline: none; }
+  input:focus-visible {
+    box-shadow: 0 0 0 3px rgba(0,99,216,.15);
+    border-color: #0063d8 !important;
+  }
+</style>
+</head>
+<body class="text-ink-800 antialiased">
+
+<div class="min-h-screen max-w-[1400px] mx-auto px-4 md:px-6 py-5">
+
+  <!-- HEADER -->
+  <header class="card rounded-2xl px-4 md:px-5 py-3 flex items-center justify-between gap-4">
+    <div class="flex items-center gap-3 min-w-0">
+      <div class="logo-pulse flex items-center justify-center w-10 h-10 rounded-xl bg-brand-500 text-white">
+        <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2L3 7v6c0 5 3.8 9.5 9 10 5.2-.5 9-5 9-10V7l-9-5z"/>
+          <path d="M9 12h6M12 9v6"/>
+        </svg>
+      </div>
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="font-extrabold tracking-tight text-ink-900 text-[16px]">MedAI</div>
+        <div class="h-4 w-px bg-ink-200"></div>
+        <div class="truncate text-ink-500 text-[13px] md:text-sm">Ambulance X-Ray Triage</div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <nav class="hidden md:flex items-center gap-1 rounded-full bg-ink-100 p-1">
+      <button data-tab="predict" class="pill-tab rounded-full px-3.5 py-1.5 text-sm flex items-center gap-2" data-active="true">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1l2.1-2.1M17 7l2.1-2.1"/></svg>
+        Predict
+      </button>
+      <button data-tab="statistics" class="pill-tab rounded-full px-3.5 py-1.5 text-sm flex items-center gap-2">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-6 4 3 5-8"/></svg>
+        Statistics
+      </button>
+      <button data-tab="history" class="pill-tab rounded-full px-3.5 py-1.5 text-sm flex items-center gap-2">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="10"/></svg>
+        History
+      </button>
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <button class="flex items-center gap-2 pl-1 pr-2 py-1 rounded-full soft-border bg-white hover:bg-ink-50 transition">
+        <img src="https://i.pravatar.cc/64?img=12" alt="Dr." class="w-7 h-7 rounded-full ring-2 ring-brand-100" />
+        <div class="hidden md:block text-left leading-tight">
+          <div class="text-[10px] uppercase tracking-wider text-ink-500">Radiologist</div>
+          <div class="text-xs font-semibold text-ink-800">Dr. A. Nguyen</div>
+        </div>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile tab bar -->
+  <div class="md:hidden mt-3 flex items-center gap-1 rounded-full bg-ink-100 p-1 w-fit mx-auto">
+    <button data-tab="predict" class="pill-tab rounded-full px-3 py-1.5 text-sm" data-active="true">Predict</button>
+    <button data-tab="statistics" class="pill-tab rounded-full px-3 py-1.5 text-sm">Statistics</button>
+    <button data-tab="history" class="pill-tab rounded-full px-3 py-1.5 text-sm">History</button>
+  </div>
+
+  <!-- MAIN -->
+  <main class="mt-5 space-y-5">
+
+    <!-- ============== PREDICT TAB ============== -->
+    <section id="tab-predict" class="space-y-5">
+
+      <!-- Upload -->
+      <div id="dropzone" class="dropzone rounded-2xl px-5 py-5 md:px-6 space-y-2">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p class="text-sm text-ink-600">
+            <span class="font-semibold text-ink-800">Upload</span>
+            <span class="text-ink-500"> — drop an image here or choose a file.</span>
+          </p>
+          <div class="flex shrink-0">
+            <button id="realSelectBtn" class="btn btn-primary text-sm">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+              Choose file
+            </button>
+            <input id="fileInput" type="file" accept=".jpg,.jpeg,.png,.dcm,image/*" class="hidden" />
+          </div>
+        </div>
+        <p id="fileMeta" class="text-xs text-ink-500">JPG, PNG, DICOM · up to ~20 MB</p>
+      </div>
+
+      <!-- Two columns: Original image + AI report -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+
+        <!-- Image -->
+        <div class="card rounded-2xl overflow-hidden">
+          <div class="flex items-center justify-between px-4 py-3 border-b border-ink-100">
+            <h3 class="text-sm font-semibold text-ink-800">Image</h3>
+            <button id="clearImageBtn" type="button" class="btn btn-ghost !py-1 !px-2 text-xs" title="Clear">Clear</button>
+          </div>
+
+          <!-- Image area -->
+          <div class="relative">
+            <div id="xrayWrap" class="xray-wrap aspect-[4/3] md:aspect-[5/4]">
+              <img id="xrayImg" class="xray-img" alt="X-Ray" />
+
+              <!-- Empty state -->
+              <div id="xrayEmpty" class="absolute inset-0 flex flex-col items-center justify-center text-ink-300 text-sm px-4 text-center">
+                No image yet — upload above.
+              </div>
+
+              <div id="scanOverlay" class="absolute inset-0 hidden items-center justify-center bg-black/35">
+                <div class="text-sm font-medium text-white/95">Analyzing…</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Prediction -->
+        <div class="card rounded-2xl flex flex-col">
+          <div class="px-4 py-3 border-b border-ink-100">
+            <h3 class="text-sm font-semibold text-ink-800">Prediction</h3>
+          </div>
+
+          <div class="p-4 md:p-5 flex-1 space-y-4">
+            <div>
+              <div id="predictedClass" class="text-2xl md:text-3xl font-extrabold text-ink-400 tracking-tight leading-tight">—</div>
+              <p id="confidenceLine" class="mt-2 text-sm text-ink-500">Upload an image to run the model.</p>
+            </div>
+            <p id="insightText" class="text-sm text-ink-600 leading-relaxed border-t border-ink-100 pt-4">
+              The model output and a short summary will show here after inference.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== STATISTICS TAB ============== -->
+    <section id="tab-statistics" class="hidden space-y-5">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="card rounded-2xl p-4">
+          <div class="text-xs text-ink-500">Studies Today</div>
+          <div class="mt-1 text-2xl font-extrabold text-ink-900 tabular-nums">142</div>
+          <div class="mt-1 text-[11px] text-ok-500">▲ 12.4% vs yesterday</div>
+        </div>
+        <div class="card rounded-2xl p-4">
+          <div class="text-xs text-ink-500">Average Inference</div>
+          <div class="mt-1 text-2xl font-extrabold text-ink-900 tabular-nums">1.82<span class="text-sm text-ink-500"> s</span></div>
+          <div class="mt-1 text-[11px] text-ok-500">▼ 180 ms</div>
+        </div>
+        <div class="card rounded-2xl p-4">
+          <div class="text-xs text-ink-500">Model Accuracy</div>
+          <div class="mt-1 text-2xl font-extrabold text-ink-900 tabular-nums">97.3%</div>
+          <div class="mt-1 text-[11px] text-ink-500">Last 1000 studies</div>
+        </div>
+        <div class="card rounded-2xl p-4">
+          <div class="text-xs text-ink-500">Flagged for Review</div>
+          <div class="mt-1 text-2xl font-extrabold text-ink-900 tabular-nums">7</div>
+          <div class="mt-1 text-[11px] text-accent-500">Needs radiologist</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div class="card rounded-2xl p-4 lg:col-span-2">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-sm font-semibold text-ink-800">Predictions (last 14 days)</h3>
+            <div class="flex gap-1">
+              <span class="chip chip-info"><span class="dot dot-info"></span>Normal</span>
+              <span class="chip chip-accent"><span class="dot" style="background:#f77224"></span>Abnormal</span>
+            </div>
+          </div>
+          <div class="relative h-[260px]"><canvas id="predChart"></canvas></div>
+        </div>
+
+        <div class="card rounded-2xl p-4">
+          <h3 class="text-sm font-semibold text-ink-800 mb-2">Class Distribution</h3>
+          <div class="relative h-[260px]"><canvas id="classChart"></canvas></div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <div class="card rounded-2xl p-4">
+          <h3 class="text-sm font-semibold text-ink-800 mb-2">Model Confidence Histogram</h3>
+          <div class="relative h-[240px]"><canvas id="confHist"></canvas></div>
+        </div>
+        <div class="card rounded-2xl p-4">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-sm font-semibold text-ink-800">Inference Latency (ms)</h3>
+            <span class="chip chip-ok">p95 2.1s</span>
+          </div>
+          <div class="relative h-[240px]"><canvas id="latChart"></canvas></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== HISTORY TAB ============== -->
+    <section id="tab-history" class="hidden card rounded-2xl">
+      <div class="px-4 py-3 border-b border-ink-100 flex items-center justify-between gap-3 flex-wrap">
+        <h3 class="text-sm font-semibold text-ink-800">Recent Studies</h3>
+        <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-ink-50 soft-border text-ink-500 text-sm">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+            <input placeholder="Search ID..." class="bg-transparent outline-none w-44 placeholder:text-ink-400 text-ink-800" />
+          </div>
+          <button class="btn btn-ghost"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M6 12h12M10 18h4"/></svg>Filter</button>
+          <button class="btn btn-primary"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>Export CSV</button>
+        </div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="text-xs uppercase text-ink-400 tracking-wider bg-ink-50">
+            <tr class="border-b border-ink-100">
+              <th class="text-left px-4 py-2.5 font-semibold">Study</th>
+              <th class="text-left px-4 py-2.5 font-semibold">Patient</th>
+              <th class="text-left px-4 py-2.5 font-semibold">Date</th>
+              <th class="text-left px-4 py-2.5 font-semibold">Prediction</th>
+              <th class="text-left px-4 py-2.5 font-semibold">Confidence</th>
+              <th class="text-left px-4 py-2.5 font-semibold">Triage</th>
+              <th class="text-left px-4 py-2.5 font-semibold">Status</th>
+              <th class="text-right px-4 py-2.5 font-semibold">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="historyBody" class="divide-y divide-ink-100"></tbody>
+        </table>
+      </div>
+      <div class="px-4 py-3 border-t border-ink-100 flex items-center justify-between text-xs text-ink-500">
+        <div>Showing <span class="text-ink-800 font-semibold">1–8</span> of 1,284</div>
+        <div class="flex items-center gap-1">
+          <button class="btn btn-ghost !py-1 !px-2 text-xs">Prev</button>
+          <button class="btn btn-primary !py-1 !px-2 text-xs">1</button>
+          <button class="btn btn-ghost !py-1 !px-2 text-xs">2</button>
+          <button class="btn btn-ghost !py-1 !px-2 text-xs">3</button>
+          <button class="btn btn-ghost !py-1 !px-2 text-xs">Next</button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+/* =========================
+   State
+   ========================= */
+const state = {
+  hasImage: false,
+  currentImage: null,
+  predictions: null,
+};
+
+/* =========================
+   Tab switching
+   ========================= */
+document.querySelectorAll('[data-tab]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tab = btn.dataset.tab;
+    document.querySelectorAll('[data-tab]').forEach(b => b.setAttribute('data-active', b.dataset.tab === tab ? 'true' : 'false'));
+    document.getElementById('tab-predict').classList.toggle('hidden', tab !== 'predict');
+    document.getElementById('tab-statistics').classList.toggle('hidden', tab !== 'statistics');
+    document.getElementById('tab-history').classList.toggle('hidden', tab !== 'history');
+    if (tab === 'statistics') initCharts();
+    if (tab === 'history') renderHistory();
+  });
+});
+
+/* =========================
+   Dropzone + upload
+   ========================= */
+const dz = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+document.getElementById('realSelectBtn').addEventListener('click', () => fileInput.click());
+
+['dragenter', 'dragover'].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.add('dragover'); }));
+['dragleave', 'drop'].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.remove('dragover'); }));
+dz.addEventListener('drop', e => {
+  const file = e.dataTransfer.files?.[0];
+  if (file) handleFile(file);
+});
+fileInput.addEventListener('change', e => {
+  const file = e.target.files?.[0];
+  if (file) handleFile(file);
+});
+
+function handleFile(file) {
+  const reader = new FileReader();
+  reader.onload = () => loadImage(reader.result, file);
+  reader.readAsDataURL(file);
+}
+
+function loadImage(dataUrl, file) {
+  state.hasImage = true;
+  state.currentImage = dataUrl;
+  document.getElementById('xrayImg').src = dataUrl;
+  document.getElementById('xrayEmpty').style.display = 'none';
+
+  const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+  document.getElementById('fileMeta').textContent = `${file.name} · ${sizeMB} MB`;
+
+  runInference();
+}
+
+document.getElementById('clearImageBtn').addEventListener('click', () => {
+  state.hasImage = false;
+  state.currentImage = null;
+  document.getElementById('xrayImg').src = '';
+  document.getElementById('xrayEmpty').style.display = 'flex';
+  document.getElementById('fileMeta').textContent = 'JPG, PNG, DICOM · up to ~20 MB';
+  const overlay = document.getElementById('scanOverlay');
+  overlay.classList.add('hidden');
+  overlay.classList.remove('flex');
+  resetReport();
+});
+
+/* =========================
+   Inference (simulated)
+   ========================= */
+function runInference() {
+  resetReport();
+  const overlay = document.getElementById('scanOverlay');
+  overlay.classList.remove('hidden');
+  overlay.classList.add('flex');
+
+  const deadline = performance.now() + 900 + Math.random() * 400;
+  const tick = now => {
+    if (now >= deadline) finishInference();
+    else requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+
+function finishInference() {
+  const overlay = document.getElementById('scanOverlay');
+  overlay.classList.add('hidden');
+  overlay.classList.remove('flex');
+
+  const cases = [
+    { cls: 'NORMAL',      icd: 'Z00.0', triage: 'ROUTINE',  severity: 'ok',
+      insight: 'No remarkable acute abnormalities detected. Findings are consistent with a normal study. Radiologist correlation recommended.',
+      probs: [['NORMAL',0.984],['PNEUMONIA',0.008],['EFFUSION',0.004],['CARDIOMEGALY',0.002],['ATELECTASIS',0.002]] },
+    { cls: 'PNEUMONIA',   icd: 'J18.9', triage: 'URGENT',   severity: 'warn',
+      insight: 'Patchy airspace opacities suggestive of pneumonia in the right lower lobe. Recommend clinical correlation and antibiotic therapy assessment.',
+      probs: [['PNEUMONIA',0.912],['ATELECTASIS',0.042],['EFFUSION',0.021],['NORMAL',0.015],['CARDIOMEGALY',0.010]] },
+    { cls: 'CARDIOMEGALY',icd: 'I51.7', triage: 'URGENT',   severity: 'warn',
+      insight: 'Enlarged cardiac silhouette (CTR > 0.5). Suggestive of cardiomegaly. Echocardiography recommended.',
+      probs: [['CARDIOMEGALY',0.871],['EFFUSION',0.063],['NORMAL',0.038],['PNEUMONIA',0.018],['ATELECTASIS',0.010]] },
+    { cls: 'PNEUMOTHORAX',icd: 'J93.9', triage: 'CRITICAL', severity: 'err',
+      insight: 'Visible visceral pleural line with absent lung markings peripherally — consistent with pneumothorax. Immediate clinical intervention may be required.',
+      probs: [['PNEUMOTHORAX',0.946],['ATELECTASIS',0.028],['NORMAL',0.012],['EFFUSION',0.008],['PNEUMONIA',0.006]] },
+    { cls: 'EFFUSION',    icd: 'J90',   triage: 'URGENT',   severity: 'warn',
+      insight: 'Blunting of the costophrenic angle with meniscus sign — indicative of pleural effusion. Lateral decubitus view recommended.',
+      probs: [['EFFUSION',0.889],['PNEUMONIA',0.047],['ATELECTASIS',0.028],['NORMAL',0.022],['CARDIOMEGALY',0.014]] },
+  ];
+  const weights = [0.55, 0.15, 0.12, 0.08, 0.10];
+  const pick = weightedPick(cases, weights);
+  state.predictions = pick;
+
+  renderReport(pick);
+}
+
+function weightedPick(items, weights) {
+  const r = Math.random();
+  let acc = 0;
+  for (let i=0;i<items.length;i++){ acc += weights[i]; if (r <= acc) return items[i]; }
+  return items[0];
+}
+
+function renderReport(p) {
+  const conf = p.probs[0][1];
+  const confPct = (conf * 100).toFixed(1);
+
+  const predEl = document.getElementById('predictedClass');
+  predEl.textContent = p.cls;
+  predEl.classList.remove('text-ok-500', 'text-accent-500', 'text-danger-500', 'text-ink-400');
+  predEl.classList.add(p.severity === 'ok' ? 'text-ok-500' : p.severity === 'warn' ? 'text-accent-500' : 'text-danger-500');
+
+  document.getElementById('confidenceLine').textContent = `Confidence ${confPct}% · ${p.triage === 'ROUTINE' ? 'Routine' : p.triage === 'URGENT' ? 'Urgent' : 'Critical'}`;
+  document.getElementById('insightText').textContent = p.insight;
+}
+
+function resetReport() {
+  const predEl = document.getElementById('predictedClass');
+  predEl.textContent = '—';
+  predEl.className = 'text-2xl md:text-3xl font-extrabold text-ink-400 tracking-tight leading-tight';
+  document.getElementById('confidenceLine').textContent = state.hasImage ? 'Running model…' : 'Upload an image to run the model.';
+  document.getElementById('insightText').textContent = state.hasImage
+    ? 'Analyzing…'
+    : 'The model output and a short summary will show here after inference.';
+}
+
+/* =========================
+   Charts (Statistics) - light theme
+   ========================= */
+let chartsReady = false;
+function initCharts() {
+  if (chartsReady) return;
+  chartsReady = true;
+
+  const gridColor = '#eef0f3';
+  const tickColor = '#64748b';
+  Chart.defaults.color = tickColor;
+  Chart.defaults.font.family = 'Inter';
+
+  const days = Array.from({length:14}, (_,i) => {
+    const d = new Date(); d.setDate(d.getDate() - (13-i));
+    return d.toLocaleDateString('en', { month:'short', day:'numeric' });
+  });
+  new Chart(document.getElementById('predChart'), {
+    type: 'line',
+    data: {
+      labels: days,
+      datasets: [
+        { label:'Normal',   data: days.map(()=> Math.round(80+Math.random()*40)), borderColor:'#0063d8', backgroundColor:'rgba(0,99,216,.10)', fill:true, tension:.35, pointRadius:0, borderWidth:2 },
+        { label:'Abnormal', data: days.map(()=> Math.round(20+Math.random()*30)), borderColor:'#f77224', backgroundColor:'rgba(247,114,36,.10)', fill:true, tension:.35, pointRadius:0, borderWidth:2 },
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ display:false } },
+      scales:{ x:{ grid:{ color:gridColor } }, y:{ grid:{ color:gridColor } } }
+    }
+  });
+
+  new Chart(document.getElementById('classChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Normal','Pneumonia','Cardiomegaly','Effusion','Pneumothorax','Other'],
+      datasets: [{ data: [612, 182, 141, 121, 58, 92],
+        backgroundColor: ['#0063d8','#f77224','#8b5cf6','#16a34a','#e11d48','#94a3b8'],
+        borderColor: '#ffffff', borderWidth: 3 }]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false, cutout: '62%',
+      plugins:{ legend:{ position:'bottom', labels:{ boxWidth:10, padding:10, font:{size:11} } } }
+    }
+  });
+
+  new Chart(document.getElementById('confHist'), {
+    type:'bar',
+    data: {
+      labels: ['50-60','60-70','70-80','80-90','90-95','95-99','99-100'],
+      datasets: [{ data:[12,28,62,148,246,412,376], backgroundColor:'rgba(0,99,216,.75)', borderRadius:6 }]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false} },
+      scales:{ x:{grid:{color:gridColor}}, y:{grid:{color:gridColor}} }
+    }
+  });
+
+  const h = Array.from({length:24}, (_,i) => i + ':00');
+  new Chart(document.getElementById('latChart'), {
+    type:'line',
+    data: {
+      labels: h,
+      datasets:[{ data:h.map(()=> 1200+Math.random()*1400), borderColor:'#f77224', backgroundColor:'rgba(247,114,36,.12)', fill:true, tension:.35, pointRadius:0, borderWidth:2 }]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false} },
+      scales:{ x:{grid:{color:gridColor}}, y:{grid:{color:gridColor}} }
+    }
+  });
+}
+
+/* =========================
+   History table
+   ========================= */
+const historyData = [
+  { id:'STD-20824', pid:'X-12345', name:'John Doe',       date:'2026-04-17 09:42', pred:'NORMAL',       conf:.984, triage:'ROUTINE',  status:'verified' },
+  { id:'STD-20823', pid:'X-89041', name:'Maria Hoang',    date:'2026-04-17 09:31', pred:'PNEUMONIA',    conf:.912, triage:'URGENT',   status:'pending'  },
+  { id:'STD-20822', pid:'X-55721', name:'Liam Tran',      date:'2026-04-17 09:17', pred:'NORMAL',       conf:.971, triage:'ROUTINE',  status:'verified' },
+  { id:'STD-20821', pid:'X-30217', name:'S. Pham',        date:'2026-04-17 08:58', pred:'CARDIOMEGALY', conf:.871, triage:'URGENT',   status:'flagged'  },
+  { id:'STD-20820', pid:'X-77812', name:'Khoa Le',        date:'2026-04-17 08:44', pred:'PNEUMOTHORAX', conf:.946, triage:'CRITICAL', status:'flagged'  },
+  { id:'STD-20819', pid:'X-44018', name:'Anh Vu',         date:'2026-04-17 08:31', pred:'EFFUSION',     conf:.889, triage:'URGENT',   status:'verified' },
+  { id:'STD-20818', pid:'X-11209', name:'T. Bui',         date:'2026-04-17 08:12', pred:'NORMAL',       conf:.993, triage:'ROUTINE',  status:'verified' },
+  { id:'STD-20817', pid:'X-66501', name:'Phong Nguyen',   date:'2026-04-17 07:58', pred:'NORMAL',       conf:.962, triage:'ROUTINE',  status:'verified' },
+];
+function renderHistory() {
+  const body = document.getElementById('historyBody');
+  if (body.children.length) return;
+  body.innerHTML = historyData.map(r => {
+    const predColor =
+      r.pred === 'NORMAL' ? 'text-ok-500'
+      : r.pred === 'PNEUMOTHORAX' ? 'text-danger-500'
+      : 'text-accent-500';
+    const triageChip =
+      r.triage === 'ROUTINE' ? 'chip-ok'
+      : r.triage === 'URGENT' ? 'chip-accent'
+      : 'chip-danger';
+    const statusChip =
+      r.status === 'verified' ? '<span class="chip chip-ok"><span class="dot dot-ok"></span>Verified</span>'
+      : r.status === 'pending' ? '<span class="chip chip-info"><span class="dot dot-info"></span>Pending</span>'
+      : '<span class="chip chip-danger"><span class="dot dot-err"></span>Flagged</span>';
+    const barAccent = r.pred === 'NORMAL' ? '' : 'accent';
+    return `
+      <tr class="row-hover">
+        <td class="px-4 py-2.5 font-mono text-xs text-ink-700">${r.id}</td>
+        <td class="px-4 py-2.5">
+          <div class="text-ink-800 font-medium">${r.name}</div>
+          <div class="text-xs text-ink-500 font-mono">${r.pid}</div>
+        </td>
+        <td class="px-4 py-2.5 text-ink-700">${r.date}</td>
+        <td class="px-4 py-2.5 font-semibold ${predColor}">${r.pred}</td>
+        <td class="px-4 py-2.5">
+          <div class="flex items-center gap-2">
+            <div class="progress-bar ${barAccent} w-24"><span style="width:${r.conf*100}%"></span></div>
+            <span class="text-xs font-mono text-ink-700">${(r.conf*100).toFixed(1)}%</span>
+          </div>
+        </td>
+        <td class="px-4 py-2.5"><span class="chip ${triageChip}">${r.triage}</span></td>
+        <td class="px-4 py-2.5">${statusChip}</td>
+        <td class="px-4 py-2.5 text-right">
+          <button class="btn btn-ghost !py-1 !px-2 text-xs">Open</button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+/* =========================
+   Init
+   ========================= */
+resetReport();
+</script>
+</body>
+</html>

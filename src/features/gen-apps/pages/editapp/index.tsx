@@ -3,11 +3,21 @@ import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { workspaceApi, initDraft } from "src/features/gen-apps/api/workspace";
 import { Button } from "src/components/ui/button";
+import { Textarea } from "src/components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "src/components/ui/dialog";
 import {
   ChatPanel,
   TreePanel,
   CodeEditorPanel,
 } from "src/features/gen-apps/components";
+import { USE_GEN_APP_MOCKS } from "src/features/gen-apps/mocks";
 import {
   useFileTree,
   useFileEditor,
@@ -16,12 +26,12 @@ import {
 } from "src/shared/hooks";
 import {
   ArrowLeftIcon,
-  Upload as ArrowUpTrayIcon,
-  RefreshCw as ArrowPathIcon,
-  SquareCode as CodeBracketSquareIcon,
-  Monitor as ComputerDesktopIcon,
-  TriangleAlert as ExclamationTriangleIcon,
-  X as XMarkIcon,
+  Upload,
+  RefreshCw,
+  SquareCode,
+  Monitor,
+  TriangleAlert,
+  X,
 } from "lucide-react";
 
 const AUTOSAVE_DEBOUNCE_MS = 1500;
@@ -40,6 +50,11 @@ const EditAppPage = () => {
   const [app, setApp] = useState(null);
   const [previewKey, setPreviewKey] = useState(0);
   const [currentVersionNumber, setCurrentVersionNumber] = useState(null);
+  const [deployDialog, setDeployDialog] = useState({
+    open: false,
+    versionNumber: undefined,
+    description: "",
+  });
 
   const autoSaveTimerRef = useRef(null);
   const addError = useCallback((message, type = "error") => {
@@ -225,29 +240,13 @@ const EditAppPage = () => {
     }
   }, [appId, addError]);
 
-  const handleDeploy = useCallback(
-    async (versionNumber) => {
+  const runDeploy = useCallback(
+    async ({ versionNumber, description = "" }) => {
       if (!appId) {
         toast.error("Invalid app ID, cannot deploy");
         return;
       }
       const isRedeploy = versionNumber !== undefined;
-      let description = "";
-      if (isRedeploy) {
-        if (!window.confirm(`Redeploy version v${versionNumber} to Vast.ai?`)) {
-          return;
-        }
-      } else {
-        description = window.prompt("Version description (optional):");
-        if (description === null) return;
-        if (
-          !window.confirm(
-            "Deploy this draft as a new version and push to Vast.ai?",
-          )
-        ) {
-          return;
-        }
-      }
       setIsDeploying(true);
       const hide = toast.loading(
         isRedeploy
@@ -291,7 +290,28 @@ const EditAppPage = () => {
     ],
   );
 
+  const handleDeploy = useCallback((versionNumber) => {
+    setDeployDialog({
+      open: true,
+      versionNumber,
+      description: "",
+    });
+  }, []);
+
+  const handleConfirmDeploy = useCallback(() => {
+    const { versionNumber, description } = deployDialog;
+    setDeployDialog((prev) => ({ ...prev, open: false }));
+    runDeploy({ versionNumber, description });
+  }, [deployDialog, runDeploy]);
+
   useSaveShortcut(currentFile, code, handleSaveFile);
+
+  const mockPreviewHtml =
+    USE_GEN_APP_MOCKS && currentFile.endsWith("index.html") ? code : "";
+  const previewUrl =
+    app?.host && app?.ports?.frontend
+      ? `http://${app.host}:${app.ports.frontend}`
+      : "";
 
   useEffect(() => {
     if (!appId) return;
@@ -360,7 +380,7 @@ const EditAppPage = () => {
                       : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                   }`}
                 >
-                  <ComputerDesktopIcon className="size-4 shrink-0" />
+                  <Monitor className="size-4 shrink-0" />
                   App
                 </button>
                 <button
@@ -372,7 +392,7 @@ const EditAppPage = () => {
                       : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                   }`}
                 >
-                  <CodeBracketSquareIcon className="size-4 shrink-0" />
+                  <SquareCode className="size-4 shrink-0" />
                   Code
                 </button>
                 {/* Sliding pill */}
@@ -401,9 +421,9 @@ const EditAppPage = () => {
               className="flex h-9 items-center gap-2 rounded-xl bg-blue-600 px-4 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:pointer-events-none disabled:opacity-50 dark:bg-blue-500 dark:hover:bg-blue-400"
             >
               {isDeploying ? (
-                <ArrowPathIcon className="size-4 shrink-0 animate-spin" />
+                <RefreshCw className="size-4 shrink-0 animate-spin" />
               ) : (
-                <ArrowUpTrayIcon className="size-4 shrink-0" />
+                <Upload className="size-4 shrink-0" />
               )}
               {isDeploying ? "Deploying…" : "Deploy"}
             </button>
@@ -433,7 +453,7 @@ const EditAppPage = () => {
             <div className="flex min-h-0 flex-1 flex-col">
               {/* URL bar */}
               <div className="shrink-0 border-b border-gray-200 bg-gray-50 px-3 py-2 dark:border-white/10 dark:bg-slate-900">
-                {app?.host && app?.ports?.frontend && (
+                {(mockPreviewHtml || previewUrl) && (
                   <div className="flex w-full items-center rounded-xl border border-gray-200 bg-white transition hover:border-gray-300 dark:border-white/10 dark:bg-white/5 dark:hover:border-white/20">
                     <button
                       type="button"
@@ -441,15 +461,17 @@ const EditAppPage = () => {
                       className="ml-1 shrink-0 rounded-lg p-1.5 text-gray-500 transition hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/10"
                       title="Reload preview"
                     >
-                      <ArrowPathIcon className="size-4" />
+                      <RefreshCw className="size-4" />
                     </button>
                     <a
-                      href={`http://${app.host}:${app.ports.frontend}`}
+                      href={previewUrl || undefined}
                       target="_blank"
                       rel="noreferrer"
                       className="flex min-w-0 flex-1 items-center px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200"
                     >
-                      <span className="truncate">{`http://${app.host}:${app.ports.frontend}`}</span>
+                      <span className="truncate">
+                        {mockPreviewHtml ? "frontend/index.html" : previewUrl}
+                      </span>
                     </a>
                   </div>
                 )}
@@ -457,11 +479,20 @@ const EditAppPage = () => {
 
               {/* iframe / placeholder */}
               <div className="relative min-h-0 flex-1">
-                {app?.host && app?.ports?.frontend ? (
+                {mockPreviewHtml ? (
                   <iframe
                     key={previewKey}
                     title="App Preview"
-                    src={`http://${app.host}:${app.ports.frontend}`}
+                    srcDoc={mockPreviewHtml}
+                    className="absolute inset-0 h-full w-full border-0 bg-white dark:bg-slate-950"
+                    sandbox="allow-scripts allow-same-origin allow-forms"
+                    referrerPolicy="no-referrer"
+                  />
+                ) : previewUrl ? (
+                  <iframe
+                    key={previewKey}
+                    title="App Preview"
+                    src={previewUrl}
                     className="absolute inset-0 h-full w-full border-0 bg-white dark:bg-slate-950"
                     sandbox="allow-scripts allow-same-origin allow-forms"
                     referrerPolicy="no-referrer"
@@ -470,7 +501,7 @@ const EditAppPage = () => {
                   <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
                     {app ? (
                       <>
-                        <ExclamationTriangleIcon className="mb-3 size-10 text-amber-500" />
+                        <TriangleAlert className="mb-3 size-10 text-amber-500" />
                         <p className="font-medium text-gray-700 dark:text-gray-300">
                           Instance not yet available
                         </p>
@@ -480,7 +511,7 @@ const EditAppPage = () => {
                       </>
                     ) : (
                       <>
-                        <ArrowPathIcon className="mb-3 size-8 animate-spin text-blue-500" />
+                        <RefreshCw className="mb-3 size-8 animate-spin text-blue-500" />
                         <p className="text-sm text-gray-600 dark:text-gray-400">
                           Fetching instance info…
                         </p>
@@ -498,7 +529,7 @@ const EditAppPage = () => {
       {errors.length > 0 && (
         <div className="flex shrink-0 items-center gap-2 overflow-x-auto border-t border-red-200 bg-red-50 px-3 py-2 dark:border-red-500/20 dark:bg-red-900/20">
           <span className="flex shrink-0 items-center gap-1 text-xs font-medium text-red-700 dark:text-red-400">
-            <ExclamationTriangleIcon className="size-4" />
+            <TriangleAlert className="size-4" />
             {errors.length} error{errors.length !== 1 ? "s" : ""}
           </span>
           <div className="flex min-w-0 flex-1 items-center gap-2 overflow-x-auto">
@@ -516,7 +547,7 @@ const EditAppPage = () => {
                   className="rounded p-0.5 text-red-500 hover:bg-red-100 dark:hover:bg-red-800/40"
                   title="Dismiss"
                 >
-                  <XMarkIcon className="size-3.5" />
+                  <X className="size-3.5" />
                 </button>
               </div>
             ))}
@@ -530,6 +561,78 @@ const EditAppPage = () => {
           </button>
         </div>
       )}
+
+      <Dialog
+        open={deployDialog.open}
+        onOpenChange={(open) =>
+          setDeployDialog((prev) => ({ ...prev, open }))
+        }
+      >
+        <DialogContent className="rounded-2xl border-gray-200 bg-white dark:border-white/10 dark:bg-slate-900 sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-bold text-gray-900 dark:text-white">
+              {deployDialog.versionNumber !== undefined
+                ? `Redeploy version v${deployDialog.versionNumber}`
+                : "Deploy draft"}
+            </DialogTitle>
+            <DialogDescription className="text-sm leading-6 text-gray-500 dark:text-gray-400">
+              {deployDialog.versionNumber !== undefined
+                ? "This will redeploy the selected version to Vast.ai."
+                : "This will create a new version from the current draft and deploy it to Vast.ai."}
+            </DialogDescription>
+          </DialogHeader>
+
+          {deployDialog.versionNumber === undefined && (
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Version description
+              </label>
+              <Textarea
+                value={deployDialog.description}
+                onChange={(event) =>
+                  setDeployDialog((prev) => ({
+                    ...prev,
+                    description: event.target.value,
+                  }))
+                }
+                placeholder="Optional changelog or release note"
+                className="min-h-24 resize-none rounded-xl border-gray-200 bg-white text-gray-900 focus-visible:border-blue-400 focus-visible:ring-blue-500/30 dark:border-white/20 dark:bg-white/10 dark:text-white"
+              />
+            </div>
+          )}
+
+          <DialogFooter className="-mx-4 -mb-4 rounded-b-2xl border-t border-gray-200 bg-gray-50 p-4 dark:border-white/10 dark:bg-white/5">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() =>
+                setDeployDialog((prev) => ({ ...prev, open: false }))
+              }
+              disabled={isDeploying}
+              className="h-10 rounded-xl border-gray-200 bg-white px-5 text-sm font-semibold text-gray-700 hover:bg-gray-100 dark:border-white/20 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              onClick={handleConfirmDeploy}
+              disabled={isDeploying}
+              className="h-10 rounded-xl bg-blue-600 px-5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50 dark:bg-blue-500 dark:hover:bg-blue-400"
+            >
+              {isDeploying ? (
+                <>
+                  <RefreshCw className="size-4 animate-spin" />
+                  Deploying...
+                </>
+              ) : deployDialog.versionNumber !== undefined ? (
+                "Redeploy"
+              ) : (
+                "Deploy"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

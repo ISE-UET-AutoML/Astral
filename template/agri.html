@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AgriScan · Crop Health & Disease Detection</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: { sans: ['Inter','ui-sans-serif','system-ui'], mono: ['JetBrains Mono','ui-monospace'] },
+        colors: {
+          brand: { 50:'#f0fdf4', 100:'#dcfce7', 200:'#bbf7d0', 300:'#86efac', 400:'#4ade80', 500:'#16a34a', 600:'#15803d', 700:'#166534' },
+          accent:{ 50:'#fffbeb', 100:'#fef3c7', 200:'#fde68a', 300:'#fcd34d', 400:'#fbbf24', 500:'#f59e0b', 600:'#d97706' },
+          earth: { 50:'#fafaf5', 100:'#f5f5e8', 200:'#eaead0', 700:'#5b6047' },
+          ink:   { 50:'#f8fafc',100:'#f1f5f9',200:'#e2e8f0',300:'#cbd5e1',400:'#94a3b8',500:'#64748b',600:'#475569',700:'#334155',800:'#1e293b',900:'#0f172a' },
+          ok:{500:'#16a34a'}, warn:{500:'#f59e0b'}, danger:{500:'#dc2626'},
+        },
+      },
+    },
+  };
+</script>
+<style>
+  :root { color-scheme: light; }
+  body {
+    background:
+      radial-gradient(900px 400px at 5% -10%, rgba(22,163,74,.08), transparent 60%),
+      radial-gradient(700px 360px at 105% 0%, rgba(245,158,11,.07), transparent 60%),
+      #f7faf6;
+    font-family: 'Inter', system-ui, sans-serif;
+    color: #1f2937;
+  }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+  .card { background:#fff; border:1px solid #eef0f3; box-shadow:0 1px 2px rgba(16,24,40,.04), 0 8px 24px -12px rgba(16,24,40,.06); }
+  .soft-border { border:1px solid #eef0f3; }
+
+  .pill-tab { transition:all .18s ease; color:#64748b; }
+  .pill-tab[data-active="true"] { background:#fff; color:#15803d; box-shadow:0 1px 2px rgba(16,24,40,.06), 0 0 0 1px #d1fae5; }
+  .pill-tab:not([data-active="true"]):hover { color:#0f172a; }
+
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; padding:.55rem .9rem; border-radius:.6rem; font-size:.875rem; font-weight:600; border:1px solid transparent; transition:all .15s ease; white-space:nowrap; }
+  .btn:disabled { opacity:.55; cursor:not-allowed; }
+  .btn:not(:disabled):hover { transform: translateY(-1px); }
+  .btn-primary { background:#16a34a; color:#fff; box-shadow:0 1px 2px rgba(22,163,74,.25), 0 8px 20px -8px rgba(22,163,74,.35); }
+  .btn-primary:not(:disabled):hover { background:#15803d; }
+  .btn-accent  { background:#f59e0b; color:#fff; box-shadow:0 1px 2px rgba(245,158,11,.25), 0 8px 20px -8px rgba(245,158,11,.35); }
+  .btn-accent:not(:disabled):hover { background:#d97706; }
+  .btn-ghost   { background:#fff; color:#334155; border-color:#e5e7eb; }
+  .btn-ghost:not(:disabled):hover { background:#f8fafc; border-color:#d1d5db; }
+
+  .chip { display:inline-flex; align-items:center; gap:.35rem; padding:.22rem .6rem; border-radius:999px; font-size:.72rem; font-weight:600; border:1px solid #e5e7eb; color:#475569; background:#f8fafc; }
+  .chip-ok    { color:#15803d; border-color:#bbf7d0; background:#f0fdf4; }
+  .chip-warn  { color:#a16207; border-color:#fde68a; background:#fffbeb; }
+  .chip-danger{ color:#b91c1c; border-color:#fecaca; background:#fef2f2; }
+  .chip-info  { color:#1e40af; border-color:#bfdbfe; background:#eff6ff; }
+
+  .dot { width:8px; height:8px; border-radius:999px; display:inline-block; }
+  .dot-ok{ background:#16a34a; box-shadow:0 0 0 3px rgba(22,163,74,.18); }
+  .dot-warn{ background:#f59e0b; box-shadow:0 0 0 3px rgba(245,158,11,.18); }
+  .dot-err{ background:#dc2626; box-shadow:0 0 0 3px rgba(220,38,38,.18); }
+
+  .dropzone { border:1.5px dashed #cbd5e1; background:#fff; transition:all .2s ease; }
+  .dropzone.dragover { border-color:#16a34a; background:#f0fdf4; box-shadow:0 0 0 4px rgba(22,163,74,.08); }
+
+  .leaf-wrap { background: linear-gradient(135deg,#0e3a23 0%, #1f5a3a 60%, #0e3a23 100%); border-radius:10px; overflow:hidden; position:relative; }
+  .leaf-img { display:block; width:100%; height:100%; object-fit:contain; transform-origin:center; transition:transform .2s, filter .2s; user-select:none; }
+
+
+  .progress-bar { position:relative; height:6px; background:#f1f5f9; border-radius:999px; overflow:hidden; }
+  .progress-bar > span { position:absolute; left:0; top:0; bottom:0; background:linear-gradient(90deg,#16a34a,#4ade80); border-radius:999px; transition:width .8s cubic-bezier(.2,.8,.2,1); }
+  .progress-bar.warn > span { background:linear-gradient(90deg,#f59e0b,#fbbf24); }
+  .progress-bar.danger > span { background:linear-gradient(90deg,#dc2626,#fb7185); }
+
+  /* Severity meter */
+  .severity-bar { display:flex; gap:4px; }
+  .severity-bar .seg { flex:1; height:8px; border-radius:4px; background:#e5e7eb; transition:background .4s; }
+  .severity-bar .seg.on-1 { background:#86efac; }
+  .severity-bar .seg.on-2 { background:#fbbf24; }
+  .severity-bar .seg.on-3 { background:#f59e0b; }
+  .severity-bar .seg.on-4 { background:#dc2626; }
+
+  /* Field map cells */
+  .field-grid { display:grid; grid-template-columns:repeat(12,1fr); grid-auto-rows:1fr; gap:3px; aspect-ratio:12/8; }
+  .field-cell { border-radius:3px; background:#dcfce7; transition:background .3s, transform .15s; cursor:pointer; }
+  .field-cell:hover { transform:scale(1.18); }
+  .field-cell.h2 { background:#bbf7d0; }
+  .field-cell.h3 { background:#86efac; }
+  .field-cell.w  { background:#fcd34d; }
+  .field-cell.w2 { background:#fbbf24; }
+  .field-cell.d  { background:#f87171; }
+  .field-cell.d2 { background:#dc2626; }
+
+  @keyframes scanSoft { 0%{transform:translateY(-2%);opacity:0;} 10%{opacity:1;} 90%{opacity:1;} 100%{transform:translateY(102%);opacity:0;} }
+  .scan-beam { position:absolute; left:0; right:0; height:56px; background:linear-gradient(180deg, transparent, rgba(255,255,255,.16), transparent); animation:scanSoft 1.6s linear infinite; pointer-events:none; }
+
+  .toast { position:fixed; right:16px; bottom:16px; z-index:60; padding:10px 14px; border-radius:12px; background:#fff; color:#1f2937; border:1px solid #e5e7eb; box-shadow:0 16px 40px -12px rgba(16,24,40,.18); display:flex; align-items:center; gap:10px; transform:translateY(16px); opacity:0; transition:all .25s ease; }
+  .toast[data-show="true"] { transform:translateY(0); opacity:1; }
+
+  .row-hover:hover { background:#f8fafc; }
+
+  @keyframes logoPulse { 0%,100%{ box-shadow:0 0 0 0 rgba(22,163,74,0); } 50%{ box-shadow:0 0 0 6px rgba(22,163,74,.10); } }
+  .logo-pulse { animation: logoPulse 3s ease-in-out infinite; }
+
+  input:focus-visible { box-shadow:0 0 0 3px rgba(22,163,74,.15); border-color:#16a34a !important; outline:none; }
+  details>summary{list-style:none;cursor:pointer;}
+  details>summary::-webkit-details-marker{display:none;}
+</style>
+</head>
+<body class="text-ink-800 antialiased">
+
+<div class="min-h-screen max-w-[1400px] mx-auto px-4 md:px-6 py-5">
+
+  <!-- HEADER -->
+  <header class="card rounded-2xl px-4 md:px-5 py-3 flex items-center justify-between gap-4">
+    <div class="flex items-center gap-3 min-w-0">
+      <div class="logo-pulse flex items-center justify-center w-10 h-10 rounded-xl bg-brand-500 text-white">
+        <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22c0-7 5-12 10-12-1 6-5 10-10 12z"/><path d="M12 22C7 22 2 17 2 12c6 1 10 5 10 10z"/><path d="M12 12V2"/>
+        </svg>
+      </div>
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="font-extrabold tracking-tight text-ink-900 text-[16px]">AgriScan</div>
+        <div class="h-4 w-px bg-ink-200"></div>
+        <div class="truncate text-ink-500 text-[13px] md:text-sm">Crop Health & Disease Detection</div>
+        <span class="chip chip-ok hidden md:inline-flex"><span class="dot dot-ok"></span>FIELD-READY</span>
+      </div>
+    </div>
+
+    <nav class="hidden md:flex items-center gap-1 rounded-full bg-ink-100 p-1">
+      <button data-tab="diagnose" class="pill-tab rounded-full px-3.5 py-1.5 text-sm flex items-center gap-2" data-active="true">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11c0 6-9 11-9 11S3 17 3 11a9 9 0 1 1 18 0z"/><circle cx="12" cy="11" r="3"/></svg>
+        Diagnose
+      </button>
+      <button data-tab="field" class="pill-tab rounded-full px-3.5 py-1.5 text-sm flex items-center gap-2">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/></svg>
+        Field Map
+      </button>
+      <button data-tab="library" class="pill-tab rounded-full px-3.5 py-1.5 text-sm flex items-center gap-2">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        Treatment Library
+      </button>
+      <button data-tab="history" class="pill-tab rounded-full px-3.5 py-1.5 text-sm flex items-center gap-2">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 2"/></svg>
+        History
+      </button>
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <button class="btn btn-ghost relative" title="Alerts">
+        <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10 21a2 2 0 0 0 4 0"/></svg>
+        <span class="hidden md:inline">Alerts</span>
+        <span class="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-accent-500 ring-2 ring-white"></span>
+      </button>
+      <button class="flex items-center gap-2 pl-1 pr-2 py-1 rounded-full soft-border bg-white hover:bg-ink-50 transition">
+        <img src="https://i.pravatar.cc/64?img=64" alt="Farmer" class="w-7 h-7 rounded-full ring-2 ring-brand-100" />
+        <div class="hidden md:block text-left leading-tight">
+          <div class="text-[10px] uppercase tracking-wider text-ink-500">Agronomist</div>
+          <div class="text-xs font-semibold text-ink-800">Mr. Tuan Le</div>
+        </div>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile tab bar -->
+  <div class="md:hidden mt-3 flex items-center gap-1 rounded-full bg-ink-100 p-1 w-fit mx-auto overflow-x-auto">
+    <button data-tab="diagnose" class="pill-tab rounded-full px-3 py-1.5 text-sm" data-active="true">Diagnose</button>
+    <button data-tab="field" class="pill-tab rounded-full px-3 py-1.5 text-sm">Field</button>
+    <button data-tab="library" class="pill-tab rounded-full px-3 py-1.5 text-sm">Library</button>
+    <button data-tab="history" class="pill-tab rounded-full px-3 py-1.5 text-sm">History</button>
+  </div>
+
+  <main class="mt-5 space-y-5">
+
+    <!-- ============= DIAGNOSE TAB ============= -->
+    <section id="tab-diagnose" class="space-y-5">
+
+      <!-- Upload -->
+      <div id="dropzone" class="dropzone rounded-2xl p-8 md:p-10 text-center">
+        <div class="mx-auto w-14 h-14 rounded-full bg-brand-50 flex items-center justify-center mb-3">
+          <svg class="w-7 h-7 text-brand-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </div>
+        <div class="text-[15px]">
+          <button id="selectFileBtn" class="text-brand-500 font-semibold hover:underline">Take a photo</button>
+          <span class="text-ink-500"> or drag & drop a leaf image (JPG, PNG, HEIC)</span>
+        </div>
+        <div class="mt-4 flex items-center justify-center gap-3 flex-wrap">
+          <button id="realSelectBtn" class="btn btn-primary">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+            Upload Photo
+          </button>
+          <button id="sampleBtn" class="btn btn-accent hidden">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c0-7 5-12 10-12-1 6-5 10-10 12z"/><path d="M12 22C7 22 2 17 2 12c6 1 10 5 10 10z"/></svg>
+            Try sample leaves
+          </button>
+          <input id="fileInput" type="file" accept="image/*" class="hidden" />
+        </div>
+        <div id="fileMeta" class="mt-3 text-xs text-ink-500">Tip: Take photo of upper leaf surface in natural light · Best within 24h of symptoms</div>
+      </div>
+
+      <!-- Sample picker -->
+      <div id="samplePicker" class="card rounded-2xl p-4 hidden">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-sm font-semibold text-ink-800">Choose a sample crop & condition</h3>
+          <button id="closeSamples" class="btn btn-ghost !py-1 !px-2 text-xs">Close</button>
+        </div>
+        <div id="sampleGrid" class="grid grid-cols-2 md:grid-cols-4 gap-3"></div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+
+        <!-- Image viewer -->
+        <div class="card rounded-2xl overflow-hidden">
+          <div class="flex items-center justify-between px-4 py-3 border-b border-ink-100">
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-ink-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+              <h3 class="text-sm font-semibold text-ink-800">Captured Image</h3>
+            </div>
+            <div class="flex items-center gap-2">
+              <button id="clearImageBtn" class="btn btn-ghost !py-1 !px-2 text-xs" title="Clear">
+                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="px-4 py-2.5 border-b border-ink-100 bg-ink-50 flex flex-wrap gap-x-5 gap-y-1 text-[12.5px]">
+            <div><span class="text-ink-500">Field:</span> <span id="f-name" class="text-ink-800 font-medium">North Field B-3</span></div>
+            <div><span class="text-ink-500">Captured:</span> <span id="f-date" class="text-ink-800">2026-05-03 09:42</span></div>
+            <div><span class="text-ink-500">GPS:</span> <span id="f-gps" class="font-mono text-ink-800">10.762, 106.660</span></div>
+            <div><span class="text-ink-500">Crop:</span> <span id="f-crop" class="text-ink-800">—</span></div>
+          </div>
+
+          <div class="relative">
+            <div id="leafWrap" class="leaf-wrap aspect-[5/4]">
+              <img id="leafImg" class="leaf-img" alt="Leaf" />
+              <div id="leafEmpty" class="absolute inset-0 flex flex-col items-center justify-center text-white/60 text-sm">
+                <svg class="w-10 h-10 mb-2 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c0-7 5-12 10-12-1 6-5 10-10 12z"/><path d="M12 22C7 22 2 17 2 12c6 1 10 5 10 10z"/></svg>
+                No leaf image yet. Upload or pick a sample.
+              </div>
+              <div id="scanOverlay" class="absolute inset-0 hidden">
+                <div class="scan-beam"></div>
+                <div class="absolute top-2 left-2 right-2 flex items-center justify-between text-[11px] font-mono text-white/95">
+                  <div class="flex items-center gap-2 px-2 py-1 rounded-md bg-black/40 backdrop-blur"><span class="dot dot-ok"></span>Identifying species & lesions</div>
+                  <div id="scanProgress" class="px-2 py-1 rounded-md bg-black/40 backdrop-blur tabular-nums">0%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Report -->
+        <div class="card rounded-2xl flex flex-col">
+          <div class="flex items-center justify-between px-4 py-3 border-b border-ink-100">
+            <div class="flex items-center gap-2">
+              <div class="w-7 h-7 rounded-lg bg-brand-50 text-brand-500 flex items-center justify-center">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              </div>
+              <h3 class="text-sm font-semibold text-ink-800">AI Diagnosis Report</h3>
+            </div>
+            <div id="statusChip" class="chip chip-info">
+              <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+              Awaiting image
+            </div>
+          </div>
+
+          <div class="p-4 md:p-5 space-y-5 flex-1">
+
+            <!-- Diagnosis header -->
+            <div>
+              <div class="text-[11px] tracking-[.14em] font-semibold text-ink-400 uppercase">Detected Condition</div>
+              <div class="flex items-center gap-2 mt-1 flex-wrap">
+                <div id="diagnosis" class="text-2xl md:text-[28px] leading-none font-extrabold text-brand-500 tracking-tight">—</div>
+                <span id="confidenceChip" class="chip chip-ok">Confidence —</span>
+              </div>
+              <div class="hidden mt-2 text-[12px] text-ink-500">on <span id="speciesText" class="font-semibold text-ink-700">—</span></div>
+            </div>
+
+            <!-- Severity -->
+            <div class="hidden">
+              <div class="flex items-center justify-between mb-1.5">
+                <div class="text-[11px] tracking-[.14em] font-semibold text-ink-400 uppercase">Severity</div>
+                <div id="severityLabel" class="text-xs font-semibold text-ink-700">—</div>
+              </div>
+              <div id="severityBar" class="severity-bar">
+                <div class="seg"></div><div class="seg"></div><div class="seg"></div><div class="seg"></div>
+              </div>
+              <div class="mt-1.5 grid grid-cols-4 text-[10px] text-ink-400">
+                <span>Healthy</span><span class="text-center">Mild</span><span class="text-center">Moderate</span><span class="text-right">Severe</span>
+              </div>
+            </div>
+
+            <!-- Spread risk + weather -->
+            <div class="hidden grid grid-cols-2 gap-3">
+              <div class="rounded-xl soft-border bg-ink-50 p-3">
+                <div class="text-[11px] text-ink-500 font-semibold uppercase tracking-wider">Spread Risk (7d)</div>
+                <div id="spreadRisk" class="text-lg font-bold text-ink-800 mt-1">—</div>
+                <div id="spreadHint" class="text-[11px] text-ink-500 mt-0.5">Based on humidity & forecast</div>
+              </div>
+              <div class="rounded-xl soft-border bg-ink-50 p-3">
+                <div class="text-[11px] text-ink-500 font-semibold uppercase tracking-wider">Estimated Yield Loss</div>
+                <div id="yieldLoss" class="text-lg font-bold text-ink-800 mt-1">—</div>
+                <div class="text-[11px] text-ink-500 mt-0.5">If untreated</div>
+              </div>
+            </div>
+
+            <!-- Top probabilities -->
+            <div class="hidden">
+              <div class="flex items-center justify-between mb-2">
+                <div class="text-[11px] tracking-[.14em] font-semibold text-ink-400 uppercase">Top Possible Conditions</div>
+                <div class="text-[11px] text-ink-400 font-mono">Top-4</div>
+              </div>
+              <div id="probList" class="space-y-2"></div>
+            </div>
+
+            <!-- Treatment -->
+            <div class="rounded-xl soft-border bg-brand-50/60 p-4">
+              <div class="flex items-center gap-2 mb-2">
+                <svg class="w-4 h-4 text-brand-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 2v4l-4 4 4 4v4M11 18h6a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2H11"/></svg>
+                <div class="text-sm font-semibold text-ink-800">Recommended Action</div>
+              </div>
+              <p id="actionText" class="text-[13px] text-ink-700 leading-relaxed">Upload an image to receive crop-specific treatment recommendations.</p>
+              <div id="treatmentChips" class="hidden mt-2 flex flex-wrap gap-1.5"></div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="hidden grid grid-cols-2 gap-2">
+              <button id="planBtn" class="btn btn-primary" disabled>
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                Add to Treatment Plan
+              </button>
+              <button id="shareBtn" class="btn btn-ghost" disabled>
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
+                Share with Agronomist
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============= FIELD MAP TAB ============= -->
+    <section id="tab-field" class="hidden space-y-5">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+
+        <div class="card rounded-2xl p-4 lg:col-span-2">
+          <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+            <div>
+              <h3 class="text-sm font-semibold text-ink-800">Field Health Map · North Field B-3</h3>
+              <div class="text-xs text-ink-500">12 ha · Rice (Oryza sativa) · Last scan 2 hours ago</div>
+            </div>
+            <div class="flex items-center gap-1.5 text-[11px]">
+              <span class="chip chip-ok"><span class="w-2 h-2 rounded-sm bg-brand-300"></span>Healthy</span>
+              <span class="chip chip-warn"><span class="w-2 h-2 rounded-sm bg-accent-400"></span>Watch</span>
+              <span class="chip chip-danger"><span class="w-2 h-2 rounded-sm bg-danger-500"></span>Diseased</span>
+            </div>
+          </div>
+          <div id="fieldGrid" class="field-grid"></div>
+          <div class="mt-3 grid grid-cols-3 gap-2 text-center">
+            <div class="rounded-lg soft-border bg-brand-50 py-2">
+              <div class="text-lg font-extrabold text-brand-700 tabular-nums" id="cellHealthy">0</div>
+              <div class="text-[11px] text-brand-700/80">Healthy plots</div>
+            </div>
+            <div class="rounded-lg soft-border bg-accent-50 py-2">
+              <div class="text-lg font-extrabold text-accent-600 tabular-nums" id="cellWatch">0</div>
+              <div class="text-[11px] text-accent-600/80">Watch zones</div>
+            </div>
+            <div class="rounded-lg soft-border bg-red-50 py-2">
+              <div class="text-lg font-extrabold text-danger-500 tabular-nums" id="cellDisease">0</div>
+              <div class="text-[11px] text-red-700/80">Diseased plots</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-5">
+          <div class="card rounded-2xl p-4">
+            <h3 class="text-sm font-semibold text-ink-800 mb-2">7-Day Forecast</h3>
+            <div id="weatherList" class="space-y-1.5"></div>
+          </div>
+          <div class="card rounded-2xl p-4">
+            <h3 class="text-sm font-semibold text-ink-800 mb-2">Disease Risk Index</h3>
+            <div class="relative h-[160px]"><canvas id="riskChart"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card rounded-2xl p-4">
+        <h3 class="text-sm font-semibold text-ink-800 mb-2">Yield Forecast (tonnes/ha)</h3>
+        <div class="relative h-[240px]"><canvas id="yieldChart"></canvas></div>
+      </div>
+    </section>
+
+    <!-- ============= LIBRARY TAB ============= -->
+    <section id="tab-library" class="hidden">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="libGrid"></div>
+    </section>
+
+    <!-- ============= HISTORY TAB ============= -->
+    <section id="tab-history" class="hidden card rounded-2xl">
+      <div class="px-4 py-3 border-b border-ink-100 flex items-center justify-between gap-3 flex-wrap">
+        <h3 class="text-sm font-semibold text-ink-800">Recent Diagnoses</h3>
+        <button class="btn btn-primary"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>Export Report</button>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="text-xs uppercase text-ink-400 tracking-wider bg-ink-50">
+            <tr class="border-b border-ink-100">
+              <th class="text-left px-4 py-2.5 font-semibold">Scan ID</th>
+              <th class="text-left px-4 py-2.5 font-semibold">Field</th>
+              <th class="text-left px-4 py-2.5 font-semibold">Crop</th>
+              <th class="text-left px-4 py-2.5 font-semibold">Condition</th>
+              <th class="text-left px-4 py-2.5 font-semibold">Severity</th>
+              <th class="text-left px-4 py-2.5 font-semibold">Date</th>
+              <th class="text-left px-4 py-2.5 font-semibold">Action</th>
+              <th class="text-right px-4 py-2.5 font-semibold"></th>
+            </tr>
+          </thead>
+          <tbody id="historyBody" class="divide-y divide-ink-100"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+</div>
+
+<div id="toast" class="toast" data-show="false">
+  <svg class="w-4 h-4 text-ok-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+  <span id="toastMsg">Ready</span>
+</div>
+
+<script>
+/* ===== Sample leaves (embedded SVGs) ===== */
+const SAMPLES = [
+  {
+    id:'tomato_lateblight', crop:'Tomato', condName:'Late Blight',
+    label:'Tomato · Late Blight',
+    cls:'LATE BLIGHT', species:'Tomato (Solanum lycopersicum)',
+    severity:3, conf:.927, sev:'danger',
+    spread:'High · Wet 7d', loss:'30–55%',
+    action:'Apply copper-based fungicide within 24h. Remove infected leaves. Improve airflow between rows. Avoid overhead irrigation.',
+    treatments:['Copper hydroxide 50% WP','Mancozeb 80% WP','Field sanitation','Drip irrigation'],
+    probs:[['LATE BLIGHT',.927],['EARLY BLIGHT',.041],['SEPTORIA LEAF SPOT',.022],['HEALTHY',.010]],
+    img: leafSvg('tomato', [[55,40,18,22],[28,62,16,18]])
+  },
+  {
+    id:'rice_blast', crop:'Rice', condName:'Blast',
+    label:'Rice · Blast',
+    cls:'RICE BLAST', species:'Rice (Oryza sativa)',
+    severity:2, conf:.884, sev:'warn',
+    spread:'Moderate · Humid', loss:'15–25%',
+    action:'Apply Tricyclazole or Isoprothiolane at first sign. Reduce nitrogen. Ensure spacing between hills.',
+    treatments:['Tricyclazole 75% WP','Isoprothiolane','Reduce N fertilizer','Resistant variety next season'],
+    probs:[['RICE BLAST',.884],['SHEATH BLIGHT',.062],['BROWN SPOT',.034],['HEALTHY',.020]],
+    img: leafSvg('rice', [[45,28,22,12],[60,55,14,16]])
+  },
+  {
+    id:'corn_rust', crop:'Corn', condName:'Common Rust',
+    label:'Corn · Common Rust',
+    cls:'COMMON RUST', species:'Maize (Zea mays)',
+    severity:2, conf:.901, sev:'warn',
+    spread:'Moderate', loss:'10–20%',
+    action:'Apply Azoxystrobin at flowering stage. Plant rust-resistant hybrids next season.',
+    treatments:['Azoxystrobin','Propiconazole','Resistant hybrids','Crop rotation'],
+    probs:[['COMMON RUST',.901],['NORTHERN LEAF BLIGHT',.058],['GRAY LEAF SPOT',.026],['HEALTHY',.015]],
+    img: leafSvg('corn', [[30,35,15,8],[55,48,10,7],[42,62,12,6]])
+  },
+  {
+    id:'apple_healthy', crop:'Apple', condName:'Healthy',
+    label:'Apple · Healthy',
+    cls:'HEALTHY', species:'Apple (Malus domestica)',
+    severity:1, conf:.978, sev:'ok',
+    spread:'Low', loss:'0%',
+    action:'No disease detected. Continue routine monitoring. Maintain balanced fertilization and pruning schedule.',
+    treatments:['Continue monitoring','Balanced NPK','Pruning · seasonal'],
+    probs:[['HEALTHY',.978],['APPLE SCAB',.012],['CEDAR APPLE RUST',.007],['BLACK ROT',.003]],
+    img: leafSvg('apple', [])
+  },
+];
+function leafSvg(crop, spots) {
+  const palette = {
+    tomato:{ leaf:'#3a8a3a', vein:'#2a6a2a', spot:'#7a4a1a' },
+    rice:  { leaf:'#65a042', vein:'#4a7a30', spot:'#9a6a2a' },
+    corn:  { leaf:'#7aa83a', vein:'#5a8a30', spot:'#b8551a' },
+    apple: { leaf:'#4aa04a', vein:'#2a7a2a', spot:'#7a3a1a' },
+  };
+  const p = palette[crop] || palette.tomato;
+  let spotsSvg = spots.map(([x,y,w,h]) =>
+    `<ellipse cx='${x}%' cy='${y}%' rx='${w*0.35}%' ry='${h*0.35}%' fill='${p.spot}' opacity='0.85' filter='url(%23soft)' />`
+  ).join('');
+  return `data:image/svg+xml;utf8,` + encodeURIComponent(`
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 640'>
+  <defs>
+    <radialGradient id='bgL' cx='50%' cy='40%' r='80%'>
+      <stop offset='0%' stop-color='${p.leaf}' stop-opacity='1'/>
+      <stop offset='80%' stop-color='${p.vein}' stop-opacity='0.9'/>
+      <stop offset='100%' stop-color='#0e3a23' stop-opacity='1'/>
+    </radialGradient>
+    <filter id='soft'><feGaussianBlur stdDeviation='2.4'/></filter>
+    <filter id='grain'><feTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='2'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.10 0'/><feComposite in2='SourceGraphic' operator='in'/></filter>
+  </defs>
+  <rect width='100%' height='100%' fill='#0e3a23'/>
+  <path d='M400,40 C620,80 720,260 720,400 C720,540 580,600 400,600 C220,600 80,540 80,400 C80,260 180,80 400,40 Z' fill='url(%23bgL)' />
+  <path d='M400,60 L400,580' stroke='${p.vein}' stroke-width='4' opacity='0.7'/>
+  <g stroke='${p.vein}' stroke-width='2' opacity='0.55' fill='none'>
+    <path d='M400,160 Q220,220 130,330'/><path d='M400,160 Q580,220 670,330'/>
+    <path d='M400,260 Q230,300 150,400'/><path d='M400,260 Q570,300 650,400'/>
+    <path d='M400,380 Q260,400 200,490'/><path d='M400,380 Q540,400 600,490'/>
+  </g>
+  ${spotsSvg}
+  <rect width='100%' height='100%' filter='url(%23grain)'/>
+</svg>`);
+}
+
+/* ===== State ===== */
+const state = { hasImage:false, currentSample:null };
+
+/* ===== Tabs ===== */
+document.querySelectorAll('[data-tab]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tab = btn.dataset.tab;
+    document.querySelectorAll('[data-tab]').forEach(b => b.setAttribute('data-active', b.dataset.tab === tab ? 'true' : 'false'));
+    ['diagnose','field','library','history'].forEach(t => {
+      document.getElementById('tab-'+t).classList.toggle('hidden', t !== tab);
+    });
+    if (tab === 'field') initField();
+    if (tab === 'library') renderLibrary();
+    if (tab === 'history') renderHistory();
+  });
+});
+
+/* ===== Sample picker ===== */
+const samplePicker = document.getElementById('samplePicker');
+const sampleGrid = document.getElementById('sampleGrid');
+document.getElementById('sampleBtn').addEventListener('click', () => {
+  samplePicker.classList.remove('hidden');
+  sampleGrid.innerHTML = SAMPLES.map(s => `
+    <button data-sample="${s.id}" class="text-left rounded-xl soft-border bg-white hover:border-brand-300 hover:shadow transition overflow-hidden">
+      <div class="aspect-[5/4] bg-brand-700/10 flex items-center justify-center">
+        <img src="${s.img}" class="w-full h-full object-contain" />
+      </div>
+      <div class="px-3 py-2">
+        <div class="text-xs font-semibold text-ink-800">${s.label}</div>
+        <div class="text-[11px] text-ink-500 mt-0.5">Sev ${s.severity}/4 · ${(s.conf*100).toFixed(0)}% conf</div>
+      </div>
+    </button>
+  `).join('');
+  sampleGrid.querySelectorAll('[data-sample]').forEach(b => {
+    b.addEventListener('click', () => {
+      const s = SAMPLES.find(x => x.id === b.dataset.sample);
+      samplePicker.classList.add('hidden');
+      loadSample(s);
+    });
+  });
+});
+document.getElementById('closeSamples').addEventListener('click', () => samplePicker.classList.add('hidden'));
+
+/* ===== Upload ===== */
+const dz = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+document.getElementById('selectFileBtn').addEventListener('click', () => fileInput.click());
+document.getElementById('realSelectBtn').addEventListener('click', () => fileInput.click());
+['dragenter','dragover'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.add('dragover'); }));
+['dragleave','drop'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.remove('dragover'); }));
+dz.addEventListener('drop', e => { const f = e.dataTransfer.files?.[0]; if (f) handleFile(f); });
+fileInput.addEventListener('change', e => { const f = e.target.files?.[0]; if (f) handleFile(f); });
+function handleFile(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    const sample = SAMPLES[Math.floor(Math.random()*SAMPLES.length)];
+    sample.img = reader.result;
+    loadSample(sample, file);
+  };
+  reader.readAsDataURL(file);
+}
+
+function loadSample(sample, file) {
+  state.hasImage = true;
+  state.currentSample = sample;
+  document.getElementById('leafImg').src = sample.img;
+  document.getElementById('leafEmpty').style.display = 'none';
+  document.getElementById('f-crop').textContent = sample.crop;
+  document.getElementById('f-date').textContent = new Date().toISOString().slice(0,16).replace('T',' ');
+  if (file) {
+    const sizeMB = (file.size/(1024*1024)).toFixed(2);
+    document.getElementById('fileMeta').innerHTML = `<span class="text-ink-700 font-medium">${file.name}</span> · ${sizeMB} MB · <span class="text-ok-500 font-semibold">Uploaded</span>`;
+  } else {
+    document.getElementById('fileMeta').innerHTML = `<span class="text-ink-700 font-medium">${sample.label}</span> · sample · <span class="text-ok-500 font-semibold">Loaded</span>`;
+  }
+  runInference();
+}
+
+document.getElementById('clearImageBtn').addEventListener('click', () => {
+  state.hasImage = false; state.currentSample = null;
+  document.getElementById('leafImg').src = '';
+  document.getElementById('leafEmpty').style.display = 'flex';
+  resetReport();
+});
+
+/* ===== Inference ===== */
+function runInference() {
+  resetReport();
+  const overlay = document.getElementById('scanOverlay'); overlay.classList.remove('hidden');
+  const status = document.getElementById('statusChip');
+  status.className = 'chip chip-warn';
+  status.innerHTML = `<span class="dot dot-warn"></span>Analyzing leaf...`;
+  let p = 0;
+  const int = setInterval(() => {
+    p += Math.random()*14 + 6; if (p>=100) p=100;
+    document.getElementById('scanProgress').textContent = Math.round(p)+'%';
+    if (p>=100) { clearInterval(int); setTimeout(() => { overlay.classList.add('hidden'); renderReport(state.currentSample); }, 200); }
+  }, 110);
+}
+
+function renderReport(s) {
+  const status = document.getElementById('statusChip');
+  if (s.sev === 'ok') {
+    status.className = 'chip chip-ok';
+    status.innerHTML = `<svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Healthy crop`;
+  } else if (s.sev === 'warn') {
+    status.className = 'chip chip-warn';
+    status.innerHTML = `<span class="dot dot-warn"></span>Treatment recommended`;
+  } else {
+    status.className = 'chip chip-danger';
+    status.innerHTML = `<span class="dot dot-err"></span>Immediate action needed`;
+  }
+
+  const d = document.getElementById('diagnosis');
+  d.textContent = s.cls;
+  d.classList.remove('text-brand-500','text-accent-500','text-danger-500');
+  d.classList.add(s.sev==='ok'?'text-brand-500':s.sev==='warn'?'text-accent-500':'text-danger-500');
+
+  const c = document.getElementById('confidenceChip');
+  c.className = 'chip ' + (s.sev==='ok'?'chip-ok':s.sev==='warn'?'chip-warn':'chip-danger');
+  c.textContent = 'Confidence ' + (s.conf*100).toFixed(1) + '%';
+
+  document.getElementById('speciesText').textContent = s.species;
+
+  // Severity bar
+  const segs = document.querySelectorAll('#severityBar .seg');
+  segs.forEach((seg,i) => {
+    seg.className = 'seg';
+    if (i < s.severity) seg.classList.add('on-' + s.severity);
+  });
+  document.getElementById('severityLabel').textContent = ['—','Healthy','Mild','Moderate','Severe'][s.severity];
+
+  document.getElementById('spreadRisk').textContent = s.spread;
+  document.getElementById('yieldLoss').textContent = s.loss;
+
+  const list = document.getElementById('probList'); list.innerHTML = '';
+  s.probs.forEach(([n,pr],i) => {
+    const barClass = (i===0 && s.sev!=='ok') ? (s.sev==='warn'?'progress-bar warn':'progress-bar danger') : 'progress-bar';
+    const dotColor = i===0 ? (s.sev==='ok'?'bg-brand-500':s.sev==='warn'?'bg-accent-500':'bg-danger-500') : 'bg-ink-300';
+    const txtColor = i===0 ? (s.sev==='ok'?'text-brand-500':s.sev==='warn'?'text-accent-500':'text-danger-500') : 'text-ink-500';
+    const row = document.createElement('div');
+    row.innerHTML = `
+      <div class="flex items-center justify-between text-[12.5px] mb-1">
+        <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full ${dotColor}"></span><span class="${i===0?'text-ink-900 font-semibold':'text-ink-700'}">${n}</span></div>
+        <span class="font-mono ${txtColor}">${(pr*100).toFixed(1)}%</span>
+      </div>
+      <div class="${barClass}"><span style="width:0%"></span></div>`;
+    list.appendChild(row);
+    requestAnimationFrame(() => row.querySelector('.progress-bar > span').style.width = (pr*100)+'%');
+  });
+
+  document.getElementById('actionText').textContent = s.action;
+  const tc = document.getElementById('treatmentChips'); tc.innerHTML = '';
+  s.treatments.forEach(t => {
+    const span = document.createElement('span');
+    span.className = 'chip chip-ok';
+    span.textContent = t;
+    tc.appendChild(span);
+  });
+
+  ['planBtn','shareBtn'].forEach(id => document.getElementById(id).disabled = false);
+  toast(`Diagnosis: ${s.cls} (${(s.conf*100).toFixed(1)}%)`);
+}
+
+function resetReport() {
+  document.getElementById('diagnosis').textContent = '—';
+  document.getElementById('confidenceChip').className = 'chip chip-ok';
+  document.getElementById('confidenceChip').textContent = 'Confidence —';
+  document.getElementById('speciesText').textContent = '—';
+  document.querySelectorAll('#severityBar .seg').forEach(s => s.className = 'seg');
+  document.getElementById('severityLabel').textContent = '—';
+  document.getElementById('spreadRisk').textContent = '—';
+  document.getElementById('yieldLoss').textContent = '—';
+  document.getElementById('probList').innerHTML = '';
+  document.getElementById('actionText').textContent = 'Upload an image to receive crop-specific treatment recommendations.';
+  document.getElementById('treatmentChips').innerHTML = '';
+  const s = document.getElementById('statusChip');
+  s.className = 'chip chip-info';
+  s.innerHTML = `<svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg> Awaiting image`;
+  ['planBtn','shareBtn'].forEach(id => document.getElementById(id).disabled = true);
+}
+
+document.getElementById('planBtn').addEventListener('click', () => toast('Added to treatment plan for North Field B-3.'));
+document.getElementById('shareBtn').addEventListener('click', () => toast('Diagnosis sent to Mr. Tuan Le (agronomist).'));
+
+/* ===== Toast ===== */
+let toastTimer;
+function toast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.setAttribute('data-show','true');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.setAttribute('data-show','false'), 2800);
+}
+
+/* ===== Field Map ===== */
+let fieldReady = false;
+function initField() {
+  if (!fieldReady) {
+    const grid = document.getElementById('fieldGrid');
+    let h=0,w=0,d=0;
+    for (let i=0; i<12*8; i++) {
+      const r = Math.random();
+      let cls = '';
+      if (r < .55) { cls = ['','h2','h3'][Math.floor(Math.random()*3)]; h++; }
+      else if (r < .82) { cls = ['w','w2'][Math.floor(Math.random()*2)]; w++; }
+      else { cls = ['d','d2'][Math.floor(Math.random()*2)]; d++; }
+      const cell = document.createElement('div');
+      cell.className = 'field-cell ' + cls;
+      cell.title = `Plot ${i+1}`;
+      grid.appendChild(cell);
+    }
+    document.getElementById('cellHealthy').textContent = h;
+    document.getElementById('cellWatch').textContent = w;
+    document.getElementById('cellDisease').textContent = d;
+
+    // Weather
+    const days = ['Today','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const icons = ['sun','cloud','rain','rain','cloud','sun','sun'];
+    const temps = [28, 27, 26, 25, 27, 29, 30];
+    const risks = ['Low','Med','High','High','Med','Low','Low'];
+    const wl = document.getElementById('weatherList');
+    days.forEach((d,i) => {
+      const riskColor = risks[i]==='High'?'chip-danger':risks[i]==='Med'?'chip-warn':'chip-ok';
+      wl.innerHTML += `
+        <div class="flex items-center justify-between text-xs px-2 py-1.5 rounded-lg hover:bg-ink-50">
+          <div class="flex items-center gap-2 w-20">
+            <svg class="w-4 h-4 text-accent-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${icons[i]==='sun'?'<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1l2.1-2.1M17 7l2.1-2.1"/>':icons[i]==='cloud'?'<path d="M17 18a5 5 0 0 0 0-10 6 6 0 0 0-12 1 4 4 0 0 0-1 8z"/>':'<path d="M16 13v8M8 13v8M12 15v7M20 16.6A5 5 0 0 0 18 7h-1.3A8 8 0 0 0 4 9.3"/>'}</svg>
+            <span class="font-medium text-ink-700">${d}</span>
+          </div>
+          <span class="font-mono text-ink-700 tabular-nums">${temps[i]}°C</span>
+          <span class="chip ${riskColor}">${risks[i]}</span>
+        </div>`;
+    });
+
+    // Charts
+    const labels = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+    Chart.defaults.color = '#64748b'; Chart.defaults.font.family = 'Inter';
+    new Chart(document.getElementById('riskChart'), {
+      type:'line', data:{ labels, datasets:[{ data:[18,28,42,68,75,52,30], borderColor:'#dc2626', backgroundColor:'rgba(220,38,38,.1)', fill:true, tension:.4, pointRadius:0, borderWidth:2 }]},
+      options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{x:{grid:{color:'#eef0f3'}}, y:{grid:{color:'#eef0f3'},min:0,max:100,ticks:{stepSize:25,callback:v=>v+'%'}}}}
+    });
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    new Chart(document.getElementById('yieldChart'), {
+      type:'bar', data:{ labels:months, datasets:[
+        { label:'2025 Actual', data:[5.2,5.4,5.7,5.5,5.9,6.1,6.0,5.8,5.6,5.5,5.4,5.3], backgroundColor:'rgba(22,163,74,.7)', borderRadius:6 },
+        { label:'2026 Forecast', data:[5.4,5.6,5.9,5.7,6.1,6.3,6.2,6.0,5.8,5.7,5.6,5.5], backgroundColor:'rgba(245,158,11,.7)', borderRadius:6 },
+      ]},
+      options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:10,font:{size:11}}}}, scales:{x:{grid:{color:'#eef0f3'}}, y:{grid:{color:'#eef0f3'}}}}
+    });
+    fieldReady = true;
+  }
+}
+
+/* ===== Library ===== */
+const LIBRARY = [
+  { name:'Late Blight (Tomato/Potato)', sci:'Phytophthora infestans', sev:'High', tx:['Copper hydroxide','Mancozeb','Field sanitation'], desc:'Fast-spreading water mold, devastating in wet weather. Can destroy a field within days.' },
+  { name:'Rice Blast', sci:'Magnaporthe oryzae', sev:'High', tx:['Tricyclazole','Isoprothiolane','Resistant variety'], desc:'Major fungal disease of rice, affects leaves, nodes and panicles.' },
+  { name:'Common Rust (Corn)', sci:'Puccinia sorghi', sev:'Medium', tx:['Azoxystrobin','Propiconazole','Resistant hybrids'], desc:'Pustules on leaves, reduces photosynthesis. Worse in cool, humid conditions.' },
+  { name:'Powdery Mildew', sci:'Erysiphe spp.', sev:'Medium', tx:['Sulfur spray','Neem oil','Pruning for airflow'], desc:'White powder on leaves. Affects many crops including cucurbits, grapes, wheat.' },
+  { name:'Apple Scab', sci:'Venturia inaequalis', sev:'Medium', tx:['Captan','Mancozeb','Sanitation'], desc:'Olive-green spots on leaves and fruit. Major apple disease in temperate climates.' },
+  { name:'Bacterial Leaf Blight', sci:'Xanthomonas oryzae', sev:'High', tx:['Copper bactericide','Resistant variety','Balanced nitrogen'], desc:'Yellow lesions along leaf veins. Major rice disease in tropical regions.' },
+  { name:'Aphid Infestation', sci:'Various aphid species', sev:'Low–Medium', tx:['Neem oil','Ladybug release','Insecticidal soap'], desc:'Small sap-sucking insects. Vector for many plant viruses.' },
+  { name:'Fall Armyworm', sci:'Spodoptera frugiperda', sev:'High', tx:['Bt sprays','Spinosad','Pheromone traps'], desc:'Major pest on maize and sorghum, can defoliate quickly.' },
+  { name:'Healthy Plant', sci:'—', sev:'—', tx:['Routine monitoring','Balanced fertilization','Pruning'], desc:'No disease detected. Continue good agricultural practices.' },
+];
+function renderLibrary() {
+  const g = document.getElementById('libGrid');
+  if (g.children.length) return;
+  g.innerHTML = LIBRARY.map(item => {
+    const sevChip = item.sev === 'High' ? 'chip-danger' : item.sev === 'Medium' ? 'chip-warn' : 'chip-ok';
+    return `
+      <div class="card rounded-2xl p-4 hover:shadow-lg transition cursor-pointer">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <div class="text-sm font-semibold text-ink-900">${item.name}</div>
+            <div class="text-xs italic text-ink-500 mt-0.5">${item.sci}</div>
+          </div>
+          <span class="chip ${sevChip}">${item.sev}</span>
+        </div>
+        <p class="mt-2 text-[12.5px] text-ink-600 leading-relaxed">${item.desc}</p>
+        <div class="mt-3">
+          <div class="text-[10px] uppercase tracking-wider font-semibold text-ink-400 mb-1">Treatment options</div>
+          <div class="flex flex-wrap gap-1.5">
+            ${item.tx.map(t => `<span class="chip">${t}</span>`).join('')}
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+/* ===== History ===== */
+const HISTORY = [
+  { id:'SCN-7821', field:'North B-3', crop:'Rice', cond:'Rice Blast', sev:2, date:'2026-05-03 09:42', status:'pending' },
+  { id:'SCN-7820', field:'East A-1', crop:'Tomato', cond:'Healthy', sev:1, date:'2026-05-03 08:15', status:'verified' },
+  { id:'SCN-7819', field:'North B-3', crop:'Rice', cond:'Healthy', sev:1, date:'2026-05-02 16:30', status:'verified' },
+  { id:'SCN-7818', field:'South C-2', crop:'Corn', cond:'Common Rust', sev:2, date:'2026-05-02 14:12', status:'treated' },
+  { id:'SCN-7817', field:'West D-4', crop:'Tomato', cond:'Late Blight', sev:3, date:'2026-05-01 11:08', status:'treated' },
+  { id:'SCN-7816', field:'East A-2', crop:'Apple', cond:'Apple Scab', sev:2, date:'2026-04-30 09:55', status:'verified' },
+];
+function renderHistory() {
+  const body = document.getElementById('historyBody');
+  if (body.children.length) return;
+  body.innerHTML = HISTORY.map(r => {
+    const condColor = r.cond === 'Healthy' ? 'text-brand-500' : r.sev === 3 ? 'text-danger-500' : 'text-accent-500';
+    const statusChip = r.status === 'verified' ? '<span class="chip chip-ok"><span class="dot dot-ok"></span>Verified</span>'
+      : r.status === 'pending' ? '<span class="chip chip-info"><span class="dot dot-warn"></span>Pending</span>'
+      : '<span class="chip chip-warn"><span class="dot dot-warn"></span>Treated</span>';
+    const sevSegs = Array.from({length:4},(_,i) =>
+      `<div class="w-3 h-1.5 rounded-sm ${i < r.sev ? (r.sev>=3?'bg-danger-500':r.sev===2?'bg-accent-500':'bg-brand-500') : 'bg-ink-200'}"></div>`
+    ).join('');
+    return `<tr class="row-hover">
+      <td class="px-4 py-2.5 font-mono text-xs text-ink-700">${r.id}</td>
+      <td class="px-4 py-2.5 text-ink-800">${r.field}</td>
+      <td class="px-4 py-2.5 text-ink-700">${r.crop}</td>
+      <td class="px-4 py-2.5 font-semibold ${condColor}">${r.cond}</td>
+      <td class="px-4 py-2.5"><div class="flex gap-1">${sevSegs}</div></td>
+      <td class="px-4 py-2.5 text-ink-700 text-xs">${r.date}</td>
+      <td class="px-4 py-2.5">${statusChip}</td>
+      <td class="px-4 py-2.5 text-right"><button class="btn btn-ghost !py-1 !px-2 text-xs">Open</button></td>
+    </tr>`;
+  }).join('');
+}
+
+/* ===== Init ===== */
+resetReport();
+toast('AgriScan ready — try a sample leaf or upload your own.');
+</script>
+</body>
+</html>

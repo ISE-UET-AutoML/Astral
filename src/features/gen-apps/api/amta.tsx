@@ -1,5 +1,6 @@
 import Cookies from 'universal-cookie'
 import { API_BASE_URL } from 'src/constants/api'
+import { USE_GEN_APP_MOCKS, getMockChatMessages } from 'src/features/gen-apps/mocks'
 
 const ADAPTIVE_URL = `${API_BASE_URL}/api/service/adaptive_model_to_app`
 
@@ -164,6 +165,10 @@ export async function getPipelineStatus(runId) {
  * @returns {Promise<{ items: Array, total: number }>}
  */
 export async function getMessages(appId, limit = 200) {
+	if (USE_GEN_APP_MOCKS) {
+		return getMockChatMessages(appId, limit)
+	}
+
 	const url = `${ADAPTIVE_URL}/workspace/${appId}/messages?limit=${limit}`
 
 	const response = await fetch(url, { headers: getAuthHeaders() })
